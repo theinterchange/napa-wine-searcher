@@ -1,0 +1,19 @@
+[
+  { "name": "Calistoga", "valley": "napa", "slug": "calistoga", "color": "#8B0000" },
+  { "name": "St. Helena", "valley": "napa", "slug": "st-helena", "color": "#A0522D" },
+  { "name": "Rutherford", "valley": "napa", "slug": "rutherford", "color": "#B22222" },
+  { "name": "Oakville", "valley": "napa", "slug": "oakville", "color": "#DC143C" },
+  { "name": "Yountville", "valley": "napa", "slug": "yountville", "color": "#C71585" },
+  { "name": "Stags Leap District", "valley": "napa", "slug": "stags-leap-district", "color": "#8B008B" },
+  { "name": "Atlas Peak", "valley": "napa", "slug": "atlas-peak", "color": "#4B0082" },
+  { "name": "Mount Veeder", "valley": "napa", "slug": "mount-veeder", "color": "#6B3FA0" },
+  { "name": "Carneros (Napa)", "valley": "napa", "slug": "carneros-napa", "color": "#9B2335" },
+  { "name": "Howell Mountain", "valley": "napa", "slug": "howell-mountain", "color": "#722F37" },
+  { "name": "Sonoma Valley", "valley": "sonoma", "slug": "sonoma-valley", "color": "#556B2F" },
+  { "name": "Russian River Valley", "valley": "sonoma", "slug": "russian-river-valley", "color": "#228B22" },
+  { "name": "Dry Creek Valley", "valley": "sonoma", "slug": "dry-creek-valley", "color": "#006400" },
+  { "name": "Alexander Valley", "valley": "sonoma", "slug": "alexander-valley", "color": "#2E8B57" },
+  { "name": "Carneros (Sonoma)", "valley": "sonoma", "slug": "carneros-sonoma", "color": "#3CB371" },
+  { "name": "Bennett Valley", "valley": "sonoma", "slug": "bennett-valley", "color": "#66CDAA" },
+  { "name": "Petaluma Gap", "valley": "sonoma", "slug": "petaluma-gap", "color": "#8FBC8F" }
+]

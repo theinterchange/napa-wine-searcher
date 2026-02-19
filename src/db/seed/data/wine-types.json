@@ -1,0 +1,22 @@
+[
+  { "name": "Cabernet Sauvignon", "category": "red" },
+  { "name": "Pinot Noir", "category": "red" },
+  { "name": "Merlot", "category": "red" },
+  { "name": "Zinfandel", "category": "red" },
+  { "name": "Syrah", "category": "red" },
+  { "name": "Cabernet Franc", "category": "red" },
+  { "name": "Petite Sirah", "category": "red" },
+  { "name": "Malbec", "category": "red" },
+  { "name": "Red Blend", "category": "red" },
+  { "name": "Chardonnay", "category": "white" },
+  { "name": "Sauvignon Blanc", "category": "white" },
+  { "name": "Viognier", "category": "white" },
+  { "name": "Riesling", "category": "white" },
+  { "name": "Pinot Grigio", "category": "white" },
+  { "name": "White Blend", "category": "white" },
+  { "name": "Rosé", "category": "rosé" },
+  { "name": "Brut", "category": "sparkling" },
+  { "name": "Blanc de Blancs", "category": "sparkling" },
+  { "name": "Sparkling Rosé", "category": "sparkling" },
+  { "name": "Late Harvest", "category": "dessert" }
+]

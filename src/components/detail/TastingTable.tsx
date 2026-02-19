@@ -1,0 +1,78 @@
+import { Clock, Users, CalendarCheck } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
+
+interface Tasting {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number | null;
+  durationMinutes: number | null;
+  includes: string | null;
+  reservationRequired: boolean | null;
+  minGroupSize: number | null;
+  maxGroupSize: number | null;
+}
+
+export function TastingTable({ tastings, curated = false }: { tastings: Tasting[]; curated?: boolean }) {
+  if (tastings.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <h2 className="font-heading text-2xl font-semibold mb-4">
+        Tasting Experiences
+      </h2>
+      {!curated && (
+        <p className="mb-3 text-xs text-[var(--muted-foreground)] italic">
+          Prices and availability are approximate and may not reflect current offerings.
+        </p>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {tastings.map((t) => (
+          <div
+            key={t.id}
+            className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="font-heading text-lg font-semibold">{t.name}</h3>
+              {t.price != null && (
+                <span className="text-lg font-semibold text-burgundy-700 dark:text-burgundy-400">
+                  {formatPrice(t.price)}
+                </span>
+              )}
+            </div>
+            {t.description && (
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                {t.description}
+              </p>
+            )}
+            <div className="mt-4 flex flex-wrap gap-3 text-xs text-[var(--muted-foreground)]">
+              {t.durationMinutes && (
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" />
+                  {t.durationMinutes} min
+                </span>
+              )}
+              {t.maxGroupSize && (
+                <span className="flex items-center gap-1">
+                  <Users className="h-3.5 w-3.5" />
+                  {t.minGroupSize || 1}–{t.maxGroupSize} guests
+                </span>
+              )}
+              {t.reservationRequired && (
+                <span className="flex items-center gap-1 text-burgundy-600 dark:text-burgundy-400">
+                  <CalendarCheck className="h-3.5 w-3.5" />
+                  Reservation Required
+                </span>
+              )}
+            </div>
+            {t.includes && (
+              <p className="mt-3 text-xs text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3">
+                Includes: {t.includes}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

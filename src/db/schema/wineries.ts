@@ -1,0 +1,38 @@
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+
+export const subRegions = sqliteTable("sub_regions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  valley: text("valley", { enum: ["napa", "sonoma"] }).notNull(),
+  slug: text("slug").notNull().unique(),
+  color: text("color").notNull(),
+});
+
+export const wineries = sqliteTable("wineries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  subRegionId: integer("sub_region_id").references(() => subRegions.id),
+  description: text("description"),
+  shortDescription: text("short_description"),
+  heroImageUrl: text("hero_image_url"),
+  thumbnailUrl: text("thumbnail_url"),
+  address: text("address"),
+  city: text("city"),
+  state: text("state").default("CA"),
+  zip: text("zip"),
+  lat: real("lat"),
+  lng: real("lng"),
+  phone: text("phone"),
+  email: text("email"),
+  websiteUrl: text("website_url"),
+  hoursJson: text("hours_json"),
+  reservationRequired: integer("reservation_required", { mode: "boolean" }).default(false),
+  dogFriendly: integer("dog_friendly", { mode: "boolean" }).default(false),
+  picnicFriendly: integer("picnic_friendly", { mode: "boolean" }).default(false),
+  priceLevel: integer("price_level"),
+  aggregateRating: real("aggregate_rating"),
+  totalRatings: integer("total_ratings").default(0),
+  curated: integer("curated", { mode: "boolean" }).default(false),
+  curatedAt: text("curated_at"),
+});

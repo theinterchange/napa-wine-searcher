@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-burgundy-50: #fdf2f4;
+  --color-burgundy-100: #fce7eb;
+  --color-burgundy-200: #f9d0d9;
+  --color-burgundy-300: #f4a9b8;
+  --color-burgundy-400: #ec7993;
+  --color-burgundy-500: #df4d6f;
+  --color-burgundy-600: #cc2d55;
+  --color-burgundy-700: #ab1f43;
+  --color-burgundy-800: #8f1d3c;
+  --color-burgundy-900: #7a1c37;
+  --color-burgundy-950: #44091a;
+
+  --color-cream-50: #fefdf8;
+  --color-cream-100: #fdf9ed;
+  --color-cream-200: #f9f0d2;
+  --color-cream-300: #f4e4ab;
+  --color-cream-400: #edd47e;
+  --color-cream-500: #e5c14f;
+  --color-cream-600: #d4a933;
+  --color-cream-700: #b18928;
+  --color-cream-800: #906d26;
+  --color-cream-900: #765923;
+  --color-cream-950: #432f10;
+
+  --color-gold-50: #fdfbe9;
+  --color-gold-100: #fcf6c6;
+  --color-gold-200: #f9ea90;
+  --color-gold-300: #f5d750;
+  --color-gold-400: #f0c324;
+  --color-gold-500: #e0ab11;
+  --color-gold-600: #c1840c;
+  --color-gold-700: #9a5f0d;
+  --color-gold-800: #7f4b13;
+  --color-gold-900: #6c3e16;
+  --color-gold-950: #3f1f08;
+
+  --color-olive-50: #f6f7ee;
+  --color-olive-100: #eaedd9;
+  --color-olive-200: #d6ddb7;
+  --color-olive-300: #bcc88c;
+  --color-olive-400: #a4b367;
+  --color-olive-500: #879849;
+  --color-olive-600: #697937;
+  --color-olive-700: #515d2d;
+  --color-olive-800: #424b28;
+  --color-olive-900: #394125;
+  --color-olive-950: #1d2311;
+
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #fefdf8;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --muted: #f5f1e8;
+  --muted-foreground: #6b6356;
+  --border: #e8e0d0;
+}
+
+.dark {
+  --background: #1a1410;
+  --foreground: #f5f1e8;
+  --card: #241e18;
+  --card-foreground: #f5f1e8;
+  --muted: #2e261e;
+  --muted-foreground: #a89880;
+  --border: #3d3428;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
