@@ -1,0 +1,1339 @@
+{
+  "castello-di-amorosa": {
+    "websiteUrl": "https://castellodiamorosa.com/",
+    "winesUrl": "https://castellodiamorosa.com/wine-club-benefits/",
+    "tastingsUrl": "https://castellodiamorosa.com/experiences/",
+    "aboutUrl": "https://castellodiamorosa.com/ask-our-winemaker/",
+    "status": "mapped"
+  },
+  "domaine-carneros": {
+    "websiteUrl": "http://domainecarneros.com/",
+    "winesUrl": "http://domainecarneros.com/wines",
+    "tastingsUrl": "http://domainecarneros.com/visit",
+    "aboutUrl": "http://domainecarneros.com/our-story",
+    "status": "mapped"
+  },
+  "v-sattui": {
+    "websiteUrl": "http://www.vsattui.com/",
+    "winesUrl": "http://www.vsattui.com/wines",
+    "tastingsUrl": "http://www.vsattui.com/visit",
+    "aboutUrl": "http://www.vsattui.com/story",
+    "status": "mapped"
+  },
+  "st-francis-winery": {
+    "websiteUrl": "http://www.stfranciswinery.com/",
+    "winesUrl": "http://www.stfranciswinery.com/wines",
+    "tastingsUrl": "http://www.stfranciswinery.com/visit",
+    "aboutUrl": "http://www.stfranciswinery.com/about",
+    "status": "mapped"
+  },
+  "sterling-vineyards": {
+    "websiteUrl": "https://www.sterlingvineyards.com/",
+    "winesUrl": "https://www.sterlingvineyards.com/collections/all-wines",
+    "tastingsUrl": "https://www.sterlingvineyards.com/pages/tastings",
+    "aboutUrl": "https://www.sterlingvineyards.com/pages/napa-valley-elevated",
+    "status": "mapped"
+  },
+  "beringer-vineyards": {
+    "websiteUrl": "https://www.beringer.com/",
+    "winesUrl": "https://www.beringer.com/collections/all-wines",
+    "tastingsUrl": "https://www.beringer.com/collections/private-reserve-cabernet-sauvignon",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "caymus-vineyards": {
+    "websiteUrl": "http://www.caymus.com/",
+    "winesUrl": "https://www.wagnerfamilyofwine.com/wine-shop/caymus/",
+    "tastingsUrl": "https://www.exploretock.com/caymusrutherford",
+    "aboutUrl": "https://www.caymus.com/",
+    "status": "mapped"
+  },
+  "mumm-napa": {
+    "websiteUrl": "https://www.mummnapa.com/",
+    "winesUrl": "https://www.mummnapa.com/wines/",
+    "tastingsUrl": "https://www.mummnapa.com/wines/reserve-wines/",
+    "aboutUrl": "https://www.mummnapa.com/about/",
+    "status": "mapped"
+  },
+  "viansa-winery": {
+    "websiteUrl": "http://www.viansa.com/",
+    "winesUrl": "https://shop.viansa.com/Shop/All-Wines",
+    "tastingsUrl": "https://www.viansa.com/visit/",
+    "aboutUrl": "https://www.viansa.com/about/",
+    "status": "mapped"
+  },
+  "bothe-napa-valley-state-park": {
+    "websiteUrl": "https://napaoutdoors.org/parks/bothe-napa-valley-state-park/",
+    "winesUrl": null,
+    "tastingsUrl": "https://napaoutdoors.org/parks/napa-river-ecological-reserve/",
+    "aboutUrl": "https://napaoutdoors.org/about/",
+    "status": "mapped"
+  },
+  "sequoia-grove-winery": {
+    "websiteUrl": "https://www.sequoiagrove.com/",
+    "winesUrl": "https://www.sequoiagrove.com/wines",
+    "tastingsUrl": "https://www.sequoiagrove.com/visit",
+    "aboutUrl": "https://www.sequoiagrove.com/about",
+    "status": "mapped"
+  },
+  "tank-garage-winery": {
+    "websiteUrl": "https://www.tankgaragewinery.com/",
+    "winesUrl": "https://www.tankgaragewinery.com/wines",
+    "tastingsUrl": "https://www.tankgaragewinery.com/visit",
+    "aboutUrl": "https://www.tankgaragewinery.com/our-story",
+    "status": "mapped"
+  },
+  "trefethen-family-vineyards": {
+    "websiteUrl": "https://www.trefethen.com/",
+    "winesUrl": "https://www.trefethen.com/collection/wine",
+    "tastingsUrl": "https://www.trefethen.com/experiences-2/",
+    "aboutUrl": "https://www.trefethen.com/learn/place/estate-vineyards/",
+    "status": "mapped"
+  },
+  "artesa-vineyards-winery": {
+    "websiteUrl": "https://www.artesawinery.com/",
+    "winesUrl": "https://www.artesawinery.com/shop/",
+    "tastingsUrl": "https://www.artesawinery.com/visit-us/",
+    "aboutUrl": "https://www.artesawinery.com/about/",
+    "status": "mapped"
+  },
+  "monticello-vineyards": {
+    "websiteUrl": "http://www.monticellonapa.com/",
+    "winesUrl": "http://www.monticellonapa.com/wines",
+    "tastingsUrl": "http://www.monticellonapa.com/visit",
+    "aboutUrl": "http://www.monticellonapa.com/about-us",
+    "status": "mapped"
+  },
+  "baldacci-family": {
+    "websiteUrl": "https://www.baldaccivineyards.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp-listing",
+    "winesUrl": "https://www.baldaccivineyards.com/collection/wine",
+    "tastingsUrl": "https://www.baldaccivineyards.com/visit/",
+    "aboutUrl": "https://www.baldaccivineyards.com/the-winemakers-collection/",
+    "status": "mapped"
+  },
+  "francis-ford-coppola": {
+    "websiteUrl": "http://www.francisfordcoppolawinery.com/",
+    "winesUrl": "http://www.francisfordcoppolawinery.com/wines",
+    "tastingsUrl": "http://www.francisfordcoppolawinery.com/visit",
+    "aboutUrl": "http://www.francisfordcoppolawinery.com/about",
+    "status": "mapped"
+  },
+  "buena-vista-winery": {
+    "websiteUrl": "http://www.buenavistawinery.com/",
+    "winesUrl": "https://buenavistawinery.com/shop/all-wines",
+    "tastingsUrl": "https://buenavistawinery.com/wine-tastings",
+    "aboutUrl": "https://buenavistawinery.com/about-us",
+    "status": "mapped"
+  },
+  "hall-wines-st-helena": {
+    "websiteUrl": "https://www.hallwines.com/",
+    "winesUrl": "https://www.hallwines.com/wine-shop",
+    "tastingsUrl": "https://www.hallwines.com/hall-schedule-a-tour-and-tasting",
+    "aboutUrl": "https://www.hallwines.com/about-us",
+    "status": "mapped"
+  },
+  "b-r-cohn-winery": {
+    "websiteUrl": "https://www.brcohn.com/",
+    "winesUrl": "https://www.brcohn.com/wine-shop",
+    "tastingsUrl": "https://www.brcohn.com/visit/",
+    "aboutUrl": "https://www.brcohn.com/about/",
+    "status": "mapped"
+  },
+  "opus-one-winery": {
+    "websiteUrl": "http://www.opusonewinery.com/",
+    "winesUrl": "http://www.opusonewinery.com/current-releases",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.opusonewinery.com/estate",
+    "status": "mapped"
+  },
+  "james-cole-winery": {
+    "websiteUrl": "http://www.jamescolewinery.com/",
+    "winesUrl": "http://www.jamescolewinery.com/store",
+    "tastingsUrl": "http://www.jamescolewinery.com/store/reserve-series",
+    "aboutUrl": "http://www.jamescolewinery.com/our-story",
+    "status": "mapped"
+  },
+  "peju-winery": {
+    "websiteUrl": "https://peju.com/",
+    "winesUrl": "https://peju.com/wines",
+    "tastingsUrl": "https://peju.com/visit",
+    "aboutUrl": "https://peju.com/about",
+    "status": "mapped"
+  },
+  "cline-cellars": {
+    "websiteUrl": "https://clinecellars.com/",
+    "winesUrl": "https://clinecellars.com/collection/cline-cellars-all",
+    "tastingsUrl": "https://clinecellars.com/visit-us",
+    "aboutUrl": "https://clinecellars.com/our-story",
+    "status": "mapped"
+  },
+  "chandon": {
+    "websiteUrl": "https://www.chandon.com/",
+    "winesUrl": "https://www.chandon.com/en-US/cat/shop/",
+    "tastingsUrl": "https://www.chandon.com/en-US/account",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "cakebread-cellars": {
+    "websiteUrl": "http://www.cakebread.com/",
+    "winesUrl": "http://www.cakebread.com/shop",
+    "tastingsUrl": "http://www.cakebread.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "halleck-vineyard-estate-winery-wine-tasting-room": {
+    "websiteUrl": "https://halleckvineyard.com/wine-tasting-sonoma-county/?utm_source=google&utm_medium=organic&utm_campaign=gbp",
+    "winesUrl": "https://halleckvineyard.com/wine-tasting-sonoma-county/",
+    "tastingsUrl": "https://halleckvineyard.com/wine-tasting-sonoma-county/",
+    "aboutUrl": "https://halleckvineyard.com/about-us/",
+    "status": "mapped"
+  },
+  "gundlach-bundschu-winery": {
+    "websiteUrl": "http://www.gunbun.com/",
+    "winesUrl": "http://www.gunbun.com/wines",
+    "tastingsUrl": "http://www.gunbun.com/visit",
+    "aboutUrl": "http://www.gunbun.com/about",
+    "status": "mapped"
+  },
+  "chateau-montelena": {
+    "websiteUrl": "http://www.montelena.com/",
+    "winesUrl": "http://www.montelena.com/wines",
+    "tastingsUrl": "http://www.montelena.com/visit",
+    "aboutUrl": "http://www.montelena.com/estate",
+    "status": "mapped"
+  },
+  "far-niente-winery": {
+    "websiteUrl": "https://farniente.com/",
+    "winesUrl": "https://farniente.com/shop",
+    "tastingsUrl": "https://farniente.com/visit-far-niente",
+    "aboutUrl": "https://farniente.com/visit",
+    "status": "mapped"
+  },
+  "jacuzzi-family-vineyards": {
+    "websiteUrl": "https://www.jacuzziwines.com/",
+    "winesUrl": "https://www.jacuzziwines.com/collection/wines",
+    "tastingsUrl": "https://www.jacuzziwines.com/visit-us",
+    "aboutUrl": "https://www.jacuzziwines.com/about-us",
+    "status": "mapped"
+  },
+  "kunde-family-winery": {
+    "websiteUrl": "http://www.kunde.com/",
+    "winesUrl": "https://www.kunde.com/Shop",
+    "tastingsUrl": "https://www.kunde.com/Visit/Tasting-Options",
+    "aboutUrl": "https://www.kunde.com/About-Us/The-Kunde-Family",
+    "status": "mapped"
+  },
+  "girard-winery": {
+    "websiteUrl": "https://www.girardwinery.com/",
+    "winesUrl": "https://shop.girardwinery.com/Shop/All-Wines",
+    "tastingsUrl": "https://www.girardwinery.com/visit/",
+    "aboutUrl": "https://www.girardwinery.com/about/",
+    "status": "mapped"
+  },
+  "gloria-ferrer-wines": {
+    "websiteUrl": "https://www.gloriaferrer.com/?utm_source=google&utm_medium=organic",
+    "winesUrl": "https://www.gloriaferrer.com/collection/all-wine-shop/",
+    "tastingsUrl": "https://www.gloriaferrer.com/visit/winery-experiences/",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "frogs-leap": {
+    "websiteUrl": "http://www.frogsleap.com/",
+    "winesUrl": "http://www.frogsleap.com/wines",
+    "tastingsUrl": "http://www.frogsleap.com/visit",
+    "aboutUrl": "http://www.frogsleap.com/estate",
+    "status": "mapped"
+  },
+  "stags-leap-wine-cellars": {
+    "websiteUrl": "https://www.stagsleapwinecellars.com/",
+    "winesUrl": "https://www.stagsleapwinecellars.com/wines/all-wines/",
+    "tastingsUrl": "https://www.stagsleapwinecellars.com/visit-us/",
+    "aboutUrl": "https://www.stagsleapwinecellars.com/wines/estate-collection/",
+    "status": "mapped"
+  },
+  "round-pond-estate-winery": {
+    "websiteUrl": "https://www.roundpond.com/",
+    "winesUrl": "https://www.roundpond.com/shop/wine/",
+    "tastingsUrl": "https://www.roundpond.com/visit/winery-experiences/",
+    "aboutUrl": "https://www.roundpond.com/visit/estate-events-2/",
+    "status": "mapped"
+  },
+  "benziger-family": {
+    "websiteUrl": "http://www.benziger.com/",
+    "winesUrl": "http://www.benziger.com/wines",
+    "tastingsUrl": "http://www.benziger.com/visit",
+    "aboutUrl": "http://www.benziger.com/our-story",
+    "status": "mapped"
+  },
+  "korbel-winery": {
+    "websiteUrl": "http://www.korbel.com/",
+    "winesUrl": "http://www.korbel.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "silver-oak-napa-valley": {
+    "websiteUrl": "http://www.silveroak.com/visit-us/",
+    "winesUrl": "http://www.silveroak.com/wines",
+    "tastingsUrl": "http://www.silveroak.com/visit",
+    "aboutUrl": "http://www.silveroak.com/about",
+    "status": "mapped"
+  },
+  "grgich-hills-estate": {
+    "websiteUrl": "http://www.grgich.com/",
+    "winesUrl": "http://www.grgich.com/wines",
+    "tastingsUrl": "http://www.grgich.com/experiences",
+    "aboutUrl": "http://www.grgich.com/story",
+    "status": "mapped"
+  },
+  "alpha-omega-winery": {
+    "websiteUrl": "http://www.aowinery.com/",
+    "winesUrl": "http://www.aowinery.com/current-releases",
+    "tastingsUrl": "http://www.aowinery.com/experiences",
+    "aboutUrl": "http://www.aowinery.com/about",
+    "status": "mapped"
+  },
+  "nickel-nickel": {
+    "websiteUrl": "https://farniente.com/visit-nickel-and-nickel?utm_source=google&utm_medium=organic&utm_campaign=gbp",
+    "winesUrl": "https://farniente.com/shop",
+    "tastingsUrl": "https://farniente.com/visit-far-niente",
+    "aboutUrl": "https://farniente.com/visit",
+    "status": "mapped"
+  },
+  "davis-estates": {
+    "websiteUrl": "http://www.davisestates.com/",
+    "winesUrl": "http://www.davisestates.com/shop",
+    "tastingsUrl": "http://www.davisestates.com/experiences",
+    "aboutUrl": "http://www.davisestates.com/about",
+    "status": "mapped"
+  },
+  "rombauer-vineyards": {
+    "websiteUrl": "http://www.rombauer.com/",
+    "winesUrl": "http://www.rombauer.com/wines",
+    "tastingsUrl": "http://www.rombauer.com/experiences",
+    "aboutUrl": "http://www.rombauer.com/story",
+    "status": "mapped"
+  },
+  "maria-concetto-winery-tasting-room": {
+    "websiteUrl": "https://mariaconcettowinery.com/",
+    "winesUrl": "https://mariaconcettowinery.com/collections/diamond-collection",
+    "tastingsUrl": "https://mariaconcettowinery.com/collections/diamond-collection",
+    "aboutUrl": "https://mariaconcettowinery.com/pages/about-maria-concetto-winery",
+    "status": "mapped"
+  },
+  "sonoma-coast-vineyards": {
+    "websiteUrl": "https://www.sonomacoastvineyards.com/",
+    "winesUrl": "https://www.sonomacoastvineyards.com/our-wines/",
+    "tastingsUrl": "https://www.sonomacoastvineyards.com/visit-us/",
+    "aboutUrl": "https://www.sonomacoastvineyards.com/about/",
+    "status": "mapped"
+  },
+  "ledson-winery-vineyards": {
+    "websiteUrl": "https://ledson.com/",
+    "winesUrl": "https://ledson.com/wine-shop/",
+    "tastingsUrl": "https://ledson.com/tasting-panel/",
+    "aboutUrl": "https://ledson.com/discover-ledson/about/",
+    "status": "mapped"
+  },
+  "kendall-jackson-wine-estate-gardens": {
+    "websiteUrl": "http://www.kj.com/",
+    "winesUrl": "http://www.kj.com/wines",
+    "tastingsUrl": "http://www.kj.com/visit",
+    "aboutUrl": "http://www.kj.com/story",
+    "status": "mapped"
+  },
+  "jam-cellars": {
+    "websiteUrl": "https://jamcellars.com/visit/?utm_source=Google&utm_medium=GMB&utm_campaign=WAMS_GMB",
+    "winesUrl": "https://jamcellars.com/locate/",
+    "tastingsUrl": "https://jamcellars.com/visit/?utm_source=Google&utm_medium=GMB&utm_campaign=WAMS_GMB#",
+    "aboutUrl": "https://jamcellars.com/about/",
+    "status": "mapped"
+  },
+  "housley-napa-valley": {
+    "websiteUrl": "https://www.housleynapavalley.com/",
+    "winesUrl": "https://www.housleynapavalley.com/our-wines",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "black-stallion-estate-winery": {
+    "websiteUrl": "http://www.blackstallionwinery.com/",
+    "winesUrl": "http://www.blackstallionwinery.com/wines",
+    "tastingsUrl": "http://www.blackstallionwinery.com/visit",
+    "aboutUrl": "http://www.blackstallionwinery.com/our-story",
+    "status": "mapped"
+  },
+  "duckhorn-vineyards": {
+    "websiteUrl": "https://www.duckhorn.com/?utm_source=google&utm_medium=organic&utm_campaign=gmb",
+    "winesUrl": "https://www.duckhorn.com/Wines",
+    "tastingsUrl": "https://www.duckhorn.com/Visit",
+    "aboutUrl": "https://www.duckhorn.com/Our-Story/History",
+    "status": "mapped"
+  },
+  "joseph-phelps-vineyards": {
+    "websiteUrl": "http://www.josephphelps.com/",
+    "winesUrl": "http://www.josephphelps.com/wines",
+    "tastingsUrl": "http://www.josephphelps.com/visit",
+    "aboutUrl": "http://www.josephphelps.com/story",
+    "status": "mapped"
+  },
+  "charles-krug": {
+    "websiteUrl": "http://www.charleskrug.com/",
+    "winesUrl": "http://www.charleskrug.com/wines",
+    "tastingsUrl": "http://www.charleskrug.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "madonna-estate-winery": {
+    "websiteUrl": "http://www.madonnaestate.com/",
+    "winesUrl": "http://www.madonnaestate.com/wines",
+    "tastingsUrl": "http://www.madonnaestate.com/visit",
+    "aboutUrl": "http://www.madonnaestate.com/about",
+    "status": "mapped"
+  },
+  "macrostie-winery-estate-house": {
+    "websiteUrl": "https://macrostiewinery.com/",
+    "winesUrl": "https://macrostiewinery.com/our-wines/#all-wines",
+    "tastingsUrl": "https://macrostiewinery.com/seasonal-allotments/",
+    "aboutUrl": "https://macrostiewinery.com/visit/",
+    "status": "mapped"
+  },
+  "del-dotto-estate-winery-caves": {
+    "websiteUrl": "http://www.deldottovineyards.com/",
+    "winesUrl": "http://www.deldottovineyards.com/wines",
+    "tastingsUrl": "http://www.deldottovineyards.com/visit",
+    "aboutUrl": "http://www.deldottovineyards.com/about",
+    "status": "mapped"
+  },
+  "pride-mountain-vineyards": {
+    "websiteUrl": "http://www.pridewines.com/",
+    "winesUrl": null,
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.pridewines.com/estate",
+    "status": "mapped"
+  },
+  "raymond-vineyards": {
+    "websiteUrl": "http://www.raymondvineyards.com/",
+    "winesUrl": "http://www.raymondvineyards.com/shop",
+    "tastingsUrl": "http://www.raymondvineyards.com/experiences",
+    "aboutUrl": "http://www.raymondvineyards.com/about",
+    "status": "mapped"
+  },
+  "chimney-rock": {
+    "websiteUrl": "http://www.chimneyrock.com/",
+    "winesUrl": "http://www.chimneyrock.com/shop",
+    "tastingsUrl": "http://www.chimneyrock.com/visit",
+    "aboutUrl": "http://www.chimneyrock.com/about",
+    "status": "mapped"
+  },
+  "rutherford-hill": {
+    "websiteUrl": "http://www.rutherfordhill.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.rutherfordhill.com/visit",
+    "aboutUrl": "http://www.rutherfordhill.com/about",
+    "status": "mapped"
+  },
+  "napa-valley-wine-trolley": {
+    "websiteUrl": "https://www.napavalleywinetrolley.com/",
+    "winesUrl": null,
+    "tastingsUrl": null,
+    "aboutUrl": "https://www.napavalleywinetrolley.com/about",
+    "status": "mapped"
+  },
+  "coursey-graves-estate-winery": {
+    "websiteUrl": "https://www.courseygraves.com/?utm_source=google&utm_medium=gmb-website-button&utm_campaign=gmb",
+    "winesUrl": "https://www.courseygraves.com/wine/",
+    "tastingsUrl": "https://www.courseygraves.com/visit/",
+    "aboutUrl": "https://www.courseygraves.com/estate/",
+    "status": "mapped"
+  },
+  "la-crema": {
+    "websiteUrl": "http://www.lacrema.com/russian-river-estate/",
+    "winesUrl": "http://www.lacrema.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.lacrema.com/about",
+    "status": "mapped"
+  },
+  "russian-river-vineyards": {
+    "websiteUrl": "http://www.russianrivervineyards.com/",
+    "winesUrl": "http://www.russianrivervineyards.com/shop",
+    "tastingsUrl": "http://www.russianrivervineyards.com/visit",
+    "aboutUrl": "http://www.russianrivervineyards.com/our-story",
+    "status": "mapped"
+  },
+  "obrien-estate-winery": {
+    "websiteUrl": "http://www.obrienestate.com/",
+    "winesUrl": "http://www.obrienestate.com/shop",
+    "tastingsUrl": "http://www.obrienestate.com/visit",
+    "aboutUrl": "http://www.obrienestate.com/estate",
+    "status": "mapped"
+  },
+  "clos-du-val": {
+    "websiteUrl": "http://www.closduval.com/",
+    "winesUrl": "http://www.closduval.com/shop",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "chateau-st-jean-winery": {
+    "websiteUrl": "https://www.chateaustjean.com/",
+    "winesUrl": "https://www.chateaustjean.com/our-wines/",
+    "tastingsUrl": "https://www.chateaustjean.com/visit-us/",
+    "aboutUrl": "https://www.chateaustjean.com/our-story/",
+    "status": "mapped"
+  },
+  "jessup-cellars": {
+    "websiteUrl": "http://jessupcellars.com/",
+    "winesUrl": "http://jessupcellars.com/shop",
+    "tastingsUrl": null,
+    "aboutUrl": "http://jessupcellars.com/about",
+    "status": "mapped"
+  },
+  "rams-gate": {
+    "websiteUrl": "http://www.ramsgatewinery.com/",
+    "winesUrl": "http://www.ramsgatewinery.com/our-wines",
+    "tastingsUrl": "http://www.ramsgatewinery.com/visit",
+    "aboutUrl": "http://www.ramsgatewinery.com/about",
+    "status": "mapped"
+  },
+  "three-fat-guys-winery": {
+    "websiteUrl": "https://www.threefatguyswines.com/",
+    "winesUrl": "https://www.threefatguyswines.com/shop",
+    "tastingsUrl": "https://www.threefatguyswines.com/visit",
+    "aboutUrl": "https://www.threefatguyswines.com/about",
+    "status": "mapped"
+  },
+  "dry-creek-vineyard": {
+    "websiteUrl": "http://www.drycreekvineyard.com/",
+    "winesUrl": "http://www.drycreekvineyard.com/wines",
+    "tastingsUrl": "http://www.drycreekvineyard.com/visit",
+    "aboutUrl": "http://www.drycreekvineyard.com/our-story",
+    "status": "mapped"
+  },
+  "alexander-valley-vineyards": {
+    "websiteUrl": "https://www.avvwine.com/",
+    "winesUrl": "https://www.avvwine.com/wine-clubs/",
+    "tastingsUrl": "https://www.avvwine.com/wine-clubs/the-alexander-school-reserve-club/",
+    "aboutUrl": "https://www.avvwine.com/about/story/",
+    "status": "mapped"
+  },
+  "larson-family-winery": {
+    "websiteUrl": "http://www.larsonfamilywinery.com/",
+    "winesUrl": "http://www.larsonfamilywinery.com/current-releases",
+    "tastingsUrl": "http://www.larsonfamilywinery.com/visit",
+    "aboutUrl": "http://www.larsonfamilywinery.com/about",
+    "status": "mapped"
+  },
+  "stags-leap-winery": {
+    "websiteUrl": "https://www.stagsleap.com/",
+    "winesUrl": "https://www.stagsleap.com/collections/all-wines",
+    "tastingsUrl": "https://www.stagsleap.com/pages/visit",
+    "aboutUrl": "https://www.stagsleap.com/pages/colorful-history",
+    "status": "mapped"
+  },
+  "ferrari-carano-vineyards-and-winery": {
+    "websiteUrl": "https://www.ferrari-carano.com/",
+    "winesUrl": "https://www.ferrari-carano.com/our-wines/",
+    "tastingsUrl": "https://www.ferrari-carano.com/visit-us/",
+    "aboutUrl": "https://www.ferrari-carano.com/our-story/",
+    "status": "mapped"
+  },
+  "schramsberg-vineyards": {
+    "websiteUrl": "http://www.schramsberg.com/",
+    "winesUrl": "http://www.schramsberg.com/wines",
+    "tastingsUrl": "http://www.schramsberg.com/visit",
+    "aboutUrl": "http://www.schramsberg.com/about",
+    "status": "mapped"
+  },
+  "frank-family-vineyards": {
+    "websiteUrl": "http://www.frankfamilyvineyards.com/",
+    "winesUrl": "http://www.frankfamilyvineyards.com/wine",
+    "tastingsUrl": "http://www.frankfamilyvineyards.com/visit",
+    "aboutUrl": "http://www.frankfamilyvineyards.com/about",
+    "status": "mapped"
+  },
+  "nicholson-ranch-winery": {
+    "websiteUrl": "http://www.nicholsonranch.com/",
+    "winesUrl": "http://www.nicholsonranch.com/wines",
+    "tastingsUrl": "http://www.nicholsonranch.com/visit",
+    "aboutUrl": "http://www.nicholsonranch.com/about",
+    "status": "mapped"
+  },
+  "ashes-diamonds-winery": {
+    "websiteUrl": "http://ashesdiamonds.com/",
+    "winesUrl": "http://ashesdiamonds.com/shop",
+    "tastingsUrl": "http://ashesdiamonds.com/visit",
+    "aboutUrl": "http://ashesdiamonds.com/about",
+    "status": "mapped"
+  },
+  "pine-ridge-vineyards": {
+    "websiteUrl": "https://www.pineridgevineyards.com/",
+    "winesUrl": "https://www.pineridgevineyards.com/shop/",
+    "tastingsUrl": "https://www.pineridgevineyards.com/visit/",
+    "aboutUrl": "https://www.pineridgevineyards.com/about/",
+    "status": "mapped"
+  },
+  "paradise-ridge-winery": {
+    "websiteUrl": "http://prwinery.com/",
+    "winesUrl": "http://prwinery.com/wines",
+    "tastingsUrl": "http://prwinery.com/visit",
+    "aboutUrl": "http://prwinery.com/about",
+    "status": "mapped"
+  },
+  "iron-horse": {
+    "websiteUrl": "http://www.ironhorsevineyards.com/",
+    "winesUrl": "http://www.ironhorsevineyards.com/wines",
+    "tastingsUrl": "http://www.ironhorsevineyards.com/visit",
+    "aboutUrl": "http://www.ironhorsevineyards.com/about",
+    "status": "mapped"
+  },
+  "inglenook": {
+    "websiteUrl": "http://inglenook.com/",
+    "winesUrl": "http://inglenook.com/shop",
+    "tastingsUrl": "http://inglenook.com/product/rc-reserve-syrah-test/",
+    "aboutUrl": "http://inglenook.com/our-story",
+    "status": "mapped"
+  },
+  "clif-family-winery": {
+    "websiteUrl": "http://www.cliffamily.com/",
+    "winesUrl": "http://www.cliffamily.com/shop",
+    "tastingsUrl": "http://www.cliffamily.com/visit",
+    "aboutUrl": "http://www.cliffamily.com/about-us",
+    "status": "mapped"
+  },
+  "brown-downtown-napa": {
+    "websiteUrl": "http://www.brownestate.com/",
+    "winesUrl": "http://www.brownestate.com/wines",
+    "tastingsUrl": "http://www.brownestate.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "tamber-bey-vineyards": {
+    "websiteUrl": "http://www.tamberbey.com/",
+    "winesUrl": "http://www.tamberbey.com/shop",
+    "tastingsUrl": "http://www.tamberbey.com/visit",
+    "aboutUrl": "http://www.tamberbey.com/about",
+    "status": "mapped"
+  },
+  "matanzas-creek": {
+    "websiteUrl": "http://www.matanzascreek.com/",
+    "winesUrl": "http://www.matanzascreek.com/wines",
+    "tastingsUrl": "http://www.matanzascreek.com/visit",
+    "aboutUrl": "http://www.matanzascreek.com/estate",
+    "status": "mapped"
+  },
+  "fantesca-estate-winery": {
+    "websiteUrl": "https://www.fantesca.com/",
+    "winesUrl": "https://www.fantesca.com/wines",
+    "tastingsUrl": "https://www.fantesca.com/visit",
+    "aboutUrl": "https://www.fantesca.com/our-story",
+    "status": "mapped"
+  },
+  "sonoma-wine-rides": {
+    "websiteUrl": "https://www.sonomawinerides.com/",
+    "winesUrl": "https://www.sonomawinerides.com/foodandwinepairing",
+    "tastingsUrl": "https://www.sonomawinerides.com/grouptour",
+    "aboutUrl": "https://www.sonomawinerides.com/about",
+    "status": "mapped"
+  },
+  "bouchaine-vineyards": {
+    "websiteUrl": "http://www.bouchaine.com/",
+    "winesUrl": "https://bouchaine.com/pages/our-wines/",
+    "tastingsUrl": "https://bouchaine.com/pages/tasting-room/",
+    "aboutUrl": "https://bouchaine.com/pages/our-story/",
+    "status": "mapped"
+  },
+  "scribe-winery": {
+    "websiteUrl": "http://scribewinery.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://scribewinery.com/visit",
+    "aboutUrl": "http://scribewinery.com/about",
+    "status": "mapped"
+  },
+  "louis-m-martini-winery": {
+    "websiteUrl": "http://www.louismartini.com/",
+    "winesUrl": "http://www.louismartini.com/shop",
+    "tastingsUrl": "http://www.louismartini.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "odette-estate-winery": {
+    "websiteUrl": "https://www.odetteestate.com/",
+    "winesUrl": "https://www.odetteestate.com/wines",
+    "tastingsUrl": "https://www.odetteestate.com/visit",
+    "aboutUrl": "https://www.odetteestate.com/about/history",
+    "status": "mapped"
+  },
+  "vincent-arroyo-family-winery": {
+    "websiteUrl": "http://www.vincentarroyo.com/",
+    "winesUrl": null,
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.vincentarroyo.com/about-us",
+    "status": "mapped"
+  },
+  "j-vineyards-winery": {
+    "websiteUrl": "https://www.jwine.com/",
+    "winesUrl": "https://www.jwine.com/shop/",
+    "tastingsUrl": "https://www.jwine.com/visit/",
+    "aboutUrl": "https://www.jwine.com/about/",
+    "status": "mapped"
+  },
+  "emeritus-vineyards": {
+    "websiteUrl": "http://www.emeritusvineyards.com/",
+    "winesUrl": "http://www.emeritusvineyards.com/wine-club",
+    "tastingsUrl": "http://www.emeritusvineyards.com/experience/",
+    "aboutUrl": "http://www.emeritusvineyards.com/our-story",
+    "status": "mapped"
+  },
+  "imagery-estate": {
+    "websiteUrl": "http://www.imagerywinery.com/",
+    "winesUrl": "http://www.imagerywinery.com/wines",
+    "tastingsUrl": "http://www.imagerywinery.com/visit",
+    "aboutUrl": "http://www.imagerywinery.com/our-story",
+    "status": "mapped"
+  },
+  "silverado-vineyards": {
+    "websiteUrl": "https://www.silveradovineyards.com/",
+    "winesUrl": "https://www.silveradovineyards.com/wines/",
+    "tastingsUrl": "https://www.silveradovineyards.com/visit-us/",
+    "aboutUrl": "https://www.silveradovineyards.com/our-story/",
+    "status": "mapped"
+  },
+  "sebastiani-vineyards-winery": {
+    "websiteUrl": "https://www.sebastiani.com/",
+    "winesUrl": "https://www.sebastiani.com/wines",
+    "tastingsUrl": "https://www.sebastiani.com/visit-us/",
+    "aboutUrl": "https://www.sebastiani.com/about-sebastiani/",
+    "status": "mapped"
+  },
+  "st-clair-brown-winery-brewery": {
+    "websiteUrl": "https://www.stclairbrown.com/",
+    "winesUrl": "https://www.stclairbrown.com/wine-beer-tasting",
+    "tastingsUrl": "https://www.stclairbrown.com/tastingroom",
+    "aboutUrl": "https://www.stclairbrown.com/about-us",
+    "status": "mapped"
+  },
+  "john-anthony-vineyards": {
+    "websiteUrl": "http://www.johnanthonyvineyards.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.johnanthonyvineyards.com/visit",
+    "aboutUrl": "http://www.johnanthonyvineyards.com/about",
+    "status": "mapped"
+  },
+  "sigh-champagne-sparkling": {
+    "websiteUrl": "http://www.sighsonoma.com/",
+    "winesUrl": "https://www.sighsonoma.com/menu",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "wine-girl-napa-valley": {
+    "websiteUrl": "http://www.winegirlbar.com/",
+    "winesUrl": "http://www.winegirlbar.com/shop",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "st-sup-ry-estate-vineyards-winery": {
+    "websiteUrl": "http://www.stsupery.com/",
+    "winesUrl": "http://www.stsupery.com/shop",
+    "tastingsUrl": "http://www.stsupery.com/visit",
+    "aboutUrl": "http://www.stsupery.com/estate",
+    "status": "mapped"
+  },
+  "robledo-family-winery": {
+    "websiteUrl": "http://www.robledofamilywinery.com/",
+    "winesUrl": "http://www.robledofamilywinery.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.robledofamilywinery.com/our-story",
+    "status": "mapped"
+  },
+  "bella-vineyards-wine-caves": {
+    "websiteUrl": "http://www.bellawinery.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.bellawinery.com/experiences",
+    "aboutUrl": "http://www.bellawinery.com/about-us",
+    "status": "mapped"
+  },
+  "laird-family-estate": {
+    "websiteUrl": "http://www.lairdfamilyestate.com/",
+    "winesUrl": "http://www.lairdfamilyestate.com/wines",
+    "tastingsUrl": "http://www.lairdfamilyestate.com/visit",
+    "aboutUrl": "http://www.lairdfamilyestate.com/about",
+    "status": "mapped"
+  },
+  "rutherford-ranch-winery": {
+    "websiteUrl": "http://www.rutherfordranch.com/",
+    "winesUrl": "http://www.rutherfordranch.com/shop",
+    "tastingsUrl": "http://www.rutherfordranch.com/visit",
+    "aboutUrl": "http://www.rutherfordranch.com/about",
+    "status": "mapped"
+  },
+  "bartholomew-estate-winery": {
+    "websiteUrl": "https://www.bartholomewestate.com/",
+    "winesUrl": "https://www.bartholomewestate.com/wines/current-releases/",
+    "tastingsUrl": "https://www.bartholomewestate.com/visit/",
+    "aboutUrl": "https://www.bartholomewestate.com/about-us/",
+    "status": "mapped"
+  },
+  "beaulieu-vineyard": {
+    "websiteUrl": "https://www.bvwines.com/",
+    "winesUrl": "https://www.bvwines.com/collections/all-wines",
+    "tastingsUrl": "https://www.bvwines.com/pages/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "roche-winery-downtown": {
+    "websiteUrl": "http://www.rochewinery.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.rochewinery.com/visit",
+    "aboutUrl": "http://www.rochewinery.com/about",
+    "status": "mapped"
+  },
+  "bennett-lane-winery": {
+    "websiteUrl": "http://www.bennettlane.com/",
+    "winesUrl": "http://www.bennettlane.com/napa-valley-calistoga-wines-online-wine-shoping",
+    "tastingsUrl": "http://www.bennettlane.com/plan-a-visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "cornerstone-sonoma": {
+    "websiteUrl": "http://www.cornerstonesonoma.com/",
+    "winesUrl": "http://www.cornerstonesonoma.com/wines",
+    "tastingsUrl": "http://www.cornerstonesonoma.com/visit",
+    "aboutUrl": "http://www.cornerstonesonoma.com/about",
+    "status": "mapped"
+  },
+  "anaba-wines": {
+    "websiteUrl": "https://www.anabawines.com/?utm_source=google&utm_medium=organic&utm_campaign=gmb",
+    "winesUrl": "https://www.anabawines.com/collection/all-wines/",
+    "tastingsUrl": "https://www.anabawines.com/visit-us/menu-tastings/",
+    "aboutUrl": "https://www.anabawines.com/about/",
+    "status": "mapped"
+  },
+  "the-duckhorn-collection-at-paraduxx": {
+    "websiteUrl": "https://www.paraduxx.com/?utm_source=google&utm_medium=organic&utm_campaign=gmb",
+    "winesUrl": "https://www.paraduxx.com/Wines",
+    "tastingsUrl": "https://www.paraduxx.com/Visit/Tastings",
+    "aboutUrl": "https://www.paraduxx.com/Our-Story",
+    "status": "mapped"
+  },
+  "zd-wines": {
+    "websiteUrl": "https://www.zdwines.com/",
+    "winesUrl": "https://www.zdwines.com/shop",
+    "tastingsUrl": "https://www.zdwines.com/visit",
+    "aboutUrl": "https://www.zdwines.com/about",
+    "status": "mapped"
+  },
+  "plumpjack-estate-winery": {
+    "websiteUrl": "http://www.plumpjackwinery.com/",
+    "winesUrl": "https://plumpjackwinery.com/wines/",
+    "tastingsUrl": "https://plumpjackwinery.com/visit/",
+    "aboutUrl": "https://plumpjackwinery.com/our-story/",
+    "status": "mapped"
+  },
+  "aesthete-winery-farm": {
+    "websiteUrl": "https://aesthetewines.com/",
+    "winesUrl": "https://aesthetewines.com/collections/featured",
+    "tastingsUrl": "https://aesthetewines.com/pages/visit-us",
+    "aboutUrl": "https://aesthetewines.com/pages/about-us",
+    "status": "mapped"
+  },
+  "roche-winery-vineyards": {
+    "websiteUrl": "http://www.rochewinery.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.rochewinery.com/visit",
+    "aboutUrl": "http://www.rochewinery.com/about",
+    "status": "mapped"
+  },
+  "piazza-del-dotto-winery-caves": {
+    "websiteUrl": "http://www.deldottovineyards.com/",
+    "winesUrl": "http://www.deldottovineyards.com/wines",
+    "tastingsUrl": "http://www.deldottovineyards.com/visit",
+    "aboutUrl": "http://www.deldottovineyards.com/about",
+    "status": "mapped"
+  },
+  "whitehall-lane-winery": {
+    "websiteUrl": "https://www.whitehalllane.com/",
+    "winesUrl": "https://www.whitehalllane.com/wines",
+    "tastingsUrl": "https://www.whitehalllane.com/visit",
+    "aboutUrl": "https://www.whitehalllane.com/estate",
+    "status": "mapped"
+  },
+  "markham-vineyards": {
+    "websiteUrl": "https://markhamvineyards.com/visit/winery-experiences/",
+    "winesUrl": "https://markhamvineyards.com/wine-shop/",
+    "tastingsUrl": "https://markhamvineyards.com/visit/",
+    "aboutUrl": "https://markhamvineyards.com/about/",
+    "status": "mapped"
+  },
+  "calistoga-depot": {
+    "websiteUrl": "https://www.calistogadepot.com/",
+    "winesUrl": "https://www.calistogadepot.com/shop",
+    "tastingsUrl": "https://www.calistogadepot.com/visit#wine-tasting-train",
+    "aboutUrl": "https://www.calistogadepot.com/history",
+    "status": "mapped"
+  },
+  "shadybrook-estate-winery-in": {
+    "websiteUrl": "http://www.shadybrookestate.com/",
+    "winesUrl": "http://www.shadybrookestate.com/wines",
+    "tastingsUrl": "http://www.shadybrookestate.com/visit",
+    "aboutUrl": "http://www.shadybrookestate.com/our-story",
+    "status": "mapped"
+  },
+  "bricoleur-vineyards": {
+    "websiteUrl": "http://www.bricoleurvineyards.com/",
+    "winesUrl": "http://www.bricoleurvineyards.com/shop",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "honig-vineyard-winery": {
+    "websiteUrl": "http://www.honigwine.com/",
+    "winesUrl": "http://www.honigwine.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "domaine-de-la-rivi-re": {
+    "websiteUrl": "https://domaineriviere.com/",
+    "winesUrl": "https://domaineriviere.com/wine/",
+    "tastingsUrl": "https://domaineriviere.com/contactus/",
+    "aboutUrl": "https://domaineriviere.com/about-us-2/",
+    "status": "mapped"
+  },
+  "napa-cellars": {
+    "websiteUrl": "https://www.napacellars.com/",
+    "winesUrl": "https://www.napacellars.com/wines/all-wines",
+    "tastingsUrl": "https://www.napacellars.com/visit-us/",
+    "aboutUrl": "https://www.napacellars.com/about/",
+    "status": "mapped"
+  },
+  "cliff-lede": {
+    "websiteUrl": "http://www.cliffledevineyards.com/",
+    "winesUrl": "http://www.cliffledevineyards.com/wines",
+    "tastingsUrl": "http://www.cliffledevineyards.com/visit",
+    "aboutUrl": "http://www.cliffledevineyards.com/about",
+    "status": "mapped"
+  },
+  "rh-yountville-wine-vault": {
+    "websiteUrl": "http://www.rh.com/yountville/winevault",
+    "winesUrl": "https://rh.com/us/en/yountville/winevault/menu",
+    "tastingsUrl": "https://www.exploretock.com/rhwinevault",
+    "aboutUrl": "https://rh.com/us/en/yountville/winevault",
+    "status": "mapped"
+  },
+  "del-dotto-historic-winery-caves": {
+    "websiteUrl": "http://deldottovineyards.com/",
+    "winesUrl": "http://deldottovineyards.com/wines",
+    "tastingsUrl": "http://deldottovineyards.com/visit",
+    "aboutUrl": "http://deldottovineyards.com/about",
+    "status": "mapped"
+  },
+  "mazzocco-sonoma": {
+    "websiteUrl": "http://www.mazzocco.com/",
+    "winesUrl": "http://www.mazzocco.com/wines",
+    "tastingsUrl": "http://www.mazzocco.com/visit",
+    "aboutUrl": "http://www.mazzocco.com/our-story",
+    "status": "mapped"
+  },
+  "robert-biale-vineyards": {
+    "websiteUrl": "https://www.biale.com/",
+    "winesUrl": "https://www.biale.com/shop/products/current-releases/",
+    "tastingsUrl": "https://www.biale.com/visit/",
+    "aboutUrl": "https://www.biale.com/about/",
+    "status": "mapped"
+  },
+  "the-donum-estate": {
+    "websiteUrl": "http://www.thedonumestate.com/",
+    "winesUrl": "http://www.thedonumestate.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.thedonumestate.com/estate",
+    "status": "mapped"
+  },
+  "walt-wines": {
+    "websiteUrl": "https://www.waltwines.com/visit-explore-walt-sonoma-square",
+    "winesUrl": "https://www.waltwines.com/shop-walt",
+    "tastingsUrl": "https://www.waltwines.com/walt-visit-our-locations",
+    "aboutUrl": "https://www.waltwines.com/our-story",
+    "status": "mapped"
+  },
+  "turnbull-wine-cellars": {
+    "websiteUrl": "http://www.turnbullwines.com/",
+    "winesUrl": "http://www.turnbullwines.com/wines",
+    "tastingsUrl": "http://www.turnbullwines.com/visit",
+    "aboutUrl": "http://www.turnbullwines.com/about",
+    "status": "mapped"
+  },
+  "regusci-winery": {
+    "websiteUrl": "https://www.regusciwinery.com/",
+    "winesUrl": "https://www.regusciwinery.com/shop-now/",
+    "tastingsUrl": "https://www.regusciwinery.com/the-regusci-way/#section3",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "rodney-strong-vineyards": {
+    "websiteUrl": "http://www.rodneystrong.com/",
+    "winesUrl": "http://www.rodneystrong.com/wines",
+    "tastingsUrl": "http://www.rodneystrong.com/visit",
+    "aboutUrl": "http://www.rodneystrong.com/our-story",
+    "status": "mapped"
+  },
+  "harvest-moon-estate-winery": {
+    "websiteUrl": "http://www.harvestmoonwinery.com/",
+    "winesUrl": "http://www.harvestmoonwinery.com/wines",
+    "tastingsUrl": "http://www.harvestmoonwinery.com/visit",
+    "aboutUrl": "http://www.harvestmoonwinery.com/about",
+    "status": "mapped"
+  },
+  "spring-mountain-vineyard": {
+    "websiteUrl": "http://www.springmountainvineyard.com/",
+    "winesUrl": "http://www.springmountainvineyard.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.springmountainvineyard.com/story",
+    "status": "mapped"
+  },
+  "amista-vineyards": {
+    "websiteUrl": "https://www.amistavineyards.com/?utm_source=Google%20My%20Business&utm_medium=Right%20Panel&utm_campaign=Website%20Button",
+    "winesUrl": "https://www.amistavineyards.com/wines",
+    "tastingsUrl": "https://www.amistavineyards.com/visit",
+    "aboutUrl": "https://www.amistavineyards.com/about",
+    "status": "mapped"
+  },
+  "ridge-vineyards-lytton-springs": {
+    "websiteUrl": "http://www.ridgewine.com/",
+    "winesUrl": "http://www.ridgewine.com/wines",
+    "tastingsUrl": "http://www.ridgewine.com/visit",
+    "aboutUrl": "http://www.ridgewine.com/about",
+    "status": "mapped"
+  },
+  "the-estate-yountville": {
+    "websiteUrl": "https://www.theestateyountville.com/",
+    "winesUrl": null,
+    "tastingsUrl": "https://www.theestateyountville.com/experiences/",
+    "aboutUrl": "https://www.theestateyountville.com/about/",
+    "status": "mapped"
+  },
+  "jarvis-estate-winery": {
+    "websiteUrl": "http://www.jarviswines.com/",
+    "winesUrl": "http://www.jarviswines.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.jarviswines.com/about",
+    "status": "mapped"
+  },
+  "tres-sabores": {
+    "websiteUrl": "http://www.tressabores.com/",
+    "winesUrl": "http://www.tressabores.com/wines",
+    "tastingsUrl": "http://www.tressabores.com/visit",
+    "aboutUrl": "http://www.tressabores.com/about",
+    "status": "mapped"
+  },
+  "b-cellars": {
+    "websiteUrl": "https://www.bcellars.com/",
+    "winesUrl": "https://www.bcellars.com/acquire",
+    "tastingsUrl": "https://www.bcellars.com/visit/",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "merry-edwards-winery": {
+    "websiteUrl": "http://www.merryedwards.com/",
+    "winesUrl": "http://www.merryedwards.com/wines",
+    "tastingsUrl": "http://www.merryedwards.com/visit",
+    "aboutUrl": "http://www.merryedwards.com/about",
+    "status": "mapped"
+  },
+  "trinitas-cellars": {
+    "websiteUrl": "http://trinitascellars.com/",
+    "winesUrl": "http://trinitascellars.com/wines",
+    "tastingsUrl": "http://trinitascellars.com/visit",
+    "aboutUrl": "http://trinitascellars.com/our-story",
+    "status": "mapped"
+  },
+  "trattore-farms-and-winery": {
+    "websiteUrl": "https://www.trattorefarms.com/",
+    "winesUrl": "https://www.trattorefarms.com/collection/wine-collection",
+    "tastingsUrl": "https://www.trattorefarms.com/visit/private-events/",
+    "aboutUrl": "https://www.trattorefarms.com/our-story",
+    "status": "mapped"
+  },
+  "merryvale-vineyards": {
+    "websiteUrl": "http://www.merryvale.com/",
+    "winesUrl": "http://www.merryvale.com/shop",
+    "tastingsUrl": "http://www.merryvale.com/visit",
+    "aboutUrl": "http://www.merryvale.com/about",
+    "status": "mapped"
+  },
+  "paloma-vineyard": {
+    "websiteUrl": "https://palomavineyard.com/?UTM_source=GMB_listing&UTM_medium=organic",
+    "winesUrl": "https://palomavineyard.com/wines",
+    "tastingsUrl": "https://palomavineyard.com/visit",
+    "aboutUrl": "https://palomavineyard.com/our-story",
+    "status": "mapped"
+  },
+  "quivira-vineyards": {
+    "websiteUrl": "http://www.quivirawine.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.quivirawine.com/visit",
+    "aboutUrl": "http://www.quivirawine.com/about",
+    "status": "mapped"
+  },
+  "seghesio-family": {
+    "websiteUrl": "https://www.seghesio.com/",
+    "winesUrl": "https://www.seghesio.com/shop/",
+    "tastingsUrl": "https://www.seghesio.com/visit/",
+    "aboutUrl": "https://www.seghesio.com/story/",
+    "status": "mapped"
+  },
+  "soda-rock-winery": {
+    "websiteUrl": "http://www.sodarockwinery.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.sodarockwinery.com/visit",
+    "aboutUrl": "http://www.sodarockwinery.com/about",
+    "status": "mapped"
+  },
+  "hamel": {
+    "websiteUrl": "https://hamelfamilywines.com/?utm_source=google&utm_medium=organic&utm_campaign=gmb",
+    "winesUrl": "https://hamelfamilywines.com/wines/",
+    "tastingsUrl": "https://hamelfamilywines.com/visit-us/",
+    "aboutUrl": "https://hamelfamilywines.com/about",
+    "status": "mapped"
+  },
+  "hook-ladder-vineyards-winery": {
+    "websiteUrl": "http://www.hookandladderwinery.com/",
+    "winesUrl": "http://www.hookandladderwinery.com/our-wines",
+    "tastingsUrl": "http://www.hookandladderwinery.com/visit",
+    "aboutUrl": "http://www.hookandladderwinery.com/about-us",
+    "status": "mapped"
+  },
+  "truchard-vineyards": {
+    "websiteUrl": "http://www.truchardvineyards.com/",
+    "winesUrl": "http://www.truchardvineyards.com/collection",
+    "tastingsUrl": "http://www.truchardvineyards.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "saintsbury-winery": {
+    "websiteUrl": "https://www.saintsbury.com/",
+    "winesUrl": "https://www.saintsbury.com/collection",
+    "tastingsUrl": "https://www.saintsbury.com/visit",
+    "aboutUrl": "https://www.saintsbury.com/about",
+    "status": "mapped"
+  },
+  "chappellet-winery": {
+    "websiteUrl": "https://www.chappellet.com/",
+    "winesUrl": "https://www.chappellet.com/wines",
+    "tastingsUrl": "https://www.chappellet.com/tastings",
+    "aboutUrl": "https://www.chappellet.com/our-story",
+    "status": "mapped"
+  },
+  "pangloss-cellars": {
+    "websiteUrl": "http://www.panglosscellars.com/",
+    "winesUrl": "http://www.panglosscellars.com/collection",
+    "tastingsUrl": "http://www.panglosscellars.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "miner-family-winery": {
+    "websiteUrl": "http://minerwines.com/",
+    "winesUrl": "http://minerwines.com/wines",
+    "tastingsUrl": "http://minerwines.com/visit",
+    "aboutUrl": "http://minerwines.com/about/philanthropy/",
+    "status": "mapped"
+  },
+  "capo-creek-winery": {
+    "websiteUrl": "http://capocreekranch.com/",
+    "winesUrl": "http://capocreekranch.com/wines",
+    "tastingsUrl": null,
+    "aboutUrl": "http://capocreekranch.com/about",
+    "status": "mapped"
+  },
+  "landmark-vineyards": {
+    "websiteUrl": "https://www.landmarkwine.com/",
+    "winesUrl": "https://www.landmarkwine.com/collection/all",
+    "tastingsUrl": "https://www.landmarkwine.com/visit",
+    "aboutUrl": "https://www.landmarkwine.com/our-story",
+    "status": "mapped"
+  },
+  "ruvango-winery": {
+    "websiteUrl": "https://www.ruvango.com/",
+    "winesUrl": "https://www.ruvango.com/all-wines/",
+    "tastingsUrl": "https://www.ruvango.com/reservation/",
+    "aboutUrl": "https://www.ruvango.com/about-us/",
+    "status": "mapped"
+  },
+  "palmaz-vineyards": {
+    "websiteUrl": "http://www.palmazvineyards.com/",
+    "winesUrl": "http://www.palmazvineyards.com/wines",
+    "tastingsUrl": "http://www.palmazvineyards.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "jordan-winery": {
+    "websiteUrl": "http://www.jordanwinery.com/",
+    "winesUrl": "http://www.jordanwinery.com/wines",
+    "tastingsUrl": "http://www.jordanwinery.com/visit",
+    "aboutUrl": "http://www.jordanwinery.com/about-us",
+    "status": "mapped"
+  },
+  "bella-union-winery": {
+    "websiteUrl": "https://farniente.com/visit-bella-union?utm_source=google&utm_medium=organic&utm_campaign=gbp",
+    "winesUrl": "https://farniente.com/shop",
+    "tastingsUrl": "https://farniente.com/visit-far-niente",
+    "aboutUrl": "https://farniente.com/visit",
+    "status": "mapped"
+  },
+  "ghost-block-estate-wines": {
+    "websiteUrl": "https://www.ghostblockwine.com/",
+    "winesUrl": "https://www.ghostblockwine.com/wines",
+    "tastingsUrl": "https://www.ghostblockwine.com/visit",
+    "aboutUrl": "https://www.ghostblockwine.com/story",
+    "status": "mapped"
+  },
+  "deerfield-ranch-winery": {
+    "websiteUrl": "http://www.deerfieldranch.com/",
+    "winesUrl": "http://www.deerfieldranch.com/shop",
+    "tastingsUrl": "http://www.deerfieldranch.com/visit",
+    "aboutUrl": "http://www.deerfieldranch.com/about",
+    "status": "mapped"
+  },
+  "papapietro-perry-winery": {
+    "websiteUrl": "http://www.papapietro-perry.com/",
+    "winesUrl": "http://www.papapietro-perry.com/shop",
+    "tastingsUrl": "http://www.papapietro-perry.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "buoncristiani-family-winery": {
+    "websiteUrl": "http://www.buonwine.com/",
+    "winesUrl": "http://www.buonwine.com/shop",
+    "tastingsUrl": null,
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "wilson-winery": {
+    "websiteUrl": "https://www.wilsonwinery.com/",
+    "winesUrl": "https://www.wilsonwinery.com/collection/wines/",
+    "tastingsUrl": "https://www.wilsonwinery.com/visit/",
+    "aboutUrl": "https://www.wilsonwinery.com/about-us/",
+    "status": "mapped"
+  },
+  "tedeschi-family-winery-napa-valley-ca": {
+    "websiteUrl": "http://www.tedeschifamilywinery.com/",
+    "winesUrl": "http://www.tedeschifamilywinery.com/shop",
+    "tastingsUrl": "http://www.tedeschifamilywinery.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "lynmar-estate-winery": {
+    "websiteUrl": "https://lynmarestate.com/",
+    "winesUrl": "https://lynmarestate.com/collection/all-wines",
+    "tastingsUrl": "https://lynmarestate.com/experiences/",
+    "aboutUrl": "https://lynmarestate.com/our-story/",
+    "status": "mapped"
+  },
+  "hendry-winery": {
+    "websiteUrl": "http://www.hendrywines.com/",
+    "winesUrl": "http://www.hendrywines.com/wines",
+    "tastingsUrl": "http://www.hendrywines.com/visit",
+    "aboutUrl": null,
+    "status": "mapped"
+  },
+  "aonair-winery-caves": {
+    "websiteUrl": "http://www.aonairwinery.com/",
+    "winesUrl": "http://www.aonairwinery.com/wines",
+    "tastingsUrl": "http://www.aonairwinery.com/visit",
+    "aboutUrl": "http://www.aonairwinery.com/about",
+    "status": "mapped"
+  },
+  "chateau-diana": {
+    "websiteUrl": "http://www.chateaud.com/",
+    "winesUrl": "http://www.chateaud.com/shop",
+    "tastingsUrl": "http://www.chateaud.com/visit",
+    "aboutUrl": "http://www.chateaud.com/about",
+    "status": "mapped"
+  },
+  "freemark-abbey-winery": {
+    "websiteUrl": "http://www.freemarkabbey.com/",
+    "winesUrl": null,
+    "tastingsUrl": "http://www.freemarkabbey.com/visit",
+    "aboutUrl": "http://www.freemarkabbey.com/about",
+    "status": "mapped"
+  },
+  "kivelstadt-cellars-winegarden": {
+    "websiteUrl": "http://www.kivelstadtcellars.com/",
+    "winesUrl": "http://www.kivelstadtcellars.com/wines",
+    "tastingsUrl": "http://www.kivelstadtcellars.com/experiences",
+    "aboutUrl": "http://www.kivelstadtcellars.com/about",
+    "status": "mapped"
+  },
+  "flowers-vineyards-winery": {
+    "websiteUrl": "http://www.flowerswinery.com/",
+    "winesUrl": "http://www.flowerswinery.com/shop",
+    "tastingsUrl": "http://www.flowerswinery.com/visit",
+    "aboutUrl": "http://www.flowerswinery.com/our-story",
+    "status": "mapped"
+  },
+  "martinelli-vineyards-winery": {
+    "websiteUrl": "http://www.martinelliwinery.com/",
+    "winesUrl": "http://www.martinelliwinery.com/wines",
+    "tastingsUrl": "http://www.martinelliwinery.com/visit",
+    "aboutUrl": "http://www.martinelliwinery.com/our-story",
+    "status": "mapped"
+  },
+  "trione-vineyards-and-winery": {
+    "websiteUrl": "http://trionewinery.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp",
+    "winesUrl": null,
+    "tastingsUrl": null,
+    "aboutUrl": "http://trionewinery.com/about",
+    "status": "mapped"
+  },
+  "gary-farrell-vineyards-winery": {
+    "websiteUrl": "https://www.garyfarrellwinery.com/",
+    "winesUrl": "https://www.garyfarrellwinery.com/wines/",
+    "tastingsUrl": "https://www.garyfarrellwinery.com/visit/",
+    "aboutUrl": "https://www.garyfarrellwinery.com/about",
+    "status": "mapped"
+  },
+  "goosecross-cellars": {
+    "websiteUrl": "http://goosecross.com/",
+    "winesUrl": "http://goosecross.com/wines",
+    "tastingsUrl": "http://goosecross.com/visit",
+    "aboutUrl": "http://goosecross.com/about",
+    "status": "mapped"
+  },
+  "zialena-winery": {
+    "websiteUrl": "https://zialena.com/about-us/",
+    "winesUrl": "https://zialena.com/collection/wines",
+    "tastingsUrl": "https://zialena.com/location-hours/",
+    "aboutUrl": "https://zialena.com/about-us/",
+    "status": "mapped"
+  },
+  "handwritten-wines": {
+    "websiteUrl": "http://www.handwrittenwines.com/",
+    "winesUrl": "http://www.handwrittenwines.com/current-releases",
+    "tastingsUrl": null,
+    "aboutUrl": "http://www.handwrittenwines.com/about",
+    "status": "mapped"
+  },
+  "silver-oak-alexander": {
+    "websiteUrl": "https://www.silveroak.com/visit-us/alexander-valley/",
+    "winesUrl": "https://www.silveroak.com/wines",
+    "tastingsUrl": "https://www.silveroak.com/visit",
+    "aboutUrl": "https://www.silveroak.com/about",
+    "status": "mapped"
+  },
+  "backstage-winery": {
+    "websiteUrl": "https://www.backstagewines.com/",
+    "winesUrl": "https://www.backstagewines.com/wine-shop",
+    "tastingsUrl": "https://www.backstagewines.com/tastingrooms",
+    "aboutUrl": "https://www.backstagewines.com/about",
+    "status": "mapped"
+  },
+  "davero-farms-winery": {
+    "websiteUrl": "https://www.davero.com/",
+    "winesUrl": "https://www.davero.com/shop",
+    "tastingsUrl": "https://www.davero.com/visit",
+    "aboutUrl": "https://www.davero.com/about",
+    "status": "mapped"
+  }
+}

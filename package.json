@@ -9,7 +9,13 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx src/db/seed/seed.ts",
-    "db:verify": "tsx src/db/seed/verify-winery-data.ts"
+    "db:verify": "tsx src/db/seed/verify-winery-data.ts",
+    "scrape:list": "tsx src/scraper/build-winery-list.ts",
+    "scrape:map-urls": "tsx src/scraper/url-mapper.ts",
+    "scrape:extract": "tsx src/scraper/pipeline.ts",
+    "scrape:winery": "tsx src/scraper/pipeline.ts --winery",
+    "scrape:status": "tsx src/scraper/pipeline.ts --status",
+    "scrape:dedup": "tsx src/scraper/deduplicate.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
@@ -17,14 +23,20 @@
     "@libsql/client": "^0.17.0",
     "@vis.gl/react-google-maps": "^1.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "next-auth": "^5.0.0-beta.30",
     "next-themes": "^0.4.6",
+    "openai": "^6.22.0",
+    "p-limit": "^7.3.0",
+    "p-retry": "^7.1.1",
+    "playwright": "^1.58.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
