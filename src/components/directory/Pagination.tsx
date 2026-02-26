@@ -24,6 +24,7 @@ export function Pagination({
       params.delete("page");
     }
     router.push(`/wineries?${params.toString()}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const pages: (number | "...")[] = [];
@@ -48,7 +49,7 @@ export function Pagination({
       <button
         onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="rounded-lg p-2 hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
@@ -62,7 +63,7 @@ export function Pagination({
             key={page}
             onClick={() => goToPage(page)}
             className={cn(
-              "min-w-[2.25rem] rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+              "min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium transition-colors",
               page === currentPage
                 ? "bg-burgundy-700 text-white"
                 : "hover:bg-[var(--muted)]"
@@ -75,7 +76,7 @@ export function Pagination({
       <button
         onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="rounded-lg p-2 hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronRight className="h-4 w-4" />
       </button>

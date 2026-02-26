@@ -1,4 +1,4 @@
-import { Clock, Users, CalendarCheck } from "lucide-react";
+import { Clock, Users, CalendarCheck, GlassWater } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 interface Tasting {
@@ -14,7 +14,21 @@ interface Tasting {
 }
 
 export function TastingTable({ tastings, curated = false }: { tastings: Tasting[]; curated?: boolean }) {
-  if (tastings.length === 0) return null;
+  if (tastings.length === 0) {
+    return (
+      <div className="mb-8">
+        <h2 className="font-heading text-2xl font-semibold mb-4">
+          Tasting Experiences
+        </h2>
+        <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
+          <GlassWater className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
+          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+            No tasting experiences listed yet
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-8">

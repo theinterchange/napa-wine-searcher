@@ -76,7 +76,7 @@ export default async function HomePage() {
       {/* Stats */}
       <section className="border-b border-[var(--border)] bg-[var(--card)]">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
             <div>
               <p className="font-heading text-3xl font-bold text-burgundy-700 dark:text-burgundy-400">
                 {stats.wineries}

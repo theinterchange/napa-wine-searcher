@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
 import { WineryInfoSection } from "@/components/detail/WineryInfoSection";
 import { WineTable } from "@/components/detail/WineTable";
@@ -103,6 +105,20 @@ export default async function WineryDetailPage({
 
   return (
     <>
+      {/* Breadcrumbs */}
+      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+        <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
+          <Link href="/" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <Link href="/wineries" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+            Wineries
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="text-[var(--foreground)] font-medium truncate">{winery.name}</span>
+        </nav>
+      </div>
       <WineryHero winery={winery} />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {!winery.curated && (

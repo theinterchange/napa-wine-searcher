@@ -1,14 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Wine, Map, Menu, X, GitCompareArrows } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { href: "/wineries", label: "Wineries" },
+  { href: "/map", label: "Map", icon: Map },
+  { href: "/compare", label: "Compare", icon: GitCompareArrows },
+];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)]/90 backdrop-blur border-[var(--border)]">
@@ -22,26 +34,21 @@ export function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link
-              href="/wineries"
-              className="text-sm font-medium text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
-            >
-              Wineries
-            </Link>
-            <Link
-              href="/map"
-              className="flex items-center gap-1 text-sm font-medium text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
-            >
-              <Map className="h-4 w-4" />
-              Map
-            </Link>
-            <Link
-              href="/compare"
-              className="flex items-center gap-1 text-sm font-medium text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
-            >
-              <GitCompareArrows className="h-4 w-4" />
-              Compare
-            </Link>
+            {navLinks.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex items-center gap-1 text-sm font-medium transition-colors border-b-2 pb-0.5",
+                  isActive(href)
+                    ? "text-burgundy-700 dark:text-burgundy-400 border-burgundy-700 dark:border-burgundy-400"
+                    : "text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 border-transparent"
+                )}
+              >
+                {Icon && <Icon className="h-4 w-4" />}
+                {label}
+              </Link>
+            ))}
             <ThemeToggle />
             {session ? (
               <span className="text-sm text-[var(--muted-foreground)]">
@@ -68,27 +75,21 @@ export function Navbar() {
 
         {open && (
           <div className="md:hidden border-t border-[var(--border)] py-4 space-y-3">
-            <Link
-              href="/wineries"
-              className="block text-sm font-medium"
-              onClick={() => setOpen(false)}
-            >
-              Wineries
-            </Link>
-            <Link
-              href="/map"
-              className="block text-sm font-medium"
-              onClick={() => setOpen(false)}
-            >
-              Map
-            </Link>
-            <Link
-              href="/compare"
-              className="block text-sm font-medium"
-              onClick={() => setOpen(false)}
-            >
-              Compare
-            </Link>
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "block text-sm font-medium",
+                  isActive(href)
+                    ? "text-burgundy-700 dark:text-burgundy-400"
+                    : ""
+                )}
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </Link>
+            ))}
             {!session && (
               <Link
                 href="/login"

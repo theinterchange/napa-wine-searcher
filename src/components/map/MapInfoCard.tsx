@@ -20,7 +20,7 @@ export function MapInfoCard({
   onClose: () => void;
 }) {
   return (
-    <div className="absolute top-4 right-4 z-10 w-80 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-xl">
+    <div className="absolute top-4 right-4 z-10 w-72 sm:w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 shadow-xl">
       <button
         onClick={onClose}
         className="absolute top-2 right-3 text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-lg"
