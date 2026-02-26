@@ -92,6 +92,7 @@ export default async function WineriesPage({
       reservationRequired: wineries.reservationRequired,
       dogFriendly: wineries.dogFriendly,
       picnicFriendly: wineries.picnicFriendly,
+      heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
       curated: wineries.curated,

@@ -22,4 +22,6 @@ export const wines = sqliteTable("wines", {
   rating: real("rating"),
   ratingSource: text("rating_source"),
   ratingCount: integer("rating_count"),
+  sourceUrl: text("source_url"),
+  updatedAt: text("updated_at"),
 });

@@ -35,6 +35,17 @@ const DUPLICATE_PAIRS: [curatedSlug: string, scrapedSlug: string][] = [
   ["seghesio-family", "seghesio-family-vineyards"],
   ["silver-oak-alexander", "silver-oak-alexander-valley"],
   ["v-sattui", "v-sattui-winery"],
+  // Round 2
+  ["opus-one", "opus-one-winery"],
+  ["gloria-ferrer", "gloria-ferrer-wines"],
+  ["ridge-lytton-springs", "ridge-vineyards-lytton-springs"],
+  ["artesa-vineyards", "artesa-vineyards-winery"],
+  ["far-niente", "far-niente-winery"],
+  ["ferrari-carano", "ferrari-carano-vineyards-and-winery"],
+  ["gary-farrell", "gary-farrell-vineyards-winery"],
+  ["gundlach-bundschu", "gundlach-bundschu-winery"],
+  ["lynmar-estate", "lynmar-estate-winery"],
+  ["plumpjack", "plumpjack-estate-winery"],
 ];
 
 // Fields to copy from scraped row when the curated row has NULL
@@ -108,29 +119,41 @@ async function main() {
     const tx = await client.transaction("write");
 
     try {
-      // 1. Delete stale curated wines (cascades wine_ratings) and tastings
-      await tx.execute({
-        sql: "DELETE FROM wine_ratings WHERE wine_id IN (SELECT id FROM wines WHERE winery_id = ?)",
-        args: [keepId],
+      // 1-2. Replace curated wines/tastings with scraped ones — but only
+      //       when the scraped row actually has data to replace with.
+      const scrapedWineCount = await tx.execute({
+        sql: "SELECT COUNT(*) as cnt FROM wines WHERE winery_id = ?",
+        args: [dropId],
       });
-      await tx.execute({
-        sql: "DELETE FROM wines WHERE winery_id = ?",
-        args: [keepId],
-      });
-      await tx.execute({
-        sql: "DELETE FROM tasting_experiences WHERE winery_id = ?",
-        args: [keepId],
-      });
+      if ((scrapedWineCount.rows[0].cnt as number) > 0) {
+        await tx.execute({
+          sql: "DELETE FROM wine_ratings WHERE wine_id IN (SELECT id FROM wines WHERE winery_id = ?)",
+          args: [keepId],
+        });
+        await tx.execute({
+          sql: "DELETE FROM wines WHERE winery_id = ?",
+          args: [keepId],
+        });
+        await tx.execute({
+          sql: "UPDATE wines SET winery_id = ? WHERE winery_id = ?",
+          args: [keepId, dropId],
+        });
+      }
 
-      // 2. Move scraped wines/tastings to curated row
-      await tx.execute({
-        sql: "UPDATE wines SET winery_id = ? WHERE winery_id = ?",
-        args: [keepId, dropId],
+      const scrapedTastingCount = await tx.execute({
+        sql: "SELECT COUNT(*) as cnt FROM tasting_experiences WHERE winery_id = ?",
+        args: [dropId],
       });
-      await tx.execute({
-        sql: "UPDATE tasting_experiences SET winery_id = ? WHERE winery_id = ?",
-        args: [keepId, dropId],
-      });
+      if ((scrapedTastingCount.rows[0].cnt as number) > 0) {
+        await tx.execute({
+          sql: "DELETE FROM tasting_experiences WHERE winery_id = ?",
+          args: [keepId],
+        });
+        await tx.execute({
+          sql: "UPDATE tasting_experiences SET winery_id = ? WHERE winery_id = ?",
+          args: [keepId, dropId],
+        });
+      }
 
       // 3. Move user data with conflict handling
       //    (user_id, winery_id) is the PK — if user has data for both, keep curated

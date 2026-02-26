@@ -15,6 +15,7 @@ interface WineryCardProps {
   dogFriendly: boolean | null;
   picnicFriendly: boolean | null;
   curated: boolean | null;
+  heroImageUrl: string | null;
 }
 
 export function WineryCard({ winery }: { winery: WineryCardProps }) {
@@ -23,8 +24,16 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
       href={`/wineries/${winery.slug}`}
       className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
     >
-      <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center">
-        <Wine className="h-12 w-12 text-burgundy-300 dark:text-burgundy-700" />
+      <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
+        {winery.heroImageUrl ? (
+          <img
+            src={winery.heroImageUrl}
+            alt={winery.name}
+            className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
+          />
+        ) : (
+          <Wine className="h-12 w-12 text-burgundy-300 dark:text-burgundy-700" />
+        )}
         {winery.curated ? (
           <span className="absolute top-2 right-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
             <BadgeCheck className="h-3 w-3" />

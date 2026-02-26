@@ -35,4 +35,10 @@ export const wineries = sqliteTable("wineries", {
   totalRatings: integer("total_ratings").default(0),
   curated: integer("curated", { mode: "boolean" }).default(false),
   curatedAt: text("curated_at"),
+  dataSource: text("data_source"),
+  lastScrapedAt: text("last_scraped_at"),
+  googlePlaceId: text("google_place_id"),
+  googleReviewCount: integer("google_review_count"),
+  googleRating: real("google_rating"),
+  updatedAt: text("updated_at"),
 });

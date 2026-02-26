@@ -67,6 +67,7 @@ export default async function WineryDetailPage({
       totalRatings: wineries.totalRatings,
       curated: wineries.curated,
       curatedAt: wineries.curatedAt,
+      heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
     })

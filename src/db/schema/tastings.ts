@@ -14,4 +14,6 @@ export const tastingExperiences = sqliteTable("tasting_experiences", {
   reservationRequired: integer("reservation_required", { mode: "boolean" }).default(false),
   minGroupSize: integer("min_group_size"),
   maxGroupSize: integer("max_group_size"),
+  sourceUrl: text("source_url"),
+  updatedAt: text("updated_at"),
 });

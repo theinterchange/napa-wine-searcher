@@ -21,6 +21,7 @@ async function getFeaturedWineries() {
       id: wineries.id,
       slug: wineries.slug,
       name: wineries.name,
+      heroImageUrl: wineries.heroImageUrl,
       shortDescription: wineries.shortDescription,
       city: wineries.city,
       priceLevel: wineries.priceLevel,
@@ -123,36 +124,48 @@ export default async function HomePage() {
             <Link
               key={w.id}
               href={`/wineries/${w.slug}`}
-              className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+              className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
-                    {w.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                    {w.subRegion} &middot;{" "}
-                    {w.valley === "napa" ? "Napa Valley" : "Sonoma County"}
-                  </p>
-                </div>
-                <Wine className="h-5 w-5 text-burgundy-300 dark:text-burgundy-600" />
+              <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
+                {w.heroImageUrl ? (
+                  <img
+                    src={w.heroImageUrl}
+                    alt={w.name}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
+                ) : (
+                  <Wine className="h-12 w-12 text-burgundy-300 dark:text-burgundy-700" />
+                )}
               </div>
-              <p className="mt-3 text-sm text-[var(--muted-foreground)] line-clamp-2">
-                {w.shortDescription}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-                  <span className="text-sm font-medium">
-                    {w.aggregateRating?.toFixed(1)}
-                  </span>
+              <div className="p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                      {w.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                      {w.subRegion} &middot;{" "}
+                      {w.valley === "napa" ? "Napa Valley" : "Sonoma County"}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-[var(--muted-foreground)] line-clamp-2">
+                  {w.shortDescription}
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+                    <span className="text-sm font-medium">
+                      {w.aggregateRating?.toFixed(1)}
+                    </span>
+                    <span className="text-sm text-[var(--muted-foreground)]">
+                      ({w.totalRatings})
+                    </span>
+                  </div>
                   <span className="text-sm text-[var(--muted-foreground)]">
-                    ({w.totalRatings})
+                    {"$".repeat(w.priceLevel || 2)}
                   </span>
                 </div>
-                <span className="text-sm text-[var(--muted-foreground)]">
-                  {"$".repeat(w.priceLevel || 2)}
-                </span>
               </div>
             </Link>
           ))}

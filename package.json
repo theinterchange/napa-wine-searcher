@@ -15,7 +15,9 @@
     "scrape:extract": "tsx src/scraper/pipeline.ts",
     "scrape:winery": "tsx src/scraper/pipeline.ts --winery",
     "scrape:status": "tsx src/scraper/pipeline.ts --status",
-    "scrape:dedup": "tsx src/scraper/deduplicate.ts"
+    "scrape:dedup": "tsx src/scraper/deduplicate.ts",
+    "scrape:spot-check": "tsx src/scraper/spot-check.ts",
+    "scrape:add-targets": "tsx src/scraper/add-generated-targets.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
@@ -23,6 +25,7 @@
     "@libsql/client": "^0.17.0",
     "@vis.gl/react-google-maps": "^1.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "^6.1.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.563.0",

@@ -4,3 +4,4 @@ export * from "./tastings";
 export * from "./ratings";
 export * from "./auth";
 export * from "./user-data";
+export * from "./scraping";

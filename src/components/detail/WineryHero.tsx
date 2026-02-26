@@ -10,12 +10,21 @@ interface WineryHeroProps {
   totalRatings: number | null;
   priceLevel: number | null;
   shortDescription: string | null;
+  heroImageUrl: string | null;
 }
 
 export function WineryHero({ winery }: { winery: WineryHeroProps }) {
   return (
     <div className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      {winery.heroImageUrl && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${winery.heroImageUrl})` }}
+        >
+          <div className="absolute inset-0 bg-burgundy-950/75" />
+        </div>
+      )}
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 text-burgundy-300 text-sm mb-4">
           <MapPin className="h-4 w-4" />
           <span>
