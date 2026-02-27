@@ -160,12 +160,12 @@ export default async function WineryDetailPage({
 
         {/* Tasting Experiences — primary visitor content */}
         <div className="mt-8">
-          <TastingTable tastings={tastings} curated={!!winery.curated} />
+          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} />
         </div>
 
         {/* Wines — secondary reference */}
         <div className="mt-8">
-          <WineTable wines={wineryWines} curated={!!winery.curated} />
+          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} />
         </div>
 
         {/* Hours — practical detail at bottom */}

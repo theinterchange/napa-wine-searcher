@@ -114,39 +114,39 @@ export async function upsertWinery(
     wineryId = result[0].id;
   }
 
-  // Delete existing wines and tastings for this winery
-  await db.delete(wines).where(eq(wines.wineryId, wineryId));
-  await db
-    .delete(tastingExperiences)
-    .where(eq(tastingExperiences.wineryId, wineryId));
-
-  // Insert new wines
-  for (const wine of validation.cleanedWines) {
-    const wineTypeId = typeMap.get(wine.wineType) || null;
-    await db.insert(wines).values({
-      wineryId,
-      wineTypeId,
-      name: wine.name,
-      vintage: wine.vintage,
-      price: wine.price,
-      description: wine.description,
-      sourceUrl: extraction.sourceUrls.wines,
-      updatedAt: now,
-    });
+  // Only replace wines if the new scrape actually found wines
+  if (validation.cleanedWines.length > 0) {
+    await db.delete(wines).where(eq(wines.wineryId, wineryId));
+    for (const wine of validation.cleanedWines) {
+      const wineTypeId = typeMap.get(wine.wineType) || null;
+      await db.insert(wines).values({
+        wineryId,
+        wineTypeId,
+        name: wine.name,
+        vintage: wine.vintage,
+        price: wine.price,
+        description: wine.description,
+        sourceUrl: extraction.sourceUrls.wines,
+        updatedAt: now,
+      });
+    }
   }
 
-  // Insert new tastings
-  for (const tasting of validation.cleanedTastings) {
-    await db.insert(tastingExperiences).values({
-      wineryId,
-      name: tasting.name,
-      description: tasting.description,
-      price: tasting.price,
-      durationMinutes: tasting.durationMinutes,
-      reservationRequired: tasting.reservationRequired,
-      sourceUrl: extraction.sourceUrls.tastings,
-      updatedAt: now,
-    });
+  // Only replace tastings if the new scrape actually found tastings
+  if (validation.cleanedTastings.length > 0) {
+    await db.delete(tastingExperiences).where(eq(tastingExperiences.wineryId, wineryId));
+    for (const tasting of validation.cleanedTastings) {
+      await db.insert(tastingExperiences).values({
+        wineryId,
+        name: tasting.name,
+        description: tasting.description,
+        price: tasting.price,
+        durationMinutes: tasting.durationMinutes,
+        reservationRequired: tasting.reservationRequired,
+        sourceUrl: extraction.sourceUrls.tastings,
+        updatedAt: now,
+      });
+    }
   }
 
   // Log the scrape

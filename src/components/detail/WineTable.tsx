@@ -34,7 +34,7 @@ function WineTypeBadge({ wineType, category }: { wineType: string | null; catego
   if (!wineType) return null;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
         categoryColors[category || ""] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
       }`}
     >
@@ -44,7 +44,17 @@ function WineTypeBadge({ wineType, category }: { wineType: string | null; catego
   );
 }
 
-export function WineTable({ wines, curated = false }: { wines: Wine[]; curated?: boolean }) {
+export function WineTable({
+  wines,
+  curated = false,
+  websiteUrl,
+  phone,
+}: {
+  wines: Wine[];
+  curated?: boolean;
+  websiteUrl?: string | null;
+  phone?: string | null;
+}) {
   if (wines.length === 0) {
     return (
       <div className="mb-8">
@@ -52,7 +62,32 @@ export function WineTable({ wines, curated = false }: { wines: Wine[]; curated?:
         <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
           <WineIcon className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
           <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-            No wines listed yet
+            Wine details aren&apos;t available online.
+            {(websiteUrl || phone) && (
+              <>
+                {" "}
+                {websiteUrl && (
+                  <a
+                    href={websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-burgundy-700 dark:text-burgundy-400 underline"
+                  >
+                    Visit their website
+                  </a>
+                )}
+                {websiteUrl && phone && " or "}
+                {phone && (
+                  <a
+                    href={`tel:${phone}`}
+                    className="text-burgundy-700 dark:text-burgundy-400 underline"
+                  >
+                    call {phone}
+                  </a>
+                )}
+                {" "}for current offerings.
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -74,7 +109,7 @@ export function WineTable({ wines, curated = false }: { wines: Wine[]; curated?:
           <thead className="bg-[var(--muted)]">
             <tr>
               <th className="text-left p-4 font-medium">Wine</th>
-              <th className="text-left p-4 font-medium">Type</th>
+              <th className="text-left p-4 font-medium min-w-[160px]">Type</th>
               <th className="text-left p-4 font-medium">Vintage</th>
               <th className="text-left p-4 font-medium">Price</th>
             </tr>
@@ -97,7 +132,7 @@ export function WineTable({ wines, curated = false }: { wines: Wine[]; curated?:
                   {wine.vintage || "NV"}
                 </td>
                 <td className="p-4">
-                  {wine.price ? formatPrice(wine.price) : "—"}
+                  {wine.price != null && formatPrice(wine.price)}
                 </td>
               </tr>
             ))}

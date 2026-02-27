@@ -13,7 +13,17 @@ interface Tasting {
   maxGroupSize: number | null;
 }
 
-export function TastingTable({ tastings, curated = false }: { tastings: Tasting[]; curated?: boolean }) {
+export function TastingTable({
+  tastings,
+  curated = false,
+  websiteUrl,
+  phone,
+}: {
+  tastings: Tasting[];
+  curated?: boolean;
+  websiteUrl?: string | null;
+  phone?: string | null;
+}) {
   if (tastings.length === 0) {
     return (
       <div className="mb-8">
@@ -23,7 +33,32 @@ export function TastingTable({ tastings, curated = false }: { tastings: Tasting[
         <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
           <GlassWater className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
           <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-            No tasting experiences listed yet
+            Tasting details aren&apos;t available online.
+            {(websiteUrl || phone) && (
+              <>
+                {" "}
+                {websiteUrl && (
+                  <a
+                    href={websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-burgundy-700 dark:text-burgundy-400 underline"
+                  >
+                    Visit their website
+                  </a>
+                )}
+                {websiteUrl && phone && " or "}
+                {phone && (
+                  <a
+                    href={`tel:${phone}`}
+                    className="text-burgundy-700 dark:text-burgundy-400 underline"
+                  >
+                    call {phone}
+                  </a>
+                )}
+                {" "}for current offerings.
+              </>
+            )}
           </p>
         </div>
       </div>
