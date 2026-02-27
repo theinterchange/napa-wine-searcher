@@ -783,13 +783,6 @@
     "aboutUrl": null,
     "status": "mapped"
   },
-  "roche-winery-downtown": {
-    "websiteUrl": "http://www.rochewinery.com/",
-    "winesUrl": "https://store.rochewinery.com/current-releases-c3.aspx",
-    "tastingsUrl": "http://www.rochewinery.com/visit",
-    "aboutUrl": "http://www.rochewinery.com/about",
-    "status": "mapped"
-  },
   "bennett-lane-winery": {
     "websiteUrl": "http://www.bennettlane.com/",
     "winesUrl": "http://www.bennettlane.com/napa-valley-calistoga-wines-online-wine-shoping",
@@ -844,13 +837,6 @@
     "winesUrl": "https://store.rochewinery.com/current-releases-c3.aspx",
     "tastingsUrl": "http://www.rochewinery.com/visit",
     "aboutUrl": "http://www.rochewinery.com/about",
-    "status": "mapped"
-  },
-  "piazza-del-dotto-winery-caves": {
-    "websiteUrl": "http://www.deldottovineyards.com/",
-    "winesUrl": "https://www.deldottovineyards.com/collection/new-releases",
-    "tastingsUrl": "http://www.deldottovineyards.com/visit",
-    "aboutUrl": "http://www.deldottovineyards.com/about",
     "status": "mapped"
   },
   "whitehall-lane-winery": {
@@ -921,13 +907,6 @@
     "winesUrl": "https://rh.com/us/en/yountville/winevault/menu",
     "tastingsUrl": "https://www.exploretock.com/rhwinevault",
     "aboutUrl": "https://rh.com/us/en/yountville/winevault",
-    "status": "mapped"
-  },
-  "del-dotto-historic-winery-caves": {
-    "websiteUrl": "http://deldottovineyards.com/",
-    "winesUrl": "https://www.deldottovineyards.com/collection/new-releases",
-    "tastingsUrl": "http://deldottovineyards.com/visit",
-    "aboutUrl": "http://deldottovineyards.com/about",
     "status": "mapped"
   },
   "mazzocco-sonoma": {
