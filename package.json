@@ -17,7 +17,8 @@
     "scrape:status": "tsx src/scraper/pipeline.ts --status",
     "scrape:dedup": "tsx src/scraper/deduplicate.ts",
     "scrape:spot-check": "tsx src/scraper/spot-check.ts",
-    "scrape:add-targets": "tsx src/scraper/add-generated-targets.ts"
+    "scrape:add-targets": "tsx src/scraper/add-generated-targets.ts",
+    "fetch:photos": "tsx scripts/fetch-photos.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",

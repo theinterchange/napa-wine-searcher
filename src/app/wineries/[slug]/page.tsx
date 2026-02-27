@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { db } from "@/db";
-import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
+import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
-import { WineryInfoSection } from "@/components/detail/WineryInfoSection";
+import { WineryInfoSection, HoursSection } from "@/components/detail/WineryInfoSection";
 import { WineTable } from "@/components/detail/WineTable";
 import { TastingTable } from "@/components/detail/TastingTable";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
@@ -80,7 +80,7 @@ export default async function WineryDetailPage({
 
   if (!winery) notFound();
 
-  const [wineryWines, tastings] = await Promise.all([
+  const [wineryWines, tastings, photos] = await Promise.all([
     db
       .select({
         id: wines.id,
@@ -101,7 +101,18 @@ export default async function WineryDetailPage({
       .select()
       .from(tastingExperiences)
       .where(eq(tastingExperiences.wineryId, winery.id)),
+    db
+      .select({
+        id: wineryPhotos.id,
+        url: wineryPhotos.url,
+        altText: wineryPhotos.altText,
+      })
+      .from(wineryPhotos)
+      .where(eq(wineryPhotos.wineryId, winery.id)),
   ]);
+
+  // Skip the first photo if it matches the hero image (avoid duplication)
+  const galleryPhotos = photos.filter((p) => p.url !== winery.heroImageUrl);
 
   return (
     <>
@@ -143,11 +154,24 @@ export default async function WineryDetailPage({
         <div className="mb-6 flex gap-3">
           <FavoriteButton wineryId={winery.id} />
         </div>
-        <WineryInfoSection winery={winery} />
-        <div className="mt-8 lg:col-span-2">
-          <WineTable wines={wineryWines} curated={!!winery.curated} />
+
+        {/* About + Gallery (left) / Visit Info (right) */}
+        <WineryInfoSection winery={winery} photos={galleryPhotos} />
+
+        {/* Tasting Experiences — primary visitor content */}
+        <div className="mt-8">
           <TastingTable tastings={tastings} curated={!!winery.curated} />
         </div>
+
+        {/* Wines — secondary reference */}
+        <div className="mt-8">
+          <WineTable wines={wineryWines} curated={!!winery.curated} />
+        </div>
+
+        {/* Hours — practical detail at bottom */}
+        <HoursSection hoursJson={winery.hoursJson} />
+
+        {/* Notes */}
         <div className="mt-8 max-w-xl">
           <NotesEditor wineryId={winery.id} />
         </div>

@@ -1,8 +1,15 @@
 import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck } from "lucide-react";
+import { PhotoGallery } from "./PhotoGallery";
 
 interface Hours {
   mon?: string; tue?: string; wed?: string; thu?: string;
   fri?: string; sat?: string; sun?: string;
+}
+
+interface Photo {
+  id: number;
+  url: string;
+  altText: string | null;
 }
 
 interface WineryInfoProps {
@@ -20,28 +27,19 @@ interface WineryInfoProps {
   description: string | null;
 }
 
-export function WineryInfoSection({ winery }: { winery: WineryInfoProps }) {
-  let hours: Hours | null = null;
-  try {
-    if (winery.hoursJson) hours = JSON.parse(winery.hoursJson);
-  } catch {}
-
-  const dayNames: Record<string, string> = {
-    mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday",
-    fri: "Friday", sat: "Saturday", sun: "Sunday",
-  };
-
+export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoProps; photos?: Photo[] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
         {winery.description && (
-          <div className="mb-8">
+          <div className="mb-4">
             <h2 className="font-heading text-2xl font-semibold mb-4">About</h2>
             <p className="text-[var(--muted-foreground)] leading-relaxed">
               {winery.description}
             </p>
           </div>
         )}
+        <PhotoGallery photos={photos} />
       </div>
 
       <div className="space-y-6">
@@ -102,24 +100,39 @@ export function WineryInfoSection({ winery }: { winery: WineryInfoProps }) {
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Hours */}
-        {hours && (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
-            <h3 className="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Hours
-            </h3>
-            <div className="space-y-1.5 text-sm">
-              {Object.entries(dayNames).map(([key, label]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">{label}</span>
-                  <span>{hours![key as keyof Hours] || "Closed"}</span>
-                </div>
-              ))}
+export function HoursSection({ hoursJson }: { hoursJson: string | null }) {
+  let hours: Hours | null = null;
+  try {
+    if (hoursJson) hours = JSON.parse(hoursJson);
+  } catch {}
+
+  if (!hours) return null;
+
+  const dayNames: Record<string, string> = {
+    mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday",
+    fri: "Friday", sat: "Saturday", sun: "Sunday",
+  };
+
+  return (
+    <div className="mt-8">
+      <h2 className="font-heading text-2xl font-semibold mb-4 flex items-center gap-2">
+        <Clock className="h-5 w-5" />
+        Hours
+      </h2>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 max-w-md">
+        <div className="space-y-1.5 text-sm">
+          {Object.entries(dayNames).map(([key, label]) => (
+            <div key={key} className="flex justify-between">
+              <span className="text-[var(--muted-foreground)]">{label}</span>
+              <span>{hours![key as keyof Hours] || "Closed"}</span>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );
