@@ -46,6 +46,9 @@ const DUPLICATE_PAIRS: [curatedSlug: string, scrapedSlug: string][] = [
   ["gundlach-bundschu", "gundlach-bundschu-winery"],
   ["lynmar-estate", "lynmar-estate-winery"],
   ["plumpjack", "plumpjack-estate-winery"],
+  // Round 3
+  ["silver-oak", "silver-oak-napa-valley"],
+  ["domaine-chandon", "chandon"],
 ];
 
 // Fields to copy from scraped row when the curated row has NULL
@@ -181,6 +184,8 @@ async function main() {
         "google_place_id",
         "google_review_count",
         "google_rating",
+        "aggregate_rating",
+        "total_ratings",
       ]);
 
       const scraped = await tx.execute({
