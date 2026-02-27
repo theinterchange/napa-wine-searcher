@@ -15,14 +15,14 @@
   },
   "v-sattui": {
     "websiteUrl": "http://www.vsattui.com/",
-    "winesUrl": "http://www.vsattui.com/wines",
+    "winesUrl": "https://www.vsattui.com/category/products/all_red_wines/",
     "tastingsUrl": "http://www.vsattui.com/visit",
     "aboutUrl": "http://www.vsattui.com/story",
     "status": "mapped"
   },
   "st-francis-winery": {
     "websiteUrl": "http://www.stfranciswinery.com/",
-    "winesUrl": "http://www.stfranciswinery.com/wines",
+    "winesUrl": "https://www.stfranciswinery.com/collection/90-points",
     "tastingsUrl": "http://www.stfranciswinery.com/visit",
     "aboutUrl": "http://www.stfranciswinery.com/about",
     "status": "mapped"
@@ -57,7 +57,7 @@
   },
   "viansa-winery": {
     "websiteUrl": "http://www.viansa.com/",
-    "winesUrl": "https://shop.viansa.com/Shop/All-Wines",
+    "winesUrl": "https://www.viansa.com/shop/",
     "tastingsUrl": "https://www.viansa.com/visit/",
     "aboutUrl": "https://www.viansa.com/about/",
     "status": "mapped"
@@ -281,7 +281,7 @@
   },
   "grgich-hills-estate": {
     "websiteUrl": "http://www.grgich.com/",
-    "winesUrl": "http://www.grgich.com/wines",
+    "winesUrl": "https://grgich.com/collection/all-wines/",
     "tastingsUrl": "http://www.grgich.com/experiences",
     "aboutUrl": "http://www.grgich.com/story",
     "status": "mapped"
@@ -302,14 +302,14 @@
   },
   "davis-estates": {
     "websiteUrl": "http://www.davisestates.com/",
-    "winesUrl": "http://www.davisestates.com/shop",
+    "winesUrl": "https://www.davisestates.com/shop/products/current-releases/",
     "tastingsUrl": "http://www.davisestates.com/experiences",
     "aboutUrl": "http://www.davisestates.com/about",
     "status": "mapped"
   },
   "rombauer-vineyards": {
     "websiteUrl": "http://www.rombauer.com/",
-    "winesUrl": "http://www.rombauer.com/wines",
+    "winesUrl": "https://www.rombauer.com/shop-all-wines/",
     "tastingsUrl": "http://www.rombauer.com/experiences",
     "aboutUrl": "http://www.rombauer.com/story",
     "status": "mapped"
@@ -344,8 +344,8 @@
   },
   "jam-cellars": {
     "websiteUrl": "https://jamcellars.com/visit/?utm_source=Google&utm_medium=GMB&utm_campaign=WAMS_GMB",
-    "winesUrl": "https://jamcellars.com/locate/",
-    "tastingsUrl": "https://jamcellars.com/visit/?utm_source=Google&utm_medium=GMB&utm_campaign=WAMS_GMB#",
+    "winesUrl": "https://jamcellars.com/shop/",
+    "tastingsUrl": "https://jamcellars.com/visit/",
     "aboutUrl": "https://jamcellars.com/about/",
     "status": "mapped"
   },
@@ -372,21 +372,21 @@
   },
   "joseph-phelps-vineyards": {
     "websiteUrl": "http://www.josephphelps.com/",
-    "winesUrl": "http://www.josephphelps.com/wines",
+    "winesUrl": "https://www.josephphelps.com/shop/all-wines/",
     "tastingsUrl": "http://www.josephphelps.com/visit",
     "aboutUrl": "http://www.josephphelps.com/story",
     "status": "mapped"
   },
   "charles-krug": {
     "websiteUrl": "http://www.charleskrug.com/",
-    "winesUrl": "http://www.charleskrug.com/wines",
+    "winesUrl": "https://www.charleskrug.com/shop",
     "tastingsUrl": "http://www.charleskrug.com/visit",
     "aboutUrl": null,
     "status": "mapped"
   },
   "madonna-estate-winery": {
     "websiteUrl": "http://www.madonnaestate.com/",
-    "winesUrl": "http://www.madonnaestate.com/wines",
+    "winesUrl": "https://store.madonnaestate.com/index.cfm?method=storeproducts.showlist",
     "tastingsUrl": "http://www.madonnaestate.com/visit",
     "aboutUrl": "http://www.madonnaestate.com/about",
     "status": "mapped"
@@ -400,7 +400,7 @@
   },
   "del-dotto-estate-winery-caves": {
     "websiteUrl": "http://www.deldottovineyards.com/",
-    "winesUrl": "http://www.deldottovineyards.com/wines",
+    "winesUrl": "https://www.deldottovineyards.com/collection/new-releases",
     "tastingsUrl": "http://www.deldottovineyards.com/visit",
     "aboutUrl": "http://www.deldottovineyards.com/about",
     "status": "mapped"
@@ -428,7 +428,7 @@
   },
   "rutherford-hill": {
     "websiteUrl": "http://www.rutherfordhill.com/",
-    "winesUrl": null,
+    "winesUrl": "https://www.rutherfordhill.com/shop-all#",
     "tastingsUrl": "http://www.rutherfordhill.com/visit",
     "aboutUrl": "http://www.rutherfordhill.com/about",
     "status": "mapped"
@@ -491,7 +491,7 @@
   },
   "rams-gate": {
     "websiteUrl": "http://www.ramsgatewinery.com/",
-    "winesUrl": "http://www.ramsgatewinery.com/our-wines",
+    "winesUrl": "https://www.ramsgatewinery.com/collection/shop",
     "tastingsUrl": "http://www.ramsgatewinery.com/visit",
     "aboutUrl": "http://www.ramsgatewinery.com/about",
     "status": "mapped"
@@ -505,7 +505,7 @@
   },
   "dry-creek-vineyard": {
     "websiteUrl": "http://www.drycreekvineyard.com/",
-    "winesUrl": "http://www.drycreekvineyard.com/wines",
+    "winesUrl": "https://www.drycreekvineyard.com/shop/",
     "tastingsUrl": "http://www.drycreekvineyard.com/visit",
     "aboutUrl": "http://www.drycreekvineyard.com/our-story",
     "status": "mapped"
@@ -540,7 +540,7 @@
   },
   "schramsberg-vineyards": {
     "websiteUrl": "http://www.schramsberg.com/",
-    "winesUrl": "http://www.schramsberg.com/wines",
+    "winesUrl": "https://shop.schramsberg.com/SHOP.AMS?LEVEL=MID&CAT=750",
     "tastingsUrl": "http://www.schramsberg.com/visit",
     "aboutUrl": "http://www.schramsberg.com/about",
     "status": "mapped"
@@ -638,14 +638,14 @@
   },
   "bouchaine-vineyards": {
     "websiteUrl": "http://www.bouchaine.com/",
-    "winesUrl": "https://bouchaine.com/pages/our-wines/",
+    "winesUrl": "https://shop.bouchaine.com/collections/90-wines",
     "tastingsUrl": "https://bouchaine.com/pages/tasting-room/",
     "aboutUrl": "https://bouchaine.com/pages/our-story/",
     "status": "mapped"
   },
   "scribe-winery": {
     "websiteUrl": "http://scribewinery.com/",
-    "winesUrl": null,
+    "winesUrl": "https://store.scribewinery.com/Cellar",
     "tastingsUrl": "http://scribewinery.com/visit",
     "aboutUrl": "http://scribewinery.com/about",
     "status": "mapped"
@@ -680,7 +680,7 @@
   },
   "emeritus-vineyards": {
     "websiteUrl": "http://www.emeritusvineyards.com/",
-    "winesUrl": "http://www.emeritusvineyards.com/wine-club",
+    "winesUrl": "https://www.emeritusvineyards.com/acquire/",
     "tastingsUrl": "http://www.emeritusvineyards.com/experience/",
     "aboutUrl": "http://www.emeritusvineyards.com/our-story",
     "status": "mapped"
@@ -708,14 +708,14 @@
   },
   "st-clair-brown-winery-brewery": {
     "websiteUrl": "https://www.stclairbrown.com/",
-    "winesUrl": "https://www.stclairbrown.com/wine-beer-tasting",
+    "winesUrl": "https://store.nexternal.com/scbwinery/our-wine-c1.aspx",
     "tastingsUrl": "https://www.stclairbrown.com/tastingroom",
     "aboutUrl": "https://www.stclairbrown.com/about-us",
     "status": "mapped"
   },
   "john-anthony-vineyards": {
     "websiteUrl": "http://www.johnanthonyvineyards.com/",
-    "winesUrl": null,
+    "winesUrl": "https://www.johnanthonyvineyards.com/Wine",
     "tastingsUrl": "http://www.johnanthonyvineyards.com/visit",
     "aboutUrl": "http://www.johnanthonyvineyards.com/about",
     "status": "mapped"
@@ -785,7 +785,7 @@
   },
   "roche-winery-downtown": {
     "websiteUrl": "http://www.rochewinery.com/",
-    "winesUrl": null,
+    "winesUrl": "https://store.rochewinery.com/current-releases-c3.aspx",
     "tastingsUrl": "http://www.rochewinery.com/visit",
     "aboutUrl": "http://www.rochewinery.com/about",
     "status": "mapped"
@@ -820,7 +820,7 @@
   },
   "zd-wines": {
     "websiteUrl": "https://www.zdwines.com/",
-    "winesUrl": "https://www.zdwines.com/shop",
+    "winesUrl": "https://www.zdwines.com/shop/wines",
     "tastingsUrl": "https://www.zdwines.com/visit",
     "aboutUrl": "https://www.zdwines.com/about",
     "status": "mapped"
@@ -841,14 +841,14 @@
   },
   "roche-winery-vineyards": {
     "websiteUrl": "http://www.rochewinery.com/",
-    "winesUrl": null,
+    "winesUrl": "https://store.rochewinery.com/current-releases-c3.aspx",
     "tastingsUrl": "http://www.rochewinery.com/visit",
     "aboutUrl": "http://www.rochewinery.com/about",
     "status": "mapped"
   },
   "piazza-del-dotto-winery-caves": {
     "websiteUrl": "http://www.deldottovineyards.com/",
-    "winesUrl": "http://www.deldottovineyards.com/wines",
+    "winesUrl": "https://www.deldottovineyards.com/collection/new-releases",
     "tastingsUrl": "http://www.deldottovineyards.com/visit",
     "aboutUrl": "http://www.deldottovineyards.com/about",
     "status": "mapped"
@@ -862,7 +862,7 @@
   },
   "markham-vineyards": {
     "websiteUrl": "https://markhamvineyards.com/visit/winery-experiences/",
-    "winesUrl": "https://markhamvineyards.com/wine-shop/",
+    "winesUrl": "https://markhamvineyards.com/features/current-releases/",
     "tastingsUrl": "https://markhamvineyards.com/visit/",
     "aboutUrl": "https://markhamvineyards.com/about/",
     "status": "mapped"
@@ -925,14 +925,14 @@
   },
   "del-dotto-historic-winery-caves": {
     "websiteUrl": "http://deldottovineyards.com/",
-    "winesUrl": "http://deldottovineyards.com/wines",
+    "winesUrl": "https://www.deldottovineyards.com/collection/new-releases",
     "tastingsUrl": "http://deldottovineyards.com/visit",
     "aboutUrl": "http://deldottovineyards.com/about",
     "status": "mapped"
   },
   "mazzocco-sonoma": {
     "websiteUrl": "http://www.mazzocco.com/",
-    "winesUrl": "http://www.mazzocco.com/wines",
+    "winesUrl": "https://shop.mazzocco.com/wines-c2all.aspx",
     "tastingsUrl": "http://www.mazzocco.com/visit",
     "aboutUrl": "http://www.mazzocco.com/our-story",
     "status": "mapped"
@@ -974,7 +974,7 @@
   },
   "rodney-strong-vineyards": {
     "websiteUrl": "http://www.rodneystrong.com/",
-    "winesUrl": "http://www.rodneystrong.com/wines",
+    "winesUrl": "https://shop.rodneystrong.com/Our-Wines/Collection/Winery-Exclusives",
     "tastingsUrl": "http://www.rodneystrong.com/visit",
     "aboutUrl": "http://www.rodneystrong.com/our-story",
     "status": "mapped"
@@ -1009,7 +1009,7 @@
   },
   "the-estate-yountville": {
     "websiteUrl": "https://www.theestateyountville.com/",
-    "winesUrl": null,
+    "winesUrl": "https://estateyountvilleclub.com/collections/our-cellar",
     "tastingsUrl": "https://www.theestateyountville.com/experiences/",
     "aboutUrl": "https://www.theestateyountville.com/about/",
     "status": "mapped"
@@ -1030,8 +1030,8 @@
   },
   "b-cellars": {
     "websiteUrl": "https://www.bcellars.com/",
-    "winesUrl": "https://www.bcellars.com/acquire",
-    "tastingsUrl": "https://www.bcellars.com/visit/",
+    "winesUrl": "https://www.bcellars.com/collection/current-release",
+    "tastingsUrl": "https://www.bcellars.com/experience",
     "aboutUrl": null,
     "status": "mapped"
   },
@@ -1044,7 +1044,7 @@
   },
   "trinitas-cellars": {
     "websiteUrl": "http://trinitascellars.com/",
-    "winesUrl": "http://trinitascellars.com/wines",
+    "winesUrl": "https://trinitascellars.com/wines/current-releases-red-wines/",
     "tastingsUrl": "http://trinitascellars.com/visit",
     "aboutUrl": "http://trinitascellars.com/our-story",
     "status": "mapped"
@@ -1086,8 +1086,8 @@
   },
   "soda-rock-winery": {
     "websiteUrl": "http://www.sodarockwinery.com/",
-    "winesUrl": null,
-    "tastingsUrl": "http://www.sodarockwinery.com/visit",
+    "winesUrl": "https://store.sodarockwinery.com/current-releases-c5.aspx",
+    "tastingsUrl": "http://sodarockwinery.com/visit",
     "aboutUrl": "http://www.sodarockwinery.com/about",
     "status": "mapped"
   },
@@ -1100,21 +1100,21 @@
   },
   "hook-ladder-vineyards-winery": {
     "websiteUrl": "http://www.hookandladderwinery.com/",
-    "winesUrl": "http://www.hookandladderwinery.com/our-wines",
+    "winesUrl": "https://www.hookandladderwinery.com/collection/red/",
     "tastingsUrl": "http://www.hookandladderwinery.com/visit",
     "aboutUrl": "http://www.hookandladderwinery.com/about-us",
     "status": "mapped"
   },
   "truchard-vineyards": {
     "websiteUrl": "http://www.truchardvineyards.com/",
-    "winesUrl": "http://www.truchardvineyards.com/collection",
+    "winesUrl": "https://truchardvineyards.com/collection/current-releases/",
     "tastingsUrl": "http://www.truchardvineyards.com/visit",
     "aboutUrl": null,
     "status": "mapped"
   },
   "saintsbury-winery": {
     "websiteUrl": "https://www.saintsbury.com/",
-    "winesUrl": "https://www.saintsbury.com/collection",
+    "winesUrl": "https://saintsbury.com/best-selling-pinot-noir-chardonnay-1833/",
     "tastingsUrl": "https://www.saintsbury.com/visit",
     "aboutUrl": "https://www.saintsbury.com/about",
     "status": "mapped"
@@ -1128,7 +1128,7 @@
   },
   "pangloss-cellars": {
     "websiteUrl": "http://www.panglosscellars.com/",
-    "winesUrl": "http://www.panglosscellars.com/collection",
+    "winesUrl": "https://panglosscellars.com/shop/current-releases",
     "tastingsUrl": "http://www.panglosscellars.com/visit",
     "aboutUrl": null,
     "status": "mapped"
@@ -1177,28 +1177,28 @@
   },
   "bella-union-winery": {
     "websiteUrl": "https://farniente.com/visit-bella-union?utm_source=google&utm_medium=organic&utm_campaign=gbp",
-    "winesUrl": "https://farniente.com/shop",
-    "tastingsUrl": "https://farniente.com/visit-far-niente",
+    "winesUrl": "https://farniente.com/shop?prod-shopify_shop%5BrefinementList%5D%5Bwinery.title%5D%5B0%5D=Bella%20Union",
+    "tastingsUrl": "https://farniente.com/visit",
     "aboutUrl": "https://farniente.com/visit",
     "status": "mapped"
   },
   "ghost-block-estate-wines": {
     "websiteUrl": "https://www.ghostblockwine.com/",
-    "winesUrl": "https://www.ghostblockwine.com/wines",
-    "tastingsUrl": "https://www.ghostblockwine.com/visit",
+    "winesUrl": "https://ghostblockwine.com/collection/bw9/",
+    "tastingsUrl": "https://www.ghostblockwine.com/tastings",
     "aboutUrl": "https://www.ghostblockwine.com/story",
     "status": "mapped"
   },
   "deerfield-ranch-winery": {
     "websiteUrl": "http://www.deerfieldranch.com/",
-    "winesUrl": "http://www.deerfieldranch.com/shop",
+    "winesUrl": "https://deerfieldranchwinery.withwine.com/buy/wine",
     "tastingsUrl": "http://www.deerfieldranch.com/visit",
     "aboutUrl": "http://www.deerfieldranch.com/about",
     "status": "mapped"
   },
   "papapietro-perry-winery": {
     "websiteUrl": "http://www.papapietro-perry.com/",
-    "winesUrl": "http://www.papapietro-perry.com/shop",
+    "winesUrl": "https://www.papapietro-perry.com/shop/?view=products&slug=current-release",
     "tastingsUrl": "http://www.papapietro-perry.com/visit",
     "aboutUrl": null,
     "status": "mapped"
@@ -1296,7 +1296,7 @@
   },
   "goosecross-cellars": {
     "websiteUrl": "http://goosecross.com/",
-    "winesUrl": "http://goosecross.com/wines",
+    "winesUrl": "https://www.goosecross.com/shop/?view=products&slug=all-products",
     "tastingsUrl": "http://goosecross.com/visit",
     "aboutUrl": "http://goosecross.com/about",
     "status": "mapped"
@@ -1331,7 +1331,7 @@
   },
   "davero-farms-winery": {
     "websiteUrl": "https://www.davero.com/",
-    "winesUrl": "https://www.davero.com/shop",
+    "winesUrl": "https://davero.com/order/",
     "tastingsUrl": "https://www.davero.com/visit",
     "aboutUrl": "https://www.davero.com/about",
     "status": "mapped"
@@ -1541,8 +1541,8 @@
   },
   "hall-wines": {
     "websiteUrl": "https://www.hallwines.com",
-    "winesUrl": "https://www.hallwines.com/wine-shop",
-    "tastingsUrl": "https://www.hallwines.com/hall-schedule-a-tour-and-tasting",
+    "winesUrl": "https://www.hallwines.com/wine-shop/new-releases",
+    "tastingsUrl": "https://www.hallwines.com/visit",
     "aboutUrl": "https://www.hallwines.com/about-us",
     "status": "mapped"
   },
@@ -1632,8 +1632,8 @@
   },
   "etude-wines": {
     "websiteUrl": "https://www.etudewines.com",
-    "winesUrl": "https://www.etudewines.com/collections/wines",
-    "tastingsUrl": "https://www.etudewines.com/pages/tastings",
+    "winesUrl": "https://www.etudewines.com/collections/high-scoring-wines",
+    "tastingsUrl": "https://www.etudewines.com/collections/wines",
     "aboutUrl": "https://www.etudewines.com/pages/jon-priest-winemaker",
     "status": "mapped"
   },
@@ -1653,8 +1653,8 @@
   },
   "burgess-cellars": {
     "websiteUrl": "https://www.burgesscellars.com",
-    "winesUrl": null,
-    "tastingsUrl": "https://www.burgesscellars.com/visit/",
+    "winesUrl": "https://www.burgesscellars.com/acquire/",
+    "tastingsUrl": "https://www.burgesscellars.com/visit",
     "aboutUrl": "https://www.burgesscellars.com/about/history/",
     "status": "mapped"
   },
@@ -1709,8 +1709,8 @@
   },
   "hartford-family": {
     "websiteUrl": "https://www.hartfordwines.com",
-    "winesUrl": "https://www.hartfordwines.com/wine-locator",
-    "tastingsUrl": "https://www.hartfordwines.com/tasting-room-winery",
+    "winesUrl": "https://www.hartfordwines.com/wines",
+    "tastingsUrl": "https://www.hartfordwines.com/visit",
     "aboutUrl": "https://www.hartfordwines.com/overview",
     "status": "mapped"
   },
