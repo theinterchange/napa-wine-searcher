@@ -149,7 +149,7 @@
   "james-cole-winery": {
     "websiteUrl": "http://www.jamescolewinery.com/",
     "winesUrl": "http://www.jamescolewinery.com/store",
-    "tastingsUrl": "http://www.jamescolewinery.com/store/reserve-series",
+    "tastingsUrl": "https://www.jamescolewinery.com/experiences",
     "aboutUrl": "http://www.jamescolewinery.com/our-story",
     "status": "mapped"
   },
@@ -198,7 +198,7 @@
   "chateau-montelena": {
     "websiteUrl": "http://www.montelena.com/",
     "winesUrl": "http://www.montelena.com/wines",
-    "tastingsUrl": "http://www.montelena.com/visit",
+    "tastingsUrl": "https://montelena.com/visit/visitor-experiences/",
     "aboutUrl": "http://www.montelena.com/estate",
     "status": "mapped"
   },
@@ -331,7 +331,7 @@
   "ledson-winery-vineyards": {
     "websiteUrl": "https://ledson.com/",
     "winesUrl": "https://ledson.com/wine-shop/",
-    "tastingsUrl": "https://ledson.com/tasting-panel/",
+    "tastingsUrl": "https://ledson.com/taste/",
     "aboutUrl": "https://ledson.com/discover-ledson/about/",
     "status": "mapped"
   },
@@ -347,13 +347,6 @@
     "winesUrl": "https://jamcellars.com/shop/",
     "tastingsUrl": "https://jamcellars.com/visit/",
     "aboutUrl": "https://jamcellars.com/about/",
-    "status": "mapped"
-  },
-  "housley-napa-valley": {
-    "websiteUrl": "https://www.housleynapavalley.com/",
-    "winesUrl": "https://www.housleynapavalley.com/our-wines",
-    "tastingsUrl": null,
-    "aboutUrl": null,
     "status": "mapped"
   },
   "black-stallion-estate-winery": {
@@ -464,7 +457,7 @@
   "obrien-estate-winery": {
     "websiteUrl": "http://www.obrienestate.com/",
     "winesUrl": "http://www.obrienestate.com/shop",
-    "tastingsUrl": "http://www.obrienestate.com/visit",
+    "tastingsUrl": "https://obrienestate.com/reservations/",
     "aboutUrl": "http://www.obrienestate.com/estate",
     "status": "mapped"
   },
@@ -499,7 +492,7 @@
   "three-fat-guys-winery": {
     "websiteUrl": "https://www.threefatguyswines.com/",
     "winesUrl": "https://www.threefatguyswines.com/shop",
-    "tastingsUrl": "https://www.threefatguyswines.com/visit",
+    "tastingsUrl": "https://threefatguyswines.com/visit-us/",
     "aboutUrl": "https://www.threefatguyswines.com/about",
     "status": "mapped"
   },
@@ -576,7 +569,7 @@
   "paradise-ridge-winery": {
     "websiteUrl": "http://prwinery.com/",
     "winesUrl": "http://prwinery.com/wines",
-    "tastingsUrl": "http://prwinery.com/visit",
+    "tastingsUrl": "https://www.prwinery.com/wine-tasting/",
     "aboutUrl": "http://prwinery.com/about",
     "status": "mapped"
   },
@@ -618,7 +611,7 @@
   "matanzas-creek": {
     "websiteUrl": "http://www.matanzascreek.com/",
     "winesUrl": "http://www.matanzascreek.com/wines",
-    "tastingsUrl": "http://www.matanzascreek.com/visit",
+    "tastingsUrl": "https://www.matanzascreek.com/visit/tasting-room",
     "aboutUrl": "http://www.matanzascreek.com/estate",
     "status": "mapped"
   },
@@ -744,7 +737,7 @@
   "robledo-family-winery": {
     "websiteUrl": "http://www.robledofamilywinery.com/",
     "winesUrl": "http://www.robledofamilywinery.com/wines",
-    "tastingsUrl": null,
+    "tastingsUrl": "https://www.robledofamilywinery.com/Visit-Us",
     "aboutUrl": "http://www.robledofamilywinery.com/our-story",
     "status": "mapped"
   },
@@ -786,7 +779,7 @@
   "bennett-lane-winery": {
     "websiteUrl": "http://www.bennettlane.com/",
     "winesUrl": "http://www.bennettlane.com/napa-valley-calistoga-wines-online-wine-shoping",
-    "tastingsUrl": "http://www.bennettlane.com/plan-a-visit",
+    "tastingsUrl": "https://www.cellarpass.com/business/bennett-lane-winery",
     "aboutUrl": null,
     "status": "mapped"
   },
@@ -828,7 +821,7 @@
   "aesthete-winery-farm": {
     "websiteUrl": "https://aesthetewines.com/",
     "winesUrl": "https://aesthetewines.com/collections/featured",
-    "tastingsUrl": "https://aesthetewines.com/pages/visit-us",
+    "tastingsUrl": "https://www.exploretock.com/aesthetewineryandfarm/",
     "aboutUrl": "https://aesthetewines.com/pages/about-us",
     "status": "mapped"
   },
@@ -870,7 +863,7 @@
   "bricoleur-vineyards": {
     "websiteUrl": "http://www.bricoleurvineyards.com/",
     "winesUrl": "http://www.bricoleurvineyards.com/shop",
-    "tastingsUrl": null,
+    "tastingsUrl": "https://bricoleurvineyards.com/pages/visit",
     "aboutUrl": null,
     "status": "mapped"
   },
@@ -925,8 +918,8 @@
   },
   "the-donum-estate": {
     "websiteUrl": "http://www.thedonumestate.com/",
-    "winesUrl": "http://www.thedonumestate.com/wines",
-    "tastingsUrl": null,
+    "winesUrl": "https://thedonumestate.com/wines",
+    "tastingsUrl": "https://www.thedonumestate.com/visiting#tasting-experiences",
     "aboutUrl": "http://www.thedonumestate.com/estate",
     "status": "mapped"
   },
@@ -967,8 +960,8 @@
   },
   "spring-mountain-vineyard": {
     "websiteUrl": "http://www.springmountainvineyard.com/",
-    "winesUrl": "http://www.springmountainvineyard.com/wines",
-    "tastingsUrl": null,
+    "winesUrl": "https://www.springmountainvineyard.com/wines",
+    "tastingsUrl": "https://www.springmountainvineyard.com/experience",
     "aboutUrl": "http://www.springmountainvineyard.com/story",
     "status": "mapped"
   },
@@ -1128,8 +1121,8 @@
   },
   "landmark-vineyards": {
     "websiteUrl": "https://www.landmarkwine.com/",
-    "winesUrl": "https://www.landmarkwine.com/collection/all",
-    "tastingsUrl": "https://www.landmarkwine.com/visit",
+    "winesUrl": "https://www.landmarkwine.com/wines",
+    "tastingsUrl": "https://www.landmarkwine.com/visit/kenwood-estate",
     "aboutUrl": "https://www.landmarkwine.com/our-story",
     "status": "mapped"
   },
@@ -1150,7 +1143,7 @@
   "jordan-winery": {
     "websiteUrl": "http://www.jordanwinery.com/",
     "winesUrl": "http://www.jordanwinery.com/wines",
-    "tastingsUrl": "http://www.jordanwinery.com/visit",
+    "tastingsUrl": "https://www.jordanwinery.com/visit/healdsburg-wine-tasting/",
     "aboutUrl": "http://www.jordanwinery.com/about-us",
     "status": "mapped"
   },
@@ -1184,8 +1177,8 @@
   },
   "buoncristiani-family-winery": {
     "websiteUrl": "http://www.buonwine.com/",
-    "winesUrl": "http://www.buonwine.com/shop",
-    "tastingsUrl": null,
+    "winesUrl": "https://www.buoncristiani.com/wines",
+    "tastingsUrl": "https://www.buonwine.com/experience/",
     "aboutUrl": null,
     "status": "mapped"
   },
@@ -1226,8 +1219,8 @@
   },
   "chateau-diana": {
     "websiteUrl": "http://www.chateaud.com/",
-    "winesUrl": "http://www.chateaud.com/shop",
-    "tastingsUrl": "http://www.chateaud.com/visit",
+    "winesUrl": "http://www.chateaud.com/wines",
+    "tastingsUrl": "https://www.chateaud.com/reservation/",
     "aboutUrl": "http://www.chateaud.com/about",
     "status": "mapped"
   },
@@ -1282,8 +1275,8 @@
   },
   "zialena-winery": {
     "websiteUrl": "https://zialena.com/about-us/",
-    "winesUrl": "https://zialena.com/collection/wines",
-    "tastingsUrl": "https://zialena.com/location-hours/",
+    "winesUrl": "https://zialena.com/our-wines/",
+    "tastingsUrl": "https://zialena.com/tours-tastings/",
     "aboutUrl": "https://zialena.com/about-us/",
     "status": "mapped"
   },
@@ -1574,13 +1567,6 @@
     "aboutUrl": "https://www.pahlmeyer.com/story/",
     "status": "mapped"
   },
-  "william-hill": {
-    "websiteUrl": "https://www.williamhillestate.com",
-    "winesUrl": "https://www.williamhillestate.com/our-wines.html",
-    "tastingsUrl": "https://www.williamhillestate.com/visit",
-    "aboutUrl": "https://www.williamhillestate.com/our-story.html",
-    "status": "mapped"
-  },
   "antinori-napa-valley": {
     "websiteUrl": "https://www.antinorinapa.com",
     "winesUrl": null,
@@ -1738,7 +1724,7 @@
   "arrowood-vineyards": {
     "websiteUrl": "https://www.arrowoodvineyards.com",
     "winesUrl": "https://www.arrowoodvineyards.com/wines",
-    "tastingsUrl": "https://www.arrowoodvineyards.com/visit",
+    "tastingsUrl": "https://www.exploretock.com/copainwines/",
     "aboutUrl": "https://www.arrowoodvineyards.com/about",
     "status": "mapped"
   },
