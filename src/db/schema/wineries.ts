@@ -30,6 +30,7 @@ export const wineries = sqliteTable("wineries", {
   reservationRequired: integer("reservation_required", { mode: "boolean" }).default(false),
   dogFriendly: integer("dog_friendly", { mode: "boolean" }).default(false),
   picnicFriendly: integer("picnic_friendly", { mode: "boolean" }).default(false),
+  kidFriendly: integer("kid_friendly", { mode: "boolean" }).default(false),
   priceLevel: integer("price_level"),
   aggregateRating: real("aggregate_rating"),
   totalRatings: integer("total_ratings").default(0),

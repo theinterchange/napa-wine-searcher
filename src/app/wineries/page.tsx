@@ -47,6 +47,7 @@ export default async function WineriesPage({
   const reservation = params.reservation || "";
   const dog = params.dog || "";
   const picnic = params.picnic || "";
+  const kid = params.kid || "";
   const sort = params.sort || "rating";
   const varietal = params.varietal || "";
   const tastingPrice = params.tastingPrice || "";
@@ -77,6 +78,9 @@ export default async function WineriesPage({
   }
   if (picnic === "true") {
     conditions.push(eq(wineries.picnicFriendly, true));
+  }
+  if (kid === "true") {
+    conditions.push(eq(wineries.kidFriendly, true));
   }
 
   // Varietal filter: find winery IDs that have matching wine types

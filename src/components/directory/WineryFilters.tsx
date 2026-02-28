@@ -75,6 +75,7 @@ export function WineryFilters({
   const reservation = searchParams.get("reservation") || "";
   const dogFriendly = searchParams.get("dog") || "";
   const picnic = searchParams.get("picnic") || "";
+  const kidFriendly = searchParams.get("kid") || "";
   const sort = searchParams.get("sort") || "rating";
   const varietal = searchParams.get("varietal") || "";
   const tastingPrice = searchParams.get("tastingPrice") || "";
@@ -92,6 +93,7 @@ export function WineryFilters({
     reservation ||
     dogFriendly ||
     picnic ||
+    kidFriendly ||
     varietal ||
     tastingPrice ||
     winePrice;
@@ -129,6 +131,8 @@ export function WineryFilters({
     activeFilters.push({ key: "dog", label: "Dog Friendly" });
   if (picnic)
     activeFilters.push({ key: "picnic", label: "Picnic Friendly" });
+  if (kidFriendly)
+    activeFilters.push({ key: "kid", label: "Kid Friendly" });
   for (const v of selectedVarietals) {
     const wt = wineTypes.find(
       (w) => w.name.toLowerCase().replace(/\s+/g, "-") === v
@@ -278,6 +282,18 @@ export function WineryFilters({
             className="rounded"
           />
           Picnic Friendly
+        </label>
+
+        <label className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={kidFriendly === "true"}
+            onChange={(e) =>
+              setParam("kid", e.target.checked ? "true" : "")
+            }
+            className="rounded"
+          />
+          Kid Friendly
         </label>
       </div>
 

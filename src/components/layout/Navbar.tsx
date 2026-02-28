@@ -23,7 +23,7 @@ export function Navbar() {
     pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-[var(--card)]/90 backdrop-blur border-[var(--border)]">
+    <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -51,9 +51,15 @@ export function Navbar() {
             ))}
             <ThemeToggle />
             {session ? (
-              <span className="text-sm text-[var(--muted-foreground)]">
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+              >
+                {session.user?.image && (
+                  <img src={session.user.image} alt="" className="h-7 w-7 rounded-full" />
+                )}
                 {session.user?.name}
-              </span>
+              </Link>
             ) : (
               <Link
                 href="/login"
@@ -90,7 +96,18 @@ export function Navbar() {
                 {label}
               </Link>
             ))}
-            {!session && (
+            {session ? (
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                {session.user?.image && (
+                  <img src={session.user.image} alt="" className="h-7 w-7 rounded-full" />
+                )}
+                {session.user?.name}
+              </Link>
+            ) : (
               <Link
                 href="/login"
                 className="block text-sm font-medium text-burgundy-700"
