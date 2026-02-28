@@ -1,15 +1,33 @@
 import { db } from "@/db";
-import { wineries, subRegions } from "@/db/schema";
-import { eq, like, gte, asc, desc, sql, and, count } from "drizzle-orm";
+import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
+import { eq, like, gte, lte, asc, desc, sql, and, count, inArray } from "drizzle-orm";
+import Link from "next/link";
+import { Route } from "lucide-react";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { WineryFilters } from "@/components/directory/WineryFilters";
 import { WinerySearch } from "@/components/directory/WinerySearch";
 import { Pagination } from "@/components/directory/Pagination";
+import { TASTING_PRICE_TIERS, WINE_PRICE_TIERS } from "@/lib/filters";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Browse Wineries | Wine Country Guide",
-  description: "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+  description:
+    "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+  openGraph: {
+    title: "Browse Wineries | Wine Country Guide",
+    description:
+      "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+    url: "https://napa-winery-search.vercel.app/wineries",
+    siteName: "Wine Country Guide",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Browse Wineries | Wine Country Guide",
+    description:
+      "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+  },
 };
 
 const PAGE_SIZE = 12;
@@ -30,6 +48,9 @@ export default async function WineriesPage({
   const dog = params.dog || "";
   const picnic = params.picnic || "";
   const sort = params.sort || "rating";
+  const varietal = params.varietal || "";
+  const tastingPrice = params.tastingPrice || "";
+  const winePrice = params.winePrice || "";
 
   // Build conditions
   const conditions = [];
@@ -56,6 +77,107 @@ export default async function WineriesPage({
   }
   if (picnic === "true") {
     conditions.push(eq(wineries.picnicFriendly, true));
+  }
+
+  // Varietal filter: find winery IDs that have matching wine types
+  let varietalWineryIds: number[] | null = null;
+  if (varietal) {
+    const slugs = varietal.split(",").filter(Boolean);
+    // Convert slugs back to names for matching
+    const allTypes = await db.select({ id: wineTypes.id, name: wineTypes.name }).from(wineTypes);
+    const matchingTypeIds = allTypes
+      .filter((t) => slugs.includes(t.name.toLowerCase().replace(/\s+/g, "-")))
+      .map((t) => t.id);
+
+    if (matchingTypeIds.length > 0) {
+      const matched = await db
+        .selectDistinct({ wineryId: wines.wineryId })
+        .from(wines)
+        .where(inArray(wines.wineTypeId, matchingTypeIds));
+      varietalWineryIds = matched.map((m) => m.wineryId);
+    } else {
+      varietalWineryIds = [];
+    }
+  }
+
+  // Tasting price filter: find winery IDs with tastings in selected price ranges
+  let tastingPriceWineryIds: number[] | null = null;
+  if (tastingPrice) {
+    const keys = tastingPrice.split(",").filter(Boolean);
+    const tpConditions = keys
+      .map((key) => {
+        const tier = TASTING_PRICE_TIERS.find((t) => t.key === key);
+        if (!tier) return null;
+        return and(
+          gte(tastingExperiences.price, tier.min),
+          lte(tastingExperiences.price, tier.max)
+        );
+      })
+      .filter(Boolean);
+
+    if (tpConditions.length > 0) {
+      const matched = await db
+        .selectDistinct({ wineryId: tastingExperiences.wineryId })
+        .from(tastingExperiences)
+        .where(
+          tpConditions.length === 1
+            ? tpConditions[0]!
+            : sql`(${sql.join(
+                tpConditions.map((c) => sql`(${c})`),
+                sql` OR `
+              )})`
+        );
+      tastingPriceWineryIds = matched.map((m) => m.wineryId);
+    } else {
+      tastingPriceWineryIds = [];
+    }
+  }
+
+  // Wine price filter: find winery IDs with wines in selected price ranges
+  let winePriceWineryIds: number[] | null = null;
+  if (winePrice) {
+    const keys = winePrice.split(",").filter(Boolean);
+    const wpConditions = keys
+      .map((key) => {
+        const tier = WINE_PRICE_TIERS.find((t) => t.key === key);
+        if (!tier) return null;
+        return and(gte(wines.price, tier.min), lte(wines.price, tier.max));
+      })
+      .filter(Boolean);
+
+    if (wpConditions.length > 0) {
+      const matched = await db
+        .selectDistinct({ wineryId: wines.wineryId })
+        .from(wines)
+        .where(
+          wpConditions.length === 1
+            ? wpConditions[0]!
+            : sql`(${sql.join(
+                wpConditions.map((c) => sql`(${c})`),
+                sql` OR `
+              )})`
+        );
+      winePriceWineryIds = matched.map((m) => m.wineryId);
+    } else {
+      winePriceWineryIds = [];
+    }
+  }
+
+  // Intersect winery ID sets from sub-filters
+  const idFilters = [varietalWineryIds, tastingPriceWineryIds, winePriceWineryIds].filter(
+    (ids): ids is number[] => ids !== null
+  );
+  if (idFilters.length > 0) {
+    const intersection = idFilters.reduce((acc, ids) => {
+      const set = new Set(ids);
+      return acc.filter((id) => set.has(id));
+    });
+    if (intersection.length > 0) {
+      conditions.push(inArray(wineries.id, intersection));
+    } else {
+      // No wineries match — push impossible condition
+      conditions.push(eq(wineries.id, -1));
+    }
   }
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
@@ -110,6 +232,19 @@ export default async function WineriesPage({
     .from(subRegions)
     .orderBy(asc(subRegions.valley), asc(subRegions.name));
 
+  // Wine types with counts for varietal filter
+  const wineTypeCounts = await db
+    .select({
+      id: wineTypes.id,
+      name: wineTypes.name,
+      count: count(),
+    })
+    .from(wineTypes)
+    .innerJoin(wines, eq(wines.wineTypeId, wineTypes.id))
+    .groupBy(wineTypes.id, wineTypes.name)
+    .orderBy(desc(count()))
+    .having(sql`count(*) > 0`);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
@@ -124,7 +259,7 @@ export default async function WineriesPage({
       </div>
 
       <div className="mb-8">
-        <WineryFilters subRegions={allSubRegions} />
+        <WineryFilters subRegions={allSubRegions} wineTypes={wineTypeCounts} />
       </div>
 
       {results.length > 0 ? (
@@ -143,6 +278,16 @@ export default async function WineriesPage({
 
       <div className="mt-8">
         <Pagination currentPage={page} totalPages={totalPages} />
+      </div>
+
+      <div className="mt-12 text-center">
+        <Link
+          href="/day-trips"
+          className="inline-flex items-center gap-2 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+        >
+          <Route className="h-4 w-4" />
+          Explore Day Trip Routes
+        </Link>
       </div>
     </div>
   );
