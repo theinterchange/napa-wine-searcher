@@ -27,7 +27,7 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Wine className="h-6 w-6 text-burgundy-700 dark:text-burgundy-400" />
+            <Wine className="h-6 w-6 text-burgundy-700 dark:text-burgundy-300" />
             <span className="font-heading text-xl font-bold text-burgundy-900 dark:text-cream-100">
               Wine Country Guide
             </span>

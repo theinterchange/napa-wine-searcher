@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { db } from "@/db";
-import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos } from "@/db/schema";
+import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos, dayTripRoutes, dayTripStops } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Route } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
 import { WineryInfoSection, HoursSection } from "@/components/detail/WineryInfoSection";
 import { WineTable } from "@/components/detail/WineTable";
 import { TastingTable } from "@/components/detail/TastingTable";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
+import { VisitedButton } from "@/components/detail/VisitedButton";
 import { NotesEditor } from "@/components/detail/NotesEditor";
 import type { Metadata } from "next";
 
@@ -17,6 +18,8 @@ export async function generateStaticParams() {
   return all.map((w) => ({ slug: w.slug }));
 }
 
+const BASE_URL = "https://napa-winery-search.vercel.app";
+
 export async function generateMetadata({
   params,
 }: {
@@ -24,16 +27,41 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const [winery] = await db
-    .select({ name: wineries.name, shortDescription: wineries.shortDescription })
+    .select({
+      name: wineries.name,
+      shortDescription: wineries.shortDescription,
+      heroImageUrl: wineries.heroImageUrl,
+      city: wineries.city,
+    })
     .from(wineries)
     .where(eq(wineries.slug, slug))
     .limit(1);
 
   if (!winery) return { title: "Winery Not Found" };
 
+  const title = `${winery.name} | Wine Country Guide`;
+  const description =
+    winery.shortDescription || `Visit ${winery.name} in wine country`;
+
   return {
-    title: `${winery.name} | Wine Country Guide`,
-    description: winery.shortDescription || `Visit ${winery.name} in wine country`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/wineries/${slug}`,
+      siteName: "Wine Country Guide",
+      type: "website",
+      ...(winery.heroImageUrl && {
+        images: [{ url: winery.heroImageUrl, alt: winery.name }],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(winery.heroImageUrl && { images: [winery.heroImageUrl] }),
+    },
   };
 }
 
@@ -80,7 +108,7 @@ export default async function WineryDetailPage({
 
   if (!winery) notFound();
 
-  const [wineryWines, tastings, photos] = await Promise.all([
+  const [wineryWines, tastings, photos, dayTrips] = await Promise.all([
     db
       .select({
         id: wines.id,
@@ -109,25 +137,92 @@ export default async function WineryDetailPage({
       })
       .from(wineryPhotos)
       .where(eq(wineryPhotos.wineryId, winery.id)),
+    db
+      .select({
+        slug: dayTripRoutes.slug,
+        title: dayTripRoutes.title,
+      })
+      .from(dayTripStops)
+      .innerJoin(dayTripRoutes, eq(dayTripStops.routeId, dayTripRoutes.id))
+      .where(eq(dayTripStops.wineryId, winery.id)),
   ]);
 
   // Skip the first photo if it matches the hero image (avoid duplication)
   const galleryPhotos = photos.filter((p) => p.url !== winery.heroImageUrl);
 
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": ["LocalBusiness", "Winery"],
+    name: winery.name,
+    description: winery.description || winery.shortDescription,
+    url: `${BASE_URL}/wineries/${winery.slug}`,
+    ...(winery.heroImageUrl && { image: winery.heroImageUrl }),
+    ...(winery.phone && { telephone: winery.phone }),
+    ...(winery.email && { email: winery.email }),
+    ...(winery.websiteUrl && { sameAs: winery.websiteUrl }),
+    address: {
+      "@type": "PostalAddress",
+      ...(winery.address && { streetAddress: winery.address }),
+      ...(winery.city && { addressLocality: winery.city }),
+      addressRegion: winery.state || "CA",
+      ...(winery.zip && { postalCode: winery.zip }),
+      addressCountry: "US",
+    },
+    ...(winery.lat &&
+      winery.lng && {
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: winery.lat,
+          longitude: winery.lng,
+        },
+      }),
+    ...(winery.aggregateRating && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: winery.aggregateRating,
+        bestRating: 5,
+        ratingCount: winery.totalRatings || 1,
+      },
+    }),
+    ...(winery.priceLevel && {
+      priceRange: "$".repeat(winery.priceLevel),
+    }),
+    ...(tastings.length > 0 && {
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Tasting Experiences",
+        itemListElement: tastings.slice(0, 5).map((t) => ({
+          "@type": "Offer",
+          name: t.name,
+          ...(t.description && { description: t.description }),
+          ...(t.price && {
+            price: t.price,
+            priceCurrency: "USD",
+          }),
+        })),
+      },
+    }),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumbs */}
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
           <Link href="/" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
+          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           <Link href="/wineries" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
             Wineries
           </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-[var(--foreground)] font-medium truncate">{winery.name}</span>
+          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">{winery.name}</span>
         </nav>
       </div>
       <WineryHero winery={winery} />
@@ -151,9 +246,25 @@ export default async function WineryDetailPage({
             Last verified: {new Date(winery.curatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })}
           </p>
         )}
-        <div className="mb-6 flex gap-3">
+        <div className="mb-6 flex flex-wrap gap-3">
           <FavoriteButton wineryId={winery.id} />
+          <VisitedButton wineryId={winery.id} />
         </div>
+
+        {dayTrips.length > 0 && (
+          <div className="mb-6 flex flex-wrap gap-2">
+            {dayTrips.map((trip) => (
+              <Link
+                key={trip.slug}
+                href={`/day-trips/${trip.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-full bg-burgundy-50 dark:bg-burgundy-950 border border-burgundy-200 dark:border-burgundy-800 px-3 py-1 text-xs font-medium text-burgundy-700 dark:text-burgundy-300 hover:bg-burgundy-100 dark:hover:bg-burgundy-900 transition-colors"
+              >
+                <Route className="h-3 w-3" />
+                {trip.title}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* About + Gallery (left) / Visit Info (right) */}
         <WineryInfoSection winery={winery} photos={galleryPhotos} />

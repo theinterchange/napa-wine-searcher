@@ -37,7 +37,7 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
           {winery.name}
         </h1>
         {winery.shortDescription && (
-          <p className="mt-4 max-w-2xl text-lg text-burgundy-200">
+          <p className="mt-4 max-w-2xl text-lg text-burgundy-100">
             {winery.shortDescription}
           </p>
         )}
@@ -56,7 +56,7 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
             </div>
           )}
           {winery.priceLevel && (
-            <span className="text-gold-400 font-medium">
+            <span className="text-gold-200 font-medium" aria-label={`Price level ${winery.priceLevel} of 4`}>
               {"$".repeat(winery.priceLevel)}
             </span>
           )}

@@ -24,6 +24,7 @@ export function MapInfoCard({
       <button
         onClick={onClose}
         className="absolute top-2 right-3 text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-lg"
+        aria-label="Close"
       >
         &times;
       </button>
@@ -38,13 +39,17 @@ export function MapInfoCard({
         </p>
       )}
       <div className="mt-3 flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-          <span className="text-sm font-medium">
-            {winery.aggregateRating?.toFixed(1)}
-          </span>
-        </div>
-        <span className="text-sm text-[var(--muted-foreground)]">
+        {winery.aggregateRating != null ? (
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+            <span className="text-sm font-medium">
+              {winery.aggregateRating.toFixed(1)}
+            </span>
+          </div>
+        ) : (
+          <div />
+        )}
+        <span className="text-sm text-[var(--muted-foreground)]" aria-label={`Price level ${winery.priceLevel || 2} of 4`}>
           {"$".repeat(winery.priceLevel || 2)}
         </span>
       </div>

@@ -50,7 +50,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
           <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
             {winery.name}
           </h3>
-          <span className="shrink-0 text-sm text-[var(--muted-foreground)]">
+          <span className="shrink-0 text-sm text-[var(--muted-foreground)]" aria-label={`Price level ${winery.priceLevel || 2} of 4`}>
             {"$".repeat(winery.priceLevel || 2)}
           </span>
         </div>
@@ -65,17 +65,21 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
           {winery.shortDescription}
         </p>
         <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-            <span className="text-sm font-medium">
-              {winery.aggregateRating?.toFixed(1) || "N/A"}
-            </span>
-            {winery.totalRatings != null && (
-              <span className="text-xs text-[var(--muted-foreground)]">
-                ({winery.totalRatings.toLocaleString()})
+          {winery.aggregateRating != null ? (
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+              <span className="text-sm font-medium">
+                {winery.aggregateRating.toFixed(1)}
               </span>
-            )}
-          </div>
+              {winery.totalRatings != null && (
+                <span className="text-xs text-[var(--muted-foreground)]">
+                  ({winery.totalRatings.toLocaleString()})
+                </span>
+              )}
+            </div>
+          ) : (
+            <div />
+          )}
           <div className="flex gap-1.5">
             {winery.reservationRequired && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">

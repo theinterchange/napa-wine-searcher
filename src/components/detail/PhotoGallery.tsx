@@ -50,7 +50,8 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             <button
               key={photo.id}
               onClick={() => setLightboxIndex(i)}
-              className="flex-shrink-0 w-36 h-24 sm:w-auto sm:h-28 rounded-lg overflow-hidden border border-[var(--border)] hover:border-burgundy-500 transition-colors focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+              className="flex-shrink-0 w-36 h-24 sm:w-auto sm:h-24 rounded-lg overflow-hidden border border-[var(--border)] hover:border-burgundy-500 transition-colors focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+              aria-label={`View photo ${i + 1} of ${photos.length}`}
             >
               <img
                 src={photo.url}
@@ -68,6 +69,9 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
           onClick={close}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Photo gallery"
         >
           {/* Close button */}
           <button
