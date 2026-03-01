@@ -14,6 +14,8 @@ interface WineryCardProps {
   reservationRequired: boolean | null;
   dogFriendly: boolean | null;
   picnicFriendly: boolean | null;
+  kidFriendly: boolean | null;
+  kidFriendlyConfidence: string | null;
   curated: boolean | null;
   heroImageUrl: string | null;
 }
@@ -54,13 +56,14 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             {"$".repeat(winery.priceLevel || 2)}
           </span>
         </div>
-        <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
-          <MapPin className="h-3.5 w-3.5" />
-          <span>
-            {winery.subRegion}
-            {winery.city && ` · ${winery.city}`}
-          </span>
-        </div>
+        {(winery.subRegion || winery.city) && (
+          <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
+            <MapPin className="h-3.5 w-3.5" />
+            <span>
+              {[winery.subRegion, winery.city].filter(Boolean).join(" · ")}
+            </span>
+          </div>
+        )}
         <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
           {winery.shortDescription}
         </p>
@@ -89,6 +92,19 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             {winery.dogFriendly && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-olive-100 text-olive-700 dark:bg-olive-900 dark:text-olive-300">
                 Dog OK
+              </span>
+            )}
+            {winery.kidFriendly && winery.kidFriendlyConfidence === "high" && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                Kid Friendly
+              </span>
+            )}
+            {winery.kidFriendly && winery.kidFriendlyConfidence === "medium" && (
+              <span
+                className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+                title="Check with winery"
+              >
+                Kid Friendly*
               </span>
             )}
           </div>

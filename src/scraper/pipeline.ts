@@ -9,12 +9,13 @@
  *   npx tsx src/scraper/pipeline.ts --dry-run                # Extract without DB write
  *   npx tsx src/scraper/pipeline.ts --force                  # Re-scrape even if unchanged
  *   npx tsx src/scraper/pipeline.ts --only-unscraped         # Only wineries not yet scraped
+ *   npx tsx src/scraper/pipeline.ts --missing-data           # Wineries with data gaps (no wines/tastings/prices)
  *   npx tsx src/scraper/pipeline.ts --status                 # Show scrape status
  */
 
 import { readFileSync, existsSync } from "fs";
 import pLimit from "p-limit";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 import { wineries } from "../db/schema";
@@ -36,7 +37,7 @@ import { getLLMCostSummary } from "./extraction/llm-client";
 import { validateExtraction } from "./ingestion/validate";
 import { upsertWinery, removeNonTargetWineries } from "./ingestion/writer";
 
-function parseArgs(): PipelineOptions & { status?: boolean; onlyUnscraped?: boolean } {
+function parseArgs(): PipelineOptions & { status?: boolean; onlyUnscraped?: boolean; missingData?: boolean } {
   const args = process.argv.slice(2);
   return {
     winery: args.includes("--winery")
@@ -52,6 +53,7 @@ function parseArgs(): PipelineOptions & { status?: boolean; onlyUnscraped?: bool
       : 25,
     status: args.includes("--status"),
     onlyUnscraped: args.includes("--only-unscraped"),
+    missingData: args.includes("--missing-data"),
   };
 }
 
@@ -290,6 +292,37 @@ async function main() {
     const before = toProcess.length;
     toProcess = toProcess.filter((t) => !scrapedSlugs.has(t.slug));
     console.log(`--only-unscraped: filtered ${before} → ${toProcess.length} (skipped ${before - toProcess.length} already-scraped)\n`);
+  }
+
+  // Filter to wineries with data gaps (no wines, no tastings, or all prices NULL)
+  if (opts.missingData) {
+    const dbClient = createClient({
+      url: process.env.DATABASE_URL || "file:./data/winery.db",
+      authToken: process.env.DATABASE_AUTH_TOKEN,
+    });
+    const pipelineDb = drizzle(dbClient);
+    const gapRows = await pipelineDb.all<{ slug: string }>(sql`
+      SELECT w.slug FROM wineries w
+      WHERE
+        -- no wines at all
+        NOT EXISTS (SELECT 1 FROM wines wi WHERE wi.winery_id = w.id)
+        -- no tastings at all
+        OR NOT EXISTS (SELECT 1 FROM tasting_experiences te WHERE te.winery_id = w.id)
+        -- all wine prices NULL
+        OR (
+          EXISTS (SELECT 1 FROM wines wi WHERE wi.winery_id = w.id)
+          AND NOT EXISTS (SELECT 1 FROM wines wi WHERE wi.winery_id = w.id AND wi.price IS NOT NULL)
+        )
+        -- all tasting prices NULL
+        OR (
+          EXISTS (SELECT 1 FROM tasting_experiences te WHERE te.winery_id = w.id)
+          AND NOT EXISTS (SELECT 1 FROM tasting_experiences te WHERE te.winery_id = w.id AND te.price IS NOT NULL)
+        )
+    `);
+    const gapSlugs = new Set(gapRows.map((r) => r.slug));
+    const before = toProcess.length;
+    toProcess = toProcess.filter((t) => gapSlugs.has(t.slug));
+    console.log(`--missing-data: found ${gapSlugs.size} wineries with data gaps, filtered ${before} → ${toProcess.length}\n`);
   }
 
   console.log(

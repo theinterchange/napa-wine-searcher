@@ -1,0 +1,35 @@
+# Wine Country Guide — Napa & Sonoma Valley Wineries
+
+> A comprehensive directory of wineries in Napa Valley and Sonoma County, California.
+
+## About
+
+Wine Country Guide is a free, searchable directory of 191+ wineries across Napa Valley and Sonoma County. The site provides detailed profiles including wines produced, tasting experiences with pricing, hours, amenities, and visitor information.
+
+## Data Coverage
+
+- 191+ wineries across Napa Valley and Sonoma County
+- 2,270+ wines cataloged across 22 varietals (Cabernet Sauvignon, Pinot Noir, Chardonnay, and more)
+- 670+ tasting experiences with pricing from $25 to $500+
+- Sub-regions: Oakville, Rutherford, St. Helena, Yountville, Calistoga, Carneros, Stags Leap, Russian River Valley, Dry Creek Valley, Sonoma Valley, and more
+
+## Key Features
+
+- Search and filter wineries by region, price, rating, varietal, and amenities
+- Detailed winery profiles with wines, tastings, hours, and contact info
+- Interactive map view of all wineries
+- Side-by-side winery comparison tool
+- Curated day-trip route suggestions
+- Amenity filters: dog-friendly, picnic-friendly, walk-ins welcome
+
+## Useful URLs
+
+- Homepage: https://napa-winery-search.vercel.app
+- Browse all wineries: https://napa-winery-search.vercel.app/wineries
+- Map view: https://napa-winery-search.vercel.app/map
+- Day trip routes: https://napa-winery-search.vercel.app/day-trips
+- Individual winery pages: https://napa-winery-search.vercel.app/wineries/{winery-slug}
+
+## Contact
+
+This site is maintained as an independent guide to help visitors plan wine country trips.

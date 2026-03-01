@@ -92,11 +92,15 @@ export default async function WineryDetailPage({
       reservationRequired: wineries.reservationRequired,
       dogFriendly: wineries.dogFriendly,
       picnicFriendly: wineries.picnicFriendly,
+      kidFriendly: wineries.kidFriendly,
+      kidFriendlyConfidence: wineries.kidFriendlyConfidence,
       priceLevel: wineries.priceLevel,
       aggregateRating: wineries.aggregateRating,
       totalRatings: wineries.totalRatings,
       curated: wineries.curated,
       curatedAt: wineries.curatedAt,
+      lastScrapedAt: wineries.lastScrapedAt,
+      updatedAt: wineries.updatedAt,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
@@ -229,7 +233,9 @@ export default async function WineryDetailPage({
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {!winery.curated && (
           <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
-            This listing uses estimated data. Visit{" "}
+            Last updated{" "}
+            {new Date(winery.lastScrapedAt || winery.updatedAt || "2025-01-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}.
+            {" "}Visit{" "}
             <a
               href={winery.websiteUrl ?? "#"}
               target="_blank"

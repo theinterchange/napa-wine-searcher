@@ -25,14 +25,14 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
         </div>
       )}
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 text-burgundy-300 text-sm mb-4">
-          <MapPin className="h-4 w-4" />
-          <span>
-            {winery.subRegion} &middot;{" "}
-            {winery.valley === "napa" ? "Napa Valley" : "Sonoma County"}
-            {winery.city && ` · ${winery.city}`}
-          </span>
-        </div>
+        {(winery.subRegion || winery.valley || winery.city) && (
+          <div className="flex items-center gap-2 text-burgundy-300 text-sm mb-4">
+            <MapPin className="h-4 w-4" />
+            <span>
+              {[winery.subRegion, winery.valley === "napa" ? "Napa Valley" : winery.valley === "sonoma" ? "Sonoma County" : null, winery.city].filter(Boolean).join(" · ")}
+            </span>
+          </div>
+        )}
         <h1 className="font-heading text-4xl sm:text-5xl font-bold">
           {winery.name}
         </h1>

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Wine, Map, Menu, X, GitCompareArrows } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { GlobalSearch } from "./GlobalSearch";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,8 @@ export function Navbar() {
               Wine Country Guide
             </span>
           </Link>
+
+          <GlobalSearch />
 
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(({ href, label, icon: Icon }) => (
@@ -70,13 +73,14 @@ export function Navbar() {
             )}
           </div>
 
-          <button
-            className="md:hidden"
-            onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
-          >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          <div className="flex md:hidden items-center gap-1">
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
 
         {open && (

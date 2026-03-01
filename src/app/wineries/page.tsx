@@ -7,7 +7,7 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import { WineryFilters } from "@/components/directory/WineryFilters";
 import { WinerySearch } from "@/components/directory/WinerySearch";
 import { Pagination } from "@/components/directory/Pagination";
-import { TASTING_PRICE_TIERS, WINE_PRICE_TIERS } from "@/lib/filters";
+import { TASTING_PRICE_TIERS } from "@/lib/filters";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -42,16 +42,11 @@ export default async function WineriesPage({
   const q = params.q || "";
   const valley = params.valley || "";
   const region = params.region || "";
-  const price = params.price || "";
   const rating = params.rating || "";
-  const reservation = params.reservation || "";
-  const dog = params.dog || "";
-  const picnic = params.picnic || "";
-  const kid = params.kid || "";
   const sort = params.sort || "rating";
   const varietal = params.varietal || "";
   const tastingPrice = params.tastingPrice || "";
-  const winePrice = params.winePrice || "";
+  const amenities = params.amenities || "";
 
   // Build conditions
   const conditions = [];
@@ -59,28 +54,44 @@ export default async function WineriesPage({
     conditions.push(like(wineries.name, `%${q}%`));
   }
   if (valley) {
-    conditions.push(eq(subRegions.valley, valley as "napa" | "sonoma"));
+    const valleys = valley.split(",").filter(Boolean);
+    if (valleys.length === 1) {
+      conditions.push(eq(subRegions.valley, valleys[0] as "napa" | "sonoma"));
+    } else if (valleys.length > 1) {
+      conditions.push(inArray(subRegions.valley, valleys as ("napa" | "sonoma")[]));
+    }
   }
   if (region) {
-    conditions.push(eq(subRegions.slug, region));
-  }
-  if (price) {
-    conditions.push(eq(wineries.priceLevel, parseInt(price)));
+    const regions = region.split(",").filter(Boolean);
+    if (regions.length === 1) {
+      conditions.push(eq(subRegions.slug, regions[0]));
+    } else if (regions.length > 1) {
+      conditions.push(inArray(subRegions.slug, regions));
+    }
   }
   if (rating) {
     conditions.push(gte(wineries.aggregateRating, parseFloat(rating)));
   }
-  if (reservation === "false") {
-    conditions.push(eq(wineries.reservationRequired, false));
-  }
-  if (dog === "true") {
-    conditions.push(eq(wineries.dogFriendly, true));
-  }
-  if (picnic === "true") {
-    conditions.push(eq(wineries.picnicFriendly, true));
-  }
-  if (kid === "true") {
-    conditions.push(eq(wineries.kidFriendly, true));
+
+  // Amenities filter
+  if (amenities) {
+    const amenityList = amenities.split(",").filter(Boolean);
+    for (const a of amenityList) {
+      switch (a) {
+        case "dog":
+          conditions.push(eq(wineries.dogFriendly, true));
+          break;
+        case "kid":
+          conditions.push(eq(wineries.kidFriendly, true));
+          break;
+        case "picnic":
+          conditions.push(eq(wineries.picnicFriendly, true));
+          break;
+        case "walkin":
+          conditions.push(eq(wineries.reservationRequired, false));
+          break;
+      }
+    }
   }
 
   // Varietal filter: find winery IDs that have matching wine types
@@ -137,38 +148,8 @@ export default async function WineriesPage({
     }
   }
 
-  // Wine price filter: find winery IDs with wines in selected price ranges
-  let winePriceWineryIds: number[] | null = null;
-  if (winePrice) {
-    const keys = winePrice.split(",").filter(Boolean);
-    const wpConditions = keys
-      .map((key) => {
-        const tier = WINE_PRICE_TIERS.find((t) => t.key === key);
-        if (!tier) return null;
-        return and(gte(wines.price, tier.min), lte(wines.price, tier.max));
-      })
-      .filter(Boolean);
-
-    if (wpConditions.length > 0) {
-      const matched = await db
-        .selectDistinct({ wineryId: wines.wineryId })
-        .from(wines)
-        .where(
-          wpConditions.length === 1
-            ? wpConditions[0]!
-            : sql`(${sql.join(
-                wpConditions.map((c) => sql`(${c})`),
-                sql` OR `
-              )})`
-        );
-      winePriceWineryIds = matched.map((m) => m.wineryId);
-    } else {
-      winePriceWineryIds = [];
-    }
-  }
-
   // Intersect winery ID sets from sub-filters
-  const idFilters = [varietalWineryIds, tastingPriceWineryIds, winePriceWineryIds].filter(
+  const idFilters = [varietalWineryIds, tastingPriceWineryIds].filter(
     (ids): ids is number[] => ids !== null
   );
   if (idFilters.length > 0) {
@@ -218,6 +199,8 @@ export default async function WineriesPage({
       reservationRequired: wineries.reservationRequired,
       dogFriendly: wineries.dogFriendly,
       picnicFriendly: wineries.picnicFriendly,
+      kidFriendly: wineries.kidFriendly,
+      kidFriendlyConfidence: wineries.kidFriendlyConfidence,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,

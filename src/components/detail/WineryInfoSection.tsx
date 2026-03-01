@@ -1,4 +1,4 @@
-import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck, Baby } from "lucide-react";
 import { PhotoGallery } from "./PhotoGallery";
 
 interface Hours {
@@ -24,6 +24,8 @@ interface WineryInfoProps {
   reservationRequired: boolean | null;
   dogFriendly: boolean | null;
   picnicFriendly: boolean | null;
+  kidFriendly: boolean | null;
+  kidFriendlyConfidence: string | null;
   description: string | null;
 }
 
@@ -51,7 +53,7 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 mt-0.5 text-[var(--muted-foreground)]" />
                 <span>
-                  {winery.address}, {winery.city}, {winery.state} {winery.zip}
+                  {[winery.address, winery.city, [winery.state, winery.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ")}
                 </span>
               </div>
             )}
@@ -96,6 +98,14 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               <div className="flex items-center gap-2 text-olive-700 dark:text-olive-400">
                 <TreePine className="h-4 w-4" />
                 Picnic Friendly
+              </div>
+            )}
+            {winery.kidFriendly && (
+              <div className="flex items-center gap-2 text-olive-700 dark:text-olive-400">
+                <Baby className="h-4 w-4" />
+                Kid Friendly{winery.kidFriendlyConfidence === "medium" && (
+                  <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
+                )}
               </div>
             )}
           </div>

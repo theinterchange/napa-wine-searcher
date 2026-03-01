@@ -17,7 +17,7 @@ const client = createClient({
 });
 const db = drizzle(client);
 
-const MAX_PHOTOS = 5;
+const MAX_PHOTOS = 8;
 const DELAY_MS = 200; // small delay between wineries to be polite
 
 function sleep(ms: number) {
