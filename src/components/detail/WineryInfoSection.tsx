@@ -89,20 +89,20 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.dogFriendly && (
-              <div className="flex items-center gap-2 text-olive-700 dark:text-olive-400">
-                <Dog className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
                 Dog Friendly
               </div>
             )}
             {winery.picnicFriendly && (
-              <div className="flex items-center gap-2 text-olive-700 dark:text-olive-400">
-                <TreePine className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <TreePine className="h-4 w-4 text-[var(--muted-foreground)]" />
                 Picnic Friendly
               </div>
             )}
             {winery.kidFriendly && (
-              <div className="flex items-center gap-2 text-olive-700 dark:text-olive-400">
-                <Baby className="h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
                 Kid Friendly{winery.kidFriendlyConfidence === "medium" && (
                   <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
                 )}

@@ -23,6 +23,8 @@ export function Navbar() {
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
+  if (pathname === "/") return null;
+
   return (
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
