@@ -1,0 +1,472 @@
+{
+  "stags-leap-wine-cellars": {
+    "tastings": [
+      { "name": "Signature Wine Tasting", "price": 95, "description": "Private table with vineyard views; guided flight of four current release wines highlighting FAY and S.L.V. signatures.", "reservationRequired": true },
+      { "name": "Estate Experience", "price": 125, "description": "Cave tour followed by seated tasting of limited production wines including Cask 23, paired with artisanal cheese and charcuterie.", "reservationRequired": true },
+      { "name": "Collector's Experience", "price": 225, "description": "Cave tour with private tasting hosted by Estate Ambassador, featuring four Cabernet Sauvignon vintages from early 2000s to current, with seasonal bites.", "reservationRequired": true },
+      { "name": "Large Party Estate Experience", "price": 155, "description": "Private experience for groups of 7-14 including cave tour, Cellarius Kitchen visit, and flight of small lot wines with Cask 23, cheese, and charcuterie.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "caymus-vineyards": {
+    "tastings": [
+      { "name": "Seated Tasting", "price": 50, "description": "Variety wine tasting experience hosted at the winery. 1.5 hours by appointment.", "reservationRequired": true },
+      { "name": "By-the-Glass Service", "price": null, "description": "Walk-in glass pours available 9:30 AM - 4:30 PM.", "reservationRequired": false }
+    ],
+    "replaceTastings": true
+  },
+  "inglenook": {
+    "tastings": [
+      { "name": "Intro to Inglenook", "price": 255, "description": "Introduction to the historic estate and wines.", "reservationRequired": true },
+      { "name": "Cabernet Sauvignon Vertical", "price": 395, "description": "A vertical tasting showcasing different vintages of Cabernet Sauvignon.", "reservationRequired": true },
+      { "name": "Explore the Rutherford Bench", "price": 475, "description": "An in-depth exploration of wines from the Rutherford Bench appellation.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "rombauer-vineyards": {
+    "tastings": [
+      { "name": "Hosted Tasting", "price": 25, "description": "Guided flight of critically acclaimed wines led by a knowledgeable host. White wine flights available upon request.", "reservationRequired": true },
+      { "name": "Independent Experience", "price": null, "description": "Outdoor garden experience where guests enjoy wines at their own pace. 90-minute duration.", "reservationRequired": true },
+      { "name": "Cave Tour and Tasting", "price": 125, "description": "90-minute experience featuring a scenic garden walk into winemaking caves, educational tour, and a portfolio tasting followed by wine and small bites pairing. Fridays-Sundays at 10 AM.", "reservationRequired": true },
+      { "name": "Wine & Bites Pairing", "price": 75, "description": "Exclusive 90-minute experience pairing five Rombauer wines with food complements. Fridays-Saturdays for groups of 8 or fewer.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "regusci-winery": {
+    "tastings": [
+      { "name": "Estate Collection", "price": 45, "description": "Flight of estate-grown wines while your host shares the story of five generations of Napa Valley farming.", "reservationRequired": true },
+      { "name": "Legacy Collection", "price": 65, "description": "Elevated tasting centered around the flagship Cabernet Sauvignon, focusing on bold, expressive wines.", "reservationRequired": true },
+      { "name": "Garden Terrace Experience", "price": 65, "description": "Self-guided seated tasting amid the beauty of Regusci Winery's vineyards and garden.", "reservationRequired": true },
+      { "name": "Private Group Experience", "price": 100, "description": "Tours, tastings, and larger group and corporate outings in a private setting.", "reservationRequired": true },
+      { "name": "Hilltop Tasting Experience", "price": 200, "description": "Private tasting at the top of the historic Stags Leap ranch with a dedicated host and curated wine selections.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "ridge-lytton-springs": {
+    "tastings": [
+      { "name": "Lytton Springs Estate Tasting", "price": 35, "description": "Seated tasting flight of five single-vineyard wines from estate vineyards in Sonoma County and the Santa Cruz Mountains.", "reservationRequired": true },
+      { "name": "From Vine to Table Pairing", "price": 125, "description": "Guided tasting featuring seasonal bites paired with single vineyard wines, focusing on flavor interactions and food-wine harmony.", "reservationRequired": true },
+      { "name": "Century Tour & Library Tasting", "price": 65, "description": "Explores century-old vines with a seated tasting of current release wines alongside their older vintage counterparts.", "reservationRequired": true },
+      { "name": "Beautiful Mountain: Monte Bello Tasting", "price": 75, "description": "Private tasting offering a deep exploration of Monte Bello vineyard wines in an intimate seated experience.", "reservationRequired": true },
+      { "name": "Historic Vineyard Tour", "price": 125, "description": "Behind-the-scenes tour of rarely seen vineyard sites emphasizing sustainable practices, followed by tasting of rarely featured wines. May-October.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "hess-collection": {
+    "tastings": [
+      { "name": "Estate Tasting", "price": 85, "description": "Guided tasting of exclusive winery wines paired with visits to the historic property, contemporary art collection, and Lions Head Cellar.", "reservationRequired": true },
+      { "name": "ATV Vineyard Tour & Tasting", "price": 150, "description": "Venture into the 1,000+ acre mountainside vineyard property with a guide in a luxury ATV, with wine tastings among the vines.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "grgich-hills-estate": {
+    "tastings": [
+      { "name": "Seated Miljenko's Tasting", "price": 60, "description": "Exclusive tasting at the Rutherford estate featuring four limited production and specialty wines.", "reservationRequired": true },
+      { "name": "The AVA Exploration", "price": 125, "description": "Journey through five Regenerative Organic certified vineyards across Napa Valley appellations, including estate tour and cellar glimpse.", "reservationRequired": true },
+      { "name": "Private Library Tasting", "price": 250, "description": "Exclusive rare wine tasting of six wines in a private Library Room, customized to guest preferences.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "schramsberg-vineyards": {
+    "tastings": [
+      { "name": "Cave Tour with Sparkling Wine Tasting", "price": 90, "description": "Cave tour followed by tasting of five limited Schramsberg sparkling wines.", "reservationRequired": true },
+      { "name": "Cave Tour with Sparkling & Red Wine Tasting", "price": 100, "description": "Cave tour with combined portfolio of three Schramsberg sparkling wines and three Davies Vineyards wines.", "reservationRequired": true },
+      { "name": "Cave Tour with Reserve Wine & Cheese Pairing", "price": 140, "description": "Cave tour with tasting of limited sparkling and still wines accompanied by artisan cheeses.", "reservationRequired": true },
+      { "name": "All Sparkling Tasting", "price": 65, "description": "Tasting of five Schramsberg sparkling wines (no cave tour).", "reservationRequired": true },
+      { "name": "Sparkling & Red Wine Tasting", "price": 75, "description": "Six-wine portfolio including three Schramsberg sparkling and three Davies Pinot Noirs or Cabernet Sauvignons.", "reservationRequired": true },
+      { "name": "Custom Tasting", "price": 85, "description": "Guests select six wines from available Schramsberg and Davies Vineyards inventory.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "honig-vineyard-winery": {
+    "tastings": [
+      { "name": "Fly By Flight Tasting", "price": null, "description": "A quick, efficient tasting option for guests with limited time.", "reservationRequired": true },
+      { "name": "Terrace Tasting Experience", "price": null, "description": "Relaxed, seated tasting on the outdoor Terrace with gorgeous vineyard views.", "reservationRequired": true },
+      { "name": "Eco Tour & Vineyard Experience", "price": null, "description": "Tour the vineyard and observe environmental conservation practices while tasting wines.", "reservationRequired": true },
+      { "name": "Reserve Room AVA Experience", "price": 115, "description": "Educational seated tasting in the Reserve Room exploring soil structures and different vineyard locations.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "la-crema": {
+    "tastings": [
+      { "name": "Estate Tasting", "price": 35, "description": "Intimate seated tasting overlooking Saralee's Vineyard with six wines showcasing cool-climate varietals.", "reservationRequired": true },
+      { "name": "Nine Barrel Tasting", "price": 80, "description": "Experience the pinnacle of La Crema's portfolio featuring wines blended from top barrels of three prized vineyards.", "reservationRequired": true },
+      { "name": "Wine & Bites Pairing", "price": 85, "description": "Three seasonally prepared bites paired with small-production, limited-release wines by Executive Chef.", "reservationRequired": true },
+      { "name": "Sparkling & Oysters", "price": 44, "description": "Half dozen locally sourced oysters paired with a glass of Saralee's Vineyard sparkling wine.", "reservationRequired": true },
+      { "name": "Best of The Vine Estate Tour", "price": 95, "description": "Behind-the-scenes vineyard access, sustainability practices, and exclusive wines. April-October.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "beringer-vineyards": {
+    "tastings": [
+      { "name": "Beringer Architecture Tour", "price": 35, "description": "Tour of the historic Beringer estate and its architecture.", "reservationRequired": true },
+      { "name": "Beringer Estate Tour", "price": 85, "description": "Comprehensive tour of the Beringer estate with wine tasting.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "castello-di-amorosa": {
+    "wines": [
+      { "name": "La Fantasia Rosé", "wineType": "Rosé", "price": 36, "vintage": 2024 },
+      { "name": "Dolcino Gewürztraminer", "wineType": "Gewürztraminer", "price": 35, "vintage": 2023 },
+      { "name": "Spumante del Castello Brut", "wineType": "Sparkling Wine", "price": 49, "vintage": 2022 },
+      { "name": "Merlot", "wineType": "Merlot", "price": 49, "vintage": 2019 },
+      { "name": "Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "price": 69, "vintage": 2019 },
+      { "name": "Serata Red Blend", "wineType": "Red Blend", "price": 55, "vintage": 2023 },
+      { "name": "Il Barone Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "price": 110, "vintage": 2019 },
+      { "name": "La Castellana Super Tuscan", "wineType": "Red Blend", "price": 125, "vintage": 2018 },
+      { "name": "Il Passito Late Harvest", "wineType": "Dessert Wine", "price": 49, "vintage": 2020 }
+    ],
+    "replaceWines": true
+  },
+  "joseph-phelps-vineyards": {
+    "tastings": [
+      { "name": "Founder's Tasting", "price": null, "description": "Personalized, seated tasting with a Wine Educator featuring current release Napa Valley and Sonoma Coast wines, including Insignia.", "reservationRequired": true },
+      { "name": "Collector's Tasting", "price": null, "description": "Exclusive seated experience inside the Home Ranch with curated selections of exclusive wines, library bottles, Insignia, and seasonal food pairings.", "reservationRequired": true },
+      { "name": "Curated Tasting Journey", "price": null, "description": "Build a personalized flight featuring current-release bottlings, from elegant single-vineyards to flagship blends.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "mumm-napa": {
+    "tastings": [
+      { "name": "Terrace Tasting", "price": null, "description": "Enjoy sparkling wines on the terrace overlooking Napa Valley vineyards.", "reservationRequired": false },
+      { "name": "Oak Terrace Tasting", "price": null, "description": "Seated sparkling wine tasting in an intimate setting.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "opus-one": {
+    "tastings": [
+      { "name": "Tasting Experience", "price": null, "description": "Experience the iconic Opus One wines by appointment. The winery receives guests by appointment only.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "macrostie-winery-estate-house": {
+    "tastings": [
+      { "name": "Signature Experience", "price": 50, "description": "Seated tasting featuring five wines with focus on single-vineyard Chardonnays and Pinot Noirs, personalized by Wine Ambassadors with panoramic valley views.", "reservationRequired": true },
+      { "name": "Nightwing Food & Wine Experience", "price": 125, "description": "Two-hour journey through Nightwing Estate Vineyard wines paired with caviar, local cheeses, and cured meats, including exclusive barrel tasting preview.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "capo-creek-winery": {
+    "tastings": [
+      { "name": "Belly Up to the Bar", "price": 55, "description": "Relaxed bar-side tasting of six wines with fresh kitchen bites. 1.5 hours.", "reservationRequired": true },
+      { "name": "Taste of the Day", "price": 95, "description": "High-end comfort food with 4 courses and 5 wines over 1.5 hours on the Garden Terrace.", "reservationRequired": true },
+      { "name": "Sunday Brunch", "price": 95, "description": "Three-course brunch with five wine pairings, offered Sundays starting at 10am.", "reservationRequired": true },
+      { "name": "Vineyard Immersion Tasting", "price": 165, "description": "Private vineyard tour and wine cave experience including lunch and wine pairings over 2 hours.", "reservationRequired": true },
+      { "name": "Mary's Table", "price": 225, "description": "Personally hosted by chef-winemaker Mary Roy in her private garden with 6 courses and 6 wines over 3 hours.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "fontanella-family": {
+    "tastings": [
+      { "name": "Golden Mornings Journey Tasting", "price": 45, "description": "Same as Journey Tasting with a special weekday rate. Monday-Thursday mornings.", "reservationRequired": true },
+      { "name": "Fontanella Journey Tasting", "price": 65, "description": "Guided journey through four current release wines plus a barrel room visit for a sample from the barrel, with a curated cheese plate.", "reservationRequired": true },
+      { "name": "Reserve Tour & Tasting", "price": 95, "description": "Elevated experience showcasing limited wines including the flagship Estate Reserve Cabernet Sauvignon and Per Sempre, with estate vineyard and barrel room overview.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "etude-wines": {
+    "wines": [
+      { "name": "Carneros Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 47 },
+      { "name": "Fiddlestix Vineyard Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 50 },
+      { "name": "North Canyon Vineyard Pinot Noir", "wineType": "Pinot Noir", "vintage": 2020, "price": 50 },
+      { "name": "Heirloom Pinot Noir", "wineType": "Pinot Noir", "vintage": 2022, "price": 95 },
+      { "name": "Deer Camp Vineyard Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 90 },
+      { "name": "Yamhela Vineyard Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 70 },
+      { "name": "Forte Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 70 },
+      { "name": "Temblor Vineyard Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023 },
+      { "name": "Heirloom Chardonnay", "wineType": "Chardonnay", "vintage": 2022, "price": 65 },
+      { "name": "Carneros Pinot Gris", "wineType": "Pinot Grigio", "vintage": 2024, "price": 35 },
+      { "name": "Carneros Pinot Noir Rosé", "wineType": "Rosé", "vintage": 2024, "price": 36 },
+      { "name": "Grace Benoist Ranch Blanc de Noirs", "wineType": "Sparkling Wine", "vintage": 2021, "price": 60 },
+      { "name": "Coombsville Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 155 },
+      { "name": "Rutherford Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 155 },
+      { "name": "Oakville Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 155 }
+    ],
+    "replaceWines": true,
+    "tastings": [
+      { "name": "Backroads Wine Tasting", "price": 30, "description": "Wine tasting experience at the Etude estate.", "reservationRequired": true },
+      { "name": "Winter Reserve Tasting", "price": 30, "description": "Seasonal reserve wine tasting.", "reservationRequired": true },
+      { "name": "Stanly Ranch Wine Tasting", "price": 35, "description": "Wine tasting at the Stanly Ranch location.", "reservationRequired": true },
+      { "name": "Discover Etude Tasting", "price": 40, "description": "Introduction to Etude wines.", "reservationRequired": true },
+      { "name": "CWT Wine Tasting Experience", "price": 50, "description": "Premium wine tasting experience.", "reservationRequired": true },
+      { "name": "Etude Tour and Tasting", "price": 65, "description": "Tour of the property followed by a seated tasting.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "rutherford-hill": {
+    "wines": [
+      { "name": "Napa Valley Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2024, "price": 27 },
+      { "name": "Rosé of Merlot", "wineType": "Rosé", "vintage": 2024, "price": 36 },
+      { "name": "Napa Valley Chardonnay", "wineType": "Chardonnay", "vintage": 2023, "price": 45 },
+      { "name": "Napa Valley Merlot", "wineType": "Merlot", "vintage": 2022, "price": 38 },
+      { "name": "Stags Leap District Merlot", "wineType": "Merlot", "vintage": 2022, "price": 70 },
+      { "name": "Carneros Merlot", "wineType": "Merlot", "vintage": 2022, "price": 70 },
+      { "name": "Oak Knoll Merlot", "wineType": "Merlot", "vintage": 2022, "price": 70 },
+      { "name": "Terlato Santa Barbara Pinot Noir", "wineType": "Pinot Noir", "vintage": 2021, "price": 62 },
+      { "name": "Malbec", "wineType": "Malbec", "vintage": 2021, "price": 65 },
+      { "name": "Cuvee Red", "wineType": "Red Blend", "vintage": 2021, "price": 55 },
+      { "name": "Winemaker's Blend", "wineType": "Red Blend", "vintage": 2021, "price": 68 },
+      { "name": "AJT Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 75 },
+      { "name": "Heaven's Peak Red Blend", "wineType": "Red Blend", "vintage": 2022, "price": 125 },
+      { "name": "Episode Red Blend", "wineType": "Red Blend", "vintage": 2019, "price": 195 }
+    ],
+    "replaceWines": true,
+    "tastings": [
+      { "name": "View of the Valley Wine Tasting", "price": 75, "description": "Seasonal selection of five current releases showcasing terroir and winemaking artistry.", "reservationRequired": true },
+      { "name": "Legacy Tasting", "price": 95, "description": "Explore the nuances of sub-appellate Cabernet Sauvignon and Merlot with comparative tasting.", "reservationRequired": true },
+      { "name": "Cave Tour & Tasting", "price": 95, "description": "90-minute guided tour of property and caves featuring five wine selections.", "reservationRequired": true },
+      { "name": "The Skyloft Experience", "price": 130, "description": "Exclusive private wine tastings with curated cheese and charcuterie selection.", "reservationRequired": true },
+      { "name": "ATV Vineyard & Cave Lounge Tasting", "price": 195, "description": "Estate vineyard tour via ATV, cave exploration, and reserve-tier wine tasting with cheese pairing.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "aonair-winery-caves": {
+    "tastings": [
+      { "name": "Private Tasting & Tour", "price": null, "description": "Exclusive behind-the-scenes journey into the art of winemaking and grape growing. Bookings fill 4-6 weeks in advance.", "reservationRequired": true }
+    ],
+    "replaceTastings": true
+  },
+  "viansa-winery": {
+    "wines": [
+      { "name": "Pinot Grigio, North Coast", "wineType": "Pinot Grigio", "vintage": 2023, "price": 30 },
+      { "name": "Chardonnay, North Coast", "wineType": "Chardonnay", "vintage": 2023, "price": 35 },
+      { "name": "Bianchetta Trevigiana, Carneros", "wineType": "White Blend", "vintage": 2023, "price": 35 },
+      { "name": "Prosecco Superiore, Valdobbiadene", "wineType": "Sparkling Wine", "price": 35 },
+      { "name": "Red Blend, Sonoma County", "wineType": "Red Blend", "vintage": 2022, "price": 35 },
+      { "name": "Estate Chardonnay, Carneros", "wineType": "Chardonnay", "vintage": 2023, "price": 40 },
+      { "name": "Estate Pinot Noir, Carneros", "wineType": "Pinot Noir", "vintage": 2023, "price": 55 },
+      { "name": "Montepulciano, Clements Hills", "wineType": "Montepulciano", "vintage": 2022, "price": 55 },
+      { "name": "Zinfandel, Dry Creek Valley", "wineType": "Zinfandel", "vintage": 2022, "price": 55 },
+      { "name": "Estate Sangiovese, Carneros", "wineType": "Sangiovese", "vintage": 2022, "price": 55 },
+      { "name": "Cabernet Sauvignon, Sonoma Valley", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 55 },
+      { "name": "Quattro Super Tuscan-Style Red Wine", "wineType": "Red Blend", "vintage": 2021, "price": 90 }
+    ],
+    "replaceWines": true
+  },
+  "v-sattui": {
+    "wines": [
+      { "name": "Bacci Bianco", "wineType": "White Blend", "vintage": 2023, "price": 29 },
+      { "name": "Muscat", "wineType": "Muscat", "vintage": 2023, "price": 31 },
+      { "name": "Napa Valley Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2024, "price": 33 },
+      { "name": "Dry Riesling, Mt. Veeder Estate", "wineType": "Riesling", "vintage": 2024, "price": 34 },
+      { "name": "Another World Riesling", "wineType": "Riesling", "vintage": 2024, "price": 34 },
+      { "name": "Off-Dry Riesling, Mt. Veeder Estate", "wineType": "Riesling", "vintage": 2024, "price": 34 },
+      { "name": "Los Carneros Semillon", "wineType": "Semillon", "vintage": 2023, "price": 35 },
+      { "name": "Field Blend (Natural Wine)", "wineType": "White Blend", "vintage": 2024, "price": 35 },
+      { "name": "Cara Chardonnay", "wineType": "Chardonnay", "vintage": 2022, "price": 37 },
+      { "name": "Albariño Skin Contact (Orange Wine)", "wineType": "White Blend", "vintage": 2024, "price": 38 },
+      { "name": "Los Carneros Tre Uve Bianco", "wineType": "White Blend", "vintage": 2024, "price": 38 },
+      { "name": "Napa Valley Chardonnay", "wineType": "Chardonnay", "vintage": 2023, "price": 39 },
+      { "name": "Los Carneros Chardonnay", "wineType": "Chardonnay", "vintage": 2023, "price": 45 },
+      { "name": "Collina d'Oro Chardonnay", "wineType": "Chardonnay", "vintage": 2023, "price": 52 },
+      { "name": "Reserve Stock Chardonnay", "wineType": "Chardonnay", "vintage": 2022, "price": 70 },
+      { "name": "Bacci Rosato", "wineType": "Rosé", "vintage": 2023, "price": 29 },
+      { "name": "Gamay Rouge", "wineType": "Rosé", "vintage": 2024, "price": 33 },
+      { "name": "Rosato di Pinot Noir", "wineType": "Rosé", "vintage": 2024, "price": 37 },
+      { "name": "Sattui Family Red", "wineType": "Red Blend", "vintage": 2022, "price": 36 },
+      { "name": "Bacci (Red Blend)", "wineType": "Red Blend", "vintage": 2023, "price": 39 },
+      { "name": "Katarina Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 39 },
+      { "name": "La Merica", "wineType": "Red Blend", "vintage": 2022, "price": 42 },
+      { "name": "Russian River Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 42 },
+      { "name": "Amador Ridge Vineyard Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 43 },
+      { "name": "Napa Valley Grenache", "wineType": "Grenache", "vintage": 2021, "price": 44 },
+      { "name": "Terra Forza Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 45 },
+      { "name": "Napa Valley Syrah", "wineType": "Syrah", "vintage": 2021, "price": 46 },
+      { "name": "Napa Valley Merlot", "wineType": "Merlot", "vintage": 2022, "price": 48 },
+      { "name": "Entanglement (GSM)", "wineType": "Red Blend", "vintage": 2022, "price": 48 },
+      { "name": "Collins Family Vineyard Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 48 },
+      { "name": "Los Carneros Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 48 },
+      { "name": "Another World Pinot Noir", "wineType": "Pinot Noir", "vintage": 2022, "price": 49 },
+      { "name": "Napa Valley Petite Sirah", "wineType": "Petite Sirah", "vintage": 2023, "price": 49 },
+      { "name": "Rocky Ridge Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 49 },
+      { "name": "School House Creek Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 49 },
+      { "name": "Napa Valley Malbec", "wineType": "Malbec", "vintage": 2022, "price": 52 },
+      { "name": "Vittorio's Vineyard Petit Verdot", "wineType": "Petit Verdot", "vintage": 2022, "price": 55 },
+      { "name": "Crow Ridge Vineyard Block 7 Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 57 },
+      { "name": "Napa Valley Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 61 },
+      { "name": "Collina d'Oro Pinot Noir", "wineType": "Pinot Noir", "vintage": 2022, "price": 68 },
+      { "name": "Quaglia Vineyard Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 68 },
+      { "name": "Howell Mtn Black-Sears Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 75 },
+      { "name": "Reserve Stock Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 75 },
+      { "name": "Vittorio's Vineyard Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 95 },
+      { "name": "Quaglia Vineyard Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 110 },
+      { "name": "Preston Vineyard Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 110 },
+      { "name": "Mt. Veeder Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 115 },
+      { "name": "Morisoli Vineyard Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 120 },
+      { "name": "Paradiso", "wineType": "Red Blend", "vintage": 2021, "price": 120 }
+    ],
+    "replaceWines": true
+  },
+  "st-francis-winery": {
+    "wines": [
+      { "name": "Chardonnay, Sonoma County", "wineType": "Chardonnay", "vintage": 2022, "price": 17 },
+      { "name": "Cabernet Sauvignon, Sonoma County", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 22 },
+      { "name": "Old Vine Zinfandel, Sonoma County", "wineType": "Zinfandel", "vintage": 2021, "price": 22 },
+      { "name": "Merlot, Sonoma County", "wineType": "Merlot", "vintage": 2021, "price": 22 },
+      { "name": "Pinot Noir, Sonoma County", "wineType": "Pinot Noir", "vintage": 2023, "price": 22 },
+      { "name": "Chardonnay, Wild Oak Vineyard", "wineType": "Chardonnay", "vintage": 2023, "price": 38 },
+      { "name": "Reserve Zinfandel", "wineType": "Zinfandel", "vintage": 2022, "price": 45 },
+      { "name": "Reserve Merlot", "wineType": "Merlot", "vintage": 2022, "price": 45 },
+      { "name": "Zinfandel, Dry Creek Valley", "wineType": "Zinfandel", "vintage": 2022, "price": 50 },
+      { "name": "Merlot, Behler Vineyard", "wineType": "Merlot", "vintage": 2022, "price": 52 },
+      { "name": "Old Vines Zinfandel, Tres Viejos", "wineType": "Zinfandel", "vintage": 2022, "price": 54 },
+      { "name": "Cabernet Sauvignon, Rockpile", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 72 },
+      { "name": "Cabernet Sauvignon, Lagomarsino Vineyard", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 75 },
+      { "name": "Cuvée Lago", "wineType": "Red Blend", "vintage": 2022, "price": 75 }
+    ],
+    "replaceWines": true
+  },
+  "st-clair-brown-winery-brewery": {
+    "wines": [
+      { "name": "Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2023, "price": 45 },
+      { "name": "White Blend", "wineType": "White Blend", "vintage": 2023, "price": 48 },
+      { "name": "Chardonnay", "wineType": "Chardonnay", "vintage": 2022, "price": 55 },
+      { "name": "Muscat (375ml)", "wineType": "Muscat", "vintage": 2022, "price": 45 },
+      { "name": "Rosé of Grenache", "wineType": "Rosé", "vintage": 2023, "price": 45 },
+      { "name": "Merlot", "wineType": "Merlot", "vintage": 2022, "price": 65 },
+      { "name": "Estate Syrah", "wineType": "Syrah", "vintage": 2023, "price": 80 },
+      { "name": "Red Blend", "wineType": "Red Blend", "vintage": 2023, "price": 90 }
+    ],
+    "replaceWines": true
+  },
+  "soda-rock-winery": {
+    "wines": [
+      { "name": "Wedding Cake Zinfandel", "wineType": "Zinfandel", "vintage": 2023, "price": 38 },
+      { "name": "Boar'd Eaux Red Blend", "wineType": "Red Blend", "vintage": 2023, "price": 40 },
+      { "name": "Boargerac Red Blend", "wineType": "Red Blend", "vintage": 2023, "price": 40 },
+      { "name": "Lord Snort Red Blend", "wineType": "Red Blend", "vintage": 2023, "price": 40 },
+      { "name": "Wild Boar Red Blend", "wineType": "Red Blend", "vintage": 2023, "price": 40 },
+      { "name": "Wentworth Zinfandel", "wineType": "Zinfandel", "vintage": 2023, "price": 40 },
+      { "name": "Lytton Station Primitivo", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Chalk Hill RSV Malbec", "wineType": "Malbec", "vintage": 2023, "price": 54 },
+      { "name": "Chalk Hill RSV Petit Verdot", "wineType": "Petit Verdot", "vintage": 2023, "price": 54 },
+      { "name": "The Stables Chalk Hill Cabernet Franc", "wineType": "Cabernet Franc", "vintage": 2023, "price": 54 },
+      { "name": "Meritage", "wineType": "Red Blend", "vintage": 2023, "price": 65 },
+      { "name": "Kenneth Carl Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 150 }
+    ],
+    "replaceWines": true
+  },
+  "roche-winery-vineyards": {
+    "wines": [
+      { "name": "Sparkling Brut Rosé", "wineType": "Sparkling Rosé", "vintage": 2023, "price": 50 },
+      { "name": "Sonoma County Rosé", "wineType": "Rosé", "vintage": 2024, "price": 35 },
+      { "name": "Unoaked Chardonnay", "wineType": "Chardonnay", "vintage": 2024, "price": 34 },
+      { "name": "Chardonnay Carneros", "wineType": "Chardonnay", "vintage": 2024, "price": 40 },
+      { "name": "Chardonnay American Oak Reserve", "wineType": "Chardonnay", "vintage": 2024, "price": 46 },
+      { "name": "Chardonnay French Oak Reserve", "wineType": "Chardonnay", "vintage": 2024, "price": 48 },
+      { "name": "Nouveau Pinot Noir", "wineType": "Pinot Noir", "vintage": 2023, "price": 36 },
+      { "name": "Pinot Noir Carneros", "wineType": "Pinot Noir", "vintage": 2021, "price": 46 },
+      { "name": "Longford Reserve Pinot Noir", "wineType": "Pinot Noir", "vintage": 2020, "price": 60 },
+      { "name": "Tipperary Reserve Pinot Noir", "wineType": "Pinot Noir", "vintage": 2020, "price": 60 },
+      { "name": "Cuvée Genevieve Pinot Noir", "wineType": "Pinot Noir", "vintage": 2021, "price": 85 },
+      { "name": "Merlot Carneros", "wineType": "Merlot", "vintage": 2023, "price": 45 },
+      { "name": "Merlot Reserve", "wineType": "Merlot", "vintage": 2021, "price": 60 },
+      { "name": "Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 75 }
+    ],
+    "replaceWines": true
+  },
+  "rams-gate": {
+    "wines": [
+      { "name": "Blanc de Noirs, Ram's Gate Estate", "wineType": "Sparkling Wine", "vintage": 2017, "price": 70 },
+      { "name": "Sauvignon Blanc, Ram's Gate Estate", "wineType": "Sauvignon Blanc", "vintage": 2022, "price": 40 },
+      { "name": "Pinot Blanc, Ram's Gate Estate", "wineType": "Pinot Blanc", "vintage": 2023, "price": 40 },
+      { "name": "Chardonnay, Cellar Note", "wineType": "Chardonnay", "vintage": 2021, "price": 58 },
+      { "name": "Chardonnay, Collector's Trust", "wineType": "Chardonnay", "vintage": 2019, "price": 150 },
+      { "name": "Rosé, Sonoma County", "wineType": "Rosé", "vintage": 2024, "price": 40 },
+      { "name": "Pinot Noir, Ram's Gate Estate", "wineType": "Pinot Noir", "vintage": 2021, "price": 85 },
+      { "name": "Grenache Syrah, Cellar Note", "wineType": "Red Blend", "vintage": 2019, "price": 69 },
+      { "name": "Cabernet Sauvignon, Cellar Note", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 75 },
+      { "name": "Cabernet Sauvignon, Berler Vineyard", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 115 }
+    ],
+    "replaceWines": true
+  },
+  "mazzocco-sonoma": {
+    "wines": [
+      { "name": "Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2024, "price": 29 },
+      { "name": "Chardonnay Mendocino Cuvée", "wineType": "Chardonnay", "vintage": 2023, "price": 30 },
+      { "name": "Rosé", "wineType": "Rosé", "vintage": 2024, "price": 29 },
+      { "name": "Cabernet Sauvignon Inheritance", "wineType": "Cabernet Sauvignon", "vintage": 2018, "price": 40 },
+      { "name": "Cabernet Sauvignon Chango", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 40 },
+      { "name": "Cabernet Sauvignon Signature", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 40 },
+      { "name": "Cabernet Sauvignon Aviation", "wineType": "Cabernet Sauvignon", "vintage": 2022, "price": 40 },
+      { "name": "Cabernet Sauvignon Reserve", "wineType": "Cabernet Sauvignon", "vintage": 2021, "price": 56 },
+      { "name": "CAZ", "wineType": "Red Blend", "vintage": 2023, "price": 40 },
+      { "name": "Vino Rosso", "wineType": "Red Blend", "vintage": 2023, "price": 38 },
+      { "name": "Petite Sirah Maria", "wineType": "Petite Sirah", "vintage": 2022, "price": 38 },
+      { "name": "Petite Sirah Chemise", "wineType": "Petite Sirah", "vintage": 2022, "price": 38 },
+      { "name": "Petite Sirah Briar", "wineType": "Petite Sirah", "vintage": 2022, "price": 38 },
+      { "name": "Petite Sirah Reserve Pony", "wineType": "Petite Sirah", "vintage": 2020, "price": 54 },
+      { "name": "Petite Sirah Reserve Florence", "wineType": "Petite Sirah", "vintage": 2020, "price": 54 },
+      { "name": "Petite Sirah Reserve Tombstone", "wineType": "Petite Sirah", "vintage": 2020, "price": 54 },
+      { "name": "Zinfandel Aguilera", "wineType": "Zinfandel", "vintage": 2023, "price": 32 },
+      { "name": "Zinfandel Verano", "wineType": "Zinfandel", "vintage": 2023, "price": 38 },
+      { "name": "Zinfandel Stone", "wineType": "Zinfandel", "vintage": 2023, "price": 38 },
+      { "name": "Zinfandel Seaton", "wineType": "Zinfandel", "vintage": 2023, "price": 38 },
+      { "name": "Zinfandel Warm Springs Ranch", "wineType": "Zinfandel", "vintage": 2023, "price": 38 },
+      { "name": "Zinfandel Boneyard", "wineType": "Zinfandel", "vintage": 2023, "price": 40 },
+      { "name": "Zinfandel Tombstone", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel Strawberry Field", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel Fog", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel Maria", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel West Dry Creek", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel Sullivan", "wineType": "Zinfandel", "vintage": 2023, "price": 42 },
+      { "name": "Zinfandel Stone Pony", "wineType": "Zinfandel", "vintage": 2023, "price": 46 },
+      { "name": "Zinfandel Pony", "wineType": "Zinfandel", "vintage": 2023, "price": 46 },
+      { "name": "Zinfandel Aguilera Old Vine Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 50 },
+      { "name": "Zinfandel Warm Springs Ranch Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 56 },
+      { "name": "Zinfandel Seaton Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 56 },
+      { "name": "Zinfandel Verano Old Vine Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 58 },
+      { "name": "Zinfandel West Dry Creek Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 58 },
+      { "name": "Zinfandel Smith Orchard Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 58 },
+      { "name": "Zinfandel Serracino Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 60 },
+      { "name": "Zinfandel Sullivan Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 60 },
+      { "name": "Zinfandel Florence Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 65 },
+      { "name": "Zinfandel Pomo Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 65 },
+      { "name": "Zinfandel Thomas Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 65 },
+      { "name": "Zinfandel Maple Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 70 },
+      { "name": "Zinfandel Pony Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 70 },
+      { "name": "Zinfandel Monte Rosso Reserve", "wineType": "Zinfandel", "vintage": 2023, "price": 90 }
+    ],
+    "replaceWines": true
+  },
+  "charles-krug": {
+    "wines": [
+      { "name": "Napa Valley Merlot", "wineType": "Merlot", "vintage": 2023, "price": 31 },
+      { "name": "Carneros-Napa Valley Chardonnay", "wineType": "Chardonnay", "vintage": 2024, "price": 26 },
+      { "name": "Napa Valley Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2024, "price": 23 },
+      { "name": "Napa Valley Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2023, "price": 42 },
+      { "name": "Carolina Bale Blanc de Blancs", "wineType": "Blanc de Blancs", "price": 70 },
+      { "name": "Carolina Bale Brut Rosé", "wineType": "Sparkling Rosé", "price": 70 },
+      { "name": "Limited Release Sauvignon Blanc", "wineType": "Sauvignon Blanc", "vintage": 2024, "price": 40 },
+      { "name": "Limited Release Carneros Chardonnay", "wineType": "Chardonnay", "vintage": 2023, "price": 55 },
+      { "name": "Limited Release St. Helena Rosé", "wineType": "Rosé", "vintage": 2024, "price": 48 },
+      { "name": "Limited Release Chenin Blanc", "wineType": "Chenin Blanc", "vintage": 2024, "price": 60 },
+      { "name": "Limited Release Yountville Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2023, "price": 70 },
+      { "name": "Limited Release Petite Sirah", "wineType": "Petite Sirah", "vintage": 2021, "price": 80 },
+      { "name": "Limited Release Merlot", "wineType": "Merlot", "vintage": 2021, "price": 80 },
+      { "name": "Limited Release Cabernet Franc", "wineType": "Cabernet Franc", "vintage": 2022, "price": 80 },
+      { "name": "Limited Release Malbec", "wineType": "Malbec", "vintage": 2022, "price": 85 },
+      { "name": "Limited Release Lot XXII Zinfandel Dessert Wine", "wineType": "Dessert Wine", "price": 40 },
+      { "name": "Limited Release Voltz Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2019, "price": 150 },
+      { "name": "Limited Release Slinsen Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2019, "price": 165 },
+      { "name": "Limited Release Cold Springs Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "vintage": 2019, "price": 175 }
+    ],
+    "replaceWines": true
+  },
+  "gundlach-bundschu": {
+    "wines": [
+      { "name": "Gewürztraminer", "wineType": "Gewürztraminer", "price": null },
+      { "name": "Chardonnay", "wineType": "Chardonnay", "price": null },
+      { "name": "Sauvignon Blanc", "wineType": "Sauvignon Blanc", "price": null },
+      { "name": "Rhinefarm Rosé", "wineType": "Rosé", "price": null },
+      { "name": "Pinot Noir", "wineType": "Pinot Noir", "price": null },
+      { "name": "Merlot", "wineType": "Merlot", "price": null },
+      { "name": "Mountain Cuvée", "wineType": "Red Blend", "price": null },
+      { "name": "Zinfandel", "wineType": "Zinfandel", "price": null },
+      { "name": "Tempranillo", "wineType": "Tempranillo", "price": null },
+      { "name": "Cabernet Franc", "wineType": "Cabernet Franc", "price": null },
+      { "name": "Cabernet Sauvignon", "wineType": "Cabernet Sauvignon", "price": null }
+    ],
+    "replaceWines": true
+  }
+}
