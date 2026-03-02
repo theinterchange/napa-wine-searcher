@@ -23,7 +23,6 @@ export function Navbar() {
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
-  if (pathname === "/") return null;
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
@@ -36,7 +35,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          <GlobalSearch />
+          {pathname !== "/" && <GlobalSearch />}
 
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(({ href, label, icon: Icon }) => (
