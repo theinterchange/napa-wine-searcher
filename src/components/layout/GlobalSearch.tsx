@@ -154,7 +154,7 @@ const SUGGESTED_LINKS: ResultItem[] = [
   { id: "s-daytrips", label: "Day Trip Routes", href: "/day-trips", icon: Route, category: "Suggestions" },
 ];
 
-export function GlobalSearch() {
+export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
@@ -290,6 +290,7 @@ export function GlobalSearch() {
   }
 
   if (!open) {
+    if (hideButton) return null;
     return (
       <>
         {/* Desktop trigger */}

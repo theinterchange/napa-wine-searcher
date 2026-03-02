@@ -35,7 +35,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {pathname !== "/" && <GlobalSearch />}
+          <GlobalSearch hideButton={pathname === "/"} />
 
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(({ href, label, icon: Icon }) => (
