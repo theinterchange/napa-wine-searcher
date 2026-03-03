@@ -23,8 +23,12 @@ interface WineryInfoProps {
   hoursJson: string | null;
   reservationRequired: boolean | null;
   dogFriendly: boolean | null;
+  dogFriendlyNote: string | null;
+  dogFriendlySource: string | null;
   picnicFriendly: boolean | null;
   kidFriendly: boolean | null;
+  kidFriendlyNote: string | null;
+  kidFriendlySource: string | null;
   kidFriendlyConfidence: string | null;
   description: string | null;
 }
@@ -89,9 +93,29 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.dogFriendly && (
-              <div className="flex items-center gap-2">
-                <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
-                Dog Friendly
+              <div>
+                <div className="flex items-center gap-2">
+                  <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  Dog Friendly
+                </div>
+                {(winery.dogFriendlyNote || winery.dogFriendlySource) && (
+                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    {winery.dogFriendlyNote || "Verify on website"}
+                    {winery.dogFriendlySource && (
+                      <>
+                        {" · "}
+                        <a
+                          href={winery.dogFriendlySource}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                        >
+                          source ↗
+                        </a>
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
             )}
             {winery.picnicFriendly && (
@@ -101,10 +125,30 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.kidFriendly && (
-              <div className="flex items-center gap-2">
-                <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
-                Kid Friendly{winery.kidFriendlyConfidence === "medium" && (
-                  <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  Kid Friendly{winery.kidFriendlyConfidence === "medium" && (
+                    <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
+                  )}
+                </div>
+                {(winery.kidFriendlyNote || winery.kidFriendlySource) && (
+                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    {winery.kidFriendlyNote || "Verify on website"}
+                    {winery.kidFriendlySource && (
+                      <>
+                        {" · "}
+                        <a
+                          href={winery.kidFriendlySource}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                        >
+                          source ↗
+                        </a>
+                      </>
+                    )}
+                  </p>
                 )}
               </div>
             )}
