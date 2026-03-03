@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos, dayTripRoutes, dayTripStops } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ChevronRight, Route } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
@@ -128,7 +128,8 @@ export default async function WineryDetailPage({
       })
       .from(wines)
       .leftJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
-      .where(eq(wines.wineryId, winery.id)),
+      .where(eq(wines.wineryId, winery.id))
+      .orderBy(asc(wineTypes.category), asc(wineTypes.name), asc(wines.name)),
     db
       .select()
       .from(tastingExperiences)

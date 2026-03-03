@@ -1,34 +1,14 @@
 import { Wine as WineIcon } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { WineCategory } from "./WineCategory";
+import {
+  CATEGORY_ORDER,
+  categoryColors,
+  categoryIcons,
+  type Wine,
+} from "./wine-constants";
 
-interface Wine {
-  id: number;
-  name: string;
-  wineType: string | null;
-  category: string | null;
-  vintage: number | null;
-  price: number | null;
-  description: string | null;
-  rating: number | null;
-  ratingSource: string | null;
-  ratingCount: number | null;
-}
-
-const categoryColors: Record<string, string> = {
-  red: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  white: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-  rosé: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
-  sparkling: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  dessert: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
-};
-
-const categoryIcons: Record<string, string> = {
-  red: "🍷",
-  white: "🥂",
-  rosé: "🌸",
-  sparkling: "✨",
-  dessert: "🍯",
-};
+const GROUPING_THRESHOLD = 8;
 
 function WineTypeBadge({ wineType, category }: { wineType: string | null; category: string | null }) {
   if (!wineType) return null;
@@ -94,6 +74,63 @@ export function WineTable({
     );
   }
 
+  // Grouped layout for large wine lists
+  if (wines.length >= GROUPING_THRESHOLD) {
+    // Group wines by category
+    const groups = new Map<string, Wine[]>();
+    for (const wine of wines) {
+      const cat = wine.category || "other";
+      const list = groups.get(cat);
+      if (list) {
+        list.push(wine);
+      } else {
+        groups.set(cat, [wine]);
+      }
+    }
+
+    // Order groups by CATEGORY_ORDER
+    const orderedGroups = CATEGORY_ORDER
+      .filter((cat) => groups.has(cat))
+      .map((cat) => ({ category: cat, wines: groups.get(cat)! }));
+
+    // Find the largest category to default-open
+    let largestCat = orderedGroups[0]?.category;
+    let largestCount = 0;
+    for (const g of orderedGroups) {
+      if (g.wines.length > largestCount) {
+        largestCount = g.wines.length;
+        largestCat = g.category;
+      }
+    }
+
+    return (
+      <div className="mb-8">
+        <h2 className="font-heading text-2xl font-semibold mb-4">
+          Wines{" "}
+          <span className="text-base font-normal text-[var(--muted-foreground)]">
+            ({wines.length})
+          </span>
+        </h2>
+        {!curated && (
+          <p className="mb-3 text-xs text-[var(--muted-foreground)] italic">
+            Prices are approximate and may not reflect current offerings.
+          </p>
+        )}
+        <div className="space-y-3">
+          {orderedGroups.map((g) => (
+            <WineCategory
+              key={g.category}
+              category={g.category}
+              wines={g.wines}
+              defaultOpen={g.category === largestCat}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Flat layout for small wine lists
   return (
     <div className="mb-8">
       <h2 className="font-heading text-2xl font-semibold mb-4">Wines</h2>
