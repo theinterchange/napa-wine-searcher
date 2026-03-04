@@ -25,12 +25,13 @@ export function BookTastingCTA({
   let href = websiteUrl;
   try {
     const url = new URL(websiteUrl);
+    if (url.protocol === "http:") url.protocol = "https:";
     url.searchParams.set("utm_source", "winecountryguide");
     url.searchParams.set("utm_medium", "referral");
     url.searchParams.set("utm_campaign", "book_tasting");
     href = url.toString();
   } catch {
-    // websiteUrl isn't a valid URL (e.g. "manual-correction") — use as-is
+    return null;
   }
 
   const sizeClasses = {
