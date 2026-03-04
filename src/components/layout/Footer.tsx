@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--card)]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Wine className="h-5 w-5 text-burgundy-700 dark:text-burgundy-300" />
@@ -43,13 +43,38 @@ export function Footer() {
             <h3 className="font-heading font-semibold mb-3">Regions</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
               <li>
-                <Link href="/wineries?valley=napa" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
                   Napa Valley
                 </Link>
               </li>
               <li>
-                <Link href="/wineries?valley=sonoma" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
-                  Sonoma Valley
+                <Link href="/sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Sonoma County
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-heading font-semibold mb-3">Guides</h3>
+            <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
+              <li>
+                <Link href="/guides/dog-friendly-wineries-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Dog-Friendly Wineries
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/best-cabernet-sauvignon-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Best Cabernet Sauvignon
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/cheap-wine-tastings-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Affordable Tastings
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/napa-valley-vs-sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Napa vs Sonoma
                 </Link>
               </li>
             </ul>

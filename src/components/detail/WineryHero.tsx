@@ -1,7 +1,10 @@
 import { Star, MapPin, Clock, Phone, Globe, Wine as WineIcon } from "lucide-react";
 import { StarRating } from "@/components/ratings/StarRating";
+import { BookTastingCTA } from "@/components/monetization/BookTastingCTA";
 
 interface WineryHeroProps {
+  id: number;
+  slug: string;
   name: string;
   subRegion: string | null;
   valley: string | null;
@@ -11,6 +14,7 @@ interface WineryHeroProps {
   priceLevel: number | null;
   shortDescription: string | null;
   heroImageUrl: string | null;
+  websiteUrl: string | null;
 }
 
 export function WineryHero({ winery }: { winery: WineryHeroProps }) {
@@ -59,6 +63,14 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
             <span className="text-gold-200 font-medium" aria-label={`Price level ${winery.priceLevel} of 4`}>
               {"$".repeat(winery.priceLevel)}
             </span>
+          )}
+          {winery.websiteUrl && (
+            <BookTastingCTA
+              websiteUrl={winery.websiteUrl}
+              wineryId={winery.id}
+              winerySlug={winery.slug}
+              sourceComponent="WineryHero"
+            />
           )}
         </div>
       </div>

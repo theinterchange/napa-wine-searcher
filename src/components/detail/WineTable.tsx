@@ -7,6 +7,7 @@ import {
   categoryIcons,
   type Wine,
 } from "./wine-constants";
+import { AffiliateWineLink } from "@/components/monetization/AffiliateWineLink";
 
 const GROUPING_THRESHOLD = 8;
 
@@ -29,11 +30,17 @@ export function WineTable({
   curated = false,
   websiteUrl,
   phone,
+  affiliateUrl,
+  wineryId,
+  winerySlug,
 }: {
   wines: Wine[];
   curated?: boolean;
   websiteUrl?: string | null;
   phone?: string | null;
+  affiliateUrl?: string | null;
+  wineryId?: number;
+  winerySlug?: string;
 }) {
   if (wines.length === 0) {
     return (
@@ -149,6 +156,7 @@ export function WineTable({
               <th className="text-left p-4 font-medium min-w-[160px]">Type</th>
               <th className="text-left p-4 font-medium">Vintage</th>
               <th className="text-left p-4 font-medium">Price</th>
+              {affiliateUrl && <th className="text-left p-4 font-medium" />}
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
@@ -171,6 +179,15 @@ export function WineTable({
                 <td className="p-4">
                   {wine.price != null && formatPrice(wine.price)}
                 </td>
+                {affiliateUrl && (
+                  <td className="p-4">
+                    <AffiliateWineLink
+                      url={affiliateUrl}
+                      wineryId={wineryId}
+                      winerySlug={winerySlug}
+                    />
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

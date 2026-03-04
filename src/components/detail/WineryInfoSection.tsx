@@ -1,5 +1,7 @@
 import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck, Baby, Info } from "lucide-react";
 import { PhotoGallery } from "./PhotoGallery";
+import { TrackedLink } from "@/components/monetization/TrackedLink";
+import { BookTastingCTA } from "@/components/monetization/BookTastingCTA";
 
 interface Hours {
   mon?: string; tue?: string; wed?: string; thu?: string;
@@ -13,6 +15,8 @@ interface Photo {
 }
 
 interface WineryInfoProps {
+  id: number;
+  slug: string;
   address: string | null;
   city: string | null;
   state: string | null;
@@ -52,6 +56,17 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
         {/* Contact */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
           <h3 className="font-heading text-lg font-semibold mb-4">Visit Info</h3>
+          {winery.websiteUrl && (
+            <div className="mb-4">
+              <BookTastingCTA
+                websiteUrl={winery.websiteUrl}
+                wineryId={winery.id}
+                winerySlug={winery.slug}
+                sourceComponent="WineryInfoSection"
+                size="lg"
+              />
+            </div>
+          )}
           <div className="space-y-3 text-sm">
             {winery.address && (
               <div className="flex items-start gap-3">
@@ -72,14 +87,16 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
             {winery.websiteUrl && (
               <div className="flex items-center gap-3">
                 <Globe className="h-4 w-4 text-[var(--muted-foreground)]" />
-                <a
+                <TrackedLink
                   href={winery.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  clickType="website"
+                  wineryId={winery.id}
+                  sourcePage={`/wineries/${winery.slug}`}
+                  sourceComponent="WineryInfoSection"
                   className="hover:text-burgundy-700 dark:hover:text-burgundy-400 truncate"
                 >
                   Website
-                </a>
+                </TrackedLink>
               </div>
             )}
           </div>

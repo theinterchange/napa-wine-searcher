@@ -11,6 +11,11 @@ import { TastingTable } from "@/components/detail/TastingTable";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
 import { NotesEditor } from "@/components/detail/NotesEditor";
+import { WineryCard } from "@/components/directory/WineryCard";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ShareButton } from "@/components/social/ShareButton";
+import { getMoreWineriesInRegion } from "@/lib/region-data";
+import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
 
 export async function generateStaticParams() {
@@ -159,6 +164,36 @@ export default async function WineryDetailPage({
   // Skip the first photo if it matches the hero image (avoid duplication)
   const galleryPhotos = photos.filter((p) => p.url !== winery.heroImageUrl);
 
+  // Affiliate link for this winery's wines
+  const affiliateUrl = wineryWinesUrl(winery.name);
+
+  // Get more wineries in the same sub-region for cross-linking
+  const moreInRegion = winery.subRegion
+    ? await getMoreWineriesInRegion(winery.subRegion, winery.slug, 4)
+    : [];
+
+  // Build breadcrumb items
+  const valleyPrefix = winery.valley === "napa" ? "/napa-valley" : winery.valley === "sonoma" ? "/sonoma-county" : null;
+  const subRegionSlug = winery.subRegion
+    ? await db
+        .select({ slug: subRegions.slug })
+        .from(subRegions)
+        .where(eq(subRegions.name, winery.subRegion))
+        .limit(1)
+        .then((r) => r[0]?.slug)
+    : null;
+
+  const breadcrumbItems = [
+    { name: "Home", href: "/" },
+    ...(valleyPrefix
+      ? [{ name: winery.valley === "napa" ? "Napa Valley" : "Sonoma County", href: valleyPrefix }]
+      : []),
+    ...(valleyPrefix && subRegionSlug
+      ? [{ name: winery.subRegion!, href: `${valleyPrefix}/${subRegionSlug}` }]
+      : []),
+    { name: winery.name, href: `/wineries/${winery.slug}` },
+  ];
+
   // JSON-LD structured data
   const jsonLd = {
     "@context": "https://schema.org",
@@ -220,6 +255,7 @@ export default async function WineryDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <BreadcrumbSchema items={breadcrumbItems} />
       {/* Breadcrumbs */}
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
@@ -227,10 +263,22 @@ export default async function WineryDetailPage({
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <Link href="/wineries" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
-            Wineries
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+          {valleyPrefix && (
+            <>
+              <Link href={valleyPrefix} className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                {winery.valley === "napa" ? "Napa Valley" : "Sonoma County"}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </>
+          )}
+          {valleyPrefix && subRegionSlug && (
+            <>
+              <Link href={`${valleyPrefix}/${subRegionSlug}`} className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                {winery.subRegion}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </>
+          )}
           <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">{winery.name}</span>
         </nav>
       </div>
@@ -260,6 +308,7 @@ export default async function WineryDetailPage({
         <div className="mb-6 flex flex-wrap gap-3">
           <FavoriteButton wineryId={winery.id} />
           <VisitedButton wineryId={winery.id} />
+          <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
         </div>
 
         {dayTrips.length > 0 && (
@@ -282,13 +331,33 @@ export default async function WineryDetailPage({
 
         {/* Tasting Experiences — primary visitor content */}
         <div className="mt-8">
-          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} />
+          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} wineryId={winery.id} winerySlug={winery.slug} />
         </div>
 
         {/* Wines — secondary reference */}
         <div className="mt-8">
-          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} />
+          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} affiliateUrl={affiliateUrl} wineryId={winery.id} winerySlug={winery.slug} />
         </div>
+
+        {/* Shop Wines Online (affiliate, only when env var set) */}
+        {affiliateUrl && wineryWines.length > 0 && (
+          <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+            <h3 className="font-heading text-lg font-semibold mb-2">
+              Shop {winery.name} Wines Online
+            </h3>
+            <p className="text-sm text-[var(--muted-foreground)] mb-4">
+              Can&apos;t visit in person? Browse and buy {winery.name} wines from trusted online retailers.
+            </p>
+            <a
+              href={affiliateUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+            >
+              Browse Wines Online
+            </a>
+          </div>
+        )}
 
         {/* Hours — practical detail at bottom */}
         <HoursSection hoursJson={winery.hoursJson} />
@@ -298,6 +367,32 @@ export default async function WineryDetailPage({
           <NotesEditor wineryId={winery.id} />
         </div>
       </div>
+
+      {/* More Wineries in Sub-Region */}
+      {moreInRegion.length > 0 && (
+        <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-heading text-xl font-bold">
+                More Wineries in {winery.subRegion}
+              </h2>
+              {valleyPrefix && subRegionSlug && (
+                <Link
+                  href={`${valleyPrefix}/${subRegionSlug}`}
+                  className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                >
+                  View all &rarr;
+                </Link>
+              )}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {moreInRegion.map((w) => (
+                <WineryCard key={w.slug} winery={w} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

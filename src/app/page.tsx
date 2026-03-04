@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { FeaturedCarousel } from "@/components/home/FeaturedCarousel";
 import { HeroSearchTrigger } from "@/components/home/HeroSearchTrigger";
 import { PlanYourVisit } from "@/components/home/PlanYourVisit";
+import { EmailCapture } from "@/components/monetization/EmailCapture";
 
 async function getFeaturedWineries() {
   return db
@@ -69,10 +70,10 @@ async function getDayTripCount() {
 
 const discoveryLinks = [
   { label: "Luxury", href: "/wineries?tastingPrice=luxury" },
-  { label: "Dog-Friendly", href: "/wineries?dog=true" },
-  { label: "Kid-Friendly", href: "/wineries?kid=true" },
-  { label: "Walk-in Friendly", href: "/wineries?reservation=false" },
-  { label: "Picnic-Ready", href: "/wineries?picnic=true" },
+  { label: "Dog-Friendly", href: "/wineries?amenities=dog" },
+  { label: "Kid-Friendly", href: "/wineries?amenities=kid" },
+  { label: "Walk-in Friendly", href: "/wineries?amenities=walkin" },
+  { label: "Picnic-Ready", href: "/wineries?amenities=picnic" },
   { label: "Under $40 Tastings", href: "/wineries?tastingPrice=budget" },
   { label: "Cabernet Sauvignon", href: "/wineries?varietal=cabernet-sauvignon" },
 ];
@@ -167,30 +168,25 @@ export default async function HomePage() {
         dayTrips={dayTrips}
       />
 
-      {/* 5. Join CTA (only if not logged in) */}
-      {!session && (
-        <section className="bg-olive-50 dark:bg-olive-950 border-t border-[var(--border)]">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-center">
-            <UserPlus className="h-8 w-8 mx-auto text-burgundy-600 dark:text-burgundy-400 mb-4" />
-            <h2 className="font-heading text-2xl font-bold">
-              Create your free account
-            </h2>
-            <p className="mt-3 text-[var(--muted-foreground)] max-w-lg mx-auto">
-              Save favorites, track visits, and plan your trip across Napa and
-              Sonoma.
-            </p>
-            <div className="mt-8">
+      {/* 5. Email Capture + Account CTA */}
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-xl mx-auto">
+            <EmailCapture source="guide" />
+          </div>
+          {!session && (
+            <p className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+              Already visiting?{" "}
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
+                className="font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
               >
-                Sign Up
-                <ArrowRight className="h-4 w-4" />
+                Sign up to save favorites and track visits
               </Link>
-            </div>
-          </div>
-        </section>
-      )}
+            </p>
+          )}
+        </div>
+      </section>
     </>
   );
 }

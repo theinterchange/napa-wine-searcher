@@ -1,5 +1,7 @@
 import { Clock, Users, CalendarCheck, GlassWater } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { TrackedLink } from "@/components/monetization/TrackedLink";
+import { BookTastingCTA } from "@/components/monetization/BookTastingCTA";
 
 interface Tasting {
   id: number;
@@ -11,6 +13,7 @@ interface Tasting {
   reservationRequired: boolean | null;
   minGroupSize: number | null;
   maxGroupSize: number | null;
+  sourceUrl?: string | null;
 }
 
 export function TastingTable({
@@ -18,11 +21,15 @@ export function TastingTable({
   curated = false,
   websiteUrl,
   phone,
+  wineryId,
+  winerySlug,
 }: {
   tastings: Tasting[];
   curated?: boolean;
   websiteUrl?: string | null;
   phone?: string | null;
+  wineryId?: number;
+  winerySlug?: string;
 }) {
   if (tastings.length === 0) {
     return (
@@ -38,14 +45,16 @@ export function TastingTable({
               <>
                 {" "}
                 {websiteUrl && (
-                  <a
+                  <TrackedLink
                     href={websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    clickType="website"
+                    wineryId={wineryId}
+                    sourcePage={winerySlug ? `/wineries/${winerySlug}` : undefined}
+                    sourceComponent="TastingTable"
                     className="text-burgundy-700 dark:text-burgundy-400 underline"
                   >
                     Visit their website
-                  </a>
+                  </TrackedLink>
                 )}
                 {websiteUrl && phone && " or "}
                 {phone && (
@@ -118,6 +127,18 @@ export function TastingTable({
               <p className="mt-3 text-xs text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3">
                 Includes: {t.includes}
               </p>
+            )}
+            {(t.sourceUrl || websiteUrl) && (
+              <div className="mt-3 pt-3 border-t border-[var(--border)]">
+                <BookTastingCTA
+                  websiteUrl={(t.sourceUrl || websiteUrl)!}
+                  wineryId={wineryId}
+                  winerySlug={winerySlug}
+                  sourceComponent="TastingTable"
+                  size="sm"
+                  label="Book This"
+                />
+              </div>
             )}
           </div>
         ))}
