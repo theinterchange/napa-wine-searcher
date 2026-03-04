@@ -1,15 +1,19 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, unique } from "drizzle-orm/sqlite-core";
 import { wineries } from "./wineries";
 
-export const wineryPhotos = sqliteTable("winery_photos", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  wineryId: integer("winery_id")
-    .notNull()
-    .references(() => wineries.id),
-  url: text("url").notNull(),
-  source: text("source").notNull(), // "google_places" | "website"
-  altText: text("alt_text"),
-});
+export const wineryPhotos = sqliteTable(
+  "winery_photos",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    wineryId: integer("winery_id")
+      .notNull()
+      .references(() => wineries.id),
+    url: text("url").notNull(),
+    source: text("source").notNull(), // "google_places" | "website"
+    altText: text("alt_text"),
+  },
+  (table) => [unique().on(table.wineryId, table.url)]
+);
 
 export const scrapeLog = sqliteTable("scrape_log", {
   id: integer("id").primaryKey({ autoIncrement: true }),
