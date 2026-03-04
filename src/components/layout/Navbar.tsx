@@ -30,7 +30,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Wine className="h-6 w-6 text-burgundy-700 dark:text-burgundy-300" />
-            <span className="font-heading text-xl font-bold text-burgundy-900 dark:text-cream-100">
+            <span className="font-heading text-xl font-bold text-gold-900 dark:text-gold-300">
               Wine Country Guide
             </span>
           </Link>

@@ -81,7 +81,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-[var(--border)] text-center text-sm text-[var(--muted-foreground)]">
-          &copy; {new Date().getFullYear()} Wine Country Guide. Built with Next.js.
+          &copy; {new Date().getFullYear()} Wine Country Guide.
         </div>
       </div>
     </footer>

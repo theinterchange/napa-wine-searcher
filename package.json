@@ -20,7 +20,8 @@
     "scrape:add-targets": "tsx src/scraper/add-generated-targets.ts",
     "fetch:photos": "tsx scripts/fetch-photos.ts",
     "scrape:amenity-sources": "tsx scripts/scrape-amenity-sources.ts",
-    "update:hours": "tsx scripts/update-hours.ts"
+    "update:hours": "tsx scripts/update-hours.ts",
+    "verify:data": "tsx scripts/verify-data.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
