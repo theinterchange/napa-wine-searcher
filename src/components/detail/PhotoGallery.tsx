@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Photo {
@@ -50,14 +51,15 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             <button
               key={photo.id}
               onClick={() => setLightboxIndex(i)}
-              className="flex-shrink-0 w-36 h-24 sm:w-auto sm:h-24 rounded-lg overflow-hidden border border-[var(--border)] hover:border-burgundy-500 transition-colors focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+              className="relative flex-shrink-0 w-36 h-24 sm:w-auto sm:h-24 rounded-lg overflow-hidden border border-[var(--border)] hover:border-burgundy-500 transition-colors focus:outline-none focus:ring-2 focus:ring-burgundy-500"
               aria-label={`View photo ${i + 1} of ${photos.length}`}
             >
-              <img
+              <Image
                 src={photo.url}
                 alt={photo.altText || "Winery photo"}
-                className="w-full h-full object-cover"
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 144px, 25vw"
+                className="object-cover"
               />
             </button>
           ))}

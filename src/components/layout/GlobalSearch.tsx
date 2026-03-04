@@ -109,11 +109,12 @@ function flattenResults(data: SearchResults): ResultItem[] {
   }
 
   for (const r of data.regions) {
+    const valleyPrefix = r.valley === "napa" ? "/napa-valley" : "/sonoma-county";
     items.push({
       id: `region-${r.slug}`,
       label: r.name,
       sublabel: r.valley === "napa" ? "Napa Valley" : "Sonoma County",
-      href: `/wineries?region=${r.slug}`,
+      href: `${valleyPrefix}/${r.slug}`,
       icon: Map,
       category: "Regions",
     });
@@ -147,10 +148,10 @@ function flattenResults(data: SearchResults): ResultItem[] {
 
 const SUGGESTED_LINKS: ResultItem[] = [
   { id: "s-browse", label: "Browse All Wineries", href: "/wineries", icon: Wine, category: "Suggestions" },
-  { id: "s-napa", label: "Napa Valley Wineries", href: "/wineries?valley=napa", icon: Map, category: "Suggestions" },
-  { id: "s-sonoma", label: "Sonoma County Wineries", href: "/wineries?valley=sonoma", icon: Map, category: "Suggestions" },
-  { id: "s-toprated", label: "Top Rated Wineries", href: "/wineries?minRating=4.5", icon: Wine, category: "Suggestions" },
-  { id: "s-dog", label: "Dog-Friendly Wineries", href: "/wineries?dog=true", icon: SlidersHorizontal, category: "Suggestions" },
+  { id: "s-napa", label: "Napa Valley Wineries", href: "/napa-valley", icon: Map, category: "Suggestions" },
+  { id: "s-sonoma", label: "Sonoma County Wineries", href: "/sonoma-county", icon: Map, category: "Suggestions" },
+  { id: "s-toprated", label: "Top Rated Wineries", href: "/wineries?rating=4.5", icon: Wine, category: "Suggestions" },
+  { id: "s-dog", label: "Dog-Friendly Wineries", href: "/wineries?amenities=dog", icon: SlidersHorizontal, category: "Suggestions" },
   { id: "s-daytrips", label: "Day Trip Routes", href: "/day-trips", icon: Route, category: "Suggestions" },
 ];
 

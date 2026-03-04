@@ -5,6 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/api/", "/profile", "/my-visits", "/login"],
     },
     sitemap: "https://napa-winery-search.vercel.app/sitemap.xml",
   };

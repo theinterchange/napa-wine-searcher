@@ -18,7 +18,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Wine Country Guide | Napa & Sonoma Valley Wineries",
+  metadataBase: new URL("https://napa-winery-search.vercel.app"),
+  title: {
+    default: "Wine Country Guide | Napa & Sonoma Valley Wineries",
+    template: "%s | Wine Country Guide",
+  },
   description:
     "Discover the finest wineries in Napa and Sonoma Valleys. Browse wines, compare tasting experiences, and plan your wine country visit.",
 };

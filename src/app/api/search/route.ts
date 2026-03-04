@@ -1,22 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { wineries, subRegions, wineTypes, wines, dayTripRoutes } from "@/db/schema";
-import { sql, like, eq, count } from "drizzle-orm";
+import { sql, eq, count } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import type { Column } from "drizzle-orm";
 
 const FILTER_SHORTCUTS = [
-  { keywords: ["dog", "dogs", "dog-friendly", "pet", "pets"], label: "Dog-Friendly Wineries", href: "/wineries?dog=true", type: "amenity" },
-  { keywords: ["kid", "kids", "child", "children", "family", "kid-friendly"], label: "Kid-Friendly Wineries", href: "/wineries?kid=true", type: "amenity" },
-  { keywords: ["picnic", "picnics", "outdoor", "outside"], label: "Picnic-Friendly Wineries", href: "/wineries?picnic=true", type: "amenity" },
-  { keywords: ["walk-in", "walkin", "walk in", "no reservation", "drop in", "drop-in"], label: "Walk-in Friendly Wineries", href: "/wineries?reservation=false", type: "amenity" },
+  { keywords: ["dog", "dogs", "dog-friendly", "pet", "pets"], label: "Dog-Friendly Wineries", href: "/wineries?amenities=dog", type: "amenity" },
+  { keywords: ["kid", "kids", "child", "children", "family", "kid-friendly"], label: "Kid-Friendly Wineries", href: "/wineries?amenities=kid", type: "amenity" },
+  { keywords: ["picnic", "picnics", "outdoor", "outside"], label: "Picnic-Friendly Wineries", href: "/wineries?amenities=picnic", type: "amenity" },
+  { keywords: ["walk-in", "walkin", "walk in", "no reservation", "drop in", "drop-in"], label: "Walk-in Friendly Wineries", href: "/wineries?amenities=walkin", type: "amenity" },
   { keywords: ["budget", "cheap", "affordable", "under 40", "under $40"], label: "Budget Tastings (Under $40)", href: "/wineries?tastingPrice=budget", type: "price" },
   { keywords: ["classic", "moderate", "mid-range", "midrange"], label: "Classic Tastings ($40–$75)", href: "/wineries?tastingPrice=classic", type: "price" },
   { keywords: ["premium", "high-end", "upscale"], label: "Premium Tastings ($75–$100)", href: "/wineries?tastingPrice=premium", type: "price" },
   { keywords: ["luxury", "expensive", "splurge", "over 100", "over $100"], label: "Luxury Tastings ($100+)", href: "/wineries?tastingPrice=luxury", type: "price" },
   { keywords: ["top rated", "top-rated", "best", "highest rated", "4.5", "highly rated"], label: "Top Rated Wineries", href: "/wineries?minRating=4.5", type: "rating" },
-  { keywords: ["napa valley", "napa"], label: "Napa Valley Wineries", href: "/wineries?valley=napa", type: "region" },
-  { keywords: ["sonoma valley", "sonoma"], label: "Sonoma Valley Wineries", href: "/wineries?valley=sonoma", type: "region" },
+  { keywords: ["napa valley", "napa"], label: "Napa Valley Wineries", href: "/napa-valley", type: "region" },
+  { keywords: ["sonoma valley", "sonoma"], label: "Sonoma County Wineries", href: "/sonoma-county", type: "region" },
   { keywords: ["curated", "featured", "recommended", "editors pick"], label: "Curated Picks", href: "/wineries?curated=true", type: "featured" },
 ];
+
+// Strip punctuation for fuzzy matching (e.g. "St Francis" matches "St. Francis")
+function normalize(text: string): string {
+  return text.replace(/[.\-'']/g, "").replace(/\s+/g, " ").trim();
+}
+
+// Wrap a column with REPLACE calls to strip the same punctuation in SQL
+function normalizedCol(col: Column): SQL {
+  return sql`REPLACE(REPLACE(REPLACE(${col}, '.', ''), '''', ''), '-', '')`;
+}
 
 function matchFilters(q: string) {
   const lower = q.toLowerCase();
@@ -31,10 +43,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ wineries: [], wineTypes: [], cities: [], regions: [], dayTrips: [], filters: [] });
   }
 
+  const normalizedQ = normalize(q);
   const pattern = `%${q}%`;
+  const normalizedPattern = `%${normalizedQ}%`;
 
   const [wineryResults, wineTypeResults, cityResults, regionResults, dayTripResults] = await Promise.all([
-    // Wineries: match name, city, or description
+    // Wineries: match name, city, or description (normalized for punctuation)
     db
       .select({
         slug: wineries.slug,
@@ -49,7 +63,7 @@ export async function GET(request: NextRequest) {
       .from(wineries)
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
       .where(
-        sql`(${wineries.name} LIKE ${pattern} OR ${wineries.city} LIKE ${pattern} OR ${wineries.shortDescription} LIKE ${pattern})`
+        sql`(${normalizedCol(wineries.name)} LIKE ${normalizedPattern} OR ${normalizedCol(wineries.city)} LIKE ${normalizedPattern} OR ${wineries.shortDescription} LIKE ${pattern})`
       )
       .orderBy(sql`${wineries.curated} DESC, COALESCE(${wineries.googleRating}, 0) DESC`)
       .limit(6),
@@ -63,7 +77,7 @@ export async function GET(request: NextRequest) {
       })
       .from(wineTypes)
       .leftJoin(wines, eq(wines.wineTypeId, wineTypes.id))
-      .where(like(wineTypes.name, pattern))
+      .where(sql`${normalizedCol(wineTypes.name)} LIKE ${normalizedPattern}`)
       .groupBy(wineTypes.id)
       .limit(5),
 
@@ -76,7 +90,7 @@ export async function GET(request: NextRequest) {
       })
       .from(wineries)
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-      .where(like(wineries.city, pattern))
+      .where(sql`${normalizedCol(wineries.city)} LIKE ${normalizedPattern}`)
       .groupBy(wineries.city)
       .limit(5),
 
@@ -88,7 +102,7 @@ export async function GET(request: NextRequest) {
         valley: subRegions.valley,
       })
       .from(subRegions)
-      .where(like(subRegions.name, pattern))
+      .where(sql`${normalizedCol(subRegions.name)} LIKE ${normalizedPattern}`)
       .limit(5),
 
     // Day trips
@@ -100,7 +114,7 @@ export async function GET(request: NextRequest) {
       })
       .from(dayTripRoutes)
       .where(
-        sql`(${dayTripRoutes.title} LIKE ${pattern} OR ${dayTripRoutes.theme} LIKE ${pattern})`
+        sql`(${normalizedCol(dayTripRoutes.title)} LIKE ${normalizedPattern} OR ${dayTripRoutes.theme} LIKE ${pattern})`
       )
       .limit(4),
   ]);

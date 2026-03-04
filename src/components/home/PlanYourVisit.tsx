@@ -12,6 +12,7 @@ import {
   Wine,
   Route,
   Clock,
+  Sparkles,
 } from "lucide-react";
 
 interface RegionStat {
@@ -40,10 +41,10 @@ interface PlanYourVisitProps {
 }
 
 const styleCards = [
-  { label: "Dog-Friendly", href: "/wineries?dog=true", icon: Dog },
-  { label: "Kid-Friendly", href: "/wineries?kid=true", icon: Baby },
-  { label: "Picnic-Ready", href: "/wineries?picnic=true", icon: UtensilsCrossed },
-  { label: "Walk-in OK", href: "/wineries?reservation=false", icon: Footprints },
+  { label: "Dog-Friendly", href: "/wineries?amenities=dog", icon: Dog },
+  { label: "Kid-Friendly", href: "/wineries?amenities=kid", icon: Baby },
+  { label: "Picnic-Ready", href: "/wineries?amenities=picnic", icon: UtensilsCrossed },
+  { label: "Walk-in OK", href: "/wineries?amenities=walkin", icon: Footprints },
   { label: "Luxury", href: "/wineries?tastingPrice=luxury", icon: Gem },
   { label: "Under $40", href: "/wineries?tastingPrice=budget", icon: DollarSign },
   { label: "Cabernet Sauvignon", href: "/wineries?varietal=cabernet-sauvignon", icon: Wine },
@@ -117,7 +118,7 @@ export function PlanYourVisit({
                 {regionStats.napa.map((r) => (
                   <Link
                     key={r.subRegionSlug}
-                    href={`/wineries?region=${r.subRegionSlug}`}
+                    href={`/napa-valley/${r.subRegionSlug}`}
                     className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 hover:text-burgundy-700 dark:hover:border-burgundy-600 dark:hover:text-burgundy-400 transition-colors"
                   >
                     {r.subRegionName}{" "}
@@ -127,7 +128,7 @@ export function PlanYourVisit({
                   </Link>
                 ))}
                 <Link
-                  href="/wineries?valley=napa"
+                  href="/napa-valley"
                   className="rounded-full px-3 py-1.5 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
                 >
                   View all &rarr;
@@ -149,7 +150,7 @@ export function PlanYourVisit({
                 {regionStats.sonoma.map((r) => (
                   <Link
                     key={r.subRegionSlug}
-                    href={`/wineries?region=${r.subRegionSlug}`}
+                    href={`/sonoma-county/${r.subRegionSlug}`}
                     className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 hover:text-burgundy-700 dark:hover:border-burgundy-600 dark:hover:text-burgundy-400 transition-colors"
                   >
                     {r.subRegionName}{" "}
@@ -159,7 +160,7 @@ export function PlanYourVisit({
                   </Link>
                 ))}
                 <Link
-                  href="/wineries?valley=sonoma"
+                  href="/sonoma-county"
                   className="rounded-full px-3 py-1.5 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
                 >
                   View all &rarr;
@@ -200,6 +201,13 @@ export function PlanYourVisit({
                 </div>
               </Link>
             ))}
+            <Link
+              href="/plan-trip"
+              className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-burgundy-300 dark:border-burgundy-700 p-5 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:bg-burgundy-50 dark:hover:bg-burgundy-950/50 transition-all"
+            >
+              <Sparkles className="h-5 w-5 mb-1.5" />
+              Build Custom Route
+            </Link>
             <Link
               href="/day-trips"
               className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border)] p-5 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:bg-burgundy-50 dark:hover:bg-burgundy-950/50 transition-all"

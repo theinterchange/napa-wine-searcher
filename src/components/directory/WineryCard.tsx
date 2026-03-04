@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, MapPin, Wine, BadgeCheck } from "lucide-react";
 
 interface WineryCardProps {
@@ -28,10 +29,12 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
     >
       <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
         {winery.heroImageUrl ? (
-          <img
+          <Image
             src={winery.heroImageUrl}
             alt={winery.name}
-            className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform group-hover:scale-105"
           />
         ) : (
           <Wine className="h-12 w-12 text-burgundy-300 dark:text-burgundy-700" />
