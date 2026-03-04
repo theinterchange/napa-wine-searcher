@@ -1,4 +1,4 @@
-import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck, Baby } from "lucide-react";
+import { MapPin, Phone, Globe, Clock, Dog, TreePine, CalendarCheck, Baby, Info } from "lucide-react";
 import { PhotoGallery } from "./PhotoGallery";
 
 interface Hours {
@@ -93,26 +93,19 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.dogFriendly && (
-              <div>
-                <div className="flex items-center gap-2">
-                  <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
-                  {winery.dogFriendlySource ? (
-                    <a
-                      href={winery.dogFriendlySource}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
-                    >
-                      Dog Friendly
-                    </a>
-                  ) : (
-                    "Dog Friendly"
-                  )}
-                </div>
-                {winery.dogFriendlyNote && (
-                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
-                    {winery.dogFriendlyNote}
-                  </p>
+              <div className="flex items-center gap-2">
+                <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
+                {winery.dogFriendlySource ? (
+                  <a
+                    href={winery.dogFriendlySource}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                  >
+                    {winery.dogFriendlyNote || "Dog Friendly"}
+                  </a>
+                ) : (
+                  winery.dogFriendlyNote || "Dog Friendly"
                 )}
               </div>
             )}
@@ -123,36 +116,27 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.kidFriendly && (
-              <div>
-                <div className="flex items-center gap-2">
-                  <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
-                  {winery.kidFriendlySource ? (
-                    <a
-                      href={winery.kidFriendlySource}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
-                    >
-                      Kid Friendly
-                    </a>
-                  ) : (
-                    "Kid Friendly"
-                  )}
-                  {winery.kidFriendlyConfidence === "medium" && (
-                    <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
-                  )}
-                </div>
-                {winery.kidFriendlyNote && (
-                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
-                    {winery.kidFriendlyNote}
-                  </p>
+              <div className="flex items-center gap-2">
+                <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
+                {winery.kidFriendlySource ? (
+                  <a
+                    href={winery.kidFriendlySource}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                  >
+                    {winery.kidFriendlyNote || "Kid Friendly"}
+                  </a>
+                ) : (
+                  winery.kidFriendlyNote || "Kid Friendly"
                 )}
               </div>
             )}
-          {(winery.dogFriendly || winery.kidFriendly) && (
-              <p className="mt-3 pt-3 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
-                Policies may change — confirm with the winery before booking.
-              </p>
+            {(winery.dogFriendly || winery.kidFriendly) && (
+              <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                <Info className="h-4 w-4 shrink-0" />
+                Confirm policies with winery before booking
+              </div>
             )}
           </div>
         </div>
