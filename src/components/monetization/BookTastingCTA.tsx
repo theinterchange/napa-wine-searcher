@@ -20,7 +20,7 @@ export function BookTastingCTA({
   sourcePage,
   sourceComponent,
   size = "md",
-  label = "Book a Tasting",
+  label = "Book with Winery",
 }: BookTastingCTAProps) {
   let href = websiteUrl;
   try {
