@@ -93,19 +93,26 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.dogFriendly && (
-              <div className="flex items-center gap-2">
-                <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
-                {winery.dogFriendlySource ? (
-                  <a
-                    href={winery.dogFriendlySource}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
-                  >
-                    {winery.dogFriendlyNote || "Dog Friendly"}
-                  </a>
-                ) : (
-                  winery.dogFriendlyNote || "Dog Friendly"
+              <div>
+                <div className="flex items-center gap-2">
+                  <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  {winery.dogFriendlySource ? (
+                    <a
+                      href={winery.dogFriendlySource}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                    >
+                      Dog Friendly
+                    </a>
+                  ) : (
+                    "Dog Friendly"
+                  )}
+                </div>
+                {winery.dogFriendlyNote && (
+                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    {winery.dogFriendlyNote}
+                  </p>
                 )}
               </div>
             )}
@@ -116,19 +123,29 @@ export function WineryInfoSection({ winery, photos = [] }: { winery: WineryInfoP
               </div>
             )}
             {winery.kidFriendly && (
-              <div className="flex items-center gap-2">
-                <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
-                {winery.kidFriendlySource ? (
-                  <a
-                    href={winery.kidFriendlySource}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
-                  >
-                    {winery.kidFriendlyNote || "Kid Friendly"}
-                  </a>
-                ) : (
-                  winery.kidFriendlyNote || "Kid Friendly"
+              <div>
+                <div className="flex items-center gap-2">
+                  <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  {winery.kidFriendlySource ? (
+                    <a
+                      href={winery.kidFriendlySource}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                    >
+                      Kid Friendly
+                    </a>
+                  ) : (
+                    "Kid Friendly"
+                  )}
+                  {winery.kidFriendlyConfidence === "medium" && (
+                    <span className="text-xs text-amber-600 dark:text-amber-400"> · Check with winery</span>
+                  )}
+                </div>
+                {winery.kidFriendlyNote && (
+                  <p className="ml-7 mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    {winery.kidFriendlyNote}
+                  </p>
                 )}
               </div>
             )}
