@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { TripPlanner } from "@/components/trip/TripPlanner";
 import type { Metadata } from "next";
+import { PlanTripClient } from "./PlanTripClient";
 
 export const metadata: Metadata = {
   title: "Plan Your Trip | Wine Country Guide",
@@ -55,11 +55,12 @@ export default async function PlanTripPage({
         </p>
       </div>
 
-      <TripPlanner
+      <PlanTripClient
         initialFrom={params.from}
         initialTheme={params.theme}
         initialStops={params.stops}
         initialValley={params.valley}
+        autoWizard={params.wizard === "1"}
       />
     </div>
   );

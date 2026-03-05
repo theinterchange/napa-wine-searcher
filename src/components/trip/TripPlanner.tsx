@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Shuffle, Loader2, Wine } from "lucide-react";
+import { Shuffle, Loader2, Wine, MapPin, Navigation } from "lucide-react";
 import { TripStopCard } from "./TripStopCard";
 import { TripSummary } from "./TripSummary";
+import type { WizardParams } from "./TripWizard";
 import {
   computeSegments,
   buildGoogleMapsUrl,
@@ -63,6 +64,7 @@ interface RouteResponse {
   alternatives: Record<number, Alternative[]>;
   summary: RouteSummary;
   route?: { title: string; slug: string; theme: string | null };
+  originSegment?: { miles: number; minutes: number } | null;
   error?: string;
 }
 
@@ -81,6 +83,7 @@ interface TripPlannerProps {
   initialTheme?: string;
   initialStops?: string;
   initialValley?: string;
+  wizardParams?: WizardParams;
 }
 
 export function TripPlanner({
@@ -88,16 +91,33 @@ export function TripPlanner({
   initialTheme,
   initialStops,
   initialValley,
+  wizardParams,
 }: TripPlannerProps) {
   const [stops, setStops] = useState<RouteStop[]>([]);
   const [alternatives, setAlternatives] = useState<Record<number, Alternative[]>>({});
   const [summary, setSummary] = useState<RouteSummary | null>(null);
   const [routeInfo, setRouteInfo] = useState<{ title: string; slug: string; theme: string | null } | null>(null);
+  const [originSegment, setOriginSegment] = useState<{ miles: number; minutes: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState(initialTheme || "");
   const [valley, setValley] = useState(initialValley || "");
   const [stopCount, setStopCount] = useState(4);
+  const [savedWizardParams, setSavedWizardParams] = useState<WizardParams | undefined>(wizardParams);
+
+  const buildWizardQueryParams = useCallback((wp: WizardParams): Record<string, string> => {
+    const params: Record<string, string> = {};
+    if (wp.originLat != null && wp.originLng != null) {
+      params.originLat = String(wp.originLat);
+      params.originLng = String(wp.originLng);
+    }
+    if (wp.dayOfWeek) params.dayOfWeek = wp.dayOfWeek;
+    if (wp.wineTypes && wp.wineTypes.length > 0) params.wineTypes = wp.wineTypes.join(",");
+    if (wp.maxPriceLevel != null) params.maxPrice = String(wp.maxPriceLevel);
+    if (wp.timeBudget) params.timeBudget = wp.timeBudget;
+    if (wp.anchorIds && wp.anchorIds.length > 0) params.anchorIds = wp.anchorIds.join(",");
+    return params;
+  }, []);
 
   const fetchRoute = useCallback(
     async (params: Record<string, string>) => {
@@ -111,11 +131,13 @@ export function TripPlanner({
           setError(data.error);
           setStops([]);
           setSummary(null);
+          setOriginSegment(null);
         } else {
           setStops(data.stops);
           setAlternatives(data.alternatives || {});
           setSummary(data.summary);
           setRouteInfo(data.route || null);
+          setOriginSegment(data.originSegment || null);
         }
       } catch {
         setError("Failed to generate route. Please try again.");
@@ -133,31 +155,63 @@ export function TripPlanner({
     } else if (initialStops) {
       fetchRoute({ stopIds: initialStops });
     } else {
-      fetchRoute({
+      const baseParams: Record<string, string> = {
         theme: initialTheme || "",
         valley: initialValley || "",
-        stops: String(stopCount),
-      });
+      };
+      // If wizard params include timeBudget, don't pass manual stop count
+      if (savedWizardParams?.timeBudget) {
+        // stop count derived from timeBudget
+      } else {
+        baseParams.stops = String(stopCount);
+      }
+      if (savedWizardParams) {
+        Object.assign(baseParams, buildWizardQueryParams(savedWizardParams));
+      }
+      fetchRoute(baseParams);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Update wizard params when prop changes
+  useEffect(() => {
+    if (wizardParams) {
+      setSavedWizardParams(wizardParams);
+    }
+  }, [wizardParams]);
+
   const handleShuffle = () => {
     const excludeIds = stops.map((s) => s.id).join(",");
-    fetchRoute({
+    const params: Record<string, string> = {
       theme,
       valley,
-      stops: String(stopCount),
       excludeIds,
-    });
+    };
+    if (savedWizardParams?.timeBudget) {
+      // stop count derived from timeBudget
+    } else {
+      params.stops = String(stopCount);
+    }
+    if (savedWizardParams) {
+      Object.assign(params, buildWizardQueryParams(savedWizardParams));
+    }
+    fetchRoute(params);
   };
 
   const handleGenerate = () => {
-    fetchRoute({
+    const params: Record<string, string> = {
       theme,
       valley,
-      stops: String(stopCount),
-    });
+    };
+    if (savedWizardParams?.timeBudget) {
+      // stop count derived from timeBudget
+    } else {
+      params.stops = String(stopCount);
+    }
+    if (savedWizardParams) {
+      Object.assign(params, buildWizardQueryParams(savedWizardParams));
+    }
+    fetchRoute(params);
   };
 
   const handleSwap = (stopId: number, newWinery: Alternative) => {
@@ -218,7 +272,14 @@ export function TripPlanner({
   };
 
   const recalcSummary = (currentStops: RouteStop[]) => {
-    const segments = computeSegments(currentStops);
+    const originCoords = savedWizardParams?.originLat != null && savedWizardParams?.originLng != null
+      ? { lat: savedWizardParams.originLat, lng: savedWizardParams.originLng }
+      : null;
+
+    const segmentStops = originCoords
+      ? [originCoords, ...currentStops]
+      : currentStops;
+    const segments = computeSegments(segmentStops);
     const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
     const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
     const totalTasteMinutes = currentStops.length * 60;
@@ -230,8 +291,14 @@ export function TripPlanner({
         totalMaxCost += stop.tasting.max ?? stop.tasting.min;
       }
     }
+
+    if (originCoords) {
+      setOriginSegment(segments[0] || null);
+    }
+
     const googleMapsUrl = buildGoogleMapsUrl(
-      currentStops.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name }))
+      currentStops.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name })),
+      originCoords
     );
     setSummary({
       totalMiles: Math.round(totalMiles * 10) / 10,
@@ -242,6 +309,8 @@ export function TripPlanner({
       googleMapsUrl,
     });
   };
+
+  const hasOrigin = savedWizardParams?.originLat != null && savedWizardParams?.originLng != null;
 
   return (
     <div>
@@ -282,25 +351,27 @@ export function TripPlanner({
             </select>
           </div>
 
-          {/* Stop count */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Stops</label>
-            <div className="flex gap-1">
-              {STOP_COUNTS.map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setStopCount(n)}
-                  className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${
-                    stopCount === n
-                      ? "bg-burgundy-700 text-white"
-                      : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
+          {/* Stop count — hidden when timeBudget controls it */}
+          {!savedWizardParams?.timeBudget && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Stops</label>
+              <div className="flex gap-1">
+                {STOP_COUNTS.map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setStopCount(n)}
+                    className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${
+                      stopCount === n
+                        ? "bg-burgundy-700 text-white"
+                        : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-2">
@@ -321,6 +392,45 @@ export function TripPlanner({
             </button>
           </div>
         </div>
+
+        {/* Wizard preferences summary */}
+        {savedWizardParams && (
+          <div className="mt-3 pt-3 border-t border-[var(--border)]">
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--muted-foreground)]">
+              <span className="font-medium text-[var(--foreground)]">Preferences:</span>
+              {savedWizardParams.originLabel && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  <MapPin className="h-3 w-3" /> {savedWizardParams.originLabel}
+                </span>
+              )}
+              {savedWizardParams.dayOfWeek && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  {savedWizardParams.dayOfWeek.charAt(0).toUpperCase() + savedWizardParams.dayOfWeek.slice(1)}
+                </span>
+              )}
+              {savedWizardParams.wineTypes && savedWizardParams.wineTypes.length > 0 && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  {savedWizardParams.wineTypes.join(", ")}
+                </span>
+              )}
+              {savedWizardParams.maxPriceLevel != null && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  {"$".repeat(savedWizardParams.maxPriceLevel)} max
+                </span>
+              )}
+              {savedWizardParams.timeBudget && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  {savedWizardParams.timeBudget === "half" ? "Half day" : savedWizardParams.timeBudget === "full" ? "Full day" : "Extended"}
+                </span>
+              )}
+              {savedWizardParams.anchorNames && savedWizardParams.anchorNames.length > 0 && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  Must-visit: {savedWizardParams.anchorNames.join(", ")}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Loading state */}
@@ -355,6 +465,35 @@ export function TripPlanner({
               </p>
             )}
             <div className="space-y-0">
+              {/* Origin pseudo-stop */}
+              {hasOrigin && (
+                <>
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-burgundy-300 dark:border-burgundy-700 bg-burgundy-50/50 dark:bg-burgundy-950/20 mb-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 dark:bg-burgundy-900/50 text-burgundy-700 dark:text-burgundy-400">
+                      <Navigation className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">
+                        Start: {savedWizardParams?.originLabel || "Your Location"}
+                      </p>
+                      <p className="text-xs text-[var(--muted-foreground)]">
+                        Starting point
+                      </p>
+                    </div>
+                  </div>
+                  {/* Driving segment from origin to first stop */}
+                  {originSegment && (
+                    <div className="flex items-center gap-2 py-2 pl-8">
+                      <div className="h-6 border-l-2 border-dashed border-burgundy-300 dark:border-burgundy-700" />
+                      <span className="text-xs text-[var(--muted-foreground)]">
+                        {formatDistance(originSegment.miles)} &middot;{" "}
+                        {formatDriveTime(originSegment.minutes)} drive
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
+
               {stops.map((stop, idx) => (
                 <TripStopCard
                   key={stop.id}

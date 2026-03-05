@@ -62,17 +62,21 @@ export function computeSegments(
 
 /** Build a Google Maps directions URL with ordered waypoints */
 export function buildGoogleMapsUrl(
-  stops: { lat: number | null; lng: number | null; name: string }[]
+  stops: { lat: number | null; lng: number | null; name: string }[],
+  originCoords?: { lat: number; lng: number } | null
 ): string | null {
   const valid = stops.filter((s) => s.lat != null && s.lng != null);
-  if (valid.length < 2) return null;
+  if (valid.length < 1) return null;
+  if (valid.length < 2 && !originCoords) return null;
 
-  const origin = `${valid[0].lat},${valid[0].lng}`;
+  const origin = originCoords
+    ? `${originCoords.lat},${originCoords.lng}`
+    : `${valid[0].lat},${valid[0].lng}`;
   const destination = `${valid[valid.length - 1].lat},${valid[valid.length - 1].lng}`;
-  const waypoints = valid
-    .slice(1, -1)
-    .map((s) => `${s.lat},${s.lng}`)
-    .join("|");
+
+  // When origin is provided, all stops are waypoints except the last (destination)
+  const waypointStops = originCoords ? valid.slice(0, -1) : valid.slice(1, -1);
+  const waypoints = waypointStops.map((s) => `${s.lat},${s.lng}`).join("|");
 
   const params = new URLSearchParams({
     api: "1",

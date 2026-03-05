@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import {
   wineries,
+  wines,
+  wineTypes,
   subRegions,
   tastingExperiences,
   dayTripRoutes,
@@ -16,6 +18,7 @@ import {
   computeSegments,
   buildGoogleMapsUrl,
 } from "@/lib/geo";
+import { isOpenOnDay } from "@/lib/hours";
 
 const THEME_AMENITY_MAP: Record<string, string[]> = {
   "dog-friendly": ["dog"],
@@ -24,17 +27,75 @@ const THEME_AMENITY_MAP: Record<string, string[]> = {
   "walk-in": ["walkin"],
 };
 
+// Wine type category groupings for wizard
+const WINE_CATEGORY_MAP: Record<string, string[]> = {
+  "Cabernet Sauvignon": ["Cabernet Sauvignon", "Cabernet Franc"],
+  "Pinot Noir": ["Pinot Noir", "Pinot Noir Blanc"],
+  Chardonnay: ["Chardonnay"],
+  Sparkling: ["Sparkling Wine", "Sparkling Rosé", "Brut", "Blanc de Blancs"],
+  Rosé: ["Rosé"],
+  Zinfandel: ["Zinfandel"],
+  "Red Blends": [
+    "Red Blend",
+    "Merlot",
+    "Syrah",
+    "Petite Sirah",
+    "Malbec",
+    "Tempranillo",
+    "Sangiovese",
+    "Grenache",
+    "Mourvèdre",
+    "Barbera",
+  ],
+  "White & Other": [
+    "Sauvignon Blanc",
+    "Viognier",
+    "Riesling",
+    "White Blend",
+    "Gewürztraminer",
+    "Pinot Grigio",
+    "Chenin Blanc",
+    "Muscat",
+    "Albariño",
+    "Grüner Veltliner",
+  ],
+};
+
+// Time budget → stop count ranges
+const TIME_BUDGET_STOPS: Record<string, { min: number; max: number; minutes: number }> = {
+  half: { min: 2, max: 3, minutes: 180 },
+  full: { min: 3, max: 5, minutes: 360 },
+  extended: { min: 5, max: 6, minutes: 480 },
+};
+
 export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
 
   const theme = sp.get("theme") || "";
   const valley = sp.get("valley") || "";
   const amenities = sp.get("amenities") || "";
-  const stopCount = Math.min(8, Math.max(2, parseInt(sp.get("stops") || "4", 10)));
   const excludeIdsStr = sp.get("excludeIds") || "";
   const excludeIds = excludeIdsStr
     ? excludeIdsStr.split(",").map(Number).filter(Boolean)
     : [];
+
+  // Wizard params
+  const originLat = sp.get("originLat") ? parseFloat(sp.get("originLat")!) : null;
+  const originLng = sp.get("originLng") ? parseFloat(sp.get("originLng")!) : null;
+  const dayOfWeek = sp.get("dayOfWeek") || "";
+  const wineTypesParam = sp.get("wineTypes") || "";
+  const maxPrice = sp.get("maxPrice") ? parseInt(sp.get("maxPrice")!, 10) : null;
+  const timeBudget = sp.get("timeBudget") || "";
+  const anchorIdsStr = sp.get("anchorIds") || "";
+  const anchorIds = anchorIdsStr
+    ? anchorIdsStr.split(",").map(Number).filter(Boolean)
+    : [];
+
+  // Derive stop count from timeBudget or explicit param
+  const timeBudgetConfig = TIME_BUDGET_STOPS[timeBudget];
+  const stopCount = timeBudgetConfig
+    ? timeBudgetConfig.max
+    : Math.min(8, Math.max(2, parseInt(sp.get("stops") || "4", 10)));
 
   // Load from existing curated route
   const fromSlug = sp.get("from") || "";
@@ -58,6 +119,11 @@ export async function GET(request: NextRequest) {
 
   if (valley) {
     conditions.push(eq(subRegions.valley, valley as "napa" | "sonoma"));
+  }
+
+  // Price filtering
+  if (maxPrice != null) {
+    conditions.push(sql`${wineries.priceLevel} IS NULL OR ${wineries.priceLevel} <= ${maxPrice}`);
   }
 
   // Combine explicit amenities with theme-mapped ones
@@ -84,7 +150,7 @@ export async function GET(request: NextRequest) {
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-  // Fetch candidate wineries
+  // Fetch candidate wineries (include hoursJson for day filtering)
   const pool = await db
     .select({
       id: wineries.id,
@@ -104,34 +170,148 @@ export async function GET(request: NextRequest) {
       subRegion: subRegions.name,
       subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
+      hoursJson: wineries.hoursJson,
     })
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(where)
     .orderBy(sql`COALESCE(${wineries.googleRating}, ${wineries.aggregateRating}, 0) DESC`)
-    .limit(100);
+    .limit(150);
 
-  if (pool.length < 2) {
+  // Filter by day of week (in JS since hoursJson is a JSON string)
+  let candidates = dayOfWeek
+    ? pool.filter((w) => isOpenOnDay(w.hoursJson, dayOfWeek))
+    : pool;
+
+  if (candidates.length < 2) {
     return NextResponse.json(
       { error: "Not enough wineries match your criteria", stops: [], alternatives: {} },
       { status: 200 }
     );
   }
 
-  // Pick seed: highest rated
-  const seed = pool[0];
-  const selected = [seed];
-  const selectedIds = new Set([seed.id]);
+  // Wine type scoring: if wineTypes provided, score each winery by matching wines
+  let wineScoreMap = new Map<number, number>();
+  const requestedWineTypes = wineTypesParam
+    ? wineTypesParam.split(",").filter(Boolean)
+    : [];
 
-  // Greedy nearest-neighbor from seed, filtering by quality
-  while (selected.length < stopCount && selected.length < pool.length) {
+  if (requestedWineTypes.length > 0) {
+    // Expand category names to individual wine type names
+    const expandedTypeNames: string[] = [];
+    for (const cat of requestedWineTypes) {
+      const mapped = WINE_CATEGORY_MAP[cat];
+      if (mapped) {
+        expandedTypeNames.push(...mapped);
+      } else {
+        expandedTypeNames.push(cat);
+      }
+    }
+
+    if (expandedTypeNames.length > 0) {
+      // Count matching wines per winery
+      const wineCounts = await db
+        .select({
+          wineryId: wines.wineryId,
+          matchCount: sql<number>`COUNT(*)`.as("match_count"),
+        })
+        .from(wines)
+        .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
+        .where(
+          inArray(wineTypes.name, expandedTypeNames)
+        )
+        .groupBy(wines.wineryId);
+
+      wineScoreMap = new Map(wineCounts.map((w) => [w.wineryId, w.matchCount]));
+    }
+
+    // Sort candidates by wine match score (desc) then rating (desc)
+    candidates = [...candidates].sort((a, b) => {
+      const scoreA = wineScoreMap.get(a.id) || 0;
+      const scoreB = wineScoreMap.get(b.id) || 0;
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      const ratingA = a.googleRating ?? a.aggregateRating ?? 0;
+      const ratingB = b.googleRating ?? b.aggregateRating ?? 0;
+      return ratingB - ratingA;
+    });
+  }
+
+  // Force-include anchor wineries
+  const anchorWineries = anchorIds.length > 0
+    ? candidates.filter((w) => anchorIds.includes(w.id))
+    : [];
+  // If anchors not found in candidates (e.g. filtered out), fetch them directly
+  const missingAnchorIds = anchorIds.filter(
+    (id) => !anchorWineries.some((w) => w.id === id)
+  );
+  if (missingAnchorIds.length > 0) {
+    const missing = await db
+      .select({
+        id: wineries.id,
+        slug: wineries.slug,
+        name: wineries.name,
+        city: wineries.city,
+        lat: wineries.lat,
+        lng: wineries.lng,
+        heroImageUrl: wineries.heroImageUrl,
+        aggregateRating: wineries.aggregateRating,
+        googleRating: wineries.googleRating,
+        priceLevel: wineries.priceLevel,
+        dogFriendly: wineries.dogFriendly,
+        kidFriendly: wineries.kidFriendly,
+        picnicFriendly: wineries.picnicFriendly,
+        reservationRequired: wineries.reservationRequired,
+        subRegion: subRegions.name,
+        subRegionSlug: subRegions.slug,
+        valley: subRegions.valley,
+        hoursJson: wineries.hoursJson,
+      })
+      .from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(inArray(wineries.id, missingAnchorIds));
+    anchorWineries.push(...missing);
+  }
+
+  // Build selected set: start with anchors, fill remaining slots
+  const selected: typeof candidates = [...anchorWineries];
+  const selectedIds = new Set(selected.map((s) => s.id));
+
+  // Use origin or highest-scored candidate as seed for nearest-neighbor
+  const hasOrigin = originLat != null && originLng != null;
+  const seedLat = hasOrigin ? originLat : (selected[0]?.lat ?? candidates[0]?.lat ?? 0);
+  const seedLng = hasOrigin ? originLng : (selected[0]?.lng ?? candidates[0]?.lng ?? 0);
+
+  // If no anchors, pick seed from candidates
+  if (selected.length === 0) {
+    // Pick candidate closest to origin if origin provided, else highest-scored
+    if (hasOrigin) {
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < candidates.length; i++) {
+        if (!candidates[i].lat || !candidates[i].lng) continue;
+        const d = haversineDistance(originLat, originLng, candidates[i].lat!, candidates[i].lng!);
+        if (d < bestDist) {
+          bestDist = d;
+          bestIdx = i;
+        }
+      }
+      selected.push(candidates[bestIdx]);
+    } else {
+      selected.push(candidates[0]);
+    }
+    selectedIds.add(selected[0].id);
+  }
+
+  // Greedy nearest-neighbor to fill remaining slots
+  while (selected.length < stopCount && selected.length < candidates.length) {
     const last = selected[selected.length - 1];
     let bestIdx = -1;
     let bestDist = Infinity;
 
-    for (let i = 0; i < pool.length; i++) {
-      if (selectedIds.has(pool[i].id)) continue;
-      const d = haversineDistance(last.lat!, last.lng!, pool[i].lat!, pool[i].lng!);
+    for (let i = 0; i < candidates.length; i++) {
+      if (selectedIds.has(candidates[i].id)) continue;
+      if (!candidates[i].lat || !candidates[i].lng) continue;
+      const d = haversineDistance(last.lat!, last.lng!, candidates[i].lat!, candidates[i].lng!);
       if (d < bestDist) {
         bestDist = d;
         bestIdx = i;
@@ -139,19 +319,37 @@ export async function GET(request: NextRequest) {
     }
 
     if (bestIdx === -1) break;
-    selected.push(pool[bestIdx]);
-    selectedIds.add(pool[bestIdx].id);
+    selected.push(candidates[bestIdx]);
+    selectedIds.add(candidates[bestIdx].id);
   }
 
   // Optimize order
   const coords = selected.map((s) => ({ lat: s.lat!, lng: s.lng! }));
   const optimalOrder = optimizeStopOrder(coords);
-  const ordered = optimalOrder.map((i) => selected[i]);
+  let ordered = optimalOrder.map((i) => selected[i]);
 
-  // Find alternatives for each stop (2-3 nearby from same sub-region or valley)
-  const alternatives: Record<number, typeof pool> = {};
+  // Time budget validation: check if route fits
+  if (timeBudgetConfig) {
+    let attempts = 0;
+    while (attempts < 3 && ordered.length > timeBudgetConfig.min) {
+      const segs = computeSegments(
+        hasOrigin
+          ? [{ lat: originLat, lng: originLng }, ...ordered]
+          : ordered
+      );
+      const totalDrive = segs.reduce((s, seg) => s + seg.minutes, 0);
+      const totalTaste = ordered.length * 60;
+      if (totalDrive + totalTaste <= timeBudgetConfig.minutes) break;
+      // Over budget — drop the last stop
+      ordered = ordered.slice(0, -1);
+      attempts++;
+    }
+  }
+
+  // Find alternatives for each stop
+  const alternatives: Record<number, (typeof candidates)[number][]> = {};
   for (const stop of ordered) {
-    const alts = pool
+    const alts = candidates
       .filter((w) => !selectedIds.has(w.id) && w.subRegionSlug === stop.subRegionSlug)
       .map((w) => ({
         ...w,
@@ -186,11 +384,20 @@ export async function GET(request: NextRequest) {
     tastingPrices.map((t) => [t.wineryId, { min: t.minPrice, max: t.maxPrice }])
   );
 
-  // Compute distances
-  const segments = computeSegments(ordered);
+  // Compute distances (include origin if provided)
+  const originPoint = hasOrigin ? { lat: originLat, lng: originLng } : null;
+  const segmentStops = originPoint
+    ? [originPoint, ...ordered]
+    : ordered;
+  const segments = computeSegments(segmentStops);
+
+  // When origin is present, first segment is origin→stop1
+  const originSegment = originPoint ? segments[0] : null;
+  const stopSegments = originPoint ? segments.slice(1) : segments;
+
   const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
   const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
-  const totalTasteMinutes = ordered.length * 60; // default 60 min per stop
+  const totalTasteMinutes = ordered.length * 60;
 
   let totalMinCost = 0;
   let totalMaxCost = 0;
@@ -203,16 +410,22 @@ export async function GET(request: NextRequest) {
   }
 
   const googleMapsUrl = buildGoogleMapsUrl(
-    ordered.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name }))
+    ordered.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name })),
+    originPoint
   );
+
+  // Strip hoursJson from response
+  const cleanStop = ({ hoursJson, ...rest }: (typeof ordered)[number]) => rest;
 
   return NextResponse.json({
     stops: ordered.map((s, i) => ({
-      ...s,
+      ...cleanStop(s),
       tasting: priceMap.get(s.id) || null,
-      segmentAfter: segments[i] || null,
+      segmentAfter: stopSegments[i] || null,
     })),
-    alternatives,
+    alternatives: Object.fromEntries(
+      Object.entries(alternatives).map(([k, v]) => [k, v.map(cleanStop)])
+    ),
     summary: {
       totalMiles: Math.round(totalMiles * 10) / 10,
       totalDriveMinutes: Math.round(totalDriveMinutes),
@@ -221,6 +434,7 @@ export async function GET(request: NextRequest) {
       totalMaxCost: Math.round(totalMaxCost),
       googleMapsUrl,
     },
+    originSegment,
     segments,
   });
 }
