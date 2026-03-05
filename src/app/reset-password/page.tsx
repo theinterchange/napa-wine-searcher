@@ -77,7 +77,7 @@ function ResetPasswordForm() {
       </div>
 
       {status === "success" ? (
-        <div className="mt-8 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        <div className="mt-8 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200">
           Password updated! Redirecting to login...
         </div>
       ) : (
