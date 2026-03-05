@@ -70,8 +70,8 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
         <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
           {winery.shortDescription}
         </p>
-        <div className="mt-4 flex items-center justify-between">
-          {winery.aggregateRating != null ? (
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+          {winery.aggregateRating != null && (
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
               <span className="text-sm font-medium">
@@ -83,34 +83,30 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
                 </span>
               )}
             </div>
-          ) : (
-            <div />
           )}
-          <div className="flex gap-1.5">
-            {winery.reservationRequired && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
-                Reservation
-              </span>
-            )}
-            {winery.dogFriendly && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-olive-100 text-olive-700 dark:bg-olive-900 dark:text-olive-300">
-                Dog OK
-              </span>
-            )}
-            {winery.kidFriendly && winery.kidFriendlyConfidence === "high" && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
-                Kid Friendly
-              </span>
-            )}
-            {winery.kidFriendly && winery.kidFriendlyConfidence === "medium" && (
-              <span
-                className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
-                title="Check with winery"
-              >
-                Kid Friendly*
-              </span>
-            )}
-          </div>
+          {winery.reservationRequired && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
+              Reservation
+            </span>
+          )}
+          {winery.dogFriendly && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-olive-100 text-olive-700 dark:bg-olive-900 dark:text-olive-300">
+              Dog OK
+            </span>
+          )}
+          {winery.kidFriendly && winery.kidFriendlyConfidence === "high" && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+              Kid Friendly
+            </span>
+          )}
+          {winery.kidFriendly && winery.kidFriendlyConfidence === "medium" && (
+            <span
+              className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+              title="Check with winery"
+            >
+              Kid Friendly*
+            </span>
+          )}
         </div>
       </div>
     </Link>
