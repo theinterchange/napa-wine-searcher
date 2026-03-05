@@ -11,6 +11,9 @@ import { TastingTable } from "@/components/detail/TastingTable";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
 import { NotesEditor } from "@/components/detail/NotesEditor";
+import { WantToVisitButton } from "@/components/detail/WantToVisitButton";
+import { AddToJournalButton } from "@/components/detail/AddToJournalButton";
+import { AddToCollectionButton } from "@/components/collections/AddToCollectionButton";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ShareButton } from "@/components/social/ShareButton";
@@ -307,7 +310,10 @@ export default async function WineryDetailPage({
         )}
         <div className="mb-6 flex flex-wrap gap-3">
           <FavoriteButton wineryId={winery.id} />
+          <WantToVisitButton wineryId={winery.id} />
           <VisitedButton wineryId={winery.id} />
+          <AddToJournalButton wineryId={winery.id} wineryName={winery.name} />
+          <AddToCollectionButton wineryId={winery.id} />
           <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
         </div>
 
@@ -336,7 +342,7 @@ export default async function WineryDetailPage({
 
         {/* Wines — secondary reference */}
         <div className="mt-8">
-          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} affiliateUrl={affiliateUrl} wineryId={winery.id} winerySlug={winery.slug} />
+          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} affiliateUrl={affiliateUrl} wineryId={winery.id} wineryName={winery.name} winerySlug={winery.slug} />
         </div>
 
         {/* Shop Wines Online (affiliate, only when env var set) */}

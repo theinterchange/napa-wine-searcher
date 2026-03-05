@@ -14,6 +14,7 @@ import { useState } from "react";
 import { formatDistance, formatDriveTime } from "@/lib/geo";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
+import { SaveTripButton } from "./SaveTripButton";
 
 interface TripSummaryProps {
   summary: {
@@ -124,6 +125,7 @@ export function TripSummary({ summary, stopIds, theme }: TripSummaryProps) {
             </>
           )}
         </button>
+        <SaveTripButton stopIds={stopIds} theme={theme} />
       </div>
 
       <div className="mt-5 pt-5 border-t border-[var(--border)]">

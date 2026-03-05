@@ -7,3 +7,4 @@ export * from "./user-data";
 export * from "./scraping";
 export * from "./day-trips";
 export * from "./monetization";
+export * from "./user-engagement";

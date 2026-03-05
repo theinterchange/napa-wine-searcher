@@ -1,0 +1,115 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { db } from "@/db";
+import { savedTrips, savedTripStops, wineries } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
+import { Route, MapPin, Share2 } from "lucide-react";
+import Link from "next/link";
+import { CopyShareLink } from "@/components/trip/CopyShareLink";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Trips | Wine Country Guide",
+  description: "Your saved wine country trip plans.",
+};
+
+export default async function MyTripsPage() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const trips = await db
+    .select()
+    .from(savedTrips)
+    .where(eq(savedTrips.userId, session.user.id))
+    .orderBy(desc(savedTrips.createdAt));
+
+  const tripsWithStops = await Promise.all(
+    trips.map(async (trip) => {
+      const stops = await db
+        .select({
+          stopOrder: savedTripStops.stopOrder,
+          wineryName: wineries.name,
+        })
+        .from(savedTripStops)
+        .innerJoin(wineries, eq(savedTripStops.wineryId, wineries.id))
+        .where(eq(savedTripStops.tripId, trip.id))
+        .orderBy(savedTripStops.stopOrder);
+      return { ...trip, stops };
+    })
+  );
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <h1 className="font-heading text-2xl font-bold flex items-center gap-2 mb-8">
+        <Route className="h-6 w-6 text-burgundy-600" />
+        My Trips
+      </h1>
+
+      {tripsWithStops.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tripsWithStops.map((trip) => (
+            <div
+              key={trip.id}
+              className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+            >
+              <h3 className="font-heading font-semibold text-lg">{trip.name}</h3>
+              <div className="mt-2 space-y-1">
+                {trip.stops.map((stop, i) => (
+                  <p
+                    key={i}
+                    className="text-sm text-[var(--muted-foreground)] flex items-center gap-1.5"
+                  >
+                    <MapPin className="h-3 w-3 shrink-0" />
+                    {stop.wineryName}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+                {trip.theme && (
+                  <span className="rounded-full bg-[var(--muted)] px-2 py-0.5">
+                    {trip.theme}
+                  </span>
+                )}
+                <span>
+                  {new Date(trip.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Link
+                  href={`/plan-trip?stops=${trip.stops.map(() => "").join(",")}`}
+                  className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                >
+                  View Route
+                </Link>
+                {trip.shareCode && (
+                  <CopyShareLink
+                    path={`/shared/trip/${trip.shareCode}`}
+                  />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
+          <Route className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
+          <h2 className="mt-4 font-heading text-lg font-semibold">
+            No saved trips yet
+          </h2>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            Use the{" "}
+            <Link href="/plan-trip" className="text-burgundy-700 dark:text-burgundy-400 underline">
+              trip planner
+            </Link>{" "}
+            to create a route, then save it here.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

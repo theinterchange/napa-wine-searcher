@@ -1,17 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Wine } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (result?.error) {
+      setError("Invalid email or password");
+      setLoading(false);
+    } else {
+      window.location.href = "/";
+    }
+  }
+
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-        <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
-        <h1 className="mt-4 font-heading text-2xl font-bold">Welcome Back</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          Sign in to save favorites, add notes, and track your visits.
-        </p>
+      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+        <div className="text-center">
+          <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
+          <h1 className="mt-4 font-heading text-2xl font-bold">
+            Welcome Back
+          </h1>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            Sign in to save favorites, add notes, and track your visits.
+          </p>
+        </div>
+
+        {/* OAuth buttons */}
         <div className="mt-8 space-y-3">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
@@ -38,14 +70,84 @@ export default function LoginPage() {
             Continue with Google
           </button>
           <button
-            onClick={() => signIn("github", { callbackUrl: "/" })}
+            onClick={() => signIn("facebook", { callbackUrl: "/" })}
             className="flex w-full items-center justify-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
           >
-            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#1877F2">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
-            Continue with GitHub
+            Continue with Facebook
           </button>
+        </div>
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-[var(--border)]" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[var(--card)] px-2 text-[var(--muted-foreground)]">
+              or
+            </span>
+          </div>
+        </div>
+
+        {/* Email/password form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-burgundy-700 px-4 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/signup"
+            className="text-burgundy-700 hover:text-burgundy-800 dark:text-burgundy-400 font-medium"
+          >
+            Create account
+          </Link>
         </div>
       </div>
     </div>
