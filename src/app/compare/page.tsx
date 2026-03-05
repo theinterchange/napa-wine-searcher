@@ -53,9 +53,17 @@ export default async function ComparePage({
           selectedWineries={selectedWineries}
           featuredWineries={featuredWineries}
         />
-        <p className="mt-6 text-sm text-[var(--muted-foreground)] text-center">
-          Select at least 2 wineries to compare side-by-side.
-        </p>
+        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Select at least 2 wineries above to compare side-by-side, or add wineries from any winery page using the Compare button.
+          </p>
+          <Link
+            href="/wineries"
+            className="mt-4 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+          >
+            Browse Wineries
+          </Link>
+        </div>
       </div>
     );
   }

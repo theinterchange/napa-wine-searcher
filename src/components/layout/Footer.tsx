@@ -80,8 +80,21 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-[var(--border)] text-center text-sm text-[var(--muted-foreground)]">
-          &copy; {new Date().getFullYear()} Wine Country Guide.
+        <div className="mt-8 pt-8 border-t border-[var(--border)] text-sm text-[var(--muted-foreground)]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>&copy; {new Date().getFullYear()} Wine Country Guide.</p>
+            <div className="flex items-center gap-4">
+              <Link href="/privacy" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+          <p className="mt-4 text-center text-xs text-[var(--muted-foreground)]">
+            Must be 21 or older to consume alcohol. Please drink responsibly.
+          </p>
         </div>
       </div>
     </footer>

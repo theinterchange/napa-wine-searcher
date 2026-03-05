@@ -19,10 +19,21 @@ export async function generateMetadata({
     .where(eq(savedTrips.shareCode, code))
     .limit(1);
 
+  if (!trip) {
+    return { title: "Trip Not Found" };
+  }
+
   return {
-    title: trip
-      ? `${trip.name} | Wine Country Guide`
-      : "Trip Not Found",
+    title: `${trip.name} | Wine Country Guide`,
+    description: `Check out this wine country trip plan: ${trip.name}`,
+    openGraph: {
+      title: `${trip.name} — Wine Country Trip`,
+      description: `A curated wine country trip plan on Wine Country Guide.`,
+      type: "website",
+    },
+    alternates: {
+      canonical: `/shared/trip/${code}`,
+    },
   };
 }
 

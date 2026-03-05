@@ -53,32 +53,33 @@ export function WineTable({
           <WineIcon className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
           <p className="mt-3 text-sm text-[var(--muted-foreground)]">
             Wine details aren&apos;t available online.
-            {(websiteUrl || phone) && (
-              <>
-                {" "}
-                {websiteUrl && (
-                  <a
-                    href={websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-burgundy-700 dark:text-burgundy-400 underline"
-                  >
-                    Visit their website
-                  </a>
-                )}
-                {websiteUrl && phone && " or "}
-                {phone && (
-                  <a
-                    href={`tel:${phone}`}
-                    className="text-burgundy-700 dark:text-burgundy-400 underline"
-                  >
-                    call {phone}
-                  </a>
-                )}
-                {" "}for current offerings.
-              </>
-            )}
           </p>
+          {(websiteUrl || phone) && (
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              Contact {wineryName || "the winery"} directly for current offerings
+              {" \u2014 "}
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                >
+                  visit their website
+                </a>
+              )}
+              {websiteUrl && phone && " or "}
+              {phone && (
+                <a
+                  href={`tel:${phone}`}
+                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                >
+                  call {phone}
+                </a>
+              )}
+              .
+            </p>
+          )}
         </div>
       </div>
     );

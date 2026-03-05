@@ -418,7 +418,7 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
           {/* Hint when no query */}
           {!query.trim() && (
             <div className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted-foreground)]">
-              Try &ldquo;cabernet&rdquo;, &ldquo;dog friendly&rdquo;, &ldquo;St Helena&rdquo;, or &ldquo;luxury&rdquo;
+              Search wineries by name, region, or feature (e.g. &ldquo;dog friendly&rdquo;, &ldquo;St Helena&rdquo;, &ldquo;cabernet&rdquo;)
             </div>
           )}
         </div>

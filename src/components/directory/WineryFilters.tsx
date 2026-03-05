@@ -245,6 +245,7 @@ export function WineryFilters({
         options={amenityOptions}
         selected={selectedAmenities}
         onChange={(v) => updateParam("amenities", v)}
+        alwaysShowCount
       />
       <MultiSelectDropdown
         label="Sort"

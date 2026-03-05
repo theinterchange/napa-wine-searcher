@@ -18,6 +18,8 @@ interface MultiSelectDropdownProps {
   multiSelect?: boolean;
   icon?: LucideIcon;
   variant?: "filter" | "sort";
+  /** Always show a count badge when items are selected (even for 1 item) */
+  alwaysShowCount?: boolean;
 }
 
 export function MultiSelectDropdown({
@@ -28,6 +30,7 @@ export function MultiSelectDropdown({
   multiSelect = true,
   icon: Icon,
   variant = "filter",
+  alwaysShowCount = false,
 }: MultiSelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -94,9 +97,13 @@ export function MultiSelectDropdown({
       >
         {Icon && <Icon className="h-3.5 w-3.5" />}
         <span className="whitespace-nowrap">
-          {selected.length > 1 ? label : selectedLabel}
+          {alwaysShowCount && selected.length >= 1
+            ? label
+            : selected.length > 1
+              ? label
+              : selectedLabel}
         </span>
-        {selected.length > 1 && (
+        {((alwaysShowCount && selected.length >= 1) || selected.length > 1) && (
           <span className="inline-flex items-center justify-center rounded-full bg-burgundy-700 px-1.5 text-xs font-medium text-white min-w-[1.25rem] h-5 dark:bg-burgundy-600">
             {selected.length}
           </span>

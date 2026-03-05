@@ -35,9 +35,11 @@ export default function ForgotPasswordPage() {
         </div>
 
         {status === "success" ? (
-          <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
-            If an account exists with that email, we&apos;ve sent a reset link. Check your inbox.
-          </p>
+          <div className="mt-8 rounded-lg bg-green-50 px-4 py-3 dark:bg-green-900/30">
+            <p className="text-center text-sm text-green-700 dark:text-green-400">
+              If an account exists for that email, we&apos;ve sent a password reset link. Check your inbox (and spam folder).
+            </p>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <div>

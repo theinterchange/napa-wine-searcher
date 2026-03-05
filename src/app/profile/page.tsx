@@ -182,7 +182,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection message="No favorites yet. Browse wineries and tap the heart to save your favorites!" />
+          <EmptySection icon={Heart} message="No favorites yet. Browse wineries and tap the heart to save your favorites!" actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
@@ -211,7 +211,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection message="No visits recorded yet. Mark wineries as visited to track your wine country journey!" />
+          <EmptySection icon={MapPin} message="No visits recorded yet. Mark wineries as visited to track your wine country journey!" actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
@@ -277,7 +277,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection message='No wines logged yet. Visit a winery page and click "Log Wine" to start your journal.' />
+          <EmptySection icon={BookOpen} message='No wines logged yet. Visit a winery page and click "Log Wine" to start your journal.' actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
@@ -314,7 +314,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection message='No collections yet. Use "Add to List" on winery pages to create collections.' />
+          <EmptySection icon={FolderOpen} message='No collections yet. Use "Add to List" on winery pages to create collections.' actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
@@ -353,17 +353,31 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection message="No saved trips yet. Use the trip planner to create and save routes." />
+          <EmptySection icon={Route} message="No saved trips yet. Use the trip planner to create and save routes." actionLabel="Plan a Trip" actionHref="/plan-trip" />
         )}
       </section>
     </div>
   );
 }
 
-function EmptySection({ message }: { message: string }) {
+function EmptySection({ icon: Icon, message, actionLabel, actionHref }: {
+  icon?: React.ComponentType<{ className?: string }>;
+  message: string;
+  actionLabel?: string;
+  actionHref?: string;
+}) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
+      {Icon && <Icon className="mx-auto h-8 w-8 text-[var(--muted-foreground)] opacity-50 mb-3" />}
       <p className="text-[var(--muted-foreground)]">{message}</p>
+      {actionLabel && actionHref && (
+        <Link
+          href={actionHref}
+          className="mt-3 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+        >
+          {actionLabel}
+        </Link>
+      )}
     </div>
   );
 }

@@ -23,6 +23,7 @@ export function TastingTable({
   phone,
   wineryId,
   winerySlug,
+  wineryName,
 }: {
   tastings: Tasting[];
   curated?: boolean;
@@ -30,6 +31,7 @@ export function TastingTable({
   phone?: string | null;
   wineryId?: number;
   winerySlug?: string;
+  wineryName?: string;
 }) {
   if (tastings.length === 0) {
     return (
@@ -41,34 +43,35 @@ export function TastingTable({
           <GlassWater className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
           <p className="mt-3 text-sm text-[var(--muted-foreground)]">
             Tasting details aren&apos;t available online.
-            {(websiteUrl || phone) && (
-              <>
-                {" "}
-                {websiteUrl && (
-                  <TrackedLink
-                    href={websiteUrl}
-                    clickType="website"
-                    wineryId={wineryId}
-                    sourcePage={winerySlug ? `/wineries/${winerySlug}` : undefined}
-                    sourceComponent="TastingTable"
-                    className="text-burgundy-700 dark:text-burgundy-400 underline"
-                  >
-                    Visit their website
-                  </TrackedLink>
-                )}
-                {websiteUrl && phone && " or "}
-                {phone && (
-                  <a
-                    href={`tel:${phone}`}
-                    className="text-burgundy-700 dark:text-burgundy-400 underline"
-                  >
-                    call {phone}
-                  </a>
-                )}
-                {" "}for current offerings.
-              </>
-            )}
           </p>
+          {(websiteUrl || phone) && (
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              Contact {wineryName || "the winery"} directly for current offerings
+              {" \u2014 "}
+              {websiteUrl && (
+                <TrackedLink
+                  href={websiteUrl}
+                  clickType="website"
+                  wineryId={wineryId}
+                  sourcePage={winerySlug ? `/wineries/${winerySlug}` : undefined}
+                  sourceComponent="TastingTable"
+                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                >
+                  visit their website
+                </TrackedLink>
+              )}
+              {websiteUrl && phone && " or "}
+              {phone && (
+                <a
+                  href={`tel:${phone}`}
+                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                >
+                  call {phone}
+                </a>
+              )}
+              .
+            </p>
+          )}
         </div>
       </div>
     );

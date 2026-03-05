@@ -291,16 +291,22 @@ export default async function WineryDetailPage({
           <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
             Last updated{" "}
             {new Date(winery.lastScrapedAt || winery.updatedAt || "2025-01-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}.
-            {" "}Visit{" "}
-            <a
-              href={winery.websiteUrl ?? "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline"
-            >
-              {winery.name}&apos;s website
-            </a>{" "}
-            for the latest info on wines, prices, and hours.
+            {winery.websiteUrl ? (
+              <>
+                {" "}Visit{" "}
+                <a
+                  href={winery.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline"
+                >
+                  {winery.name}&apos;s website
+                </a>{" "}
+                for the latest info on wines, prices, and hours.
+              </>
+            ) : (
+              <> Contact {winery.name} directly for the latest info on wines, prices, and hours.</>
+            )}
           </div>
         )}
         {winery.curated && winery.curatedAt && (
@@ -349,7 +355,7 @@ export default async function WineryDetailPage({
 
         {/* Tasting Experiences — primary visitor content */}
         <div className="mt-8">
-          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} wineryId={winery.id} winerySlug={winery.slug} />
+          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
         </div>
 
         {/* Wines — secondary reference */}

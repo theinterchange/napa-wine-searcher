@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -119,6 +120,7 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
             />
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">Must be at least 8 characters</p>
           </div>
 
           <div>
@@ -139,9 +141,22 @@ export default function SignupPage() {
             />
           </div>
 
+          <div className="flex items-start gap-2">
+            <input
+              id="age-confirm"
+              type="checkbox"
+              checked={ageConfirmed}
+              onChange={(e) => setAgeConfirmed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-burgundy-700 focus:ring-burgundy-500"
+            />
+            <label htmlFor="age-confirm" className="text-xs text-[var(--muted-foreground)]">
+              I confirm that I am 21 years of age or older
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !ageConfirmed}
             className="w-full rounded-lg bg-burgundy-700 px-4 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Create Account"}

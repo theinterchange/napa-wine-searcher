@@ -85,7 +85,7 @@ export default async function CollectionsPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <FolderOpen className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
+          <FolderOpen className="mx-auto h-10 w-10 text-[var(--muted-foreground)] opacity-50" />
           <h2 className="mt-4 font-heading text-lg font-semibold">
             No collections yet
           </h2>
@@ -93,6 +93,12 @@ export default async function CollectionsPage() {
             Visit a winery page and click &ldquo;Add to List&rdquo; to create
             your first collection.
           </p>
+          <Link
+            href="/wineries"
+            className="mt-4 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+          >
+            Browse Wineries
+          </Link>
         </div>
       )}
     </div>

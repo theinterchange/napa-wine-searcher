@@ -184,6 +184,10 @@ export default async function WineriesPage({
     .where(where);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+  const clampedPage = Math.min(page, Math.max(1, totalPages));
+
+  // If the requested page exceeds the max, show the last valid page
+  // (results will reflect the clamped page; pagination will show correctly)
 
   // Fetch
   const results = await db
@@ -211,7 +215,7 @@ export default async function WineriesPage({
     .where(where)
     .orderBy(desc(wineries.curated), secondaryOrder)
     .limit(PAGE_SIZE)
-    .offset((page - 1) * PAGE_SIZE);
+    .offset((clampedPage - 1) * PAGE_SIZE);
 
   // Sub regions for filter
   const allSubRegions = await db
@@ -264,7 +268,7 @@ export default async function WineriesPage({
       )}
 
       <div className="mt-8">
-        <Pagination currentPage={page} totalPages={totalPages} />
+        <Pagination currentPage={clampedPage} totalPages={totalPages} />
       </div>
 
       <div className="mt-12 text-center">

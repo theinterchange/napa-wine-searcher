@@ -27,10 +27,21 @@ export async function generateMetadata({
     .where(eq(users.username, username))
     .limit(1);
 
+  if (!user) {
+    return { title: "Profile Not Found" };
+  }
+
   return {
-    title: user
-      ? `${user.name}'s Profile | Wine Country Guide`
-      : "Profile Not Found",
+    title: `${user.name}'s Profile | Wine Country Guide`,
+    description: `${user.name}'s wine country profile on Wine Country Guide.`,
+    openGraph: {
+      title: `${user.name}'s Wine Country Profile`,
+      description: `Check out ${user.name}'s wine country favorites and collections.`,
+      type: "profile",
+    },
+    alternates: {
+      canonical: `/u/${username}`,
+    },
   };
 }
 

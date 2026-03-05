@@ -14,15 +14,26 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { code } = await params;
   const [collection] = await db
-    .select({ name: collections.name })
+    .select({ name: collections.name, description: collections.description })
     .from(collections)
     .where(eq(collections.shareCode, code))
     .limit(1);
 
+  if (!collection) {
+    return { title: "Collection Not Found" };
+  }
+
   return {
-    title: collection
-      ? `${collection.name} | Wine Country Guide`
-      : "Collection Not Found",
+    title: `${collection.name} | Wine Country Guide`,
+    description: collection.description || `A curated winery collection on Wine Country Guide.`,
+    openGraph: {
+      title: `${collection.name} — Winery Collection`,
+      description: collection.description || `A curated winery collection on Wine Country Guide.`,
+      type: "website",
+    },
+    alternates: {
+      canonical: `/shared/collection/${code}`,
+    },
   };
 }
 

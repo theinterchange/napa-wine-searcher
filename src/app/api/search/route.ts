@@ -38,6 +38,7 @@ function matchFilters(q: string) {
 }
 
 export async function GET(request: NextRequest) {
+  try {
   const q = request.nextUrl.searchParams.get("q")?.trim();
   if (!q || q.length < 2) {
     return NextResponse.json({ wineries: [], wineTypes: [], cities: [], regions: [], dayTrips: [], filters: [] });
@@ -130,4 +131,8 @@ export async function GET(request: NextRequest) {
     dayTrips: dayTripResults,
     filters,
   });
+  } catch (error) {
+    console.error("GET /api/search error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

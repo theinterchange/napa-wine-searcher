@@ -20,12 +20,18 @@ interface WineryHeroProps {
 export function WineryHero({ winery }: { winery: WineryHeroProps }) {
   return (
     <div className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white">
-      {winery.heroImageUrl && (
+      {winery.heroImageUrl ? (
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${winery.heroImageUrl})` }}
         >
           <div className="absolute inset-0 bg-burgundy-950/75" />
+        </div>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-burgundy-800 via-burgundy-900 to-burgundy-950">
+          <div className="absolute inset-0 flex items-center justify-center opacity-10">
+            <WineIcon className="h-48 w-48" />
+          </div>
         </div>
       )}
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

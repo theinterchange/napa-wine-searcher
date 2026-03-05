@@ -53,13 +53,13 @@ function ResetPasswordForm() {
     return (
       <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
         <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
-        <h1 className="mt-4 font-heading text-2xl font-bold">Invalid Link</h1>
+        <h1 className="mt-4 font-heading text-2xl font-bold">Link Expired</h1>
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          This reset link is invalid or has expired.
+          This reset link has expired or is invalid. Please request a new one.
         </p>
         <Link
           href="/forgot-password"
-          className="mt-4 inline-block text-sm text-burgundy-700 hover:text-burgundy-800 dark:text-burgundy-400 font-medium"
+          className="mt-4 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
         >
           Request a new reset link
         </Link>

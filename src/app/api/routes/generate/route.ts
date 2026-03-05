@@ -69,6 +69,7 @@ const TIME_BUDGET_STOPS: Record<string, { min: number; max: number; minutes: num
 };
 
 export async function GET(request: NextRequest) {
+  try {
   const sp = request.nextUrl.searchParams;
 
   const theme = sp.get("theme") || "";
@@ -446,6 +447,10 @@ export async function GET(request: NextRequest) {
     originSegment,
     segments,
   });
+  } catch (error) {
+    console.error("GET /api/routes/generate error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
 async function loadCuratedRoute(slug: string) {

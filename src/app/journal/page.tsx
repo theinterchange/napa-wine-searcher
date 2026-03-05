@@ -6,6 +6,7 @@ import { eq, desc, count, avg } from "drizzle-orm";
 import { BookOpen, Star } from "lucide-react";
 import { JournalEntryCard } from "@/components/journal/JournalEntryCard";
 import { JournalActions } from "@/components/journal/JournalActions";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -64,7 +65,7 @@ export default async function JournalPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <BookOpen className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
+          <BookOpen className="mx-auto h-10 w-10 text-[var(--muted-foreground)] opacity-50" />
           <h2 className="mt-4 font-heading text-lg font-semibold">
             No wines logged yet
           </h2>
@@ -72,6 +73,12 @@ export default async function JournalPage() {
             Visit a winery page and click &ldquo;Log Wine&rdquo; or use the
             &ldquo;Tried it&rdquo; button next to any wine to start your journal.
           </p>
+          <Link
+            href="/wineries"
+            className="mt-4 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+          >
+            Browse Wineries
+          </Link>
         </div>
       )}
     </div>
