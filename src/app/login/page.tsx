@@ -20,17 +20,22 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
+      if (!result?.ok) {
+        setError("Invalid email or password");
+        setLoading(false);
+      } else {
+        window.location.href = callbackUrl;
+      }
+    } catch {
       setError("Invalid email or password");
       setLoading(false);
-    } else {
-      window.location.href = callbackUrl;
     }
   }
 
