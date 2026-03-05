@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
 import { wineries } from "./wineries";
 
 export const wineTypes = sqliteTable("wine_types", {
@@ -24,4 +24,6 @@ export const wines = sqliteTable("wines", {
   ratingCount: integer("rating_count"),
   sourceUrl: text("source_url"),
   updatedAt: text("updated_at"),
-});
+}, (t) => [
+  index("idx_wines_winery_id").on(t.wineryId),
+]);

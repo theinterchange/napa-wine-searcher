@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { savedTrips, savedTripStops, wineries } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
-import { Route, MapPin, Share2 } from "lucide-react";
+import { eq, desc, inArray } from "drizzle-orm";
+import { Route, MapPin } from "lucide-react";
 import Link from "next/link";
 import { CopyShareLink } from "@/components/trip/CopyShareLink";
 import type { Metadata } from "next";
@@ -25,20 +25,25 @@ export default async function MyTripsPage() {
     .where(eq(savedTrips.userId, session.user.id))
     .orderBy(desc(savedTrips.createdAt));
 
-  const tripsWithStops = await Promise.all(
-    trips.map(async (trip) => {
-      const stops = await db
+  const tripIds = trips.map((t) => t.id);
+  const allStops = tripIds.length > 0
+    ? await db
         .select({
+          tripId: savedTripStops.tripId,
           stopOrder: savedTripStops.stopOrder,
+          wineryId: savedTripStops.wineryId,
           wineryName: wineries.name,
         })
         .from(savedTripStops)
         .innerJoin(wineries, eq(savedTripStops.wineryId, wineries.id))
-        .where(eq(savedTripStops.tripId, trip.id))
-        .orderBy(savedTripStops.stopOrder);
-      return { ...trip, stops };
-    })
-  );
+        .where(inArray(savedTripStops.tripId, tripIds))
+        .orderBy(savedTripStops.stopOrder)
+    : [];
+
+  const tripsWithStops = trips.map((trip) => ({
+    ...trip,
+    stops: allStops.filter((s) => s.tripId === trip.id),
+  }));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -81,7 +86,7 @@ export default async function MyTripsPage() {
               </div>
               <div className="mt-4 flex gap-2">
                 <Link
-                  href={`/plan-trip?stops=${trip.stops.map(() => "").join(",")}`}
+                  href={`/plan-trip?stops=${trip.stops.map((s) => s.wineryId).join(",")}`}
                   className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
                 >
                   View Route

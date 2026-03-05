@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
 import { users } from "./auth";
 import { wineries } from "./wineries";
 import { wines } from "./wines";
@@ -63,7 +63,9 @@ export const savedTrips = sqliteTable("saved_trips", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (t) => [
+  index("idx_saved_trips_user_id").on(t.userId),
+]);
 
 export const savedTripStops = sqliteTable("saved_trip_stops", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -75,7 +77,9 @@ export const savedTripStops = sqliteTable("saved_trip_stops", {
     .references(() => wineries.id, { onDelete: "cascade" }),
   stopOrder: integer("stop_order").notNull(),
   notes: text("notes"),
-});
+}, (t) => [
+  index("idx_saved_trip_stops_trip_id").on(t.tripId),
+]);
 
 // --- Collections / Lists ---
 export const collections = sqliteTable("collections", {
@@ -93,7 +97,9 @@ export const collections = sqliteTable("collections", {
   updatedAt: text("updated_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-});
+}, (t) => [
+  index("idx_collections_user_id").on(t.userId),
+]);
 
 export const collectionItems = sqliteTable(
   "collection_items",
@@ -109,7 +115,10 @@ export const collectionItems = sqliteTable(
       .$defaultFn(() => new Date().toISOString()),
     notes: text("notes"),
   },
-  (t) => [primaryKey({ columns: [t.collectionId, t.wineryId] })]
+  (t) => [
+    primaryKey({ columns: [t.collectionId, t.wineryId] }),
+    index("idx_collection_items_collection_id").on(t.collectionId),
+  ]
 );
 
 // --- Friendships (schema only, UI deferred) ---

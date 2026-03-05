@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
 
 export const subRegions = sqliteTable("sub_regions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -47,4 +47,7 @@ export const wineries = sqliteTable("wineries", {
   googleReviewCount: integer("google_review_count"),
   googleRating: real("google_rating"),
   updatedAt: text("updated_at"),
-});
+}, (t) => [
+  index("idx_wineries_slug").on(t.slug),
+  index("idx_wineries_sub_region_id").on(t.subRegionId),
+]);

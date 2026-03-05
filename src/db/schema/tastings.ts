@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, index } from "drizzle-orm/sqlite-core";
 import { wineries } from "./wineries";
 
 export const tastingExperiences = sqliteTable("tasting_experiences", {
@@ -16,4 +16,6 @@ export const tastingExperiences = sqliteTable("tasting_experiences", {
   maxGroupSize: integer("max_group_size"),
   sourceUrl: text("source_url"),
   updatedAt: text("updated_at"),
-});
+}, (t) => [
+  index("idx_tasting_experiences_winery_id").on(t.wineryId),
+]);

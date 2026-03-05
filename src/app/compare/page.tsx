@@ -109,13 +109,16 @@ export default async function ComparePage({
   const rows: { label: string; render: (w: typeof compareWineries[number]) => React.ReactNode }[] = [
     {
       label: "Rating",
-      render: (w) => (
-        <div className="flex items-center gap-1">
-          <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-          <span className="font-semibold">{w.aggregateRating?.toFixed(1)}</span>
-          <span className="text-xs text-[var(--muted-foreground)]">({w.totalRatings})</span>
-        </div>
-      ),
+      render: (w) =>
+        w.aggregateRating != null ? (
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+            <span className="font-semibold">{w.aggregateRating.toFixed(1)}</span>
+            <span className="text-xs text-[var(--muted-foreground)]">({w.totalRatings})</span>
+          </div>
+        ) : (
+          <span className="text-sm text-[var(--muted-foreground)]">—</span>
+        ),
     },
     {
       label: "Price Level",

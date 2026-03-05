@@ -22,6 +22,7 @@ import {
   Route,
   FolderOpen,
   Star,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -168,6 +169,57 @@ export default async function ProfilePage() {
           <SignOutButton />
         </div>
       </div>
+
+      {/* Getting Started — shown for new users with no activity */}
+      {favCount === 0 && visitCount === 0 && journalCount === 0 && (
+        <section className="mb-10 rounded-xl border border-burgundy-200 dark:border-burgundy-800 bg-burgundy-50 dark:bg-burgundy-950/50 p-6">
+          <h2 className="font-heading text-lg font-bold flex items-center gap-2 mb-3">
+            <Sparkles className="h-5 w-5 text-gold-500" />
+            Getting Started
+          </h2>
+          <p className="text-sm text-[var(--muted-foreground)] mb-4">
+            Welcome to Wine Country Guide! Here are a few things to try:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link
+              href="/wineries"
+              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+            >
+              <Heart className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Browse wineries</p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  Add your favorites
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/plan-trip"
+              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+            >
+              <Route className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Plan your first trip</p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  Build a winery route
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/journal"
+              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+            >
+              <BookOpen className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Start a journal entry</p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  Log wines you&apos;ve tasted
+                </p>
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Favorites */}
       <section className="mb-12">
