@@ -9,6 +9,7 @@ import {
   categoryLabels,
   type Wine,
 } from "./wine-constants";
+import { TriedItButton } from "./TriedItButton";
 
 function WineTypeBadge({ wineType, category }: { wineType: string | null; category: string | null }) {
   if (!wineType) return null;
@@ -27,10 +28,14 @@ export function WineCategory({
   category,
   wines,
   defaultOpen = false,
+  wineryId,
+  wineryName,
 }: {
   category: string;
   wines: Wine[];
   defaultOpen?: boolean;
+  wineryId?: number;
+  wineryName?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -79,6 +84,7 @@ export function WineCategory({
                   <th className="text-left p-4 font-medium min-w-[160px]">Type</th>
                   <th className="text-left p-4 font-medium">Vintage</th>
                   <th className="text-left p-4 font-medium">Price</th>
+                  {wineryId && <th className="p-4 font-medium" />}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
@@ -101,6 +107,17 @@ export function WineCategory({
                     <td className="p-4">
                       {wine.price != null && formatPrice(wine.price)}
                     </td>
+                    {wineryId && (
+                      <td className="p-4">
+                        <TriedItButton
+                          wineId={wine.id}
+                          wineName={wine.name}
+                          vintage={wine.vintage}
+                          wineryId={wineryId}
+                          wineryName={wineryName || ""}
+                        />
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -134,6 +151,15 @@ export function WineCategory({
                   <span className="text-xs text-[var(--muted-foreground)]">
                     {wine.vintage || "NV"}
                   </span>
+                  {wineryId && (
+                    <TriedItButton
+                      wineId={wine.id}
+                      wineName={wine.name}
+                      vintage={wine.vintage}
+                      wineryId={wineryId}
+                      wineryName={wineryName || ""}
+                    />
+                  )}
                 </div>
               </div>
             ))}

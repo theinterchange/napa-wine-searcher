@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wine, Map, Menu, X, GitCompareArrows } from "lucide-react";
-import { useState } from "react";
+import {
+  Wine,
+  Map,
+  Menu,
+  X,
+  GitCompareArrows,
+  ChevronDown,
+  User,
+  FolderOpen,
+  Route,
+  BookOpen,
+  Bookmark,
+  LogOut,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch } from "./GlobalSearch";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -15,14 +28,32 @@ const navLinks = [
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
 ];
 
+const userMenuLinks = [
+  { href: "/profile", label: "Profile", icon: User },
+  { href: "/collections", label: "Collections", icon: FolderOpen },
+  { href: "/my-trips", label: "My Trips", icon: Route },
+  { href: "/journal", label: "Wine Journal", icon: BookOpen },
+];
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { data: session } = useSession();
   const pathname = usePathname();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    if (userMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [userMenuOpen]);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
@@ -55,15 +86,53 @@ export function Navbar() {
             ))}
             <ThemeToggle />
             {session ? (
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
-              >
-                {session.user?.image && (
-                  <img src={session.user.image} alt="" className="h-7 w-7 rounded-full" />
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                >
+                  {session.user?.image && (
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="h-7 w-7 rounded-full"
+                    />
+                  )}
+                  {session.user?.name}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-lg py-1 z-50">
+                    {userMenuLinks.map(({ href, label, icon: Icon }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setUserMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors",
+                          isActive(href) &&
+                            "text-burgundy-700 dark:text-burgundy-400"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {label}
+                      </Link>
+                    ))}
+                    <div className="border-t border-[var(--border)] my-1" />
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors text-left"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
                 )}
-                {session.user?.name}
-              </Link>
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -79,7 +148,11 @@ export function Navbar() {
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
             >
-              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {open ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -102,16 +175,34 @@ export function Navbar() {
               </Link>
             ))}
             {session ? (
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                {session.user?.image && (
-                  <img src={session.user.image} alt="" className="h-7 w-7 rounded-full" />
-                )}
-                {session.user?.name}
-              </Link>
+              <>
+                {userMenuLinks.map(({ href, label, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-2 text-sm font-medium",
+                      isActive(href)
+                        ? "text-burgundy-700 dark:text-burgundy-400"
+                        : ""
+                    )}
+                    onClick={() => setOpen(false)}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                ))}
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </button>
+              </>
             ) : (
               <Link
                 href="/login"

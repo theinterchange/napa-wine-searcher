@@ -8,6 +8,7 @@ import {
   type Wine,
 } from "./wine-constants";
 import { AffiliateWineLink } from "@/components/monetization/AffiliateWineLink";
+import { TriedItButton } from "./TriedItButton";
 
 const GROUPING_THRESHOLD = 8;
 
@@ -32,6 +33,7 @@ export function WineTable({
   phone,
   affiliateUrl,
   wineryId,
+  wineryName,
   winerySlug,
 }: {
   wines: Wine[];
@@ -40,6 +42,7 @@ export function WineTable({
   phone?: string | null;
   affiliateUrl?: string | null;
   wineryId?: number;
+  wineryName?: string;
   winerySlug?: string;
 }) {
   if (wines.length === 0) {
@@ -130,6 +133,8 @@ export function WineTable({
               category={g.category}
               wines={g.wines}
               defaultOpen={g.category === largestCat}
+              wineryId={wineryId}
+              wineryName={wineryName}
             />
           ))}
         </div>
@@ -156,6 +161,7 @@ export function WineTable({
               <th className="text-left p-4 font-medium min-w-[160px]">Type</th>
               <th className="text-left p-4 font-medium">Vintage</th>
               <th className="text-left p-4 font-medium">Price</th>
+              {wineryId && <th className="p-4 font-medium" />}
               {affiliateUrl && <th className="text-left p-4 font-medium" />}
             </tr>
           </thead>
@@ -179,6 +185,17 @@ export function WineTable({
                 <td className="p-4">
                   {wine.price != null && formatPrice(wine.price)}
                 </td>
+                {wineryId && (
+                  <td className="p-4">
+                    <TriedItButton
+                      wineId={wine.id}
+                      wineName={wine.name}
+                      vintage={wine.vintage}
+                      wineryId={wineryId}
+                      wineryName={wineryName || ""}
+                    />
+                  </td>
+                )}
                 {affiliateUrl && (
                   <td className="p-4">
                     <AffiliateWineLink
@@ -221,6 +238,15 @@ export function WineTable({
               <span className="text-xs text-[var(--muted-foreground)]">
                 {wine.vintage || "NV"}
               </span>
+              {wineryId && (
+                <TriedItButton
+                  wineId={wine.id}
+                  wineName={wine.name}
+                  vintage={wine.vintage}
+                  wineryId={wineryId}
+                  wineryName={wineryName || ""}
+                />
+              )}
             </div>
           </div>
         ))}
