@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, desc, sql } from "drizzle-orm";
 import { Star, MapPin } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ShareCompareButton } from "@/components/compare/ShareCompareButton";
@@ -11,6 +11,48 @@ export const metadata: Metadata = {
   title: "Compare Wineries | Wine Country Guide",
   description: "Compare wineries side-by-side to plan your wine country visit.",
 };
+
+async function getRecommendedGroups() {
+  const pick = { id: wineries.id, name: wineries.name };
+
+  const [topRated, dogFriendly, walkIn, napa, sonoma, luxury] = await Promise.all([
+    db.select(pick).from(wineries)
+      .where(sql`${wineries.curated} = 1`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+    db.select(pick).from(wineries)
+      .where(sql`${wineries.dogFriendly} = 1`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+    db.select(pick).from(wineries)
+      .where(sql`${wineries.reservationRequired} = 0 OR ${wineries.reservationRequired} IS NULL`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+    db.select(pick).from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(sql`${subRegions.valley} = 'napa'`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+    db.select(pick).from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(sql`${subRegions.valley} = 'sonoma'`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+    db.select(pick).from(wineries)
+      .where(sql`${wineries.priceLevel} >= 3`)
+      .orderBy(desc(wineries.googleRating))
+      .limit(4),
+  ]);
+
+  return [
+    { label: "Top Rated", wineries: topRated },
+    { label: "Dog Friendly", wineries: dogFriendly },
+    { label: "Walk-in Friendly", wineries: walkIn },
+    { label: "Napa Valley", wineries: napa },
+    { label: "Sonoma County", wineries: sonoma },
+    { label: "Luxury", wineries: luxury },
+  ].filter((g) => g.wineries.length > 0);
+}
 
 export default async function ComparePage({
   searchParams,
@@ -25,17 +67,22 @@ export default async function ComparePage({
     .filter((n) => !isNaN(n))
     .slice(0, 4);
 
-  // Fetch all wineries for the search/add dropdown
-  const allWineries = await db
-    .select({ id: wineries.id, name: wineries.name })
-    .from(wineries)
-    .orderBy(wineries.name);
+  const [recommendedGroups, selectedWineries] = await Promise.all([
+    getRecommendedGroups(),
+    ids.length > 0
+      ? db.select({ id: wineries.id, name: wineries.name }).from(wineries).where(inArray(wineries.id, ids))
+      : Promise.resolve([]),
+  ]);
 
   if (ids.length < 2) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="font-heading text-3xl font-bold mb-6">Compare Wineries</h1>
-        <CompareManager currentIds={ids} allWineries={allWineries} />
+        <CompareManager
+          currentIds={ids}
+          selectedWineries={selectedWineries}
+          recommendedGroups={recommendedGroups}
+        />
         <p className="mt-6 text-sm text-[var(--muted-foreground)] text-center">
           Select at least 2 wineries to compare side-by-side.
         </p>
@@ -128,7 +175,11 @@ export default async function ComparePage({
       </div>
 
       <div className="mb-8">
-        <CompareManager currentIds={ids} allWineries={allWineries} />
+        <CompareManager
+          currentIds={ids}
+          selectedWineries={selectedWineries}
+          recommendedGroups={recommendedGroups}
+        />
       </div>
 
       {/* Desktop: grid table */}
@@ -164,31 +215,6 @@ export default async function ComparePage({
             </div>
           ))}
 
-          {/* Wines */}
-          <div className="flex items-center p-3 font-medium text-sm bg-[var(--muted)] rounded-l-lg">
-            Wines
-          </div>
-          {compareWineries.map((w) => {
-            const ww = wineryWines.filter((wine) => wine.wineryId === w.id);
-            return (
-              <div key={w.id} className="p-3 text-sm border-x border-[var(--border)] bg-[var(--card)]">
-                <ul className="space-y-1">
-                  {ww.map((wine) => (
-                    <li key={wine.id} className="flex justify-between">
-                      <span className="truncate">{wine.name}</span>
-                      <span className="shrink-0 ml-2 text-[var(--muted-foreground)]">
-                        {wine.price ? formatPrice(wine.price) : "—"}
-                      </span>
-                    </li>
-                  ))}
-                  {ww.length === 0 && (
-                    <li className="text-[var(--muted-foreground)]">—</li>
-                  )}
-                </ul>
-              </div>
-            );
-          })}
-
           {/* Tastings */}
           <div className="flex items-center p-3 font-medium text-sm bg-[var(--muted)] rounded-l-lg">
             Tastings
@@ -196,7 +222,7 @@ export default async function ComparePage({
           {compareWineries.map((w) => {
             const tt = wineryTastings.filter((t) => t.wineryId === w.id);
             return (
-              <div key={w.id} className="p-3 text-sm border-x border-b border-[var(--border)] bg-[var(--card)] rounded-b-xl">
+              <div key={w.id} className="p-3 text-sm border-x border-[var(--border)] bg-[var(--card)]">
                 <ul className="space-y-2">
                   {tt.map((t) => (
                     <li key={t.id}>
@@ -214,6 +240,31 @@ export default async function ComparePage({
                     </li>
                   ))}
                   {tt.length === 0 && (
+                    <li className="text-[var(--muted-foreground)]">—</li>
+                  )}
+                </ul>
+              </div>
+            );
+          })}
+
+          {/* Wines */}
+          <div className="flex items-center p-3 font-medium text-sm bg-[var(--muted)] rounded-l-lg">
+            Wines
+          </div>
+          {compareWineries.map((w) => {
+            const ww = wineryWines.filter((wine) => wine.wineryId === w.id);
+            return (
+              <div key={w.id} className="p-3 text-sm border-x border-b border-[var(--border)] bg-[var(--card)] rounded-b-xl">
+                <ul className="space-y-1">
+                  {ww.map((wine) => (
+                    <li key={wine.id} className="flex justify-between">
+                      <span className="truncate">{wine.name}</span>
+                      <span className="shrink-0 ml-2 text-[var(--muted-foreground)]">
+                        {wine.price ? formatPrice(wine.price) : "—"}
+                      </span>
+                    </li>
+                  ))}
+                  {ww.length === 0 && (
                     <li className="text-[var(--muted-foreground)]">—</li>
                   )}
                 </ul>
@@ -244,21 +295,6 @@ export default async function ComparePage({
                     {render(w)}
                   </div>
                 ))}
-                {ww.length > 0 && (
-                  <div className="px-4 py-3">
-                    <p className="text-sm font-medium text-[var(--muted-foreground)] mb-2">Wines</p>
-                    <ul className="space-y-1 text-sm">
-                      {ww.map((wine) => (
-                        <li key={wine.id} className="flex justify-between">
-                          <span className="truncate">{wine.name}</span>
-                          <span className="shrink-0 ml-2 text-[var(--muted-foreground)]">
-                            {wine.price ? formatPrice(wine.price) : "—"}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
                 {tt.length > 0 && (
                   <div className="px-4 py-3">
                     <p className="text-sm font-medium text-[var(--muted-foreground)] mb-2">Tastings</p>
@@ -271,6 +307,21 @@ export default async function ComparePage({
                               {t.price ? formatPrice(t.price) : "—"}
                             </span>
                           </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {ww.length > 0 && (
+                  <div className="px-4 py-3">
+                    <p className="text-sm font-medium text-[var(--muted-foreground)] mb-2">Wines</p>
+                    <ul className="space-y-1 text-sm">
+                      {ww.map((wine) => (
+                        <li key={wine.id} className="flex justify-between">
+                          <span className="truncate">{wine.name}</span>
+                          <span className="shrink-0 ml-2 text-[var(--muted-foreground)]">
+                            {wine.price ? formatPrice(wine.price) : "—"}
+                          </span>
                         </li>
                       ))}
                     </ul>

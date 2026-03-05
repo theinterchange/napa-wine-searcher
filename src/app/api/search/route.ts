@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
     // Wineries: match name, city, or description (normalized for punctuation)
     db
       .select({
+        id: wineries.id,
         slug: wineries.slug,
         name: wineries.name,
         city: wineries.city,
