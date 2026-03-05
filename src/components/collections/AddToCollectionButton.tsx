@@ -2,6 +2,7 @@
 
 import { ListPlus, Check, Plus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +12,9 @@ interface Collection {
   itemCount: number;
 }
 
-export function AddToCollectionButton({ wineryId }: { wineryId: number }) {
+export function AddToCollectionButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [memberOf, setMemberOf] = useState<Set<number>>(new Set());
@@ -22,15 +24,10 @@ export function AddToCollectionButton({ wineryId }: { wineryId: number }) {
 
   useEffect(() => {
     if (!session || !open) return;
-    // Fetch collections and check membership
     fetch("/api/user/collections")
       .then((r) => r.json())
       .then(async (cols: Collection[]) => {
         setCollections(cols);
-        // Check which collections contain this winery
-        // We'll check by fetching the collection items - but for simplicity,
-        // we'll use a dedicated endpoint or check client-side
-        // For now, just set empty - can be enhanced later
       })
       .catch(() => {});
   }, [session, open]);
@@ -45,7 +42,13 @@ export function AddToCollectionButton({ wineryId }: { wineryId: number }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  if (!session) return null;
+  const handleClick = () => {
+    if (!session) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+    setOpen(!open);
+  };
 
   async function toggleCollection(collectionId: number) {
     const isMember = memberOf.has(collectionId);
@@ -77,7 +80,6 @@ export function AddToCollectionButton({ wineryId }: { wineryId: number }) {
       });
       const col = await res.json();
 
-      // Add winery to new collection
       await fetch(`/api/user/collections/${col.id}/items`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,11 +100,15 @@ export function AddToCollectionButton({ wineryId }: { wineryId: number }) {
   return (
     <div className="relative" ref={ref}>
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+        onClick={handleClick}
+        title={compact ? "Add to List" : undefined}
+        className={cn(
+          "flex items-center gap-2 rounded-lg border border-[var(--border)] text-sm font-medium hover:bg-[var(--muted)] transition-colors",
+          compact ? "px-2.5 py-2" : "px-4 py-2"
+        )}
       >
         <ListPlus className="h-4 w-4" />
-        Add to List
+        {!compact && "Add to List"}
       </button>
 
       {open && (

@@ -2,11 +2,13 @@
 
 import { Bookmark } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-export function WantToVisitButton({ wineryId }: { wineryId: number }) {
+export function WantToVisitButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isWantToVisit, setIsWantToVisit] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -18,9 +20,11 @@ export function WantToVisitButton({ wineryId }: { wineryId: number }) {
       .catch(() => {});
   }, [session, wineryId]);
 
-  if (!session) return null;
-
   const toggle = async () => {
+    if (!session) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
     setLoading(true);
     try {
       const method = isWantToVisit ? "DELETE" : "POST";
@@ -39,8 +43,10 @@ export function WantToVisitButton({ wineryId }: { wineryId: number }) {
     <button
       onClick={toggle}
       disabled={loading}
+      title={compact ? (isWantToVisit ? "Want to Visit" : "Add to Wish List") : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
+        compact ? "px-2.5 py-2" : "px-4 py-2",
         isWantToVisit
           ? "bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300"
           : "border border-[var(--border)] hover:bg-[var(--muted)]"
@@ -52,7 +58,7 @@ export function WantToVisitButton({ wineryId }: { wineryId: number }) {
           isWantToVisit && "fill-sky-600 text-sky-600"
         )}
       />
-      {isWantToVisit ? "Want to Visit" : "Add to Wish List"}
+      {!compact && (isWantToVisit ? "Want to Visit" : "Add to Wish List")}
     </button>
   );
 }

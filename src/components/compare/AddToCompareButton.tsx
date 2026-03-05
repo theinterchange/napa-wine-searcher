@@ -7,20 +7,26 @@ import { cn } from "@/lib/utils";
 export function AddToCompareButton({
   wineryId,
   wineryName,
+  compact,
 }: {
   wineryId: number;
   wineryName: string;
+  compact?: boolean;
 }) {
   const { toggle, isSelected, isFull } = useCompare();
   const selected = isSelected(wineryId);
   const disabled = !selected && isFull;
 
+  const label = selected ? "In Compare \u2713" : disabled ? "Compare Full" : "Add to Compare";
+
   return (
     <button
       onClick={() => toggle(wineryId, wineryName)}
       disabled={disabled}
+      title={compact ? label : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
+        compact ? "px-2.5 py-2" : "px-4 py-2",
         selected
           ? "bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300"
           : disabled
@@ -29,7 +35,7 @@ export function AddToCompareButton({
       )}
     >
       <Scale className={cn("h-4 w-4", selected && "text-burgundy-600")} />
-      {selected ? "In Compare \u2713" : disabled ? "Compare Full" : "Add to Compare"}
+      {!compact && label}
     </button>
   );
 }

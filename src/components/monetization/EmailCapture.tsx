@@ -109,8 +109,8 @@ export function EmailCapture({
   return (
     <div className="rounded-xl border border-[var(--border)] bg-olive-50 dark:bg-olive-950 p-6 sm:p-8 text-center">
       <Mail className="h-8 w-8 mx-auto text-burgundy-600 dark:text-burgundy-400 mb-3" />
-      <h3 className="font-heading text-xl font-bold">{heading}</h3>
-      <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-md mx-auto">
+      <h3 className="font-heading text-xl font-bold text-olive-900 dark:text-white">{heading}</h3>
+      <p className="mt-2 text-sm text-olive-700 dark:text-olive-300 max-w-md mx-auto">
         {description}
       </p>
       <form

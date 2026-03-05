@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export interface DropdownOption {
   value: string;
@@ -15,6 +16,8 @@ interface MultiSelectDropdownProps {
   selected: string[];
   onChange: (selected: string[]) => void;
   multiSelect?: boolean;
+  icon?: LucideIcon;
+  variant?: "filter" | "sort";
 }
 
 export function MultiSelectDropdown({
@@ -23,6 +26,8 @@ export function MultiSelectDropdown({
   selected,
   onChange,
   multiSelect = true,
+  icon: Icon,
+  variant = "filter",
 }: MultiSelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -81,10 +86,13 @@ export function MultiSelectDropdown({
         onClick={() => setOpen(!open)}
         className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
           selected.length > 0
-            ? "border-burgundy-600 bg-burgundy-50 text-burgundy-700 dark:border-burgundy-700 dark:bg-burgundy-950 dark:text-burgundy-300"
+            ? variant === "sort"
+              ? "border-[var(--foreground)] text-[var(--foreground)] font-semibold bg-[var(--card)]"
+              : "border-burgundy-600 bg-burgundy-50 text-burgundy-700 dark:border-burgundy-700 dark:bg-burgundy-950 dark:text-burgundy-300"
             : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]"
         }`}
       >
+        {Icon && <Icon className="h-3.5 w-3.5" />}
         <span className="whitespace-nowrap">
           {selected.length > 1 ? label : selectedLabel}
         </span>

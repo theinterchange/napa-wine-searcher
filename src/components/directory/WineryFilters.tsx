@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
-import { Filter, X, ChevronDown } from "lucide-react";
+import { Filter, X, ChevronDown, ArrowUpDown } from "lucide-react";
 import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
 import { TASTING_PRICE_TIERS, AMENITY_OPTIONS } from "@/lib/filters";
 import type { DropdownOption } from "@/components/ui/MultiSelectDropdown";
@@ -252,6 +252,8 @@ export function WineryFilters({
         selected={selectedSort}
         onChange={(v) => updateParam("sort", v.length > 0 ? v : ["rating"])}
         multiSelect={false}
+        icon={ArrowUpDown}
+        variant="sort"
       />
       {hasFilters && (
         <button

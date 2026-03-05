@@ -2,11 +2,13 @@
 
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-export function FavoriteButton({ wineryId }: { wineryId: number }) {
+export function FavoriteButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -18,9 +20,11 @@ export function FavoriteButton({ wineryId }: { wineryId: number }) {
       .catch(() => {});
   }, [session, wineryId]);
 
-  if (!session) return null;
-
   const toggle = async () => {
+    if (!session) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
     setLoading(true);
     try {
       const method = isFavorite ? "DELETE" : "POST";
@@ -39,8 +43,10 @@ export function FavoriteButton({ wineryId }: { wineryId: number }) {
     <button
       onClick={toggle}
       disabled={loading}
+      title={compact ? (isFavorite ? "Favorited" : "Add to Favorites") : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
+        compact ? "px-2.5 py-2" : "px-4 py-2",
         isFavorite
           ? "bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300"
           : "border border-[var(--border)] hover:bg-[var(--muted)]"
@@ -49,7 +55,7 @@ export function FavoriteButton({ wineryId }: { wineryId: number }) {
       <Heart
         className={cn("h-4 w-4", isFavorite && "fill-burgundy-600 text-burgundy-600")}
       />
-      {isFavorite ? "Favorited" : "Add to Favorites"}
+      {!compact && (isFavorite ? "Favorited" : "Add to Favorites")}
     </button>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Check, Link2 } from "lucide-react";
+import { Share2, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function ShareButton({ title, text }: { title: string; text?: string }) {
+export function ShareButton({ title, text, compact }: { title: string; text?: string; compact?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -26,17 +27,21 @@ export function ShareButton({ title, text }: { title: string; text?: string }) {
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
+      title={compact ? (copied ? "Link Copied" : "Share") : undefined}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors",
+        compact ? "px-2.5 py-2" : "px-3 py-2"
+      )}
     >
       {copied ? (
         <>
           <Check className="h-4 w-4 text-emerald-600" />
-          Link Copied
+          {!compact && "Link Copied"}
         </>
       ) : (
         <>
           <Share2 className="h-4 w-4" />
-          Share
+          {!compact && "Share"}
         </>
       )}
     </button>
