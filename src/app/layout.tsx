@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CompareFloatingBar } from "@/components/compare/CompareFloatingBar";
 
 const playfair = Playfair_Display({
   variable: "--font-heading",
@@ -47,6 +48,7 @@ export default function RootLayout({
             <main id="main-content" className="flex-1">{children}</main>
             <Footer />
           </div>
+          <CompareFloatingBar />
         </Providers>
       </body>
     </html>

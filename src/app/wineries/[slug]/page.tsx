@@ -17,6 +17,7 @@ import { AddToCollectionButton } from "@/components/collections/AddToCollectionB
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ShareButton } from "@/components/social/ShareButton";
+import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
@@ -315,6 +316,7 @@ export default async function WineryDetailPage({
           <AddToJournalButton wineryId={winery.id} wineryName={winery.name} />
           <AddToCollectionButton wineryId={winery.id} />
           <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
+          <AddToCompareButton wineryId={winery.id} wineryName={winery.name} />
         </div>
 
         {dayTrips.length > 0 && (
