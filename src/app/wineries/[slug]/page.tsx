@@ -11,7 +11,6 @@ import { TastingTable } from "@/components/detail/TastingTable";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
 import { NotesEditor } from "@/components/detail/NotesEditor";
-import { WantToVisitButton } from "@/components/detail/WantToVisitButton";
 import { AddToJournalButton } from "@/components/detail/AddToJournalButton";
 import { AddToCollectionButton } from "@/components/collections/AddToCollectionButton";
 import { WineryCard } from "@/components/directory/WineryCard";
@@ -313,21 +312,19 @@ export default async function WineryDetailPage({
           {/* Compact (icon-only) on mobile */}
           <div className="flex flex-wrap gap-2 sm:hidden">
             <FavoriteButton wineryId={winery.id} compact />
-            <WantToVisitButton wineryId={winery.id} compact />
+            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
             <VisitedButton wineryId={winery.id} compact />
             <AddToJournalButton wineryId={winery.id} wineryName={winery.name} compact />
             <AddToCollectionButton wineryId={winery.id} compact />
-            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
             <AddToCompareButton wineryId={winery.id} wineryName={winery.name} compact />
           </div>
           {/* Full labels on sm+ */}
           <div className="hidden sm:flex sm:flex-wrap sm:gap-3">
             <FavoriteButton wineryId={winery.id} />
-            <WantToVisitButton wineryId={winery.id} />
+            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
             <VisitedButton wineryId={winery.id} />
             <AddToJournalButton wineryId={winery.id} wineryName={winery.name} />
             <AddToCollectionButton wineryId={winery.id} />
-            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
             <AddToCompareButton wineryId={winery.id} wineryName={winery.name} />
           </div>
         </div>

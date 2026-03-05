@@ -4,7 +4,6 @@ import { db } from "@/db";
 import {
   favorites,
   visited,
-  wantToVisit,
   wineJournalEntries,
   savedTrips,
   collections,
@@ -19,7 +18,6 @@ import { ProfileSettings } from "@/components/profile/ProfileSettings";
 import {
   Heart,
   MapPin,
-  Bookmark,
   BookOpen,
   Route,
   FolderOpen,
@@ -63,14 +61,12 @@ export default async function ProfilePage() {
 
   const [
     favoriteWineries,
-    wantToVisitWineries,
     visitedWineries,
     recentJournal,
     userCollections,
     userTrips,
     [{ favCount }],
     [{ visitCount }],
-    [{ wtvCount }],
     [{ journalCount }],
   ] = await Promise.all([
     db
@@ -79,12 +75,6 @@ export default async function ProfilePage() {
       .innerJoin(wineries, eq(favorites.wineryId, wineries.id))
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
       .where(eq(favorites.userId, session.user.id)),
-    db
-      .select(winerySelect)
-      .from(wantToVisit)
-      .innerJoin(wineries, eq(wantToVisit.wineryId, wineries.id))
-      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-      .where(eq(wantToVisit.userId, session.user.id)),
     db
       .select({
         ...winerySelect,
@@ -131,10 +121,6 @@ export default async function ProfilePage() {
       .from(visited)
       .where(eq(visited.userId, session.user.id)),
     db
-      .select({ wtvCount: count() })
-      .from(wantToVisit)
-      .where(eq(wantToVisit.userId, session.user.id)),
-    db
       .select({ journalCount: count() })
       .from(wineJournalEntries)
       .where(eq(wineJournalEntries.userId, session.user.id)),
@@ -167,10 +153,6 @@ export default async function ProfilePage() {
                 {favCount} {favCount === 1 ? "favorite" : "favorites"}
               </span>
               <span className="flex items-center gap-1">
-                <Bookmark className="h-3.5 w-3.5" />
-                {wtvCount} wish list
-              </span>
-              <span className="flex items-center gap-1">
                 <MapPin className="h-3.5 w-3.5" />
                 {visitCount} {visitCount === 1 ? "visit" : "visits"}
               </span>
@@ -201,23 +183,6 @@ export default async function ProfilePage() {
           </div>
         ) : (
           <EmptySection message="No favorites yet. Browse wineries and tap the heart to save your favorites!" />
-        )}
-      </section>
-
-      {/* Want to Visit */}
-      <section className="mb-12">
-        <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
-          <Bookmark className="h-5 w-5 text-sky-600" />
-          Want to Visit
-        </h2>
-        {wantToVisitWineries.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {wantToVisitWineries.map((w) => (
-              <WineryCard key={w.id} winery={w} />
-            ))}
-          </div>
-        ) : (
-          <EmptySection message="No wineries on your wish list yet. Use the bookmark button on winery pages!" />
         )}
       </section>
 

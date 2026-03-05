@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const now = new Date().toISOString();
   const [entry] = await db
     .insert(wineJournalEntries)
     .values({
@@ -70,6 +71,8 @@ export async function POST(request: NextRequest) {
       rating: rating || null,
       tastingNotes: tastingNotes || null,
       dateTried,
+      createdAt: now,
+      updatedAt: now,
     })
     .returning();
 
