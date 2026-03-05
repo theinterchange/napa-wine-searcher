@@ -26,6 +26,7 @@ const navLinks = [
   { href: "/wineries", label: "Wineries" },
   { href: "/map", label: "Map", icon: Map },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
+  { href: "/plan-trip", label: "Plan Trip", icon: Route },
 ];
 
 const userMenuLinks = [

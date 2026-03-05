@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   MapPin,
   Calendar,
@@ -16,6 +16,9 @@ import {
   Loader2,
   Check,
 } from "lucide-react";
+import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
+
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 export interface WizardParams {
   originLat?: number;
@@ -23,7 +26,8 @@ export interface WizardParams {
   originLabel?: string;
   dayOfWeek?: string;
   wineTypes?: string[];
-  maxPriceLevel?: number;
+  priceLevels?: number[];
+  amenities?: string[];
   timeBudget?: "half" | "full" | "extended";
   anchorIds?: number[];
   anchorNames?: string[];
@@ -34,7 +38,14 @@ interface TripWizardProps {
   onSkip: () => void;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
+
+const AMENITY_OPTIONS = [
+  { key: "dog", label: "Dog-Friendly" },
+  { key: "kid", label: "Kid-Friendly" },
+  { key: "picnic", label: "Picnic-Friendly" },
+  { key: "walkin", label: "Walk-in (No Reservation)" },
+];
 
 const DAY_OPTIONS = [
   { key: "mon", label: "Mon" },
@@ -90,7 +101,18 @@ interface AnchorWinery {
   name: string;
 }
 
-export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
+export function TripWizard(props: TripWizardProps) {
+  if (GOOGLE_MAPS_API_KEY) {
+    return (
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
+        <TripWizardInner {...props} />
+      </APIProvider>
+    );
+  }
+  return <TripWizardInner {...props} />;
+}
+
+function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
   const [step, setStep] = useState(1);
 
   // Step 1: Starting point
@@ -105,13 +127,16 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
   // Step 3: Wine preferences
   const [selectedWines, setSelectedWines] = useState<string[]>([]);
 
-  // Step 4: Budget
-  const [maxPriceLevel, setMaxPriceLevel] = useState<number | undefined>();
+  // Step 4: Amenities
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
-  // Step 5: Time budget
+  // Step 5: Budget
+  const [priceLevels, setPriceLevels] = useState<number[]>([]);
+
+  // Step 6: Time budget
   const [timeBudget, setTimeBudget] = useState<"half" | "full" | "extended" | undefined>();
 
-  // Step 6: Must-visit anchors
+  // Step 7: Must-visit anchors
   const [anchors, setAnchors] = useState<AnchorWinery[]>([]);
   const [anchorSearch, setAnchorSearch] = useState("");
   const [anchorResults, setAnchorResults] = useState<AnchorWinery[]>([]);
@@ -139,6 +164,18 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
   const handleWineToggle = (key: string) => {
     setSelectedWines((prev) =>
       prev.includes(key) ? prev.filter((w) => w !== key) : [...prev, key]
+    );
+  };
+
+  const handleAmenityToggle = (key: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(key) ? prev.filter((a) => a !== key) : [...prev, key]
+    );
+  };
+
+  const handlePriceLevelToggle = (level: number) => {
+    setPriceLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
     );
   };
 
@@ -201,7 +238,8 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
     }
     if (dayOfWeek) params.dayOfWeek = dayOfWeek;
     if (selectedWines.length > 0) params.wineTypes = selectedWines;
-    if (maxPriceLevel != null) params.maxPriceLevel = maxPriceLevel;
+    if (selectedAmenities.length > 0) params.amenities = selectedAmenities;
+    if (priceLevels.length > 0) params.priceLevels = priceLevels;
     if (timeBudget) params.timeBudget = timeBudget;
     if (anchors.length > 0) {
       params.anchorIds = anchors.map((a) => a.id);
@@ -210,11 +248,12 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
     onComplete(params);
   };
 
-  const stepIcons = [MapPin, Calendar, Wine, DollarSign, Clock, Star];
+  const stepIcons = [MapPin, Calendar, Wine, Check, DollarSign, Clock, Star];
   const stepTitles = [
     "Starting Point",
     "Day of Visit",
     "Wine Preferences",
+    "Amenities",
     "Budget",
     "Time",
     "Must-Visit",
@@ -274,7 +313,8 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
             originLabel={originLabel}
             dayOfWeek={dayOfWeek}
             selectedWines={selectedWines}
-            maxPriceLevel={maxPriceLevel}
+            selectedAmenities={selectedAmenities}
+            priceLevels={priceLevels}
             timeBudget={timeBudget}
             anchors={anchors}
           />
@@ -284,6 +324,8 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
             setOriginLabel={setOriginLabel}
             originLat={originLat}
             originLng={originLng}
+            setOriginLat={setOriginLat}
+            setOriginLng={setOriginLng}
             geoLoading={geoLoading}
             onGeolocate={handleGeolocate}
           />
@@ -296,11 +338,18 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
             onClearAll={() => setSelectedWines([])}
           />
         ) : step === 4 ? (
-          <StepBudget
-            maxPriceLevel={maxPriceLevel}
-            setMaxPriceLevel={setMaxPriceLevel}
+          <StepAmenities
+            selectedAmenities={selectedAmenities}
+            onToggle={handleAmenityToggle}
+            onClearAll={() => setSelectedAmenities([])}
           />
         ) : step === 5 ? (
+          <StepBudget
+            priceLevels={priceLevels}
+            onToggle={handlePriceLevelToggle}
+            onClearAll={() => setPriceLevels([])}
+          />
+        ) : step === 6 ? (
           <StepTimeBudget timeBudget={timeBudget} setTimeBudget={setTimeBudget} />
         ) : (
           <StepAnchors
@@ -356,12 +405,123 @@ export function TripWizard({ onComplete, onSkip }: TripWizardProps) {
   );
 }
 
+/* ── Places Autocomplete Input ───────────────────────────── */
+function PlacesAutocompleteInput({
+  value,
+  onChange,
+  onSelect,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSelect: (label: string, lat: number, lng: number) => void;
+}) {
+  const places = useMapsLibrary("places");
+  const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesService = useRef<google.maps.places.PlacesService | null>(null);
+  const dummyDiv = useRef<HTMLDivElement | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!places) return;
+    autocompleteService.current = new places.AutocompleteService();
+    if (!dummyDiv.current) {
+      dummyDiv.current = document.createElement("div");
+    }
+    placesService.current = new places.PlacesService(dummyDiv.current);
+  }, [places]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleInput = (text: string) => {
+    onChange(text);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!autocompleteService.current || text.length < 2) {
+      setPredictions([]);
+      setShowDropdown(false);
+      return;
+    }
+    debounceRef.current = setTimeout(() => {
+      autocompleteService.current!.getPlacePredictions(
+        {
+          input: text,
+          locationBias: {
+            center: { lat: 38.5, lng: -122.4 },
+            radius: 50000,
+          } as google.maps.places.LocationBias,
+        },
+        (results) => {
+          setPredictions(results || []);
+          setShowDropdown((results || []).length > 0);
+        }
+      );
+    }, 300);
+  };
+
+  const handleSelect = (prediction: google.maps.places.AutocompletePrediction) => {
+    if (!placesService.current) return;
+    placesService.current.getDetails(
+      { placeId: prediction.place_id, fields: ["geometry", "formatted_address", "name"] },
+      (place) => {
+        if (place?.geometry?.location) {
+          const label = place.name || place.formatted_address || prediction.description;
+          onSelect(label, place.geometry.location.lat(), place.geometry.location.lng());
+        }
+      }
+    );
+    setShowDropdown(false);
+    setPredictions([]);
+  };
+
+  return (
+    <div ref={wrapperRef} className="relative">
+      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleInput(e.target.value)}
+        onFocus={() => predictions.length > 0 && setShowDropdown(true)}
+        placeholder="Hotel name or address..."
+        className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] py-2.5 pl-10 pr-4 text-sm placeholder:text-[var(--muted-foreground)] focus:border-burgundy-500 focus:outline-none focus:ring-1 focus:ring-burgundy-500"
+      />
+      {showDropdown && predictions.length > 0 && (
+        <div className="absolute z-20 mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg overflow-hidden">
+          {predictions.map((p) => (
+            <button
+              key={p.place_id}
+              onClick={() => handleSelect(p)}
+              className="w-full text-left px-4 py-2.5 text-sm hover:bg-[var(--accent)] transition-colors border-b border-[var(--border)] last:border-0"
+            >
+              <span className="font-medium">{p.structured_formatting.main_text}</span>
+              <span className="text-[var(--muted-foreground)] ml-1 text-xs">
+                {p.structured_formatting.secondary_text}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Step 1: Starting Point ──────────────────────────────── */
 function StepStartingPoint({
   originLabel,
   setOriginLabel,
   originLat,
   originLng,
+  setOriginLat,
+  setOriginLng,
   geoLoading,
   onGeolocate,
 }: {
@@ -369,10 +529,18 @@ function StepStartingPoint({
   setOriginLabel: (v: string) => void;
   originLat?: number;
   originLng?: number;
+  setOriginLat: (v: number | undefined) => void;
+  setOriginLng: (v: number | undefined) => void;
   geoLoading: boolean;
   onGeolocate: () => void;
 }) {
   const hasLocation = originLat != null && originLng != null;
+
+  const handlePlaceSelect = (label: string, lat: number, lng: number) => {
+    setOriginLabel(label);
+    setOriginLat(lat);
+    setOriginLng(lng);
+  };
 
   return (
     <div>
@@ -383,16 +551,31 @@ function StepStartingPoint({
       </p>
 
       <div className="max-w-md space-y-3">
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
-          <input
-            type="text"
+        {GOOGLE_MAPS_API_KEY ? (
+          <PlacesAutocompleteInput
             value={originLabel}
-            onChange={(e) => setOriginLabel(e.target.value)}
-            placeholder="Hotel name or address..."
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] py-2.5 pl-10 pr-4 text-sm placeholder:text-[var(--muted-foreground)] focus:border-burgundy-500 focus:outline-none focus:ring-1 focus:ring-burgundy-500"
+            onChange={(v) => {
+              setOriginLabel(v);
+              // Clear coordinates when manually editing
+              if (hasLocation) {
+                setOriginLat(undefined);
+                setOriginLng(undefined);
+              }
+            }}
+            onSelect={handlePlaceSelect}
           />
-        </div>
+        ) : (
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
+            <input
+              type="text"
+              value={originLabel}
+              onChange={(e) => setOriginLabel(e.target.value)}
+              placeholder="Hotel name or address..."
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] py-2.5 pl-10 pr-4 text-sm placeholder:text-[var(--muted-foreground)] focus:border-burgundy-500 focus:outline-none focus:ring-1 focus:ring-burgundy-500"
+            />
+          </div>
+        )}
 
         <button
           onClick={onGeolocate}
@@ -511,30 +694,83 @@ function StepWinePreferences({
   );
 }
 
-/* ── Step 4: Budget ──────────────────────────────────────── */
-function StepBudget({
-  maxPriceLevel,
-  setMaxPriceLevel,
+/* ── Step 4: Amenities ───────────────────────────────────── */
+function StepAmenities({
+  selectedAmenities,
+  onToggle,
+  onClearAll,
 }: {
-  maxPriceLevel?: number;
-  setMaxPriceLevel: (v: number | undefined) => void;
+  selectedAmenities: string[];
+  onToggle: (key: string) => void;
+  onClearAll: () => void;
 }) {
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">What&apos;s your budget?</h2>
+      <h2 className="text-xl font-bold mb-2">Any must-have amenities?</h2>
       <p className="text-sm text-[var(--muted-foreground)] mb-6">
-        We&apos;ll filter wineries by tasting price range.
+        We&apos;ll only show wineries that match your requirements.
+      </p>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        {AMENITY_OPTIONS.map((a) => (
+          <button
+            key={a.key}
+            onClick={() => onToggle(a.key)}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              selectedAmenities.includes(a.key)
+                ? "bg-burgundy-700 text-white"
+                : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
+            }`}
+          >
+            {a.label}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={onClearAll}
+        className={`text-sm transition-colors ${
+          selectedAmenities.length === 0
+            ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
+            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+        }`}
+      >
+        No preference
+      </button>
+
+      {selectedAmenities.length > 0 && (
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          Selected: {selectedAmenities.map((k) => AMENITY_OPTIONS.find((a) => a.key === k)?.label).join(", ")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── Step 5: Budget ──────────────────────────────────────── */
+function StepBudget({
+  priceLevels,
+  onToggle,
+  onClearAll,
+}: {
+  priceLevels: number[];
+  onToggle: (level: number) => void;
+  onClearAll: () => void;
+}) {
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-2">What type of experience?</h2>
+      <p className="text-sm text-[var(--muted-foreground)] mb-6">
+        Select one or more tasting price tiers. You can pick multiple.
       </p>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {PRICE_OPTIONS.map((p) => (
           <button
             key={p.level}
-            onClick={() =>
-              setMaxPriceLevel(maxPriceLevel === p.level ? undefined : p.level)
-            }
+            onClick={() => onToggle(p.level)}
             className={`rounded-xl border p-4 text-center transition-colors ${
-              maxPriceLevel === p.level
+              priceLevels.includes(p.level)
                 ? "border-burgundy-600 bg-burgundy-50 dark:bg-burgundy-950/30"
                 : "border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
             }`}
@@ -546,15 +782,21 @@ function StepBudget({
       </div>
 
       <button
-        onClick={() => setMaxPriceLevel(undefined)}
+        onClick={onClearAll}
         className={`text-sm transition-colors ${
-          maxPriceLevel == null
+          priceLevels.length === 0
             ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
             : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
         }`}
       >
         No preference
       </button>
+
+      {priceLevels.length > 0 && (
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          Selected: {priceLevels.sort((a, b) => a - b).map((l) => "$".repeat(l)).join(", ")}
+        </p>
+      )}
     </div>
   );
 }
@@ -689,14 +931,16 @@ function SummaryPanel({
   originLabel,
   dayOfWeek,
   selectedWines,
-  maxPriceLevel,
+  selectedAmenities,
+  priceLevels,
   timeBudget,
   anchors,
 }: {
   originLabel: string;
   dayOfWeek?: string;
   selectedWines: string[];
-  maxPriceLevel?: number;
+  selectedAmenities: string[];
+  priceLevels: number[];
   timeBudget?: "half" | "full" | "extended";
   anchors: AnchorWinery[];
 }) {
@@ -715,9 +959,22 @@ function SummaryPanel({
   if (selectedWines.length > 0) {
     items.push({ icon: Wine, label: "Wines", value: selectedWines.join(", ") });
   }
-  if (maxPriceLevel != null) {
-    const p = PRICE_OPTIONS.find((p) => p.level === maxPriceLevel);
-    items.push({ icon: DollarSign, label: "Budget", value: `${p?.label} (${p?.desc})` });
+  if (selectedAmenities.length > 0) {
+    items.push({
+      icon: Check,
+      label: "Amenities",
+      value: selectedAmenities.map((k) => AMENITY_OPTIONS.find((a) => a.key === k)?.label).join(", "),
+    });
+  }
+  if (priceLevels.length > 0) {
+    items.push({
+      icon: DollarSign,
+      label: "Budget",
+      value: priceLevels.sort((a, b) => a - b).map((l) => {
+        const p = PRICE_OPTIONS.find((p) => p.level === l);
+        return `${p?.label} (${p?.desc})`;
+      }).join(", "),
+    });
   }
   if (timeBudget) {
     const t = TIME_OPTIONS.find((t) => t.key === timeBudget);

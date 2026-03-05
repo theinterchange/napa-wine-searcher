@@ -85,6 +85,7 @@ export async function GET(request: NextRequest) {
   const dayOfWeek = sp.get("dayOfWeek") || "";
   const wineTypesParam = sp.get("wineTypes") || "";
   const maxPrice = sp.get("maxPrice") ? parseInt(sp.get("maxPrice")!, 10) : null;
+  const priceLevelsParam = sp.get("priceLevels")?.split(",").map(Number).filter(Boolean) || [];
   const timeBudget = sp.get("timeBudget") || "";
   const anchorIdsStr = sp.get("anchorIds") || "";
   const anchorIds = anchorIdsStr
@@ -121,9 +122,17 @@ export async function GET(request: NextRequest) {
     conditions.push(eq(subRegions.valley, valley as "napa" | "sonoma"));
   }
 
-  // Price filtering
-  if (maxPrice != null) {
-    conditions.push(sql`${wineries.priceLevel} IS NULL OR ${wineries.priceLevel} <= ${maxPrice}`);
+  // Price filtering — exact match with multi-select
+  // Backward compat: convert legacy maxPrice to priceLevels if new param absent
+  const effectivePriceLevels = priceLevelsParam.length > 0
+    ? priceLevelsParam
+    : maxPrice != null
+      ? [maxPrice]
+      : [];
+  if (effectivePriceLevels.length > 0) {
+    conditions.push(
+      sql`${wineries.priceLevel} IS NULL OR ${wineries.priceLevel} IN (${sql.join(effectivePriceLevels.map(l => sql`${l}`), sql`, `)})`
+    );
   }
 
   // Combine explicit amenities with theme-mapped ones

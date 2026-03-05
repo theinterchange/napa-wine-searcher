@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Shuffle, Loader2, Wine, MapPin, Navigation } from "lucide-react";
 import { TripStopCard } from "./TripStopCard";
 import { TripSummary } from "./TripSummary";
@@ -104,6 +104,47 @@ export function TripPlanner({
   const [valley, setValley] = useState(initialValley || "");
   const [stopCount, setStopCount] = useState(4);
   const [savedWizardParams, setSavedWizardParams] = useState<WizardParams | undefined>(wizardParams);
+  const skipCacheRef = useRef(false);
+
+  const CACHE_KEY = "trip-planner-route";
+  const CACHE_MAX_AGE = 30 * 60 * 1000; // 30 minutes
+
+  const saveToCache = useCallback((data: {
+    stops: RouteStop[];
+    alternatives: Record<number, Alternative[]>;
+    summary: RouteSummary;
+    routeInfo: { title: string; slug: string; theme: string | null } | null;
+    originSegment: { miles: number; minutes: number } | null;
+  }) => {
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, timestamp: Date.now() }));
+    } catch {}
+  }, []);
+
+  const loadFromCache = useCallback((): boolean => {
+    try {
+      const raw = sessionStorage.getItem(CACHE_KEY);
+      if (!raw) return false;
+      const cached = JSON.parse(raw);
+      if (Date.now() - cached.timestamp > CACHE_MAX_AGE) {
+        sessionStorage.removeItem(CACHE_KEY);
+        return false;
+      }
+      setStops(cached.stops);
+      setAlternatives(cached.alternatives || {});
+      setSummary(cached.summary);
+      setRouteInfo(cached.routeInfo || null);
+      setOriginSegment(cached.originSegment || null);
+      setLoading(false);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const clearCache = useCallback(() => {
+    try { sessionStorage.removeItem(CACHE_KEY); } catch {}
+  }, []);
 
   const buildWizardQueryParams = useCallback((wp: WizardParams): Record<string, string> => {
     const params: Record<string, string> = {};
@@ -113,7 +154,8 @@ export function TripPlanner({
     }
     if (wp.dayOfWeek) params.dayOfWeek = wp.dayOfWeek;
     if (wp.wineTypes && wp.wineTypes.length > 0) params.wineTypes = wp.wineTypes.join(",");
-    if (wp.maxPriceLevel != null) params.maxPrice = String(wp.maxPriceLevel);
+    if (wp.priceLevels && wp.priceLevels.length > 0) params.priceLevels = wp.priceLevels.join(",");
+    if (wp.amenities && wp.amenities.length > 0) params.amenities = wp.amenities.join(",");
     if (wp.timeBudget) params.timeBudget = wp.timeBudget;
     if (wp.anchorIds && wp.anchorIds.length > 0) params.anchorIds = wp.anchorIds.join(",");
     return params;
@@ -138,6 +180,13 @@ export function TripPlanner({
           setSummary(data.summary);
           setRouteInfo(data.route || null);
           setOriginSegment(data.originSegment || null);
+          saveToCache({
+            stops: data.stops,
+            alternatives: data.alternatives || {},
+            summary: data.summary,
+            routeInfo: data.route || null,
+            originSegment: data.originSegment || null,
+          });
         }
       } catch {
         setError("Failed to generate route. Please try again.");
@@ -148,8 +197,11 @@ export function TripPlanner({
     []
   );
 
-  // Initial load
+  // Initial load — try cache first
   useEffect(() => {
+    if (!skipCacheRef.current && loadFromCache()) return;
+    skipCacheRef.current = false;
+
     if (initialFrom) {
       fetchRoute({ from: initialFrom });
     } else if (initialStops) {
@@ -181,6 +233,7 @@ export function TripPlanner({
   }, [wizardParams]);
 
   const handleShuffle = () => {
+    clearCache();
     const excludeIds = stops.map((s) => s.id).join(",");
     const params: Record<string, string> = {
       theme,
@@ -199,6 +252,7 @@ export function TripPlanner({
   };
 
   const handleGenerate = () => {
+    clearCache();
     const params: Record<string, string> = {
       theme,
       valley,
@@ -413,9 +467,17 @@ export function TripPlanner({
                   {savedWizardParams.wineTypes.join(", ")}
                 </span>
               )}
-              {savedWizardParams.maxPriceLevel != null && (
+              {savedWizardParams.amenities && savedWizardParams.amenities.length > 0 && (
                 <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
-                  {"$".repeat(savedWizardParams.maxPriceLevel)} max
+                  {savedWizardParams.amenities.map((a) => {
+                    const labels: Record<string, string> = { dog: "Dog-Friendly", kid: "Kid-Friendly", picnic: "Picnic", walkin: "Walk-in" };
+                    return labels[a] || a;
+                  }).join(", ")}
+                </span>
+              )}
+              {savedWizardParams.priceLevels && savedWizardParams.priceLevels.length > 0 && (
+                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                  {savedWizardParams.priceLevels.sort((a, b) => a - b).map((l) => "$".repeat(l)).join(", ")}
                 </span>
               )}
               {savedWizardParams.timeBudget && (
