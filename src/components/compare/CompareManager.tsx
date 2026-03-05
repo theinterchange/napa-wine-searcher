@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, Search, Plus, Clock, Loader2 } from "lucide-react";
+import { X, Scale, Plus, Clock, Loader2, Star } from "lucide-react";
 
 interface WineryBasic {
   id: number;
@@ -19,9 +19,10 @@ interface SearchWinery {
   priceLevel: number | null;
 }
 
-interface RecommendedGroup {
-  label: string;
-  wineries: WineryBasic[];
+interface FeaturedWinery {
+  id: number;
+  name: string;
+  googleRating: number | null;
 }
 
 const RECENT_KEY = "compare-recent-wineries";
@@ -46,11 +47,11 @@ function saveRecent(wineries: WineryBasic[]) {
 export function CompareManager({
   currentIds,
   selectedWineries,
-  recommendedGroups,
+  featuredWineries,
 }: {
   currentIds: number[];
   selectedWineries: WineryBasic[];
-  recommendedGroups: RecommendedGroup[];
+  featuredWineries: FeaturedWinery[];
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -160,13 +161,8 @@ export function CompareManager({
 
   // Filter recent to exclude already-selected
   const availableRecent = recent.filter((r) => !currentIds.includes(r.id));
-  // Filter recommended to exclude already-selected
-  const filteredGroups = recommendedGroups
-    .map((g) => ({
-      ...g,
-      wineries: g.wineries.filter((w) => !currentIds.includes(w.id)),
-    }))
-    .filter((g) => g.wineries.length > 0);
+  // Filter featured to exclude already-selected
+  const availableFeatured = featuredWineries.filter((w) => !currentIds.includes(w.id));
 
   return (
     <div className="space-y-3">
@@ -190,9 +186,9 @@ export function CompareManager({
 
       {/* Search to add */}
       {canAdd && (
-        <div className="relative max-w-sm">
+        <div className="relative max-w-md">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
+            <Scale className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
             <input
               ref={inputRef}
               type="text"
@@ -202,7 +198,7 @@ export function CompareManager({
                 setShowDropdown(true);
               }}
               onFocus={() => setShowDropdown(true)}
-              placeholder="Search to add a winery..."
+              placeholder="Add a winery to compare..."
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] pl-9 pr-3 py-2 text-sm placeholder:text-[var(--muted-foreground)]"
             />
           </div>
@@ -276,26 +272,30 @@ export function CompareManager({
                       </div>
                     </div>
                   )}
-                  {filteredGroups.map((group) => (
-                    <div key={group.label} className="px-3 pt-2 pb-1">
-                      <div className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
-                        {group.label}
+                  {availableFeatured.length > 0 && (
+                    <div className="px-3 pt-2 pb-1">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
+                        <Star className="h-3 w-3" />
+                        Featured
                       </div>
                       <div className="flex flex-wrap gap-1.5 mb-2">
-                        {group.wineries.map((w) => (
+                        {availableFeatured.map((w) => (
                           <button
                             key={w.id}
                             onClick={() => addWinery(w.id, w.name)}
                             className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--muted)]/50 px-2.5 py-1 text-xs hover:bg-[var(--muted)] transition-colors"
                           >
                             <Plus className="h-3 w-3 text-[var(--muted-foreground)]" />
-                            {w.name}
+                            <span>{w.name}</span>
+                            {w.googleRating && (
+                              <span className="text-[var(--muted-foreground)]">{w.googleRating.toFixed(1)}★</span>
+                            )}
                           </button>
                         ))}
                       </div>
                     </div>
-                  ))}
-                  {availableRecent.length === 0 && filteredGroups.length === 0 && (
+                  )}
+                  {availableRecent.length === 0 && availableFeatured.length === 0 && (
                     <div className="px-3 py-4 text-center text-sm text-[var(--muted-foreground)]">
                       Type to search wineries
                     </div>
@@ -304,6 +304,9 @@ export function CompareManager({
               )}
             </div>
           )}
+          <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+            Tip: You can also add wineries to compare from each winery&apos;s page.
+          </p>
         </div>
       )}
 
