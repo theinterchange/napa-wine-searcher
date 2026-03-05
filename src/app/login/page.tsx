@@ -27,7 +27,7 @@ function LoginForm() {
         redirect: false,
       });
 
-      if (!result?.ok) {
+      if (result?.error || !result?.ok) {
         setError("Invalid email or password");
         setLoading(false);
       } else {
