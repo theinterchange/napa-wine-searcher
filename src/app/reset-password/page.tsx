@@ -77,9 +77,9 @@ function ResetPasswordForm() {
       </div>
 
       {status === "success" ? (
-        <div className="mt-8 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200">
+        <p className="mt-8 text-center text-sm text-[var(--muted-foreground)]">
           Password updated! Redirecting to login...
-        </div>
+        </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {error && (
