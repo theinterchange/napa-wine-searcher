@@ -4,6 +4,9 @@ import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
+
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -16,6 +19,14 @@ const signupSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+    const { success } = limiter.check(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
     const body = await req.json();
     const result = signupSchema.safeParse(body);
     if (!result.success) {
