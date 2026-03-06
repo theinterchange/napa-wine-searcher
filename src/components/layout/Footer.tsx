@@ -8,8 +8,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Wine className="h-5 w-5 text-burgundy-700 dark:text-burgundy-300" />
-              <span className="font-heading text-lg font-bold text-gold-900 dark:text-gold-300">
+              <Wine className="h-5 w-5 text-burgundy-900 dark:text-burgundy-200" />
+              <span className="font-heading text-lg font-extrabold text-burgundy-900 dark:text-gold-200">
                 Napa Sonoma Guide
               </span>
             </div>
