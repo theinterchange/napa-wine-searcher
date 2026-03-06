@@ -7,7 +7,6 @@ import {
   ChevronRight,
   BadgeCheck,
   Star,
-  Wine,
   Map,
   ArrowRight,
 } from "lucide-react";
@@ -92,14 +91,6 @@ export function HeroFeatured({
       {/* Content */}
       <div className="relative h-full min-h-[400px] sm:min-h-[500px] flex flex-col justify-end">
         <div className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-          {/* Brand pill */}
-          <div className="flex items-center gap-2 mb-3">
-            <Wine className="h-5 w-5 text-gold-400" />
-            <span className="text-sm font-medium text-gold-400/80">
-              Napa Sonoma Guide
-            </span>
-          </div>
-
           {/* Slide content with fade animation */}
           <div key={current} className="animate-fade-in min-h-[120px] sm:min-h-[140px]">
             <span className="inline-flex items-center gap-1 rounded-full bg-gold-500/90 px-2.5 py-0.5 text-xs font-semibold text-burgundy-950 mb-2">
