@@ -1,6 +1,7 @@
 import { Resend } from "resend";
+import { BASE_URL } from "@/lib/constants";
 
-const BASE_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+const SITE_DOMAIN = new URL(BASE_URL).hostname;
 
 export async function sendPasswordResetEmail(email: string, token: string) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -13,7 +14,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
   const resetUrl = `${BASE_URL}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
   await resend.emails.send({
-    from: "Wine Country Guide <noreply@napa-winery-search.vercel.app>",
+    from: `Napa Sonoma Guide <noreply@${SITE_DOMAIN}>`,
     to: email,
     subject: "Reset your password",
     html: `

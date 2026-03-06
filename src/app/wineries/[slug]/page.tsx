@@ -20,13 +20,12 @@ import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
+import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
   const all = await db.select({ slug: wineries.slug }).from(wineries);
   return all.map((w) => ({ slug: w.slug }));
 }
-
-const BASE_URL = "https://napa-winery-search.vercel.app";
 
 export async function generateMetadata({
   params,
@@ -47,7 +46,7 @@ export async function generateMetadata({
 
   if (!winery) return { title: "Winery Not Found" };
 
-  const title = `${winery.name} | Wine Country Guide`;
+  const title = `${winery.name} | Napa Sonoma Guide`;
   const description =
     winery.shortDescription || `Visit ${winery.name} in wine country`;
 
@@ -58,7 +57,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${BASE_URL}/wineries/${slug}`,
-      siteName: "Wine Country Guide",
+      siteName: "Napa Sonoma Guide",
       type: "website",
       ...(winery.heroImageUrl && {
         images: [{ url: winery.heroImageUrl, alt: winery.name }],

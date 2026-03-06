@@ -28,9 +28,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile | Wine Country Guide",
+  title: "Profile | Napa Sonoma Guide",
   description:
-    "Your Wine Country Guide profile, favorites, and visit history.",
+    "Your Napa Sonoma Guide profile, favorites, and visit history.",
 };
 
 // Shared winery select shape
@@ -178,7 +178,7 @@ export default async function ProfilePage() {
             Getting Started
           </h2>
           <p className="text-sm text-[var(--muted-foreground)] mb-4">
-            Welcome to Wine Country Guide! Here are a few things to try:
+            Welcome to Napa Sonoma Guide! Here are a few things to try:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Link

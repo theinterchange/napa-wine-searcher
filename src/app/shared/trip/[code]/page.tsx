@@ -24,11 +24,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${trip.name} | Wine Country Guide`,
+    title: `${trip.name} | Napa Sonoma Guide`,
     description: `Check out this wine country trip plan: ${trip.name}`,
     openGraph: {
       title: `${trip.name} — Wine Country Trip`,
-      description: `A curated wine country trip plan on Wine Country Guide.`,
+      description: `A curated wine country trip plan on Napa Sonoma Guide.`,
       type: "website",
     },
     alternates: {

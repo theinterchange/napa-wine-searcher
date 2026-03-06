@@ -1,7 +1,7 @@
 # Future Features — Napa & Sonoma Winery Search
 
 > Last updated: 2026-02-26
-> App: [napa-winery-search.vercel.app](https://napa-winery-search.vercel.app)
+> App: [napasonomaguide.com](https://napasonomaguide.com)
 
 ## Current State
 

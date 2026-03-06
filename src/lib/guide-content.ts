@@ -249,7 +249,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "amenity",
-        title: `${amenity.label} in ${region} | Wine Country Guide`,
+        title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
         h1: `${amenity.label} in ${region}`,
         metaDescription: `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
@@ -266,7 +266,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "amenity",
-        title: `${amenity.label} in ${region} | Wine Country Guide`,
+        title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
         h1: `${amenity.label} in ${region}`,
         metaDescription: `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
@@ -287,7 +287,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "varietal",
-        title: `Best ${varietal} in ${region} | Wine Country Guide`,
+        title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
         h1: `Best ${varietal} in ${region}`,
         metaDescription: `Discover the best ${varietal} producers in ${region}. Browse wineries, compare prices, and plan your tasting tour.`,
         intro: getVarietalIntro(varietal, region),
@@ -318,7 +318,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "varietal",
-        title: `Best ${varietal} in ${region} | Wine Country Guide`,
+        title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
         h1: `Best ${varietal} in ${region}`,
         metaDescription: `Discover the best ${varietal} producers in ${region}. Browse wineries, compare prices, and plan your tasting tour.`,
         intro: getVarietalIntro(varietal, region),
@@ -344,7 +344,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "price",
-        title: `${tier.label} in ${region} | Wine Country Guide`,
+        title: `${tier.label} in ${region} | Napa Sonoma Guide`,
         h1: `${tier.label} in ${region}`,
         metaDescription: `Find ${tier.label.toLowerCase()} in ${region}. Browse wineries with pricing, ratings, and tasting details.`,
         intro: PRICE_INTROS[tier.key]?.(region) || [],
@@ -366,7 +366,7 @@ export function getAllGuides(): GuideDefinition[] {
     guides.push({
       slug: `wines-under-50-${valley.slugPart}`,
       type: "price",
-      title: `Wines Under $50 in ${region} | Wine Country Guide`,
+      title: `Wines Under $50 in ${region} | Napa Sonoma Guide`,
       h1: `Wines Under $50 in ${region}`,
       metaDescription: `Find great wines under $50 from ${region} wineries. Browse affordable bottles with ratings and tasting notes.`,
       intro: [

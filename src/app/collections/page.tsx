@@ -9,7 +9,7 @@ import { CopyShareLink } from "@/components/trip/CopyShareLink";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Collections | Wine Country Guide",
+  title: "My Collections | Napa Sonoma Guide",
   description: "Your curated winery collections.",
 };
 

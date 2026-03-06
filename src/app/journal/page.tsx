@@ -10,7 +10,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Wine Journal | Wine Country Guide",
+  title: "Wine Journal | Napa Sonoma Guide",
   description: "Your personal wine journal — track wines you've tried with ratings and tasting notes.",
 };
 

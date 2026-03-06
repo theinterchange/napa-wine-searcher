@@ -3,8 +3,7 @@ import { db } from "@/db";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getAllGuides } from "@/lib/guide-content";
-
-const BASE_URL = "https://napa-winery-search.vercel.app";
+import { BASE_URL } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [allWineries, allRoutes, allSubRegions] = await Promise.all([

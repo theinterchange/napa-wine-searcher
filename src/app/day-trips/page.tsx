@@ -4,17 +4,18 @@ import { dayTripRoutes, dayTripStops } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 import { Clock, MapPin, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Day Trip Routes | Wine Country Guide",
+  title: "Day Trip Routes | Napa Sonoma Guide",
   description:
     "Curated day-trip itineraries for Napa and Sonoma wine country. Budget-friendly, luxury, dog-friendly, and themed wine tours.",
   openGraph: {
-    title: "Day Trip Routes | Wine Country Guide",
+    title: "Day Trip Routes | Napa Sonoma Guide",
     description:
       "Curated day-trip itineraries for Napa and Sonoma wine country.",
-    url: "https://napa-winery-search.vercel.app/day-trips",
-    siteName: "Wine Country Guide",
+    url: `${BASE_URL}/day-trips`,
+    siteName: "Napa Sonoma Guide",
     type: "website",
   },
 };

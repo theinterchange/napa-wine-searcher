@@ -9,22 +9,23 @@ import { WinerySearch } from "@/components/directory/WinerySearch";
 import { Pagination } from "@/components/directory/Pagination";
 import { TASTING_PRICE_TIERS } from "@/lib/filters";
 import type { Metadata } from "next";
+import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Browse Wineries | Wine Country Guide",
+  title: "Browse Wineries | Napa Sonoma Guide",
   description:
     "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
   openGraph: {
-    title: "Browse Wineries | Wine Country Guide",
+    title: "Browse Wineries | Napa Sonoma Guide",
     description:
       "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
-    url: "https://napa-winery-search.vercel.app/wineries",
-    siteName: "Wine Country Guide",
+    url: `${BASE_URL}/wineries`,
+    siteName: "Napa Sonoma Guide",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Browse Wineries | Wine Country Guide",
+    title: "Browse Wineries | Napa Sonoma Guide",
     description:
       "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
   },

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Wine Country Guide",
-  description: "Terms of service for Wine Country Guide.",
+  title: "Terms of Service | Napa Sonoma Guide",
+  description: "Terms of service for Napa Sonoma Guide.",
 };
 
 export default function TermsPage() {
@@ -15,7 +15,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">1. Acceptance of Terms</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
-            By accessing or using Wine Country Guide, you agree to be bound by these Terms of Service. If you do not agree, please do not use the site.
+            By accessing or using Napa Sonoma Guide, you agree to be bound by these Terms of Service. If you do not agree, please do not use the site.
           </p>
         </section>
 
@@ -53,21 +53,21 @@ export default function TermsPage() {
         <section>
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">6. Intellectual Property</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
-            The Wine Country Guide name, logo, and original content are protected by copyright. Winery names, logos, and associated trademarks belong to their respective owners. User-generated content (journal entries, notes, reviews) remains the property of the user.
+            The Napa Sonoma Guide name, logo, and original content are protected by copyright. Winery names, logos, and associated trademarks belong to their respective owners. User-generated content (journal entries, notes, reviews) remains the property of the user.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">7. Limitation of Liability</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
-            Wine Country Guide is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from your use of the service, including but not limited to inaccurate winery information, service interruptions, or data loss. Use this service at your own risk.
+            Napa Sonoma Guide is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from your use of the service, including but not limited to inaccurate winery information, service interruptions, or data loss. Use this service at your own risk.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">8. Alcohol Disclaimer</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
-            Wine Country Guide provides information about wineries and wine tasting. You must be 21 years of age or older to consume alcohol in the United States. Please drink responsibly and never drink and drive.
+            Napa Sonoma Guide provides information about wineries and wine tasting. You must be 21 years of age or older to consume alcohol in the United States. Please drink responsibly and never drink and drive.
           </p>
         </section>
 

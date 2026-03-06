@@ -8,12 +8,12 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import { SubRegionGrid } from "@/components/region/SubRegionGrid";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 
+import { BASE_URL } from "@/lib/constants";
+
 export async function generateStaticParams() {
   const regions = await getAllSubRegions("sonoma");
   return regions.map((r) => ({ slug: r.slug }));
 }
-
-const BASE_URL = "https://napa-winery-search.vercel.app";
 
 export async function generateMetadata({
   params,
@@ -37,7 +37,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${BASE_URL}/sonoma-county/${slug}`,
-      siteName: "Wine Country Guide",
+      siteName: "Napa Sonoma Guide",
       type: "website",
     },
     twitter: { card: "summary_large_image", title, description },

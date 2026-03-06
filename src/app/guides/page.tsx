@@ -4,7 +4,7 @@ import { getAllGuides } from "@/lib/guide-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Wine Country Guides | Wine Country Guide",
+  title: "Wine Country Guides | Napa Sonoma Guide",
   description:
     "Browse our collection of guides to Napa Valley and Sonoma County wineries — by amenity, varietal, price, and more.",
 };

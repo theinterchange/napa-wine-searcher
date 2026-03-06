@@ -10,7 +10,7 @@ export function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <Wine className="h-5 w-5 text-burgundy-700 dark:text-burgundy-300" />
               <span className="font-heading text-lg font-bold text-gold-900 dark:text-gold-300">
-                Wine Country Guide
+                Napa Sonoma Guide
               </span>
             </div>
             <p className="text-sm text-[var(--muted-foreground)]">
@@ -82,7 +82,7 @@ export function Footer() {
         </div>
         <div className="mt-8 pt-8 border-t border-[var(--border)] text-sm text-[var(--muted-foreground)]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; {new Date().getFullYear()} Wine Country Guide.</p>
+            <p>&copy; {new Date().getFullYear()} Napa Sonoma Guide.</p>
             <div className="flex items-center gap-4">
               <Link href="/privacy" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
                 Privacy Policy

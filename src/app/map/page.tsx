@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Map | Wine Country Guide",
+  title: "Map | Napa Sonoma Guide",
   description: "Explore Napa and Sonoma Valley wineries on an interactive map.",
 };
 

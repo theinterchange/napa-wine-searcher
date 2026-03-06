@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Wine Country Guide",
-  description: "Privacy policy for Wine Country Guide - how we collect, use, and protect your data.",
+  title: "Privacy Policy | Napa Sonoma Guide",
+  description: "Privacy policy for Napa Sonoma Guide - how we collect, use, and protect your data.",
 };
 
 export default function PrivacyPage() {

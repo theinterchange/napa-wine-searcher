@@ -24,7 +24,7 @@ export async function generateMetadata({
 
   return {
     title: collection
-      ? `${collection.name} | Wine Country Guide`
+      ? `${collection.name} | Napa Sonoma Guide`
       : "Collection Not Found",
   };
 }

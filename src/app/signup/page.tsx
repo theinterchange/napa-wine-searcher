@@ -59,7 +59,7 @@ export default function SignupPage() {
             Create Account
           </h1>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Join Wine Country Guide to save favorites, track visits, and more.
+            Join Napa Sonoma Guide to save favorites, track visits, and more.
           </p>
         </div>
 

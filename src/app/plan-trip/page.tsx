@@ -1,18 +1,19 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { BASE_URL } from "@/lib/constants";
 import { PlanTripClient } from "./PlanTripClient";
 
 export const metadata: Metadata = {
-  title: "Plan Your Trip | Wine Country Guide",
+  title: "Plan Your Trip | Napa Sonoma Guide",
   description:
     "Build a custom wine country day trip. Choose your style, shuffle routes, swap wineries, and share your itinerary.",
   openGraph: {
-    title: "Plan Your Trip | Wine Country Guide",
+    title: "Plan Your Trip | Napa Sonoma Guide",
     description:
       "Build a custom wine country day trip. Choose your style, shuffle routes, swap wineries, and share your itinerary.",
-    url: "https://napa-winery-search.vercel.app/plan-trip",
-    siteName: "Wine Country Guide",
+    url: `${BASE_URL}/plan-trip`,
+    siteName: "Napa Sonoma Guide",
     type: "website",
   },
 };

@@ -7,7 +7,7 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Visits | Wine Country Guide",
+  title: "My Visits | Napa Sonoma Guide",
   description: "Wineries you've visited in Napa and Sonoma Valleys.",
 };
 

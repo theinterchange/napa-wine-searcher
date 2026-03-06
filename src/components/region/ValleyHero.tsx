@@ -22,7 +22,7 @@ export function ValleyHero({
         <div className="flex items-center gap-2 mb-4">
           <Wine className="h-5 w-5 text-gold-400" />
           <span className="text-sm font-medium text-gold-400/80">
-            Wine Country Guide
+            Napa Sonoma Guide
           </span>
         </div>
         <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-2xl">

@@ -10,6 +10,7 @@ import { FAQSection } from "@/components/region/FAQSection";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { slugify } from "@/lib/utils";
+import { BASE_URL } from "@/lib/constants";
 
 const content = VALLEY_CONTENT.sonoma;
 
@@ -19,8 +20,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: content.metaTitle,
     description: content.metaDescription,
-    url: "https://napa-winery-search.vercel.app/sonoma-county",
-    siteName: "Wine Country Guide",
+    url: `${BASE_URL}/sonoma-county`,
+    siteName: "Napa Sonoma Guide",
     type: "website",
   },
   twitter: {

@@ -1,4 +1,4 @@
-const BASE_URL = "https://napa-winery-search.vercel.app";
+import { BASE_URL } from "@/lib/constants";
 
 interface BreadcrumbItem {
   name: string;

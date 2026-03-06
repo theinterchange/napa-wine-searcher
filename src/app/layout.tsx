@@ -6,6 +6,7 @@ import { Providers } from "@/components/layout/Providers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CompareFloatingBar } from "@/components/compare/CompareFloatingBar";
+import { BASE_URL } from "@/lib/constants";
 
 const playfair = Playfair_Display({
   variable: "--font-heading",
@@ -20,10 +21,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://napa-winery-search.vercel.app"),
+  metadataBase: new URL(BASE_URL),
   title: {
-    default: "Wine Country Guide | Napa & Sonoma Valley Wineries",
-    template: "%s | Wine Country Guide",
+    default: "Napa Sonoma Guide | Napa & Sonoma Valley Wineries",
+    template: "%s | Napa Sonoma Guide",
   },
   description:
     "Discover the finest wineries in Napa and Sonoma Valleys. Browse wines, compare tasting experiences, and plan your wine country visit.",
@@ -45,6 +46,27 @@ export default function RootLayout({
         />
       )}
       <body className={`${playfair.variable} ${inter.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Napa Sonoma Guide",
+              url: BASE_URL,
+              description:
+                "Discover the finest wineries in Napa and Sonoma Valleys. Browse wines, compare tasting experiences, and plan your wine country visit.",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: `${BASE_URL}/wineries?q={search_term_string}`,
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         <Providers>
           <a
             href="#main-content"

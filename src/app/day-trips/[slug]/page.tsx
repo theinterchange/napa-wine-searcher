@@ -33,7 +33,7 @@ import { ShareButton } from "@/components/social/ShareButton";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
 
-const BASE_URL = "https://napa-winery-search.vercel.app";
+import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
   const routes = await db
@@ -59,7 +59,7 @@ export async function generateMetadata({
 
   if (!route) return { title: "Route Not Found" };
 
-  const title = `${route.title} | Wine Country Guide`;
+  const title = `${route.title} | Napa Sonoma Guide`;
   const description =
     route.description || `Day trip route through wine country`;
 
@@ -70,7 +70,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${BASE_URL}/day-trips/${slug}`,
-      siteName: "Wine Country Guide",
+      siteName: "Napa Sonoma Guide",
       type: "website",
     },
   };

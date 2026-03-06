@@ -63,7 +63,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <Wine className="h-6 w-6 text-burgundy-700 dark:text-burgundy-300" />
             <span className="font-heading text-xl font-bold text-gold-900 dark:text-gold-300">
-              Wine Country Guide
+              Napa Sonoma Guide
             </span>
           </Link>
 

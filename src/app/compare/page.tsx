@@ -9,7 +9,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Compare Wineries | Wine Country Guide",
+  title: "Compare Wineries | Napa Sonoma Guide",
   description: "Compare wineries side-by-side to plan your wine country visit.",
 };
 

@@ -24,11 +24,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${collection.name} | Wine Country Guide`,
-    description: collection.description || `A curated winery collection on Wine Country Guide.`,
+    title: `${collection.name} | Napa Sonoma Guide`,
+    description: collection.description || `A curated winery collection on Napa Sonoma Guide.`,
     openGraph: {
       title: `${collection.name} — Winery Collection`,
-      description: collection.description || `A curated winery collection on Wine Country Guide.`,
+      description: collection.description || `A curated winery collection on Napa Sonoma Guide.`,
       type: "website",
     },
     alternates: {

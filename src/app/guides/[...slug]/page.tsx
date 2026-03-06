@@ -21,7 +21,7 @@ import {
   getSubRegionComparisonData,
 } from "@/lib/guide-data";
 
-const BASE_URL = "https://napa-winery-search.vercel.app";
+import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
   const guides = getAllGuides();
@@ -46,7 +46,7 @@ export async function generateMetadata({
       title: guide.title,
       description: guide.metaDescription,
       url: `${BASE_URL}/guides/${guide.slug}`,
-      siteName: "Wine Country Guide",
+      siteName: "Napa Sonoma Guide",
       type: "website",
     },
   };

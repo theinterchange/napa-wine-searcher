@@ -1,17 +1,27 @@
-# Wine Country Guide — Napa & Sonoma Valley Wineries
+# Napa Sonoma Guide — Napa & Sonoma Valley Wineries
 
 > A comprehensive directory of wineries in Napa Valley and Sonoma County, California.
 
 ## About
 
-Wine Country Guide is a free, searchable directory of 191+ wineries across Napa Valley and Sonoma County. The site provides detailed profiles including wines produced, tasting experiences with pricing, hours, amenities, and visitor information.
+Napa Sonoma Guide is a free, searchable directory of 208+ wineries across Napa Valley and Sonoma County. The site provides detailed profiles including wines produced, tasting experiences with pricing, hours, amenities, and visitor information.
 
 ## Data Coverage
 
-- 191+ wineries across Napa Valley and Sonoma County
-- 2,270+ wines cataloged across 22 varietals (Cabernet Sauvignon, Pinot Noir, Chardonnay, and more)
+- 208+ wineries across Napa Valley and Sonoma County
+- 2,075+ wines cataloged across 22 varietals (Cabernet Sauvignon, Pinot Noir, Chardonnay, and more)
 - 670+ tasting experiences with pricing from $25 to $500+
 - Sub-regions: Oakville, Rutherford, St. Helena, Yountville, Calistoga, Carneros, Stags Leap, Russian River Valley, Dry Creek Valley, Sonoma Valley, and more
+
+## Key Facts
+
+- Average Napa Valley tasting costs $50-75
+- Average Sonoma County tasting costs $25-50
+- Napa Valley: ~130 wineries across 8 sub-regions
+- Sonoma County: ~80 wineries across 6 sub-regions
+- Dog-friendly wineries: 40+
+- Walk-ins welcome: 60+
+- Picnic-friendly: 50+
 
 ## Key Features
 
@@ -20,15 +30,19 @@ Wine Country Guide is a free, searchable directory of 191+ wineries across Napa 
 - Interactive map view of all wineries
 - Side-by-side winery comparison tool
 - Curated day-trip route suggestions
+- 100+ programmatic guide pages (dog-friendly, budget, by varietal, by sub-region)
 - Amenity filters: dog-friendly, picnic-friendly, walk-ins welcome
 
 ## Useful URLs
 
-- Homepage: https://napa-winery-search.vercel.app
-- Browse all wineries: https://napa-winery-search.vercel.app/wineries
-- Map view: https://napa-winery-search.vercel.app/map
-- Day trip routes: https://napa-winery-search.vercel.app/day-trips
-- Individual winery pages: https://napa-winery-search.vercel.app/wineries/{winery-slug}
+- Homepage: https://napasonomaguide.com
+- Browse all wineries: https://napasonomaguide.com/wineries
+- Map view: https://napasonomaguide.com/map
+- Day trip routes: https://napasonomaguide.com/day-trips
+- Individual winery pages: https://napasonomaguide.com/wineries/{winery-slug}
+- Napa Valley guide: https://napasonomaguide.com/napa-valley
+- Sonoma County guide: https://napasonomaguide.com/sonoma-county
+- Trip planner: https://napasonomaguide.com/plan-trip
 
 ## Contact
 
