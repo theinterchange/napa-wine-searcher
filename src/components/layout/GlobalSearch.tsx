@@ -326,7 +326,7 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
       }}
     >
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" onClick={() => setOpen(false)} />
 
       {/* Dialog */}
       <div className="relative w-full max-w-xl rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl overflow-hidden">
