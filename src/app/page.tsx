@@ -81,20 +81,22 @@ export default async function HomePage() {
       {/* 2. Quick Stats Bar */}
       <section className="border-y border-[var(--border)] bg-[var(--muted)]/30">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-6 text-sm text-[var(--muted-foreground)]">
-            <span className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-[var(--muted-foreground)]">
+            <Link href="/wineries" className="flex items-center gap-1.5 hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
               <Wine className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
               <strong className="text-[var(--foreground)]">{totalWineries}</strong> Wineries
-            </span>
-            <span className="text-[var(--border)]" aria-hidden="true">|</span>
-            <span className="flex items-center gap-1.5">
+            </Link>
+            <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
+            <Link href="/day-trips" className="flex items-center gap-1.5 hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
               <Route className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
               <strong className="text-[var(--foreground)]">{dayTripCount}</strong> Day Trip Routes
-            </span>
-            <span className="text-[var(--border)]" aria-hidden="true">|</span>
+            </Link>
+            <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <strong className="text-[var(--foreground)]">2</strong> Valleys
+              <Link href="/napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"><strong className="text-[var(--foreground)]">Napa Valley</strong></Link>
+              <span className="text-[var(--border)]" aria-hidden="true">|</span>
+              <Link href="/sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"><strong className="text-[var(--foreground)]">Sonoma County</strong></Link>
             </span>
           </div>
         </div>

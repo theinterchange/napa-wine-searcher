@@ -136,7 +136,7 @@ export function HeroFeatured({
               href="/wineries"
               className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
             >
-              Browse All {totalWineries} Wineries
+              Browse Wineries
             </Link>
             <Link
               href="/map"
