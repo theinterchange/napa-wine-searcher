@@ -127,7 +127,7 @@ export default async function HomePage() {
             href="/wineries"
             className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
           >
-            View all {totalWineries} wineries &rarr;
+            Browse All Wineries &rarr;
           </Link>
         </div>
         <QuickFilterBar />
@@ -135,6 +135,14 @@ export default async function HomePage() {
           {homepageWineries.map((winery) => (
             <WineryCard key={winery.slug} winery={winery} />
           ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            href="/wineries"
+            className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-600 transition-colors"
+          >
+            Browse All Wineries &rarr;
+          </Link>
         </div>
       </section>
 

@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   },
   description:
     "Discover the finest wineries in Napa and Sonoma Valleys. Browse wines, compare tasting experiences, and plan your wine country visit.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },

@@ -10,7 +10,7 @@ interface BookTastingCTAProps {
   sourcePage?: string;
   sourceComponent?: string;
   size?: "sm" | "md" | "lg";
-  label?: string;
+  label?: React.ReactNode;
 }
 
 export function BookTastingCTA({
@@ -20,7 +20,7 @@ export function BookTastingCTA({
   sourcePage,
   sourceComponent,
   size = "md",
-  label = "Book with Winery",
+  label = "Book with Winery" as React.ReactNode,
 }: BookTastingCTAProps) {
   let href = websiteUrl;
   try {

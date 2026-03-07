@@ -76,6 +76,7 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
               wineryId={winery.id}
               winerySlug={winery.slug}
               sourceComponent="WineryHero"
+              label={<><span className="sm:hidden">Book</span><span className="hidden sm:inline">Book with Winery</span></>}
             />
           )}
         </div>

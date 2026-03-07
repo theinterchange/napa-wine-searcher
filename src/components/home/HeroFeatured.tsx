@@ -41,7 +41,7 @@ export function HeroFeatured({
 
   useEffect(() => {
     if (paused || wineries.length <= 1) return;
-    const id = setInterval(next, 6000);
+    const id = setInterval(next, 5000);
     return () => clearInterval(id);
   }, [paused, next, wineries.length]);
 
@@ -140,7 +140,7 @@ export function HeroFeatured({
             </Link>
             <Link
               href="/map"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+              className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
             >
               <Map className="h-4 w-4" />
               View Map
@@ -171,18 +171,30 @@ export function HeroFeatured({
         {/* Dot indicators */}
         {wineries.length > 1 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" aria-live="polite">
+            <style>{`@keyframes progress-fill { from { transform: scaleX(0) } to { transform: scaleX(1) } }`}</style>
             {wineries.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`rounded-full transition-all ${
                   i === current
-                    ? "bg-white w-6 h-2"
+                    ? "relative overflow-hidden bg-white/30 w-6 h-2"
                     : "bg-white/50 w-2 h-2 hover:bg-white/70"
                 }`}
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === current ? "true" : undefined}
-              />
+              >
+                {i === current && (
+                  <span
+                    key={current}
+                    className="absolute inset-0 rounded-full bg-white origin-left"
+                    style={{
+                      animation: "progress-fill 5s linear forwards",
+                      animationPlayState: paused ? "paused" : "running",
+                    }}
+                  />
+                )}
+              </button>
             ))}
           </div>
         )}
