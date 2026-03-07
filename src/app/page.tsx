@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen } from "lucide-react";
+import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape } from "lucide-react";
 import { db } from "@/db";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
-import { sql, count, eq, desc } from "drizzle-orm";
+import { sql, count, eq, desc, and } from "drizzle-orm";
 import { auth } from "@/auth";
 import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
@@ -36,6 +36,21 @@ async function getDayTripCount() {
   return total;
 }
 
+async function getPopularSubRegions() {
+  return db
+    .select({
+      name: subRegions.name,
+      slug: subRegions.slug,
+      valley: subRegions.valley,
+      count: count(),
+    })
+    .from(wineries)
+    .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+    .groupBy(subRegions.id)
+    .orderBy(sql`count(*) DESC`)
+    .limit(8);
+}
+
 async function getHomepageWineries() {
   return db
     .select({
@@ -54,6 +69,7 @@ async function getHomepageWineries() {
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
+      subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
       curated: wineries.curated,
     })
@@ -64,13 +80,14 @@ async function getHomepageWineries() {
 }
 
 export default async function HomePage() {
-  const [featured, totalWineries, session, dayTripCount, homepageWineries] =
+  const [featured, totalWineries, session, dayTripCount, homepageWineries, popularRegions] =
     await Promise.all([
       getFeaturedWineries(),
       getTotalWineries(),
       auth(),
       getDayTripCount(),
       getHomepageWineries(),
+      getPopularSubRegions(),
     ]);
 
   return (
@@ -121,7 +138,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. Account CTA + Email Capture */}
+      {/* 4. Explore Wine Regions */}
+      {popularRegions.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pb-10 pt-2 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-heading text-xl font-bold">Explore Wine Regions</h2>
+            <div className="flex gap-3 text-sm font-medium">
+              <Link href="/napa-valley" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+                Napa Valley &rarr;
+              </Link>
+              <Link href="/sonoma-county" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+                Sonoma County &rarr;
+              </Link>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {popularRegions.map((sr) => (
+              <Link
+                key={sr.slug}
+                href={`${sr.valley === "napa" ? "/napa-valley" : "/sonoma-county"}/${sr.slug}`}
+                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-burgundy-50 dark:bg-burgundy-950 shrink-0">
+                  <Grape className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors truncate">
+                    {sr.name}
+                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    {sr.count} {sr.count === 1 ? "winery" : "wineries"}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 5. Account CTA + Email Capture */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           {!session && (

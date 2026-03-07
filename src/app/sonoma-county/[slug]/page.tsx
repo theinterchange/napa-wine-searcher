@@ -120,6 +120,40 @@ export default async function SonomaSubRegionPage({
         </div>
       </section>
 
+      {/* About Sub-Region */}
+      {content && (
+        <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+          <h2 className="font-heading text-2xl font-bold mb-6">
+            About {data.region.name}
+          </h2>
+          <div className="max-w-3xl space-y-4 text-[var(--muted-foreground)] leading-relaxed">
+            {content.description.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                Known For
+              </h3>
+              <p className="text-sm">{content.knownFor.join(", ")}</p>
+            </div>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                Terroir
+              </h3>
+              <p className="text-sm">{content.terroir}</p>
+            </div>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                Best Time to Visit
+              </h3>
+              <p className="text-sm">{content.bestTimeToVisit}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* All Wineries */}
       <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,42 +162,6 @@ export default async function SonomaSubRegionPage({
           ))}
         </div>
       </section>
-
-      {/* About Sub-Region */}
-      {content && (
-        <section className="border-y border-[var(--border)] bg-[var(--muted)]/30">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-bold mb-6">
-              About {data.region.name}
-            </h2>
-            <div className="max-w-3xl space-y-4 text-[var(--muted-foreground)] leading-relaxed">
-              {content.description.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
-              <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-                <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                  Known For
-                </h3>
-                <p className="text-sm">{content.knownFor.join(", ")}</p>
-              </div>
-              <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-                <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                  Terroir
-                </h3>
-                <p className="text-sm">{content.terroir}</p>
-              </div>
-              <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-                <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                  Best Time to Visit
-                </h3>
-                <p className="text-sm">{content.bestTimeToVisit}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Related Day Trips */}
       {data.relatedTrips.length > 0 && (
