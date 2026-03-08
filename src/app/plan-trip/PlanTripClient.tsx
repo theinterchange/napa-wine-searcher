@@ -60,11 +60,13 @@ export function PlanTripClient({
   const [wizardCompleted, setWizardCompleted] = useState(
     restoredFromUrl.completed
   );
+  const [editStep, setEditStep] = useState<number | undefined>();
 
   const handleWizardComplete = (params: WizardParams) => {
     setWizardParams(params);
     setWizardCompleted(true);
     setShowWizard(false);
+    setEditStep(undefined);
     // Persist to URL for browser back navigation
     const encoded = encodeWizardParams(params);
     const url = new URL(window.location.href);
@@ -89,35 +91,57 @@ export function PlanTripClient({
   if (wizardCompleted) {
     return (
       <div>
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            Route personalized with your preferences.
-          </p>
-          <button
-            onClick={() => {
-              setWizardCompleted(false);
-              setWizardParams(undefined);
-              setShowWizard(true);
-              // Clear URL state
-              const url = new URL(window.location.href);
-              url.searchParams.delete("wp");
-              window.history.replaceState({}, "", url.toString());
-              // Clear session cache
-              try { sessionStorage.removeItem("trip-planner-route"); } catch {}
-            }}
-            className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
-          >
-            Start over with wizard
-          </button>
-        </div>
-        <TripPlanner
-          initialFrom={initialFrom}
-          initialTheme={initialTheme}
-          initialStops={initialStops}
-          initialValley={initialValley}
-          wizardParams={wizardParams}
-          key="wizard-result"
-        />
+        {showWizard ? (
+          <div className="mb-8">
+            <TripWizard
+              onComplete={handleWizardComplete}
+              onSkip={() => {
+                setShowWizard(false);
+                setEditStep(undefined);
+              }}
+              onSaveStep={handleWizardComplete}
+              initialStep={editStep}
+              initialParams={wizardParams}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Route personalized with your preferences.
+              </p>
+              <button
+                onClick={() => {
+                  setWizardCompleted(false);
+                  setWizardParams(undefined);
+                  setEditStep(undefined);
+                  setShowWizard(true);
+                  // Clear URL state
+                  const url = new URL(window.location.href);
+                  url.searchParams.delete("wp");
+                  window.history.replaceState({}, "", url.toString());
+                  // Clear session cache
+                  try { sessionStorage.removeItem("trip-planner-route"); } catch {}
+                }}
+                className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+              >
+                Start over with wizard
+              </button>
+            </div>
+            <TripPlanner
+              initialFrom={initialFrom}
+              initialTheme={initialTheme}
+              initialStops={initialStops}
+              initialValley={initialValley}
+              wizardParams={wizardParams}
+              onEditPreference={(step: number) => {
+                setEditStep(step);
+                setShowWizard(true);
+              }}
+              key="wizard-result"
+            />
+          </>
+        )}
       </div>
     );
   }
@@ -130,6 +154,7 @@ export function PlanTripClient({
           <TripWizard
             onComplete={handleWizardComplete}
             onSkip={handleWizardSkip}
+            initialStep={editStep}
           />
         </div>
       ) : (

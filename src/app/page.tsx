@@ -188,7 +188,7 @@ export default async function HomePage() {
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           {!session && (
-            <div className="max-w-2xl mx-auto mb-12 text-center">
+            <div className="max-w-3xl mx-auto mb-12 text-center">
               <h2 className="font-heading text-2xl font-bold mb-3">
                 Create Your Free Account
               </h2>

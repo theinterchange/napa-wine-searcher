@@ -55,8 +55,13 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-heading font-semibold mb-3">Guides</h3>
+            <h3 className="font-heading font-semibold mb-3">Guides & Blog</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
+              <li>
+                <Link href="/blog" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                  Blog
+                </Link>
+              </li>
               <li>
                 <Link href="/guides/dog-friendly-wineries-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
                   Dog-Friendly Wineries

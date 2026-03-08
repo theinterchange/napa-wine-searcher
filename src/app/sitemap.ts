@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getAllGuides } from "@/lib/guide-content";
+import { getAllPosts } from "@/lib/blog";
 import { BASE_URL } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -84,5 +85,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })),
     ...guideEntries,
+    {
+      url: `${BASE_URL}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...getAllPosts().map((post) => ({
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

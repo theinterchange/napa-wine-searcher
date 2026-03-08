@@ -15,6 +15,7 @@ import {
   Navigation,
   Loader2,
   Check,
+  Flag,
 } from "lucide-react";
 import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
 
@@ -24,6 +25,11 @@ export interface WizardParams {
   originLat?: number;
   originLng?: number;
   originLabel?: string;
+  originAddress?: string;
+  endLat?: number;
+  endLng?: number;
+  endLabel?: string;
+  endAddress?: string;
   dayOfWeek?: string;
   wineTypes?: string[];
   priceLevels?: number[];
@@ -36,9 +42,12 @@ export interface WizardParams {
 interface TripWizardProps {
   onComplete: (params: WizardParams) => void;
   onSkip: () => void;
+  onSaveStep?: (params: WizardParams) => void;
+  initialStep?: number;
+  initialParams?: WizardParams;
 }
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
 const AMENITY_OPTIONS = [
   { key: "dog", label: "Dog-Friendly" },
@@ -112,32 +121,45 @@ export function TripWizard(props: TripWizardProps) {
   return <TripWizardInner {...props} />;
 }
 
-function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
-  const [step, setStep] = useState(1);
+function TripWizardInner({ onComplete, onSkip, onSaveStep, initialStep, initialParams }: TripWizardProps) {
+  const [step, setStep] = useState(initialStep ?? 1);
 
   // Step 1: Starting point
-  const [originLabel, setOriginLabel] = useState("");
-  const [originLat, setOriginLat] = useState<number | undefined>();
-  const [originLng, setOriginLng] = useState<number | undefined>();
+  const [originLabel, setOriginLabel] = useState(initialParams?.originLabel ?? "");
+  const [originLat, setOriginLat] = useState<number | undefined>(initialParams?.originLat);
+  const [originLng, setOriginLng] = useState<number | undefined>(initialParams?.originLng);
+  const [originAddress, setOriginAddress] = useState(initialParams?.originAddress ?? "");
   const [geoLoading, setGeoLoading] = useState(false);
 
-  // Step 2: Day of week
-  const [dayOfWeek, setDayOfWeek] = useState<string | undefined>();
+  // Step 2: Ending point
+  const [endLabel, setEndLabel] = useState(initialParams?.endLabel ?? "");
+  const [endLat, setEndLat] = useState<number | undefined>(initialParams?.endLat);
+  const [endLng, setEndLng] = useState<number | undefined>(initialParams?.endLng);
+  const [endAddress, setEndAddress] = useState(initialParams?.endAddress ?? "");
 
-  // Step 3: Wine preferences
-  const [selectedWines, setSelectedWines] = useState<string[]>([]);
+  // Step 3: Day of week (multi-select)
+  const [selectedDays, setSelectedDays] = useState<string[]>(
+    initialParams?.dayOfWeek ? initialParams.dayOfWeek.split(",") : []
+  );
 
-  // Step 4: Amenities
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  // Step 4: Wine preferences
+  const [selectedWines, setSelectedWines] = useState<string[]>(initialParams?.wineTypes ?? []);
 
-  // Step 5: Budget
-  const [priceLevels, setPriceLevels] = useState<number[]>([]);
+  // Step 5: Amenities
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(initialParams?.amenities ?? []);
 
-  // Step 6: Time budget
-  const [timeBudget, setTimeBudget] = useState<"half" | "full" | "extended" | undefined>();
+  // Step 6: Budget
+  const [priceLevels, setPriceLevels] = useState<number[]>(initialParams?.priceLevels ?? []);
 
-  // Step 7: Must-visit anchors
-  const [anchors, setAnchors] = useState<AnchorWinery[]>([]);
+  // Step 7: Time budget
+  const [timeBudget, setTimeBudget] = useState<"half" | "full" | "extended" | undefined>(initialParams?.timeBudget);
+
+  // Step 8: Must-visit anchors
+  const [anchors, setAnchors] = useState<AnchorWinery[]>(
+    initialParams?.anchorIds && initialParams?.anchorNames
+      ? initialParams.anchorIds.map((id, i) => ({ id, name: initialParams.anchorNames![i] }))
+      : []
+  );
   const [anchorSearch, setAnchorSearch] = useState("");
   const [anchorResults, setAnchorResults] = useState<AnchorWinery[]>([]);
   const [anchorSearching, setAnchorSearching] = useState(false);
@@ -160,6 +182,12 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
       }
     );
   }, []);
+
+  const handleDayToggle = (key: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(key) ? prev.filter((d) => d !== key) : [...prev, key]
+    );
+  };
 
   const handleWineToggle = (key: string) => {
     setSelectedWines((prev) =>
@@ -229,14 +257,21 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
     }
   };
 
-  const handleBuild = () => {
+  const buildParams = (): WizardParams => {
     const params: WizardParams = {};
     if (originLat != null && originLng != null) {
       params.originLat = originLat;
       params.originLng = originLng;
       params.originLabel = originLabel;
+      if (originAddress) params.originAddress = originAddress;
     }
-    if (dayOfWeek) params.dayOfWeek = dayOfWeek;
+    if (endLat != null && endLng != null) {
+      params.endLat = endLat;
+      params.endLng = endLng;
+      params.endLabel = endLabel;
+      if (endAddress) params.endAddress = endAddress;
+    }
+    if (selectedDays.length > 0) params.dayOfWeek = selectedDays.join(",");
     if (selectedWines.length > 0) params.wineTypes = selectedWines;
     if (selectedAmenities.length > 0) params.amenities = selectedAmenities;
     if (priceLevels.length > 0) params.priceLevels = priceLevels;
@@ -245,12 +280,17 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
       params.anchorIds = anchors.map((a) => a.id);
       params.anchorNames = anchors.map((a) => a.name);
     }
-    onComplete(params);
+    return params;
   };
 
-  const stepIcons = [MapPin, Calendar, Wine, Check, DollarSign, Clock, Star];
+  const handleBuild = () => {
+    onComplete(buildParams());
+  };
+
+  const stepIcons = [MapPin, Flag, Calendar, Wine, Check, DollarSign, Clock, Star];
   const stepTitles = [
     "Starting Point",
+    "Ending Point",
     "Day of Visit",
     "Wine Preferences",
     "Amenities",
@@ -269,7 +309,7 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
           </span>
           <button
             onClick={onSkip}
-            className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--muted-foreground)] hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:text-[var(--foreground)] transition-colors"
           >
             Skip wizard
           </button>
@@ -311,7 +351,10 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
         {showSummary ? (
           <SummaryPanel
             originLabel={originLabel}
-            dayOfWeek={dayOfWeek}
+            endLabel={endLabel}
+            endLat={endLat}
+            endLng={endLng}
+            selectedDays={selectedDays}
             selectedWines={selectedWines}
             selectedAmenities={selectedAmenities}
             priceLevels={priceLevels}
@@ -326,30 +369,50 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
             originLng={originLng}
             setOriginLat={setOriginLat}
             setOriginLng={setOriginLng}
+            originAddress={originAddress}
+            setOriginAddress={setOriginAddress}
             geoLoading={geoLoading}
             onGeolocate={handleGeolocate}
           />
         ) : step === 2 ? (
-          <StepDayOfWeek dayOfWeek={dayOfWeek} setDayOfWeek={setDayOfWeek} />
+          <StepEndingPoint
+            endLabel={endLabel}
+            setEndLabel={setEndLabel}
+            endLat={endLat}
+            endLng={endLng}
+            setEndLat={setEndLat}
+            setEndLng={setEndLng}
+            endAddress={endAddress}
+            setEndAddress={setEndAddress}
+            originLabel={originLabel}
+            originLat={originLat}
+            originLng={originLng}
+          />
         ) : step === 3 ? (
+          <StepDayOfWeek
+            selectedDays={selectedDays}
+            onToggle={handleDayToggle}
+            onClearAll={() => setSelectedDays([])}
+          />
+        ) : step === 4 ? (
           <StepWinePreferences
             selectedWines={selectedWines}
             onToggle={handleWineToggle}
             onClearAll={() => setSelectedWines([])}
           />
-        ) : step === 4 ? (
+        ) : step === 5 ? (
           <StepAmenities
             selectedAmenities={selectedAmenities}
             onToggle={handleAmenityToggle}
             onClearAll={() => setSelectedAmenities([])}
           />
-        ) : step === 5 ? (
+        ) : step === 6 ? (
           <StepBudget
             priceLevels={priceLevels}
             onToggle={handlePriceLevelToggle}
             onClearAll={() => setPriceLevels([])}
           />
-        ) : step === 6 ? (
+        ) : step === 7 ? (
           <StepTimeBudget timeBudget={timeBudget} setTimeBudget={setTimeBudget} />
         ) : (
           <StepAnchors
@@ -369,7 +432,7 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
         <button
           onClick={goBack}
           disabled={step === 1 && !showSummary}
-          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] disabled:opacity-30 transition-colors"
+          className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:text-[var(--foreground)] disabled:opacity-30 transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
           Back
@@ -387,17 +450,26 @@ function TripWizardInner({ onComplete, onSkip }: TripWizardProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={goNext}
-              className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--muted-foreground)] hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:text-[var(--foreground)] transition-colors"
             >
               Skip
             </button>
-            <button
-              onClick={goNext}
-              className="inline-flex items-center gap-1 rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </button>
+            {initialStep != null && step === initialStep && onSaveStep ? (
+              <button
+                onClick={() => onSaveStep(buildParams())}
+                className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              >
+                Save & Update Route
+              </button>
+            ) : (
+              <button
+                onClick={goNext}
+                className="inline-flex items-center gap-1 rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -413,7 +485,7 @@ function PlacesAutocompleteInput({
 }: {
   value: string;
   onChange: (v: string) => void;
-  onSelect: (label: string, lat: number, lng: number) => void;
+  onSelect: (label: string, lat: number, lng: number, address?: string) => void;
 }) {
   const places = useMapsLibrary("places");
   const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
@@ -475,7 +547,7 @@ function PlacesAutocompleteInput({
       (place) => {
         if (place?.geometry?.location) {
           const label = place.name || place.formatted_address || prediction.description;
-          onSelect(label, place.geometry.location.lat(), place.geometry.location.lng());
+          onSelect(label, place.geometry.location.lat(), place.geometry.location.lng(), place.formatted_address || undefined);
         }
       }
     );
@@ -522,6 +594,8 @@ function StepStartingPoint({
   originLng,
   setOriginLat,
   setOriginLng,
+  originAddress,
+  setOriginAddress,
   geoLoading,
   onGeolocate,
 }: {
@@ -531,15 +605,18 @@ function StepStartingPoint({
   originLng?: number;
   setOriginLat: (v: number | undefined) => void;
   setOriginLng: (v: number | undefined) => void;
+  originAddress: string;
+  setOriginAddress: (v: string) => void;
   geoLoading: boolean;
   onGeolocate: () => void;
 }) {
   const hasLocation = originLat != null && originLng != null;
 
-  const handlePlaceSelect = (label: string, lat: number, lng: number) => {
+  const handlePlaceSelect = (label: string, lat: number, lng: number, address?: string) => {
     setOriginLabel(label);
     setOriginLat(lat);
     setOriginLng(lng);
+    setOriginAddress(address ?? "");
   };
 
   return (
@@ -560,6 +637,7 @@ function StepStartingPoint({
               if (hasLocation) {
                 setOriginLat(undefined);
                 setOriginLng(undefined);
+                setOriginAddress("");
               }
             }}
             onSelect={handlePlaceSelect}
@@ -591,38 +669,174 @@ function StepStartingPoint({
         </button>
 
         {hasLocation && (
-          <p className="text-sm text-burgundy-700 dark:text-burgundy-400 flex items-center gap-1">
-            <Check className="h-4 w-4" />
-            Location set: {originLabel || `${originLat!.toFixed(4)}, ${originLng!.toFixed(4)}`}
-          </p>
+          <div className="text-sm text-burgundy-700 dark:text-burgundy-400 flex items-center gap-1">
+            <Check className="h-4 w-4 shrink-0" />
+            <span>
+              Location set: {originLabel || `${originLat!.toFixed(4)}, ${originLng!.toFixed(4)}`}
+              {originAddress && (
+                <span className="text-[var(--muted-foreground)]"> · {originAddress}</span>
+              )}
+            </span>
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-/* ── Step 2: Day of Week ─────────────────────────────────── */
-function StepDayOfWeek({
-  dayOfWeek,
-  setDayOfWeek,
+/* ── Step 2: Ending Point ────────────────────────────────── */
+function StepEndingPoint({
+  endLabel,
+  setEndLabel,
+  endLat,
+  endLng,
+  setEndLat,
+  setEndLng,
+  endAddress,
+  setEndAddress,
+  originLabel,
+  originLat,
+  originLng,
 }: {
-  dayOfWeek?: string;
-  setDayOfWeek: (v: string | undefined) => void;
+  endLabel: string;
+  setEndLabel: (v: string) => void;
+  endLat?: number;
+  endLng?: number;
+  setEndLat: (v: number | undefined) => void;
+  setEndLng: (v: number | undefined) => void;
+  endAddress: string;
+  setEndAddress: (v: string) => void;
+  originLabel: string;
+  originLat?: number;
+  originLng?: number;
+}) {
+  const hasEnd = endLat != null && endLng != null;
+  const hasOrigin = originLat != null && originLng != null;
+
+  const handlePlaceSelect = (label: string, lat: number, lng: number, address?: string) => {
+    setEndLabel(label);
+    setEndLat(lat);
+    setEndLng(lng);
+    setEndAddress(address ?? "");
+  };
+
+  const handleReturnToStart = () => {
+    if (hasOrigin) {
+      setEndLabel(originLabel || "Starting point");
+      setEndLat(originLat);
+      setEndLng(originLng);
+    }
+  };
+
+  const handleClear = () => {
+    setEndLabel("");
+    setEndLat(undefined);
+    setEndLng(undefined);
+    setEndAddress("");
+  };
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-2">Where are you headed after?</h2>
+      <p className="text-sm text-[var(--muted-foreground)] mb-6">
+        Optional — hotel, restaurant, or next destination. We&apos;ll optimize the route to end nearby.
+      </p>
+
+      <div className="max-w-md space-y-3">
+        {GOOGLE_MAPS_API_KEY ? (
+          <PlacesAutocompleteInput
+            value={endLabel}
+            onChange={(v) => {
+              setEndLabel(v);
+              if (hasEnd) {
+                setEndLat(undefined);
+                setEndLng(undefined);
+                setEndAddress("");
+              }
+            }}
+            onSelect={handlePlaceSelect}
+          />
+        ) : (
+          <div className="relative">
+            <Flag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]" />
+            <input
+              type="text"
+              value={endLabel}
+              onChange={(e) => setEndLabel(e.target.value)}
+              placeholder="Hotel, restaurant, or address..."
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] py-2.5 pl-10 pr-4 text-sm placeholder:text-[var(--muted-foreground)] focus:border-burgundy-500 focus:outline-none focus:ring-1 focus:ring-burgundy-500"
+            />
+          </div>
+        )}
+
+        {hasOrigin && !hasEnd && (
+          <button
+            onClick={handleReturnToStart}
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+          >
+            <Navigation className="h-4 w-4" />
+            Return to starting point
+          </button>
+        )}
+
+        {hasEnd && (
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-burgundy-700 dark:text-burgundy-400 flex items-center gap-1">
+              <Check className="h-4 w-4 shrink-0" />
+              <span>
+                Ending at: {endLabel || `${endLat!.toFixed(4)}, ${endLng!.toFixed(4)}`}
+                {endAddress && (
+                  <span className="text-[var(--muted-foreground)]"> · {endAddress}</span>
+                )}
+              </span>
+            </div>
+            <button
+              onClick={handleClear}
+              className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Step 3: Day of Week ─────────────────────────────────── */
+function StepDayOfWeek({
+  selectedDays,
+  onToggle,
+  onClearAll,
+}: {
+  selectedDays: string[];
+  onToggle: (key: string) => void;
+  onClearAll: () => void;
 }) {
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">What day are you visiting?</h2>
+      <h2 className="text-xl font-bold mb-2">What day(s) are you visiting?</h2>
       <p className="text-sm text-[var(--muted-foreground)] mb-6">
-        We&apos;ll only include wineries that are open on your chosen day.
+        Select one or more days. We&apos;ll only include wineries open on at least one of your chosen days.
       </p>
 
       <div className="flex flex-wrap gap-2">
+        <button
+          onClick={onClearAll}
+          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            selectedDays.length === 0
+              ? "bg-burgundy-700 text-white"
+              : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
+          }`}
+        >
+          Any day
+        </button>
         {DAY_OPTIONS.map((d) => (
           <button
             key={d.key}
-            onClick={() => setDayOfWeek(dayOfWeek === d.key ? undefined : d.key)}
+            onClick={() => onToggle(d.key)}
             className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
-              dayOfWeek === d.key
+              selectedDays.includes(d.key)
                 ? "bg-burgundy-700 text-white"
                 : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
             }`}
@@ -632,9 +846,9 @@ function StepDayOfWeek({
         ))}
       </div>
 
-      {dayOfWeek && (
+      {selectedDays.length > 0 && (
         <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-          Selected: <strong>{DAY_OPTIONS.find((d) => d.key === dayOfWeek)?.label}</strong>
+          Selected: <strong>{selectedDays.map((k) => DAY_OPTIONS.find((d) => d.key === k)?.label).join(", ")}</strong>
         </p>
       )}
     </div>
@@ -658,7 +872,17 @@ function StepWinePreferences({
         Select your favorites and we&apos;ll prioritize wineries known for those varietals.
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={onClearAll}
+          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            selectedWines.length === 0
+              ? "bg-burgundy-700 text-white"
+              : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
+          }`}
+        >
+          No preference
+        </button>
         {WINE_CATEGORIES.map((cat) => (
           <button
             key={cat.key}
@@ -673,17 +897,6 @@ function StepWinePreferences({
           </button>
         ))}
       </div>
-
-      <button
-        onClick={onClearAll}
-        className={`text-sm transition-colors ${
-          selectedWines.length === 0
-            ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-        }`}
-      >
-        No preference
-      </button>
 
       {selectedWines.length > 0 && (
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
@@ -711,7 +924,17 @@ function StepAmenities({
         We&apos;ll only show wineries that match your requirements.
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={onClearAll}
+          className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+            selectedAmenities.length === 0
+              ? "bg-burgundy-700 text-white"
+              : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
+          }`}
+        >
+          No preference
+        </button>
         {AMENITY_OPTIONS.map((a) => (
           <button
             key={a.key}
@@ -726,17 +949,6 @@ function StepAmenities({
           </button>
         ))}
       </div>
-
-      <button
-        onClick={onClearAll}
-        className={`text-sm transition-colors ${
-          selectedAmenities.length === 0
-            ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-        }`}
-      >
-        No preference
-      </button>
 
       {selectedAmenities.length > 0 && (
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
@@ -783,10 +995,10 @@ function StepBudget({
 
       <button
         onClick={onClearAll}
-        className={`text-sm transition-colors ${
+        className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
           priceLevels.length === 0
-            ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            ? "bg-burgundy-700 text-white"
+            : "border border-[var(--border)] hover:border-burgundy-400 dark:hover:border-burgundy-600"
         }`}
       >
         No preference
@@ -929,7 +1141,10 @@ function StepAnchors({
 /* ── Summary Panel ───────────────────────────────────────── */
 function SummaryPanel({
   originLabel,
-  dayOfWeek,
+  endLabel,
+  endLat,
+  endLng,
+  selectedDays,
   selectedWines,
   selectedAmenities,
   priceLevels,
@@ -937,7 +1152,10 @@ function SummaryPanel({
   anchors,
 }: {
   originLabel: string;
-  dayOfWeek?: string;
+  endLabel: string;
+  endLat?: number;
+  endLng?: number;
+  selectedDays: string[];
   selectedWines: string[];
   selectedAmenities: string[];
   priceLevels: number[];
@@ -949,11 +1167,14 @@ function SummaryPanel({
   if (originLabel) {
     items.push({ icon: MapPin, label: "Starting from", value: originLabel });
   }
-  if (dayOfWeek) {
+  if (endLat != null && endLng != null && endLabel) {
+    items.push({ icon: Flag, label: "Ending at", value: endLabel });
+  }
+  if (selectedDays.length > 0) {
     items.push({
       icon: Calendar,
-      label: "Day",
-      value: DAY_OPTIONS.find((d) => d.key === dayOfWeek)?.label || dayOfWeek,
+      label: selectedDays.length === 1 ? "Day" : "Days",
+      value: selectedDays.map((k) => DAY_OPTIONS.find((d) => d.key === k)?.label).join(", "),
     });
   }
   if (selectedWines.length > 0) {

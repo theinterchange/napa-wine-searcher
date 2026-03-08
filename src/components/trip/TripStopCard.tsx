@@ -14,6 +14,7 @@ interface TripStopCardProps {
   alternatives: Alternative[];
   onSwap: (stopId: number, newWinery: Alternative) => void;
   onRemove: (stopId: number) => void;
+  onPreview?: (slug: string) => void;
 }
 
 export function TripStopCard({
@@ -23,6 +24,7 @@ export function TripStopCard({
   alternatives,
   onSwap,
   onRemove,
+  onPreview,
 }: TripStopCardProps) {
   const [showAlts, setShowAlts] = useState(false);
 
@@ -57,12 +59,12 @@ export function TripStopCard({
             </div>
             <div className="flex-1 p-4">
               <div className="flex items-start justify-between gap-2">
-                <Link
-                  href={`/wineries/${stop.slug}`}
-                  className="font-heading text-lg font-semibold hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                <button
+                  onClick={() => onPreview?.(stop.slug)}
+                  className="font-heading text-lg font-semibold text-left hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
                 >
                   {stop.name}
-                </Link>
+                </button>
                 <div className="flex items-center gap-1 shrink-0">
                   {alternatives.length > 0 && (
                     <button
@@ -97,6 +99,18 @@ export function TripStopCard({
                   </span>
                 )}
               </div>
+              {stop.matchReasons && stop.matchReasons.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {stop.matchReasons.map((reason) => (
+                    <span
+                      key={reason}
+                      className="inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]"
+                    >
+                      {reason}
+                    </span>
+                  ))}
+                </div>
+              )}
               {stop.tasting?.min != null && (
                 <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                   Tastings from ${Math.round(stop.tasting.min)}

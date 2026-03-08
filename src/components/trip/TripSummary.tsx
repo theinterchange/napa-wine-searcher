@@ -77,7 +77,7 @@ export function TripSummary({ summary, stopIds, theme }: TripSummaryProps) {
             <DollarSign className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
             <div>
               <p className="text-sm font-medium">
-                ${summary.totalMinCost}–${summary.totalMaxCost}
+                From ${summary.totalMinCost}
               </p>
               <p className="text-xs text-[var(--muted-foreground)]">
                 Estimated tasting cost

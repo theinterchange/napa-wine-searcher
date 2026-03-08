@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Shuffle, Loader2, Wine, MapPin, Navigation } from "lucide-react";
+import { Shuffle, Loader2, Wine, MapPin, Navigation, Clock, Flag, Pencil } from "lucide-react";
 import { TripStopCard } from "./TripStopCard";
 import { TripSummary } from "./TripSummary";
+import { WineryPreviewPanel } from "./WineryPreviewPanel";
 import type { WizardParams } from "./TripWizard";
 import {
   computeSegments,
@@ -32,6 +33,7 @@ export interface RouteStop {
   valley: string | null;
   tasting: { min: number | null; max: number | null } | null;
   segmentAfter: { miles: number; minutes: number } | null;
+  matchReasons?: string[];
 }
 
 export interface Alternative {
@@ -65,6 +67,7 @@ interface RouteResponse {
   summary: RouteSummary;
   route?: { title: string; slug: string; theme: string | null };
   originSegment?: { miles: number; minutes: number } | null;
+  endSegment?: { miles: number; minutes: number } | null;
   error?: string;
 }
 
@@ -84,6 +87,7 @@ interface TripPlannerProps {
   initialStops?: string;
   initialValley?: string;
   wizardParams?: WizardParams;
+  onEditPreference?: (step: number) => void;
 }
 
 export function TripPlanner({
@@ -92,18 +96,21 @@ export function TripPlanner({
   initialStops,
   initialValley,
   wizardParams,
+  onEditPreference,
 }: TripPlannerProps) {
   const [stops, setStops] = useState<RouteStop[]>([]);
   const [alternatives, setAlternatives] = useState<Record<number, Alternative[]>>({});
   const [summary, setSummary] = useState<RouteSummary | null>(null);
   const [routeInfo, setRouteInfo] = useState<{ title: string; slug: string; theme: string | null } | null>(null);
   const [originSegment, setOriginSegment] = useState<{ miles: number; minutes: number } | null>(null);
+  const [endSegment, setEndSegment] = useState<{ miles: number; minutes: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState(initialTheme || "");
   const [valley, setValley] = useState(initialValley || "");
   const [stopCount, setStopCount] = useState(4);
   const [savedWizardParams, setSavedWizardParams] = useState<WizardParams | undefined>(wizardParams);
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const skipCacheRef = useRef(false);
 
   const CACHE_KEY = "trip-planner-route";
@@ -115,6 +122,7 @@ export function TripPlanner({
     summary: RouteSummary;
     routeInfo: { title: string; slug: string; theme: string | null } | null;
     originSegment: { miles: number; minutes: number } | null;
+    endSegment: { miles: number; minutes: number } | null;
   }) => {
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, timestamp: Date.now() }));
@@ -135,6 +143,7 @@ export function TripPlanner({
       setSummary(cached.summary);
       setRouteInfo(cached.routeInfo || null);
       setOriginSegment(cached.originSegment || null);
+      setEndSegment(cached.endSegment || null);
       setLoading(false);
       return true;
     } catch {
@@ -151,6 +160,10 @@ export function TripPlanner({
     if (wp.originLat != null && wp.originLng != null) {
       params.originLat = String(wp.originLat);
       params.originLng = String(wp.originLng);
+    }
+    if (wp.endLat != null && wp.endLng != null) {
+      params.endLat = String(wp.endLat);
+      params.endLng = String(wp.endLng);
     }
     if (wp.dayOfWeek) params.dayOfWeek = wp.dayOfWeek;
     if (wp.wineTypes && wp.wineTypes.length > 0) params.wineTypes = wp.wineTypes.join(",");
@@ -174,18 +187,21 @@ export function TripPlanner({
           setStops([]);
           setSummary(null);
           setOriginSegment(null);
+          setEndSegment(null);
         } else {
           setStops(data.stops);
           setAlternatives(data.alternatives || {});
           setSummary(data.summary);
           setRouteInfo(data.route || null);
           setOriginSegment(data.originSegment || null);
+          setEndSegment(data.endSegment || null);
           saveToCache({
             stops: data.stops,
             alternatives: data.alternatives || {},
             summary: data.summary,
             routeInfo: data.route || null,
             originSegment: data.originSegment || null,
+            endSegment: data.endSegment || null,
           });
         }
       } catch {
@@ -197,9 +213,9 @@ export function TripPlanner({
     []
   );
 
-  // Initial load — try cache first
+  // Initial load — try cache first (skip cache when wizard params are present)
   useEffect(() => {
-    if (!skipCacheRef.current && loadFromCache()) return;
+    if (!skipCacheRef.current && !wizardParams && loadFromCache()) return;
     skipCacheRef.current = false;
 
     if (initialFrom) {
@@ -329,10 +345,15 @@ export function TripPlanner({
     const originCoords = savedWizardParams?.originLat != null && savedWizardParams?.originLng != null
       ? { lat: savedWizardParams.originLat, lng: savedWizardParams.originLng }
       : null;
+    const endCoords = savedWizardParams?.endLat != null && savedWizardParams?.endLng != null
+      ? { lat: savedWizardParams.endLat, lng: savedWizardParams.endLng }
+      : null;
 
-    const segmentStops = originCoords
-      ? [originCoords, ...currentStops]
-      : currentStops;
+    const segmentStops = [
+      ...(originCoords ? [originCoords] : []),
+      ...currentStops,
+      ...(endCoords ? [endCoords] : []),
+    ];
     const segments = computeSegments(segmentStops);
     const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
     const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
@@ -349,10 +370,16 @@ export function TripPlanner({
     if (originCoords) {
       setOriginSegment(segments[0] || null);
     }
+    if (endCoords) {
+      setEndSegment(segments[segments.length - 1] || null);
+    } else {
+      setEndSegment(null);
+    }
 
     const googleMapsUrl = buildGoogleMapsUrl(
       currentStops.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name })),
-      originCoords
+      originCoords,
+      endCoords
     );
     setSummary({
       totalMiles: Math.round(totalMiles * 10) / 10,
@@ -365,6 +392,7 @@ export function TripPlanner({
   };
 
   const hasOrigin = savedWizardParams?.originLat != null && savedWizardParams?.originLng != null;
+  const hasEnd = savedWizardParams?.endLat != null && savedWizardParams?.endLng != null;
 
   return (
     <div>
@@ -451,44 +479,57 @@ export function TripPlanner({
         {savedWizardParams && (
           <div className="mt-3 pt-3 border-t border-[var(--border)]">
             <div className="flex flex-wrap gap-2 text-xs text-[var(--muted-foreground)]">
-              <span className="font-medium text-[var(--foreground)]">Preferences:</span>
+              <span className="inline-flex items-center gap-1 font-medium text-[var(--foreground)]">
+                Preferences <Pencil className="h-3 w-3 text-[var(--muted-foreground)]" />
+              </span>
               {savedWizardParams.originLabel && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(1)} className={`inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   <MapPin className="h-3 w-3" /> {savedWizardParams.originLabel}
-                </span>
+                  {savedWizardParams.originAddress && (
+                    <span className="text-[var(--muted-foreground)]"> · {savedWizardParams.originAddress}</span>
+                  )}
+                </button>
+              )}
+              {savedWizardParams.endLabel && (
+                <button onClick={() => onEditPreference?.(2)} className={`inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
+                  <Flag className="h-3 w-3" /> {savedWizardParams.endLabel}
+                  {savedWizardParams.endAddress && (
+                    <span className="text-[var(--muted-foreground)]"> · {savedWizardParams.endAddress}</span>
+                  )}
+                </button>
               )}
               {savedWizardParams.dayOfWeek && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
-                  {savedWizardParams.dayOfWeek.charAt(0).toUpperCase() + savedWizardParams.dayOfWeek.slice(1)}
-                </span>
+                <button onClick={() => onEditPreference?.(3)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
+                  {savedWizardParams.dayOfWeek.split(",").map((d) => d.charAt(0).toUpperCase() + d.slice(1)).join(", ")}
+                </button>
               )}
               {savedWizardParams.wineTypes && savedWizardParams.wineTypes.length > 0 && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(4)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   {savedWizardParams.wineTypes.join(", ")}
-                </span>
+                </button>
               )}
               {savedWizardParams.amenities && savedWizardParams.amenities.length > 0 && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(5)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   {savedWizardParams.amenities.map((a) => {
                     const labels: Record<string, string> = { dog: "Dog-Friendly", kid: "Kid-Friendly", picnic: "Picnic", walkin: "Walk-in" };
                     return labels[a] || a;
                   }).join(", ")}
-                </span>
+                </button>
               )}
               {savedWizardParams.priceLevels && savedWizardParams.priceLevels.length > 0 && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(6)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   {savedWizardParams.priceLevels.sort((a, b) => a - b).map((l) => "$".repeat(l)).join(", ")}
-                </span>
+                </button>
               )}
               {savedWizardParams.timeBudget && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(7)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   {savedWizardParams.timeBudget === "half" ? "Half day" : savedWizardParams.timeBudget === "full" ? "Full day" : "Extended"}
-                </span>
+                </button>
               )}
               {savedWizardParams.anchorNames && savedWizardParams.anchorNames.length > 0 && (
-                <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950/30 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-400">
+                <button onClick={() => onEditPreference?.(8)} className={`inline-flex items-center rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--muted-foreground)]${onEditPreference ? " cursor-pointer hover:border-burgundy-400 dark:hover:border-burgundy-600" : ""}`}>
                   Must-visit: {savedWizardParams.anchorNames.join(", ")}
-                </span>
+                </button>
               )}
             </div>
           </div>
@@ -529,31 +570,34 @@ export function TripPlanner({
             <div className="space-y-0">
               {/* Origin pseudo-stop */}
               {hasOrigin && (
-                <>
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-burgundy-300 dark:border-burgundy-700 bg-burgundy-50/50 dark:bg-burgundy-950/20 mb-0">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 dark:bg-burgundy-900/50 text-burgundy-700 dark:text-burgundy-400">
-                      <Navigation className="h-4 w-4" />
+                <div>
+                  <div className="flex gap-4">
+                    {/* Timeline dot matching TripStopCard */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-burgundy-700 text-white">
+                        <Navigation className="h-4 w-4" />
+                      </div>
+                      <div className="w-0.5 flex-1 bg-burgundy-200 dark:bg-burgundy-800 mt-2" />
                     </div>
-                    <div>
-                      <p className="text-sm font-medium">
-                        Start: {savedWizardParams?.originLabel || "Your Location"}
+                    {/* Card matching TripStopCard card style */}
+                    <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 mb-2">
+                      <p className="font-heading text-lg font-semibold">
+                        {savedWizardParams?.originLabel || "Your Location"}
                       </p>
-                      <p className="text-xs text-[var(--muted-foreground)]">
-                        Starting point
-                      </p>
+                      <p className="text-sm text-[var(--muted-foreground)]">Starting point</p>
                     </div>
                   </div>
-                  {/* Driving segment from origin to first stop */}
+                  {/* Drive segment to first stop */}
                   {originSegment && (
-                    <div className="flex items-center gap-2 py-2 pl-8">
-                      <div className="h-6 border-l-2 border-dashed border-burgundy-300 dark:border-burgundy-700" />
-                      <span className="text-xs text-[var(--muted-foreground)]">
-                        {formatDistance(originSegment.miles)} &middot;{" "}
-                        {formatDriveTime(originSegment.minutes)} drive
-                      </span>
+                    <div className="flex gap-4 mb-2">
+                      <div className="w-8" />
+                      <div className="flex items-center gap-2 py-1 px-3 text-xs text-[var(--muted-foreground)]">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>~{formatDistance(originSegment.miles)} · ~{formatDriveTime(originSegment.minutes)} drive</span>
+                      </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
 
               {stops.map((stop, idx) => (
@@ -565,8 +609,37 @@ export function TripPlanner({
                   alternatives={alternatives[stop.id] || []}
                   onSwap={handleSwap}
                   onRemove={handleRemove}
+                  onPreview={setPreviewSlug}
                 />
               ))}
+
+              {/* Destination pseudo-stop */}
+              {hasEnd && (
+                <div>
+                  {endSegment && (
+                    <div className="flex gap-4 mb-2">
+                      <div className="w-8" />
+                      <div className="flex items-center gap-2 py-1 px-3 text-xs text-[var(--muted-foreground)]">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>~{formatDistance(endSegment.miles)} · ~{formatDriveTime(endSegment.minutes)} drive</span>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-burgundy-700 text-white">
+                        <Flag className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <div className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+                      <p className="font-heading text-lg font-semibold">
+                        {savedWizardParams?.endLabel || "Destination"}
+                      </p>
+                      <p className="text-sm text-[var(--muted-foreground)]">Ending point</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -584,6 +657,8 @@ export function TripPlanner({
           </div>
         </div>
       )}
+
+      <WineryPreviewPanel slug={previewSlug} onClose={() => setPreviewSlug(null)} />
     </div>
   );
 }

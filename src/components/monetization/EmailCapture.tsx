@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Check, Loader2 } from "lucide-react";
+import { Mail, Check, Loader2, Download } from "lucide-react";
 
 interface EmailCaptureProps {
   source: "itinerary" | "guide" | "exit_intent";
@@ -62,9 +62,17 @@ export function EmailCapture({
             <Check className="h-4 w-4" />
           </div>
           <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
-            {successMessage}
+            Your guide is ready!
           </p>
         </div>
+        <a
+          href="/api/guide/download"
+          download
+          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
+        >
+          <Download className="h-4 w-4" />
+          Download Your Free Guide (PDF)
+        </a>
       </div>
     );
   }

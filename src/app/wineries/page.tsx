@@ -208,6 +208,7 @@ export default async function WineriesPage({
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
+      subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
       curated: wineries.curated,
     })

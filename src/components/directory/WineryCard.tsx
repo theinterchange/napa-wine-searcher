@@ -2,12 +2,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Wine, BadgeCheck } from "lucide-react";
 
+const valleyPrefix: Record<string, string> = {
+  napa: "/napa-valley",
+  sonoma: "/sonoma-county",
+};
+
 interface WineryCardProps {
   slug: string;
   name: string;
   shortDescription: string | null;
   city: string | null;
   subRegion: string | null;
+  subRegionSlug?: string | null;
   valley: string | null;
   priceLevel: number | null;
   aggregateRating: number | null;
@@ -22,11 +28,13 @@ interface WineryCardProps {
 }
 
 export function WineryCard({ winery }: { winery: WineryCardProps }) {
+  const subRegionHref = winery.subRegion && winery.subRegionSlug && winery.valley && valleyPrefix[winery.valley]
+    ? `${valleyPrefix[winery.valley]}/${winery.subRegionSlug}`
+    : null;
+
   return (
-    <Link
-      href={`/wineries/${winery.slug}`}
-      className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
-    >
+    <div className="group relative flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all">
+      <Link href={`/wineries/${winery.slug}`} className="absolute inset-0 z-0" aria-label={winery.name} />
       <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
         {winery.heroImageUrl ? (
           <Image
@@ -62,9 +70,21 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
         {(winery.subRegion || winery.city) && (
           <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
             <MapPin className="h-3.5 w-3.5" />
-            <span>
-              {[winery.subRegion, winery.city].filter(Boolean).join(" · ")}
-            </span>
+            {subRegionHref ? (
+              <span>
+                <Link
+                  href={subRegionHref}
+                  className="relative z-10 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
+                >
+                  {winery.subRegion}
+                </Link>
+                {winery.city && ` · ${winery.city}`}
+              </span>
+            ) : (
+              <span>
+                {[winery.subRegion, winery.city].filter(Boolean).join(" · ")}
+              </span>
+            )}
           </div>
         )}
         <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
@@ -109,6 +129,6 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

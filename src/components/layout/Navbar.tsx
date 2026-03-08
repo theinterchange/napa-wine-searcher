@@ -15,6 +15,7 @@ import {
   BookOpen,
   Bookmark,
   LogOut,
+  Newspaper,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -27,6 +28,7 @@ const navLinks = [
   { href: "/map", label: "Map", icon: Map },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
   { href: "/plan-trip", label: "Plan Trip", icon: Route },
+  { href: "/blog", label: "Blog", icon: Newspaper },
 ];
 
 const userMenuLinks = [
