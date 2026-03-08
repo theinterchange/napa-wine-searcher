@@ -63,19 +63,28 @@ export function computeSegments(
 /** Build a Google Maps directions URL with ordered waypoints */
 export function buildGoogleMapsUrl(
   stops: { lat: number | null; lng: number | null; name: string }[],
-  originCoords?: { lat: number; lng: number } | null
+  originCoords?: { lat: number; lng: number } | null,
+  destinationCoords?: { lat: number; lng: number } | null
 ): string | null {
   const valid = stops.filter((s) => s.lat != null && s.lng != null);
   if (valid.length < 1) return null;
-  if (valid.length < 2 && !originCoords) return null;
+  if (valid.length < 2 && !originCoords && !destinationCoords) return null;
 
   const origin = originCoords
     ? `${originCoords.lat},${originCoords.lng}`
     : `${valid[0].lat},${valid[0].lng}`;
-  const destination = `${valid[valid.length - 1].lat},${valid[valid.length - 1].lng}`;
+  const destination = destinationCoords
+    ? `${destinationCoords.lat},${destinationCoords.lng}`
+    : `${valid[valid.length - 1].lat},${valid[valid.length - 1].lng}`;
 
-  // When origin is provided, all stops are waypoints except the last (destination)
-  const waypointStops = originCoords ? valid.slice(0, -1) : valid.slice(1, -1);
+  // When destinationCoords provided, all stops are waypoints
+  // When only originCoords provided, all stops except last are waypoints
+  // Otherwise, first and last are origin/destination, middle are waypoints
+  const waypointStops = destinationCoords
+    ? valid
+    : originCoords
+      ? valid.slice(0, -1)
+      : valid.slice(1, -1);
   const waypoints = waypointStops.map((s) => `${s.lat},${s.lng}`).join("|");
 
   const params = new URLSearchParams({
@@ -99,26 +108,37 @@ export function totalRouteMiles(
 /**
  * For N <= 8 stops, find optimal ordering by trying all permutations.
  * For N > 8, use nearest-neighbor heuristic.
+ * When origin/destination provided, includes those legs in distance calculation.
  * Returns reordered indices.
  */
 export function optimizeStopOrder(
-  stops: { lat: number; lng: number }[]
+  stops: { lat: number; lng: number }[],
+  origin?: { lat: number; lng: number } | null,
+  destination?: { lat: number; lng: number } | null
 ): number[] {
   if (stops.length <= 1) return stops.map((_, i) => i);
 
   if (stops.length <= 8) {
-    return bruteForceOptimal(stops);
+    return bruteForceOptimal(stops, origin, destination);
   }
-  return nearestNeighborOrder(stops);
+  return nearestNeighborOrder(stops, origin, destination);
 }
 
-function bruteForceOptimal(stops: { lat: number; lng: number }[]): number[] {
+function bruteForceOptimal(
+  stops: { lat: number; lng: number }[],
+  origin?: { lat: number; lng: number } | null,
+  destination?: { lat: number; lng: number } | null
+): number[] {
   const indices = stops.map((_, i) => i);
   let bestOrder = [...indices];
   let bestDist = Infinity;
 
   for (const perm of permutations(indices)) {
     let dist = 0;
+    // Include origin → first stop
+    if (origin) {
+      dist += haversineDistance(origin.lat, origin.lng, stops[perm[0]].lat, stops[perm[0]].lng);
+    }
     for (let i = 0; i < perm.length - 1; i++) {
       dist += haversineDistance(
         stops[perm[i]].lat,
@@ -127,6 +147,15 @@ function bruteForceOptimal(stops: { lat: number; lng: number }[]): number[] {
         stops[perm[i + 1]].lng
       );
       if (dist >= bestDist) break;
+    }
+    // Include last stop → destination
+    if (dist < bestDist && destination) {
+      dist += haversineDistance(
+        stops[perm[perm.length - 1]].lat,
+        stops[perm[perm.length - 1]].lng,
+        destination.lat,
+        destination.lng
+      );
     }
     if (dist < bestDist) {
       bestDist = dist;
@@ -149,10 +178,28 @@ function* permutations(arr: number[]): Generator<number[]> {
   }
 }
 
-function nearestNeighborOrder(stops: { lat: number; lng: number }[]): number[] {
+function nearestNeighborOrder(
+  stops: { lat: number; lng: number }[],
+  origin?: { lat: number; lng: number } | null,
+  destination?: { lat: number; lng: number } | null
+): number[] {
   const visited = new Set<number>();
-  const order: number[] = [0];
-  visited.add(0);
+
+  // Start from stop closest to origin
+  let startIdx = 0;
+  if (origin) {
+    let bestDist = Infinity;
+    for (let i = 0; i < stops.length; i++) {
+      const d = haversineDistance(origin.lat, origin.lng, stops[i].lat, stops[i].lng);
+      if (d < bestDist) {
+        bestDist = d;
+        startIdx = i;
+      }
+    }
+  }
+
+  const order: number[] = [startIdx];
+  visited.add(startIdx);
 
   while (order.length < stops.length) {
     const last = stops[order[order.length - 1]];
@@ -169,5 +216,17 @@ function nearestNeighborOrder(stops: { lat: number; lng: number }[]): number[] {
     order.push(nearest);
     visited.add(nearest);
   }
+
+  // Check if reversing puts last stop closer to destination
+  if (destination && order.length >= 2) {
+    const lastFwd = stops[order[order.length - 1]];
+    const lastRev = stops[order[0]];
+    const distFwd = haversineDistance(lastFwd.lat, lastFwd.lng, destination.lat, destination.lng);
+    const distRev = haversineDistance(lastRev.lat, lastRev.lng, destination.lat, destination.lng);
+    if (distRev < distFwd) {
+      order.reverse();
+    }
+  }
+
   return order;
 }

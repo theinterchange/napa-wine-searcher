@@ -83,7 +83,8 @@ export async function GET(request: NextRequest) {
   // Wizard params
   const originLat = sp.get("originLat") ? parseFloat(sp.get("originLat")!) : null;
   const originLng = sp.get("originLng") ? parseFloat(sp.get("originLng")!) : null;
-  const dayOfWeek = sp.get("dayOfWeek") || "";
+  const dayOfWeekParam = sp.get("dayOfWeek") || "";
+  const daysOfWeek = dayOfWeekParam ? dayOfWeekParam.split(",").filter(Boolean) : [];
   const wineTypesParam = sp.get("wineTypes") || "";
   const maxPrice = sp.get("maxPrice") ? parseInt(sp.get("maxPrice")!, 10) : null;
   const priceLevelsParam = sp.get("priceLevels")?.split(",").map(Number).filter(Boolean) || [];
@@ -92,6 +93,11 @@ export async function GET(request: NextRequest) {
   const anchorIds = anchorIdsStr
     ? anchorIdsStr.split(",").map(Number).filter(Boolean)
     : [];
+
+  // Ending destination
+  const endLat = sp.get("endLat") ? parseFloat(sp.get("endLat")!) : null;
+  const endLng = sp.get("endLng") ? parseFloat(sp.get("endLng")!) : null;
+  const hasEnd = endLat != null && endLng != null;
 
   // Derive stop count from timeBudget or explicit param
   const timeBudgetConfig = TIME_BUDGET_STOPS[timeBudget];
@@ -189,8 +195,9 @@ export async function GET(request: NextRequest) {
     .limit(150);
 
   // Filter by day of week (in JS since hoursJson is a JSON string)
-  let candidates = dayOfWeek
-    ? pool.filter((w) => isOpenOnDay(w.hoursJson, dayOfWeek))
+  // If multiple days, include winery if open on ANY of the selected days
+  let candidates = daysOfWeek.length > 0
+    ? pool.filter((w) => daysOfWeek.some((day) => isOpenOnDay(w.hoursJson, day)))
     : pool;
 
   if (candidates.length < 2) {
@@ -219,23 +226,40 @@ export async function GET(request: NextRequest) {
     }
 
     if (expandedTypeNames.length > 0) {
-      // Count matching wines per winery
-      const wineCounts = await db
-        .select({
-          wineryId: wines.wineryId,
-          matchCount: sql<number>`COUNT(*)`.as("match_count"),
-        })
-        .from(wines)
-        .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
-        .where(
-          inArray(wineTypes.name, expandedTypeNames)
-        )
-        .groupBy(wines.wineryId);
+      const candidateIds = candidates.map((c) => c.id);
 
-      wineScoreMap = new Map(wineCounts.map((w) => [w.wineryId, w.matchCount]));
+      // Count matching wines and total wines per winery in parallel
+      const [wineCounts, totalCounts] = await Promise.all([
+        db
+          .select({
+            wineryId: wines.wineryId,
+            matchCount: sql<number>`COUNT(*)`.as("match_count"),
+          })
+          .from(wines)
+          .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
+          .where(inArray(wineTypes.name, expandedTypeNames))
+          .groupBy(wines.wineryId),
+        db
+          .select({
+            wineryId: wines.wineryId,
+            totalCount: sql<number>`COUNT(*)`.as("total_count"),
+          })
+          .from(wines)
+          .where(inArray(wines.wineryId, candidateIds))
+          .groupBy(wines.wineryId),
+      ]);
+
+      const matchMap = new Map(wineCounts.map((w) => [w.wineryId, w.matchCount]));
+      const totalMap = new Map(totalCounts.map((w) => [w.wineryId, w.totalCount]));
+
+      // Score = ratio of matching wines to total wines (0.0 to 1.0)
+      for (const [wineryId, matchCount] of matchMap) {
+        const total = totalMap.get(wineryId) || matchCount;
+        wineScoreMap.set(wineryId, matchCount / total);
+      }
     }
 
-    // Sort candidates by wine match score (desc) then rating (desc)
+    // Sort candidates by wine relevance ratio (desc) then rating (desc)
     candidates = [...candidates].sort((a, b) => {
       const scoreA = wineScoreMap.get(a.id) || 0;
       const scoreB = wineScoreMap.get(b.id) || 0;
@@ -244,6 +268,15 @@ export async function GET(request: NextRequest) {
       const ratingB = b.googleRating ?? b.aggregateRating ?? 0;
       return ratingB - ratingA;
     });
+
+    // Filter out wineries below minimum relevance threshold
+    const MIN_WINE_RELEVANCE = 0.10;
+    if (wineScoreMap.size > 0) {
+      const filtered = candidates.filter((c) => (wineScoreMap.get(c.id) || 0) >= MIN_WINE_RELEVANCE);
+      if (filtered.length >= 2) {
+        candidates = filtered;
+      }
+    }
   }
 
   // Force-include anchor wineries
@@ -288,6 +321,26 @@ export async function GET(request: NextRequest) {
 
   // Use origin or highest-scored candidate as seed for nearest-neighbor
   const hasOrigin = originLat != null && originLng != null;
+
+  // Weight origin proximity into candidate scoring
+  if (hasOrigin) {
+    candidates = [...candidates].sort((a, b) => {
+      const wineA = wineScoreMap.get(a.id) || 0;
+      const wineB = wineScoreMap.get(b.id) || 0;
+      const distA = haversineDistance(originLat!, originLng!, a.lat!, a.lng!);
+      const distB = haversineDistance(originLat!, originLng!, b.lat!, b.lng!);
+      // Proximity bonus: closer = higher score (max 5 at 0mi, 0 at 50mi+)
+      const proxA = Math.max(0, 5 - distA / 10);
+      const proxB = Math.max(0, 5 - distB / 10);
+      const scoreA = wineA + proxA;
+      const scoreB = wineB + proxB;
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      const ratingA = a.googleRating ?? a.aggregateRating ?? 0;
+      const ratingB = b.googleRating ?? b.aggregateRating ?? 0;
+      return ratingB - ratingA;
+    });
+  }
+
   const seedLat = hasOrigin ? originLat : (selected[0]?.lat ?? candidates[0]?.lat ?? 0);
   const seedLng = hasOrigin ? originLng : (selected[0]?.lng ?? candidates[0]?.lng ?? 0);
 
@@ -335,18 +388,21 @@ export async function GET(request: NextRequest) {
 
   // Optimize order
   const coords = selected.map((s) => ({ lat: s.lat!, lng: s.lng! }));
-  const optimalOrder = optimizeStopOrder(coords);
+  const originPt = hasOrigin ? { lat: originLat!, lng: originLng! } : null;
+  const destPt = hasEnd ? { lat: endLat!, lng: endLng! } : originPt; // loop-aware fallback
+  const optimalOrder = optimizeStopOrder(coords, originPt, destPt);
   let ordered = optimalOrder.map((i) => selected[i]);
 
   // Time budget validation: check if route fits
   if (timeBudgetConfig) {
     let attempts = 0;
     while (attempts < 3 && ordered.length > timeBudgetConfig.min) {
-      const segs = computeSegments(
-        hasOrigin
-          ? [{ lat: originLat, lng: originLng }, ...ordered]
-          : ordered
-      );
+      const budgetStops = [
+        ...(hasOrigin ? [{ lat: originLat, lng: originLng }] : []),
+        ...ordered,
+        ...(hasEnd ? [{ lat: endLat, lng: endLng }] : []),
+      ];
+      const segs = computeSegments(budgetStops);
       const totalDrive = segs.reduce((s, seg) => s + seg.minutes, 0);
       const totalTaste = ordered.length * 60;
       if (totalDrive + totalTaste <= timeBudgetConfig.minutes) break;
@@ -360,7 +416,7 @@ export async function GET(request: NextRequest) {
   const alternatives: Record<number, (typeof candidates)[number][]> = {};
   for (const stop of ordered) {
     const alts = candidates
-      .filter((w) => !selectedIds.has(w.id) && w.subRegionSlug === stop.subRegionSlug)
+      .filter((w) => !selectedIds.has(w.id))
       .map((w) => ({
         ...w,
         _dist: haversineDistance(stop.lat!, stop.lng!, w.lat!, w.lng!),
@@ -394,16 +450,24 @@ export async function GET(request: NextRequest) {
     tastingPrices.map((t) => [t.wineryId, { min: t.minPrice, max: t.maxPrice }])
   );
 
-  // Compute distances (include origin if provided)
+  // Compute distances (include origin and/or ending destination)
   const originPoint = hasOrigin ? { lat: originLat, lng: originLng } : null;
-  const segmentStops = originPoint
-    ? [originPoint, ...ordered]
-    : ordered;
+  const endPoint = hasEnd ? { lat: endLat, lng: endLng } : null;
+  const segmentStops = [
+    ...(originPoint ? [originPoint] : []),
+    ...ordered,
+    ...(endPoint ? [endPoint] : []),
+  ];
   const segments = computeSegments(segmentStops);
 
   // When origin is present, first segment is origin→stop1
   const originSegment = originPoint ? segments[0] : null;
-  const stopSegments = originPoint ? segments.slice(1) : segments;
+  // When end is present, last segment is lastStop→destination
+  const endSegment = endPoint ? segments[segments.length - 1] : null;
+  // Stop-to-stop segments are in between
+  const stopStart = originPoint ? 1 : 0;
+  const stopEnd = endPoint ? segments.length - 1 : segments.length;
+  const stopSegments = segments.slice(stopStart, stopEnd);
 
   const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
   const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
@@ -421,8 +485,52 @@ export async function GET(request: NextRequest) {
 
   const googleMapsUrl = buildGoogleMapsUrl(
     ordered.map((s) => ({ lat: s.lat, lng: s.lng, name: s.name })),
-    originPoint
+    originPoint,
+    endPoint
   );
+
+  // Build matchReasons for each stop
+  const anchorIdSet = new Set(anchorIds);
+  const amenityLabels: Record<string, string> = {
+    dog: "Dog-friendly",
+    kid: "Kid-friendly",
+    picnic: "Picnic area",
+    walkin: "Walk-in welcome",
+  };
+
+  function getMatchReasons(stop: (typeof ordered)[number], idx: number): string[] {
+    const reasons: string[] = [];
+    // Anchor / must-visit
+    if (anchorIdSet.has(stop.id)) reasons.push("Must-visit");
+    // Wine type matches (ratio-aware labels)
+    if (requestedWineTypes.length > 0) {
+      const score = wineScoreMap.get(stop.id) || 0;
+      if (score >= 0.20) {
+        const label = requestedWineTypes.length === 1
+          ? `Strong in ${requestedWineTypes[0]}`
+          : `${requestedWineTypes[0]} selection`;
+        reasons.push(label);
+      } else if (score >= 0.10) {
+        reasons.push(`${requestedWineTypes[0]} available`);
+      }
+    }
+    // Amenity matches
+    for (const a of allAmenities) {
+      if (amenityLabels[a]) reasons.push(amenityLabels[a]);
+    }
+    // High rating
+    const rating = stop.googleRating ?? stop.aggregateRating ?? 0;
+    if (rating >= 4.5) reasons.push("Highly rated");
+    // Proximity to previous stop
+    if (idx > 0) {
+      const prev = ordered[idx - 1];
+      if (prev.lat && prev.lng && stop.lat && stop.lng) {
+        const dist = haversineDistance(prev.lat, prev.lng, stop.lat, stop.lng);
+        if (dist < 3) reasons.push("Close to previous stop");
+      }
+    }
+    return reasons.slice(0, 3);
+  }
 
   // Strip hoursJson from response
   const cleanStop = ({ hoursJson, ...rest }: (typeof ordered)[number]) => rest;
@@ -432,6 +540,7 @@ export async function GET(request: NextRequest) {
       ...cleanStop(s),
       tasting: priceMap.get(s.id) || null,
       segmentAfter: stopSegments[i] || null,
+      matchReasons: getMatchReasons(s, i),
     })),
     alternatives: Object.fromEntries(
       Object.entries(alternatives).map(([k, v]) => [k, v.map(cleanStop)])
@@ -445,6 +554,7 @@ export async function GET(request: NextRequest) {
       googleMapsUrl,
     },
     originSegment,
+    endSegment,
     segments,
   });
   } catch (error) {
