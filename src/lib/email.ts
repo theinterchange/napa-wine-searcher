@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { BASE_URL } from "@/lib/constants";
 
-const SITE_DOMAIN = new URL(BASE_URL).hostname;
+const SITE_DOMAIN = new URL(BASE_URL).hostname.replace(/^www\./, "");
 
 export async function sendPasswordResetEmail(email: string, token: string) {
   const apiKey = process.env.RESEND_API_KEY;
