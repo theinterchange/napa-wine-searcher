@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err: unknown) {
+    console.error("Subscribe error:", err);
     // Handle unique constraint violation (duplicate email)
     if (err instanceof Error && err.message?.includes("UNIQUE")) {
       sendGuideEmail(normalizedEmail).catch(console.error);
