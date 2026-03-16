@@ -34,10 +34,6 @@ export async function sendGuideEmail(email: string) {
   }
 
   const resend = new Resend(apiKey);
-  const React = await import("react");
-  const { renderToBuffer } = await import("@react-pdf/renderer");
-  const { WineCountryGuide } = await import("@/components/guide-pdf/WineCountryGuide");
-  const pdfBuffer = await renderToBuffer(React.createElement(WineCountryGuide));
   const downloadUrl = `${BASE_URL}/api/guide/download`;
 
   await resend.emails.send({
@@ -46,17 +42,11 @@ export async function sendGuideEmail(email: string) {
     subject: "Your Free Wine Country Planning Guide",
     html: `
       <h2>Welcome to Napa Sonoma Guide!</h2>
-      <p>Your free Wine Country Planning Guide is attached to this email as a PDF.</p>
+      <p>Thanks for signing up! Your free Wine Country Planning Guide is ready.</p>
       <p>Inside you'll find tips on the best wineries, when to visit, and how to save on tastings.</p>
-      <p>If the attachment doesn't work, you can <a href="${downloadUrl}">download it here</a>.</p>
+      <p><a href="${downloadUrl}" style="display:inline-block;padding:12px 24px;background-color:#7f1d1d;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;">Download Your Free Guide (PDF)</a></p>
       <p>Happy wine tasting!</p>
     `,
-    attachments: [
-      {
-        filename: "Napa-Sonoma-Wine-Country-Planning-Guide.pdf",
-        content: Buffer.from(pdfBuffer),
-      },
-    ],
   });
 }
 
