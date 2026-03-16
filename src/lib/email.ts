@@ -1,7 +1,4 @@
 import { Resend } from "resend";
-import { renderToBuffer } from "@react-pdf/renderer";
-import React from "react";
-import { WineCountryGuide } from "@/components/guide-pdf/WineCountryGuide";
 import { BASE_URL } from "@/lib/constants";
 
 const SITE_DOMAIN = new URL(BASE_URL).hostname;
@@ -37,6 +34,9 @@ export async function sendGuideEmail(email: string) {
   }
 
   const resend = new Resend(apiKey);
+  const React = await import("react");
+  const { renderToBuffer } = await import("@react-pdf/renderer");
+  const { WineCountryGuide } = await import("@/components/guide-pdf/WineCountryGuide");
   const pdfBuffer = await renderToBuffer(React.createElement(WineCountryGuide));
   const downloadUrl = `${BASE_URL}/api/guide/download`;
 

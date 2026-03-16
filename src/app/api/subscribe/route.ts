@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
       sendGuideEmail(normalizedEmail).catch(console.error);
       return NextResponse.json({ ok: true, alreadySubscribed: true });
     }
+    const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to subscribe" },
+      { error: "Failed to subscribe", detail: message },
       { status: 500 }
     );
   }
