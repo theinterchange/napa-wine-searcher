@@ -27,12 +27,13 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    const result = await db
-      .insert(emailSubscribers)
-      .values({ email: normalizedEmail, source })
-      .onConflictDoNothing({ target: emailSubscribers.email });
-
-    const isNew = (result.rowsAffected ?? 0) > 0;
+    let isNew = false;
+    try {
+      await db.insert(emailSubscribers).values({ email: normalizedEmail, source });
+      isNew = true;
+    } catch {
+      // Duplicate email — not an error
+    }
 
     sendGuideEmail(normalizedEmail).catch(console.error);
     if (isNew) {
