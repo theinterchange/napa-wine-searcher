@@ -35,14 +35,14 @@ function readAllPosts(): BlogPost[] {
         content,
       } satisfies BlogPost;
     })
-    .filter((post) => new Date(post.date) <= new Date())
+    .filter((post) => process.env.NODE_ENV === "development" || new Date(post.date) <= new Date())
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 let cached: BlogPost[] | null = null;
 
 export function getAllPosts(): BlogPost[] {
-  if (!cached) cached = readAllPosts();
+  if (process.env.NODE_ENV === "development" || !cached) cached = readAllPosts();
   return cached;
 }
 

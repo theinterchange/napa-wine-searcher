@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, Clock } from "lucide-react";
 import type { BlogPost } from "@/lib/blog";
+
+function estimateReadTime(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 230));
+}
 
 export function BlogArticle({
   post,
@@ -10,8 +15,10 @@ export function BlogArticle({
   post: BlogPost;
   children: React.ReactNode;
 }) {
+  const readTime = estimateReadTime(post.content);
+
   return (
-    <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-16">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] py-6">
         <Link href="/" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
@@ -27,7 +34,7 @@ export function BlogArticle({
 
       {/* Hero image */}
       {post.heroImage && (
-        <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-8">
+        <div className="relative aspect-[2/1] rounded-2xl overflow-hidden mb-10 shadow-md">
           <Image
             src={post.heroImage}
             alt={post.title}
@@ -40,11 +47,14 @@ export function BlogArticle({
       )}
 
       {/* Header */}
-      <header className="mb-8">
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold leading-tight">
+      <header className="mb-10 border-b border-[var(--border)] pb-8">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold leading-tight text-[var(--foreground)]">
           {post.title}
         </h1>
-        <div className="mt-4 flex items-center gap-4 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 text-lg text-[var(--muted-foreground)] leading-relaxed">
+          {post.description}
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
           <div className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
             <time dateTime={post.date}>
@@ -55,9 +65,13 @@ export function BlogArticle({
               })}
             </time>
           </div>
+          <div className="flex items-center gap-1.5">
+            <Clock className="h-4 w-4" />
+            <span>{readTime} min read</span>
+          </div>
           <span>by {post.author}</span>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {post.tags.map((tag) => (
             <Link
               key={tag}
@@ -71,18 +85,7 @@ export function BlogArticle({
       </header>
 
       {/* MDX content */}
-      <div className="prose prose-lg max-w-none
-        prose-headings:font-heading prose-headings:font-bold
-        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-        prose-p:text-[var(--foreground)] prose-p:leading-relaxed
-        prose-strong:text-[var(--foreground)]
-        prose-li:text-[var(--foreground)]
-        prose-table:text-sm
-        prose-th:text-left prose-th:font-semibold prose-th:border-b prose-th:border-[var(--border)] prose-th:pb-2
-        prose-td:border-b prose-td:border-[var(--border)] prose-td:py-2
-        dark:prose-invert
-      ">
+      <div className="blog-prose prose prose-lg max-w-none">
         {children}
       </div>
     </article>
