@@ -29,8 +29,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
 export async function sendGuideEmail(email: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("RESEND_API_KEY not set — skipping guide email");
-    return;
+    throw new Error("RESEND_API_KEY not set");
   }
 
   const resend = new Resend(apiKey);
