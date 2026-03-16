@@ -56,28 +56,26 @@ export function EmailCapture({
 
   if (status === "success") {
     return (
-      <div className={`rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 ${compact ? "p-4" : "p-6"}`}>
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
-            <Check className="h-4 w-4" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
-              Your guide is on the way!
-            </p>
-            <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1">
-              Check your inbox — or download it now:
-            </p>
-          </div>
+      <div className={`rounded-xl border border-[var(--border)] bg-olive-50 dark:bg-olive-950 text-center ${compact ? "p-4" : "p-6 sm:p-8"}`}>
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-burgundy-600 text-white mx-auto">
+          <Check className="h-5 w-5" />
         </div>
-        <a
-          href="/api/guide/download"
-          download
-          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
-        >
-          <Download className="h-4 w-4" />
-          Download Your Free Guide (PDF)
-        </a>
+        <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+          Your guide is on the way!
+        </p>
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
+          Check your inbox — or download it now:
+        </p>
+        <div className="mt-4 flex justify-center">
+          <a
+            href="/api/guide/download"
+            download
+            className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            Download Your Free Guide (PDF)
+          </a>
+        </div>
       </div>
     );
   }
