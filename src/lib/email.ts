@@ -35,7 +35,7 @@ export async function sendGuideEmail(email: string) {
   const resend = new Resend(apiKey);
   const downloadUrl = `${BASE_URL}/api/guide/download`;
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: `Napa Sonoma Guide <noreply@${SITE_DOMAIN}>`,
     to: email,
     subject: "Your Free Wine Country Planning Guide",
@@ -47,6 +47,9 @@ export async function sendGuideEmail(email: string) {
       <p>Happy wine tasting!</p>
     `,
   });
+  if (error) {
+    throw new Error(`Resend error: ${error.message}`);
+  }
 }
 
 export async function notifyNewSubscriber(email: string, source: string) {
