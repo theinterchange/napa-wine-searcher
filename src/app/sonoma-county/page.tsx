@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     title: content.metaTitle,
     description: content.metaDescription,
   },
+  alternates: {
+    canonical: `${BASE_URL}/sonoma-county`,
+  },
 };
 
 export default async function SonomaCountyPage() {

@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     description:
       "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
   },
+  alternates: {
+    canonical: `${BASE_URL}/wineries`,
+  },
 };
 
 const PAGE_SIZE = 12;

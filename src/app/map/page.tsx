@@ -2,9 +2,20 @@ import { WineryMap } from "@/components/map/WineryMap";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
+import { BASE_URL } from "@/lib/constants";
+
 export const metadata: Metadata = {
-  title: "Map | Napa Sonoma Guide",
-  description: "Explore Napa and Sonoma Valley wineries on an interactive map.",
+  title: "Winery Map | Napa Sonoma Guide",
+  description:
+    "Explore Napa Valley and Sonoma County wineries on an interactive map. Find nearby tasting rooms, filter by amenities, and plan your route.",
+  openGraph: {
+    title: "Winery Map | Napa Sonoma Guide",
+    description:
+      "Explore Napa Valley and Sonoma County wineries on an interactive map.",
+    url: `${BASE_URL}/map`,
+    siteName: "Napa Sonoma Guide",
+    type: "website",
+  },
 };
 
 export default function MapPage() {

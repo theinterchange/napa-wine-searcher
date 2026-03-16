@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape } from "lucide-react";
 import { db } from "@/db";
+import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
 import { sql, count, eq, desc, and } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -8,6 +10,23 @@ import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
+
+export const metadata: Metadata = {
+  title: "Napa Sonoma Guide | Discover Wineries in Napa Valley & Sonoma County",
+  description:
+    "Find and compare wineries across Napa Valley and Sonoma County. Browse tasting experiences, plan day trips, and get insider tips for your wine country visit.",
+  openGraph: {
+    title: "Napa Sonoma Guide | Discover Wineries in Napa Valley & Sonoma County",
+    description:
+      "Find and compare wineries across Napa Valley and Sonoma County. Browse tasting experiences, plan day trips, and get insider tips for your wine country visit.",
+    url: BASE_URL,
+    siteName: "Napa Sonoma Guide",
+    type: "website",
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+};
 
 async function getFeaturedWineries() {
   return db

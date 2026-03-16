@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     title: content.metaTitle,
     description: content.metaDescription,
   },
+  alternates: {
+    canonical: `${BASE_URL}/napa-valley`,
+  },
 };
 
 export default async function NapaValleyPage() {

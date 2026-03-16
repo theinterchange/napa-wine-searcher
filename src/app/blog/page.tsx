@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     siteName: "Napa Sonoma Guide",
     type: "website",
   },
+  alternates: {
+    canonical: `${BASE_URL}/blog`,
+  },
 };
 
 export default async function BlogPage({
@@ -38,8 +41,30 @@ export default async function BlogPage({
     ? allPosts.filter((p) => p.tags.includes(tag))
     : allPosts;
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Wine Country Blog",
+    description:
+      "Expert guides, insider tips, and practical advice for planning your Napa Valley and Sonoma County wine country visit.",
+    url: `${BASE_URL}/blog`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: posts.map((post, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${BASE_URL}/blog/${post.slug}`,
+        name: post.title,
+      })),
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <BreadcrumbSchema
         items={[
           { name: "Home", href: "/" },

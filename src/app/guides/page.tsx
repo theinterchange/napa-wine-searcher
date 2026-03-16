@@ -3,10 +3,20 @@ import { BookOpen, Dog, Baby, UtensilsCrossed, DoorOpen, Wine, DollarSign, Arrow
 import { getAllGuides } from "@/lib/guide-content";
 import type { Metadata } from "next";
 
+import { BASE_URL } from "@/lib/constants";
+
 export const metadata: Metadata = {
   title: "Wine Country Guides | Napa Sonoma Guide",
   description:
     "Browse our collection of guides to Napa Valley and Sonoma County wineries — by amenity, varietal, price, and more.",
+  openGraph: {
+    title: "Wine Country Guides | Napa Sonoma Guide",
+    description:
+      "Browse our collection of guides to Napa Valley and Sonoma County wineries — by amenity, varietal, price, and more.",
+    url: `${BASE_URL}/guides`,
+    siteName: "Napa Sonoma Guide",
+    type: "website",
+  },
 };
 
 const TYPE_META: Record<
@@ -46,7 +56,30 @@ export default function GuidesPage() {
     guides: allGuides.filter((g) => g.type === type),
   })).filter((g) => g.guides.length > 0);
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Wine Country Guides",
+    description:
+      "Browse our collection of guides to Napa Valley and Sonoma County wineries — by amenity, varietal, price, and more.",
+    url: `${BASE_URL}/guides`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: allGuides.map((guide, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${BASE_URL}/guides/${guide.slug}`,
+        name: guide.h1,
+      })),
+    },
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+    />
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-10">
         <h1 className="font-heading text-3xl sm:text-4xl font-bold flex items-center gap-3">
@@ -84,5 +117,6 @@ export default function GuidesPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }
