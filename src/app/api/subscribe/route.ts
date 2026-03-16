@@ -6,13 +6,10 @@ import { sendGuideEmail, notifyNewSubscriber } from "@/lib/email";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
-  let normalizedEmail = "";
-  let source: "itinerary" | "guide" | "exit_intent" = "guide";
-
   try {
     const body = await req.json();
     const email = body.email;
-    source = body.source;
+    const source = body.source;
 
     if (!email || !EMAIL_REGEX.test(email)) {
       return NextResponse.json(
@@ -28,24 +25,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase().trim();
 
-    await db.insert(emailSubscribers).values({
-      email: normalizedEmail,
-      source,
-    });
+    const result = await db
+      .insert(emailSubscribers)
+      .values({ email: normalizedEmail, source })
+      .onConflictDoNothing({ target: emailSubscribers.email });
+
+    const isNew = (result.rowsAffected ?? 0) > 0;
 
     sendGuideEmail(normalizedEmail).catch(console.error);
-    notifyNewSubscriber(normalizedEmail, source).catch(console.error);
+    if (isNew) {
+      notifyNewSubscriber(normalizedEmail, source).catch(console.error);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err: unknown) {
     console.error("Subscribe error:", err);
-    // Handle unique constraint violation (duplicate email)
-    if (err instanceof Error && err.message?.includes("UNIQUE")) {
-      sendGuideEmail(normalizedEmail).catch(console.error);
-      return NextResponse.json({ ok: true, alreadySubscribed: true });
-    }
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
       { error: "Failed to subscribe", detail: message },
