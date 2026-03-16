@@ -35,12 +35,24 @@ export async function POST(req: NextRequest) {
       // Duplicate email — not an error
     }
 
-    sendGuideEmail(normalizedEmail).catch(console.error);
+    const emailErrors: string[] = [];
+    try {
+      await sendGuideEmail(normalizedEmail);
+    } catch (e) {
+      emailErrors.push(`guide: ${e instanceof Error ? e.message : String(e)}`);
+    }
     if (isNew) {
-      notifyNewSubscriber(normalizedEmail, source).catch(console.error);
+      try {
+        await notifyNewSubscriber(normalizedEmail, source);
+      } catch (e) {
+        emailErrors.push(`notify: ${e instanceof Error ? e.message : String(e)}`);
+      }
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({
+      ok: true,
+      ...(emailErrors.length > 0 && { emailErrors }),
+    });
   } catch (err: unknown) {
     console.error("Subscribe error:", err);
     const message = err instanceof Error ? err.message : "Unknown error";
