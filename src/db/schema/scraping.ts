@@ -11,6 +11,7 @@ export const wineryPhotos = sqliteTable(
     url: text("url").notNull(),
     source: text("source").notNull(), // "google_places" | "website"
     altText: text("alt_text"),
+    fetchedAt: text("fetched_at"),
   },
   (table) => [unique().on(table.wineryId, table.url)]
 );

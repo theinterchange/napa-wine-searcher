@@ -2,30 +2,60 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-import { wineries, wineryPhotos } from "../src/db/schema";
-import { eq, isNotNull } from "drizzle-orm";
+import { wineries, wineryPhotos, scrapeLog } from "../src/db/schema";
+import { eq, isNotNull, sql, and } from "drizzle-orm";
+
+// --- CLI args ---
+const useTurso = process.argv.includes("--turso");
+const dryRun = process.argv.includes("--dry-run");
+const force = process.argv.includes("--force");
+const winerySlugArg = process.argv.find((a) => a.startsWith("--winery="))?.split("=")[1];
+const olderThanDays = parseInt(
+  process.argv.find((a) => a.startsWith("--older-than="))?.split("=")[1] || "90",
+  10
+);
+
+// --- DB setup ---
+let dbUrl: string;
+let dbAuthToken: string | undefined;
+
+if (useTurso) {
+  dbUrl = "libsql://napa-winery-search-theinterchange.aws-us-west-2.turso.io";
+  dbAuthToken = process.env.DATABASE_AUTH_TOKEN?.replace(/\s/g, "");
+  if (!dbAuthToken) {
+    console.log("No DATABASE_AUTH_TOKEN in env, generating via Turso CLI...");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { execSync } = require("child_process") as typeof import("child_process");
+    dbAuthToken = execSync(
+      `${process.env.HOME}/.turso/turso db tokens create napa-winery-search`,
+      { encoding: "utf-8" }
+    ).trim();
+  }
+  console.log("Using Turso production database");
+} else {
+  dbUrl = process.env.DATABASE_URL || "file:./data/winery.db";
+  dbAuthToken = process.env.DATABASE_AUTH_TOKEN?.replace(/\s/g, "");
+  console.log("Using local database");
+}
 
 const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
-if (!API_KEY) {
+if (!API_KEY && !dryRun) {
   console.error("Missing GOOGLE_PLACES_API_KEY in environment");
   process.exit(1);
 }
 
-const client = createClient({
-  url: process.env.DATABASE_URL || "file:./data/winery.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN?.replace(/\s/g, ""),
-});
+const client = createClient({ url: dbUrl, authToken: dbAuthToken });
 const db = drizzle(client);
 
 const MAX_PHOTOS = 8;
-const DELAY_MS = 200; // small delay between wineries to be polite
+const DELAY_MS = 200;
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 interface PlacePhoto {
-  name: string; // e.g. "places/PLACE_ID/photos/PHOTO_REF"
+  name: string;
   widthPx: number;
   heightPx: number;
   authorAttributions: { displayName: string; uri: string }[];
@@ -53,27 +83,135 @@ async function getPhotoUrl(photoName: string): Promise<string | null> {
   return data.photoUri || null;
 }
 
-async function main() {
-  const allWineries = await db
+type RefreshReason = "no photos" | "stale" | "content changed" | "force" | "targeted";
+
+interface WineryToFetch {
+  id: number;
+  name: string;
+  slug: string;
+  googlePlaceId: string;
+  reason: RefreshReason;
+  detail?: string;
+}
+
+async function getWineriesToFetch(): Promise<WineryToFetch[]> {
+  // Get all wineries with place IDs, their photo stats, and latest scrape info
+  const rows = await db
     .select({
       id: wineries.id,
       name: wineries.name,
+      slug: wineries.slug,
       googlePlaceId: wineries.googlePlaceId,
+      hoursJson: wineries.hoursJson,
+      photoCount: sql<number>`count(${wineryPhotos.id})`.as("photo_count"),
+      oldestFetchedAt: sql<string | null>`min(${wineryPhotos.fetchedAt})`.as("oldest_fetched_at"),
+      latestContentHash: sql<string | null>`(
+        SELECT ${scrapeLog.contentHash} FROM ${scrapeLog}
+        WHERE ${scrapeLog.wineryId} = ${wineries.id}
+        ORDER BY ${scrapeLog.scrapedAt} DESC LIMIT 1
+      )`.as("latest_content_hash"),
+      prevContentHash: sql<string | null>`(
+        SELECT ${scrapeLog.contentHash} FROM ${scrapeLog}
+        WHERE ${scrapeLog.wineryId} = ${wineries.id}
+        ORDER BY ${scrapeLog.scrapedAt} DESC LIMIT 1 OFFSET 1
+      )`.as("prev_content_hash"),
     })
     .from(wineries)
-    .where(isNotNull(wineries.googlePlaceId));
+    .leftJoin(wineryPhotos, eq(wineryPhotos.wineryId, wineries.id))
+    .where(isNotNull(wineries.googlePlaceId))
+    .groupBy(wineries.id);
 
-  console.log(`Found ${allWineries.length} wineries with Google Place IDs\n`);
+  // Filter by slug if specified
+  const filtered = winerySlugArg
+    ? rows.filter((r) => r.slug === winerySlugArg)
+    : rows;
+
+  if (winerySlugArg && filtered.length === 0) {
+    console.error(`No winery found with slug "${winerySlugArg}"`);
+    process.exit(1);
+  }
+
+  const result: WineryToFetch[] = [];
+  const staleCutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000).toISOString();
+
+  for (const row of filtered) {
+    const placeId = row.googlePlaceId!;
+    let reason: RefreshReason | null = null;
+    let detail: string | undefined;
+
+    if (winerySlugArg) {
+      reason = "targeted";
+    } else if (force) {
+      reason = "force";
+    } else if (row.photoCount === 0) {
+      reason = "no photos";
+    } else if (
+      row.latestContentHash &&
+      row.prevContentHash &&
+      row.latestContentHash !== row.prevContentHash
+    ) {
+      reason = "content changed";
+      detail = `hash ${row.prevContentHash?.slice(0, 8)} → ${row.latestContentHash?.slice(0, 8)}`;
+    } else if (!row.oldestFetchedAt || row.oldestFetchedAt < staleCutoff) {
+      const daysOld = row.oldestFetchedAt
+        ? Math.round((Date.now() - new Date(row.oldestFetchedAt).getTime()) / (1000 * 60 * 60 * 24))
+        : null;
+      reason = "stale";
+      detail = daysOld ? `${daysOld} days old` : "no fetchedAt timestamp";
+    }
+
+    if (reason) {
+      result.push({ id: row.id, name: row.name, slug: row.slug, googlePlaceId: placeId, reason, detail });
+    }
+  }
+
+  return result;
+}
+
+async function main() {
+  console.log(`Flags: ${force ? "--force " : ""}${dryRun ? "--dry-run " : ""}${winerySlugArg ? `--winery=${winerySlugArg} ` : ""}--older-than=${olderThanDays}\n`);
+
+  const toFetch = await getWineriesToFetch();
+
+  // Count all wineries for context
+  const allCount = (
+    await db.select({ id: wineries.id }).from(wineries).where(isNotNull(wineries.googlePlaceId))
+  ).length;
+
+  console.log(`${toFetch.length} / ${allCount} wineries need photo refresh:\n`);
+
+  if (toFetch.length === 0) {
+    console.log("Nothing to do.");
+    return;
+  }
+
+  // Print summary
+  const reasonCounts: Record<string, number> = {};
+  for (const w of toFetch) {
+    reasonCounts[w.reason] = (reasonCounts[w.reason] || 0) + 1;
+  }
+  for (const [reason, count] of Object.entries(reasonCounts)) {
+    console.log(`  ${reason}: ${count}`);
+  }
+  console.log();
+
+  if (dryRun) {
+    for (const w of toFetch) {
+      console.log(`  [dry-run] ${w.name} — ${w.reason}${w.detail ? ` (${w.detail})` : ""}`);
+    }
+    console.log("\nDry run complete. No API calls made.");
+    return;
+  }
 
   let totalPhotos = 0;
   let processed = 0;
+  const now = new Date().toISOString();
 
-  for (const winery of allWineries) {
+  for (const winery of toFetch) {
     processed++;
-    const placeId = winery.googlePlaceId!;
-    console.log(`[${processed}/${allWineries.length}] ${winery.name} (${placeId})`);
+    console.log(`[${processed}/${toFetch.length}] ${winery.name} — ${winery.reason}${winery.detail ? ` (${winery.detail})` : ""}`);
 
-    const photoRefs = await getPhotoRefs(placeId);
+    const photoRefs = await getPhotoRefs(winery.googlePlaceId);
     if (photoRefs.length === 0) {
       console.log("  No photos found, skipping");
       await sleep(DELAY_MS);
@@ -102,6 +240,7 @@ async function main() {
         url,
         source: "google_places" as const,
         altText: `Photo of ${winery.name}`,
+        fetchedAt: now,
       }))
     );
 
