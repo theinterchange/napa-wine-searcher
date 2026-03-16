@@ -30,10 +30,10 @@ export function RatingBadge({
     >
       {score.toFixed(1)}
       {source && (
-        <span className="opacity-60 capitalize">{source}</span>
+        <span className="opacity-75 capitalize">{source}</span>
       )}
       {count != null && (
-        <span className="opacity-60">({count.toLocaleString()})</span>
+        <span className="opacity-75">({count.toLocaleString()})</span>
       )}
     </span>
   );

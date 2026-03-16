@@ -45,11 +45,12 @@ export function Pagination({
   }
 
   return (
-    <div className="flex items-center justify-center gap-1">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-1">
       <button
         onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        aria-label="Previous page"
+        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
@@ -62,8 +63,9 @@ export function Pagination({
           <button
             key={page}
             onClick={() => goToPage(page)}
+            aria-current={page === currentPage ? "page" : undefined}
             className={cn(
-              "min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium transition-colors",
+              "min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2",
               page === currentPage
                 ? "bg-burgundy-700 text-white"
                 : "hover:bg-[var(--muted)]"
@@ -76,10 +78,11 @@ export function Pagination({
       <button
         onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        aria-label="Next page"
+        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
       >
         <ChevronRight className="h-4 w-4" />
       </button>
-    </div>
+    </nav>
   );
 }

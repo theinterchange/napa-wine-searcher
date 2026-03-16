@@ -28,7 +28,7 @@ export function InteractiveStarRating({
           onClick={() => onChange(star === value ? 0 : star)}
           onMouseEnter={() => setHover(star)}
           onMouseLeave={() => setHover(0)}
-          className="p-0.5 transition-transform hover:scale-110"
+          className="p-0.5 transition-transform hover:scale-110 rounded focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
         >
           <Star
             className={cn(
@@ -36,7 +36,7 @@ export function InteractiveStarRating({
               "transition-colors",
               (hover || value) >= star
                 ? "fill-gold-500 text-gold-500"
-                : "text-gray-300 dark:text-gray-600"
+                : "text-gray-400 dark:text-gray-500"
             )}
           />
         </button>

@@ -32,7 +32,7 @@ export function StarRating({
         <span key={i} className="relative" style={{ width: px, height: px }}>
           <Star
             style={{ width: px, height: px }}
-            className="absolute inset-0 text-gray-300 dark:text-gray-600"
+            className="absolute inset-0 text-gray-400 dark:text-gray-500"
           />
           <span
             className="absolute inset-0 overflow-hidden"
@@ -50,7 +50,7 @@ export function StarRating({
         <Star
           key={i}
           style={{ width: px, height: px }}
-          className="text-gray-300 dark:text-gray-600"
+          className="text-gray-400 dark:text-gray-500"
         />
       );
     }

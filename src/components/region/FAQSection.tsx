@@ -17,7 +17,8 @@ export function FAQSection({ faqs }: FAQSectionProps) {
         <div key={i}>
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="flex w-full items-center justify-between gap-4 py-4 text-left"
+            aria-expanded={openIndex === i}
+            className="flex w-full items-center justify-between gap-4 py-4 text-left focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
           >
             <h3 className="font-heading text-base font-semibold pr-4">
               {faq.question}

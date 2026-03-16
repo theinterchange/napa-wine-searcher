@@ -24,7 +24,7 @@ export function SubRegionGrid({ subRegions, valley }: SubRegionGridProps) {
         <Link
           key={sr.slug}
           href={`${valleyPrefix[valley]}/${sr.slug}`}
-          className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
+          className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-burgundy-50 dark:bg-burgundy-950 shrink-0">
             <MapPin className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400" />

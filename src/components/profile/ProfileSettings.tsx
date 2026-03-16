@@ -54,7 +54,7 @@ export function ProfileSettings() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm hover:bg-[var(--muted)] transition-colors"
+        className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
       >
         <Settings className="h-4 w-4" />
         Settings
@@ -69,7 +69,7 @@ export function ProfileSettings() {
               </h3>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1 hover:bg-[var(--muted)] rounded"
+                className="p-1 hover:bg-[var(--muted)] rounded focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -107,7 +107,9 @@ export function ProfileSettings() {
                 </div>
                 <button
                   onClick={() => setIsPublic(!isPublic)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  role="switch"
+                  aria-checked={isPublic}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 ${
                     isPublic
                       ? "bg-burgundy-700"
                       : "bg-gray-300 dark:bg-gray-600"

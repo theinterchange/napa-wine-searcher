@@ -92,7 +92,8 @@ export function Navbar() {
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                  aria-expanded={userMenuOpen}
+                  className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
                 >
                   {session.user?.image && (
                     <img
@@ -150,6 +151,8 @@ export function Navbar() {
             <button
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
+              aria-expanded={open}
+              className="rounded p-1 focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
             >
               {open ? (
                 <X className="h-6 w-6" />

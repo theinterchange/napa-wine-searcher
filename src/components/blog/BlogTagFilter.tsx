@@ -19,7 +19,8 @@ export function BlogTagFilter({ tags }: { tags: string[] }) {
     <div className="flex flex-wrap gap-2">
       <button
         onClick={() => handleClick(null)}
-        className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${
+        aria-current={!activeTag ? "true" : undefined}
+        className={`text-sm px-3 py-1.5 rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 ${
           !activeTag
             ? "bg-burgundy-700 text-white border-burgundy-700"
             : "border-[var(--border)] hover:border-burgundy-400 text-[var(--muted-foreground)]"
@@ -31,7 +32,8 @@ export function BlogTagFilter({ tags }: { tags: string[] }) {
         <button
           key={tag}
           onClick={() => handleClick(tag)}
-          className={`text-sm px-3 py-1.5 rounded-full border transition-colors capitalize ${
+          aria-current={activeTag === tag ? "true" : undefined}
+          className={`text-sm px-3 py-1.5 rounded-full border transition-colors capitalize focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 ${
             activeTag === tag
               ? "bg-burgundy-700 text-white border-burgundy-700"
               : "border-[var(--border)] hover:border-burgundy-400 text-[var(--muted-foreground)]"

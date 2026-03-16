@@ -33,7 +33,8 @@ export function CompareFloatingBar() {
                   <span className="truncate">{w.name}</span>
                   <button
                     onClick={() => remove(w.id)}
-                    className="rounded-full p-0.5 hover:bg-burgundy-200 dark:hover:bg-burgundy-800 transition-colors shrink-0"
+                    aria-label={`Remove ${w.name}`}
+                    className="rounded-full p-0.5 hover:bg-burgundy-200 dark:hover:bg-burgundy-800 transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -44,13 +45,14 @@ export function CompareFloatingBar() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={clear}
-                className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                aria-label="Clear all wineries from comparison"
+                className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
               >
                 Clear
               </button>
               <button
                 onClick={handleCompare}
-                className="rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                className="rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
               >
                 Compare ({selectedWineries.length})
               </button>
