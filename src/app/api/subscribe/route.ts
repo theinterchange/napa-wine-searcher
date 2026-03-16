@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { emailSubscribers } from "@/db/schema";
+import { sendGuideEmail, notifyNewSubscriber } from "@/lib/email";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
+  let normalizedEmail = "";
+  let source: "itinerary" | "guide" | "exit_intent" = "guide";
+
   try {
-    const { email, source } = await req.json();
+    const body = await req.json();
+    const email = body.email;
+    source = body.source;
 
     if (!email || !EMAIL_REGEX.test(email)) {
       return NextResponse.json(
@@ -22,15 +28,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    normalizedEmail = email.toLowerCase().trim();
+
     await db.insert(emailSubscribers).values({
-      email: email.toLowerCase().trim(),
+      email: normalizedEmail,
       source,
     });
+
+    sendGuideEmail(normalizedEmail).catch(console.error);
+    notifyNewSubscriber(normalizedEmail, source).catch(console.error);
 
     return NextResponse.json({ ok: true });
   } catch (err: unknown) {
     // Handle unique constraint violation (duplicate email)
     if (err instanceof Error && err.message?.includes("UNIQUE")) {
+      sendGuideEmail(normalizedEmail).catch(console.error);
       return NextResponse.json({ ok: true, alreadySubscribed: true });
     }
     return NextResponse.json(

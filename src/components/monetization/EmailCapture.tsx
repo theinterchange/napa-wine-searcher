@@ -61,9 +61,14 @@ export function EmailCapture({
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
             <Check className="h-4 w-4" />
           </div>
-          <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
-            Your guide is ready!
-          </p>
+          <div>
+            <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+              Your guide is on the way!
+            </p>
+            <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1">
+              Check your inbox — or download it now:
+            </p>
+          </div>
         </div>
         <a
           href="/api/guide/download"
