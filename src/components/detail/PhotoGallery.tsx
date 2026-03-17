@@ -58,6 +58,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
                 src={photo.url}
                 alt={photo.altText || "Winery photo"}
                 fill
+                unoptimized
                 sizes="(max-width: 640px) 144px, 25vw"
                 className="object-cover"
               />
