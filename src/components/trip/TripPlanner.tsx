@@ -9,8 +9,8 @@ import type { WizardParams } from "./TripWizard";
 import {
   computeSegments,
   buildGoogleMapsUrl,
-  formatDistance,
   formatDriveTime,
+  formatDriveTimeRange,
 } from "@/lib/geo";
 
 export interface RouteStop {
@@ -32,6 +32,7 @@ export interface RouteStop {
   subRegionSlug: string | null;
   valley: string | null;
   tasting: { min: number | null; max: number | null } | null;
+  tastingDurationMinutes?: number;
   segmentAfter: { miles: number; minutes: number } | null;
   matchReasons?: string[];
 }
@@ -357,7 +358,7 @@ export function TripPlanner({
     const segments = computeSegments(segmentStops);
     const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
     const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
-    const totalTasteMinutes = currentStops.length * 60;
+    const totalTasteMinutes = currentStops.reduce((sum, s) => sum + (s.tastingDurationMinutes || 60), 0);
     let totalMinCost = 0;
     let totalMaxCost = 0;
     for (const stop of currentStops) {
@@ -593,7 +594,7 @@ export function TripPlanner({
                       <div className="w-8" />
                       <div className="flex items-center gap-2 py-1 px-3 text-xs text-[var(--muted-foreground)]">
                         <Clock className="h-3.5 w-3.5" />
-                        <span>~{formatDistance(originSegment.miles)} · ~{formatDriveTime(originSegment.minutes)} drive</span>
+                        <span>~{originSegment.minutes > 15 ? formatDriveTimeRange(originSegment.minutes) : formatDriveTime(originSegment.minutes)} drive</span>
                       </div>
                     </div>
                   )}
@@ -621,7 +622,7 @@ export function TripPlanner({
                       <div className="w-8" />
                       <div className="flex items-center gap-2 py-1 px-3 text-xs text-[var(--muted-foreground)]">
                         <Clock className="h-3.5 w-3.5" />
-                        <span>~{formatDistance(endSegment.miles)} · ~{formatDriveTime(endSegment.minutes)} drive</span>
+                        <span>~{endSegment.minutes > 15 ? formatDriveTimeRange(endSegment.minutes) : formatDriveTime(endSegment.minutes)} drive</span>
                       </div>
                     </div>
                   )}

@@ -12,8 +12,7 @@ import {
 import { eq, and, asc, sql, inArray, min, max } from "drizzle-orm";
 import {
   haversineDistance,
-  estimatedDrivingMiles,
-  estimatedDrivingMinutes,
+  computeDetour,
   optimizeStopOrder,
   computeSegments,
   buildGoogleMapsUrl,
@@ -319,84 +318,72 @@ export async function GET(request: NextRequest) {
   const selected: typeof candidates = [...anchorWineries];
   const selectedIds = new Set(selected.map((s) => s.id));
 
-  // Use origin or highest-scored candidate as seed for nearest-neighbor
+  // Destination-aware candidate scoring
   const hasOrigin = originLat != null && originLng != null;
+  const originPt = hasOrigin ? { lat: originLat!, lng: originLng! } : null;
+  const destPt = hasEnd ? { lat: endLat!, lng: endLng! } : null;
 
-  // Weight origin proximity into candidate scoring
-  if (hasOrigin) {
-    candidates = [...candidates].sort((a, b) => {
-      const wineA = wineScoreMap.get(a.id) || 0;
-      const wineB = wineScoreMap.get(b.id) || 0;
-      const distA = haversineDistance(originLat!, originLng!, a.lat!, a.lng!);
-      const distB = haversineDistance(originLat!, originLng!, b.lat!, b.lng!);
-      // Proximity bonus: closer = higher score (max 5 at 0mi, 0 at 50mi+)
-      const proxA = Math.max(0, 5 - distA / 10);
-      const proxB = Math.max(0, 5 - distB / 10);
-      const scoreA = wineA + proxA;
-      const scoreB = wineB + proxB;
-      if (scoreB !== scoreA) return scoreB - scoreA;
-      const ratingA = a.googleRating ?? a.aggregateRating ?? 0;
-      const ratingB = b.googleRating ?? b.aggregateRating ?? 0;
-      return ratingB - ratingA;
-    });
-  }
+  // Score every non-anchor candidate
+  const slotsToFill = stopCount - selected.length;
+  const scoredCandidates = candidates
+    .filter((c) => !selectedIds.has(c.id) && c.lat != null && c.lng != null)
+    .map((c) => {
+      const wineRelevance = wineScoreMap.get(c.id) || 0;
+      const rating = c.googleRating ?? c.aggregateRating ?? 0;
+      const normalizedRating = Math.min(1, Math.max(0, (rating - 3) / 2));
+      let score: number;
 
-  const seedLat = hasOrigin ? originLat : (selected[0]?.lat ?? candidates[0]?.lat ?? 0);
-  const seedLng = hasOrigin ? originLng : (selected[0]?.lng ?? candidates[0]?.lng ?? 0);
-
-  // If no anchors, pick seed from candidates
-  if (selected.length === 0) {
-    // Pick candidate closest to origin if origin provided, else highest-scored
-    if (hasOrigin) {
-      let bestIdx = 0;
-      let bestDist = Infinity;
-      for (let i = 0; i < candidates.length; i++) {
-        if (!candidates[i].lat || !candidates[i].lng) continue;
-        const d = haversineDistance(originLat, originLng, candidates[i].lat!, candidates[i].lng!);
-        if (d < bestDist) {
-          bestDist = d;
-          bestIdx = i;
-        }
+      if (hasOrigin && hasEnd) {
+        const detour = computeDetour(originPt!, { lat: c.lat!, lng: c.lng! }, destPt!);
+        const scaleFactor = Math.max(haversineDistance(originPt!.lat, originPt!.lng, destPt!.lat, destPt!.lng), 10);
+        const routeEfficiency = 1 / (1 + detour / scaleFactor);
+        score = wineRelevance * 0.35 + routeEfficiency * 0.45 + normalizedRating * 0.20;
+      } else if (hasOrigin) {
+        const dist = haversineDistance(originLat!, originLng!, c.lat!, c.lng!);
+        const proximity = Math.max(0, 1 - dist / 60);
+        score = wineRelevance * 0.40 + proximity * 0.35 + normalizedRating * 0.25;
+      } else {
+        score = wineRelevance * 0.60 + normalizedRating * 0.40;
       }
-      selected.push(candidates[bestIdx]);
-    } else {
-      selected.push(candidates[0]);
-    }
-    selectedIds.add(selected[0].id);
-  }
 
-  // Greedy nearest-neighbor to fill remaining slots
-  while (selected.length < stopCount && selected.length < candidates.length) {
-    const last = selected[selected.length - 1];
-    let bestIdx = -1;
-    let bestDist = Infinity;
+      return { candidate: c, score };
+    })
+    .sort((a, b) => b.score - a.score);
 
-    for (let i = 0; i < candidates.length; i++) {
-      if (selectedIds.has(candidates[i].id)) continue;
-      if (!candidates[i].lat || !candidates[i].lng) continue;
-      const d = haversineDistance(last.lat!, last.lng!, candidates[i].lat!, candidates[i].lng!);
-      if (d < bestDist) {
-        bestDist = d;
-        bestIdx = i;
-      }
-    }
-
-    if (bestIdx === -1) break;
-    selected.push(candidates[bestIdx]);
-    selectedIds.add(candidates[bestIdx].id);
+  // Pick top N candidates
+  for (const { candidate } of scoredCandidates.slice(0, slotsToFill)) {
+    selected.push(candidate);
+    selectedIds.add(candidate.id);
   }
 
   // Optimize order
   const coords = selected.map((s) => ({ lat: s.lat!, lng: s.lng! }));
-  const originPt = hasOrigin ? { lat: originLat!, lng: originLng! } : null;
-  const destPt = hasEnd ? { lat: endLat!, lng: endLng! } : originPt; // loop-aware fallback
-  const optimalOrder = optimizeStopOrder(coords, originPt, destPt);
+  const loopDest = hasEnd ? destPt : originPt; // loop-aware fallback
+  const optimalOrder = optimizeStopOrder(coords, originPt, loopDest);
   let ordered = optimalOrder.map((i) => selected[i]);
 
-  // Time budget validation: check if route fits
+  // Pre-fetch tasting durations for selected stops (needed for time-budget trimming)
+  const selectedStopIds = selected.map((s) => s.id);
+  const earlyDurations = selectedStopIds.length > 0
+    ? await db
+        .select({
+          wineryId: tastingExperiences.wineryId,
+          avgDuration: sql<number>`COALESCE(AVG(${tastingExperiences.durationMinutes}), 60)`.as("avg_duration"),
+        })
+        .from(tastingExperiences)
+        .where(inArray(tastingExperiences.wineryId, selectedStopIds))
+        .groupBy(tastingExperiences.wineryId)
+    : [];
+  const durationMap = new Map(
+    earlyDurations.map((t) => [t.wineryId, Math.round(t.avgDuration)])
+  );
+
+  // Time budget validation: smart drop of biggest detour contributor + re-optimize
   if (timeBudgetConfig) {
-    let attempts = 0;
-    while (attempts < 3 && ordered.length > timeBudgetConfig.min) {
+    const anchorIdSet = new Set(anchorIds);
+    let trimmed = false;
+
+    while (ordered.length > timeBudgetConfig.min) {
       const budgetStops = [
         ...(hasOrigin ? [{ lat: originLat, lng: originLng }] : []),
         ...ordered,
@@ -404,11 +391,40 @@ export async function GET(request: NextRequest) {
       ];
       const segs = computeSegments(budgetStops);
       const totalDrive = segs.reduce((s, seg) => s + seg.minutes, 0);
-      const totalTaste = ordered.length * 60;
+      const totalTaste = ordered.reduce((sum, s) => sum + (durationMap.get(s.id) || 60), 0);
       if (totalDrive + totalTaste <= timeBudgetConfig.minutes) break;
-      // Over budget — drop the last stop
-      ordered = ordered.slice(0, -1);
-      attempts++;
+
+      // Find non-anchor stop whose removal saves the most driving time
+      let bestDropIdx = -1;
+      let bestSaving = -Infinity;
+
+      for (let i = 0; i < ordered.length; i++) {
+        if (anchorIdSet.has(ordered[i].id)) continue;
+        const without = ordered.filter((_, j) => j !== i);
+        const trialStops = [
+          ...(hasOrigin ? [{ lat: originLat, lng: originLng }] : []),
+          ...without,
+          ...(hasEnd ? [{ lat: endLat, lng: endLng }] : []),
+        ];
+        const trialSegs = computeSegments(trialStops);
+        const trialDrive = trialSegs.reduce((s, seg) => s + seg.minutes, 0);
+        const saving = totalDrive - trialDrive;
+        if (saving > bestSaving) {
+          bestSaving = saving;
+          bestDropIdx = i;
+        }
+      }
+
+      if (bestDropIdx === -1) break; // only anchors left
+      ordered = ordered.filter((_, j) => j !== bestDropIdx);
+      trimmed = true;
+    }
+
+    // Re-optimize after trimming
+    if (trimmed && ordered.length > 1) {
+      const trimCoords = ordered.map((s) => ({ lat: s.lat!, lng: s.lng! }));
+      const reOrder = optimizeStopOrder(trimCoords, originPt, loopDest);
+      ordered = reOrder.map((i) => ordered[i]);
     }
   }
 
@@ -441,6 +457,7 @@ export async function GET(request: NextRequest) {
             wineryId: tastingExperiences.wineryId,
             minPrice: min(tastingExperiences.price),
             maxPrice: max(tastingExperiences.price),
+            avgDuration: sql<number>`COALESCE(AVG(${tastingExperiences.durationMinutes}), 60)`.as("avg_duration"),
           })
           .from(tastingExperiences)
           .where(inArray(tastingExperiences.wineryId, allIds))
@@ -449,6 +466,12 @@ export async function GET(request: NextRequest) {
   const priceMap = new Map(
     tastingPrices.map((t) => [t.wineryId, { min: t.minPrice, max: t.maxPrice }])
   );
+  // Merge durations from full query into the existing durationMap
+  for (const t of tastingPrices) {
+    if (!durationMap.has(t.wineryId)) {
+      durationMap.set(t.wineryId, Math.round(t.avgDuration));
+    }
+  }
 
   // Compute distances (include origin and/or ending destination)
   const originPoint = hasOrigin ? { lat: originLat, lng: originLng } : null;
@@ -471,7 +494,9 @@ export async function GET(request: NextRequest) {
 
   const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
   const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
-  const totalTasteMinutes = ordered.length * 60;
+  const totalTasteMinutes = ordered.reduce(
+    (sum, s) => sum + (durationMap.get(s.id) || 60), 0
+  );
 
   let totalMinCost = 0;
   let totalMaxCost = 0;
@@ -539,6 +564,7 @@ export async function GET(request: NextRequest) {
     stops: ordered.map((s, i) => ({
       ...cleanStop(s),
       tasting: priceMap.get(s.id) || null,
+      tastingDurationMinutes: durationMap.get(s.id) || 60,
       segmentAfter: stopSegments[i] || null,
       matchReasons: getMatchReasons(s, i),
     })),
@@ -643,7 +669,7 @@ async function loadCuratedRoute(slug: string) {
     }
   }
 
-  // Get tasting prices
+  // Get tasting prices and durations
   const allIds = [
     ...stops.map((s) => s.id),
     ...Object.values(alternatives).flat().map((a) => a.id),
@@ -655,6 +681,7 @@ async function loadCuratedRoute(slug: string) {
             wineryId: tastingExperiences.wineryId,
             minPrice: min(tastingExperiences.price),
             maxPrice: max(tastingExperiences.price),
+            avgDuration: sql<number>`COALESCE(AVG(${tastingExperiences.durationMinutes}), 60)`.as("avg_duration"),
           })
           .from(tastingExperiences)
           .where(inArray(tastingExperiences.wineryId, allIds))
@@ -663,12 +690,15 @@ async function loadCuratedRoute(slug: string) {
   const priceMap = new Map(
     tastingPrices.map((t) => [t.wineryId, { min: t.minPrice, max: t.maxPrice }])
   );
+  const curatedDurationMap = new Map(
+    tastingPrices.map((t) => [t.wineryId, Math.round(t.avgDuration)])
+  );
 
   const segments = computeSegments(stops);
   const totalMiles = segments.reduce((s, seg) => s + seg.miles, 0);
   const totalDriveMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
   const totalTasteMinutes = stops.reduce(
-    (sum, s) => sum + (s.suggestedDuration || 60),
+    (sum, s) => sum + (s.suggestedDuration || curatedDurationMap.get(s.id) || 60),
     0
   );
 
@@ -691,6 +721,7 @@ async function loadCuratedRoute(slug: string) {
     stops: stops.map((s, i) => ({
       ...s,
       tasting: priceMap.get(s.id) || null,
+      tastingDurationMinutes: s.suggestedDuration || curatedDurationMap.get(s.id) || 60,
       segmentAfter: segments[i] || null,
     })),
     alternatives,
@@ -745,12 +776,16 @@ async function loadSpecificStops(stopIdsStr: string) {
       wineryId: tastingExperiences.wineryId,
       minPrice: min(tastingExperiences.price),
       maxPrice: max(tastingExperiences.price),
+      avgDuration: sql<number>`COALESCE(AVG(${tastingExperiences.durationMinutes}), 60)`.as("avg_duration"),
     })
     .from(tastingExperiences)
     .where(inArray(tastingExperiences.wineryId, ids))
     .groupBy(tastingExperiences.wineryId);
   const priceMap = new Map(
     tastingPrices.map((t) => [t.wineryId, { min: t.minPrice, max: t.maxPrice }])
+  );
+  const specificDurationMap = new Map(
+    tastingPrices.map((t) => [t.wineryId, Math.round(t.avgDuration)])
   );
 
   const segments = computeSegments(ordered);
@@ -775,13 +810,16 @@ async function loadSpecificStops(stopIdsStr: string) {
     stops: ordered.map((s, i) => ({
       ...s,
       tasting: priceMap.get(s.id) || null,
+      tastingDurationMinutes: specificDurationMap.get(s.id) || 60,
       segmentAfter: segments[i] || null,
     })),
     alternatives: {},
     summary: {
       totalMiles: Math.round(totalMiles * 10) / 10,
       totalDriveMinutes: Math.round(totalDriveMinutes),
-      totalTasteMinutes: ordered.length * 60,
+      totalTasteMinutes: ordered.reduce(
+        (sum, s) => sum + (specificDurationMap.get(s.id) || 60), 0
+      ),
       totalMinCost: Math.round(totalMinCost),
       totalMaxCost: Math.round(totalMaxCost),
       googleMapsUrl,

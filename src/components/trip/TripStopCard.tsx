@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ArrowLeftRight, X, MapPin, Star, Clock, Wine, ChevronDown, CalendarCheck } from "lucide-react";
 import { useState } from "react";
 import type { RouteStop, Alternative } from "./TripPlanner";
-import { formatDistance, formatDriveTime } from "@/lib/geo";
+import { formatDriveTime, formatDriveTimeRange } from "@/lib/geo";
 
 interface TripStopCardProps {
   stop: RouteStop;
@@ -114,6 +114,9 @@ export function TripStopCard({
               {stop.tasting?.min != null && (
                 <p className="mt-1 text-xs text-[var(--muted-foreground)]">
                   Tastings from ${Math.round(stop.tasting.min)}
+                  {stop.tastingDurationMinutes && stop.tastingDurationMinutes !== 60 && (
+                    <span> · ~{stop.tastingDurationMinutes} min tasting</span>
+                  )}
                 </p>
               )}
               <div className="mt-2">
@@ -175,7 +178,9 @@ export function TripStopCard({
           <div className="flex items-center gap-2 py-1 px-3 text-xs text-[var(--muted-foreground)]">
             <Clock className="h-3.5 w-3.5" />
             <span>
-              ~{formatDistance(stop.segmentAfter.miles)} · ~{formatDriveTime(stop.segmentAfter.minutes)} drive
+              ~{stop.segmentAfter.minutes > 15
+                ? formatDriveTimeRange(stop.segmentAfter.minutes)
+                : formatDriveTime(stop.segmentAfter.minutes)} drive
             </span>
           </div>
         </div>

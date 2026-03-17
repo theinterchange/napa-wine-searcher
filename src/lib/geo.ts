@@ -15,6 +15,18 @@ export function haversineDistance(
   return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/** Extra miles a stop adds vs. the direct origin→destination path */
+export function computeDetour(
+  origin: { lat: number; lng: number },
+  candidate: { lat: number; lng: number },
+  destination: { lat: number; lng: number }
+): number {
+  const direct = haversineDistance(origin.lat, origin.lng, destination.lat, destination.lng);
+  const via = haversineDistance(origin.lat, origin.lng, candidate.lat, candidate.lng)
+            + haversineDistance(candidate.lat, candidate.lng, destination.lat, destination.lng);
+  return via - direct;
+}
+
 function toRad(deg: number): number {
   return (deg * Math.PI) / 180;
 }
@@ -29,6 +41,20 @@ export function estimatedDrivingMinutes(drivingMiles: number): number {
   return (drivingMiles / 30) * 60;
 }
 
+const WINE_COUNTRY_THRESHOLD = 10; // haversine miles
+
+/** Two-tier distance/time estimate: highway for long segments, wine country for short */
+export function estimateSegment(straightLineMiles: number): { miles: number; minutes: number } {
+  if (straightLineMiles < WINE_COUNTRY_THRESHOLD) {
+    // Wine country roads: winding, slow
+    const miles = straightLineMiles * 1.3;
+    return { miles, minutes: (miles / 30) * 60 };
+  }
+  // Highway approach/return: less winding, faster average
+  const miles = straightLineMiles * 1.4;
+  return { miles, minutes: (miles / 45) * 60 };
+}
+
 export function formatDistance(miles: number): string {
   return miles < 1 ? `${(miles * 5280).toFixed(0)} ft` : `${miles.toFixed(1)} mi`;
 }
@@ -41,6 +67,14 @@ export function formatDriveTime(minutes: number): string {
   return mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
 }
 
+/** Format drive time as a range acknowledging estimation uncertainty */
+export function formatDriveTimeRange(minutes: number): string {
+  const low = minutes;
+  const high = minutes * 1.2; // +20% upper bound
+  if (high < 60) return `${Math.round(low)}–${Math.round(high)} min`;
+  return `${formatDriveTime(low)} – ${formatDriveTime(high)}`;
+}
+
 /** Compute distance segments between consecutive stops */
 export function computeSegments(
   stops: { lat: number | null; lng: number | null }[]
@@ -51,8 +85,7 @@ export function computeSegments(
     const b = stops[i + 1];
     if (a.lat != null && a.lng != null && b.lat != null && b.lng != null) {
       const straight = haversineDistance(a.lat, a.lng, b.lat, b.lng);
-      const miles = estimatedDrivingMiles(straight);
-      segments.push({ miles, minutes: estimatedDrivingMinutes(miles) });
+      segments.push(estimateSegment(straight));
     } else {
       segments.push({ miles: 0, minutes: 0 });
     }

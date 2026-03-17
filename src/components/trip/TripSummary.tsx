@@ -11,7 +11,7 @@ import {
   Check,
 } from "lucide-react";
 import { useState } from "react";
-import { formatDistance, formatDriveTime } from "@/lib/geo";
+import { formatDriveTime, formatDriveTimeRange } from "@/lib/geo";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { SaveTripButton } from "./SaveTripButton";
@@ -52,7 +52,7 @@ export function TripSummary({ summary, stopIds, theme }: TripSummaryProps) {
           <Car className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
           <div>
             <p className="text-sm font-medium">
-              {formatDistance(summary.totalMiles)}
+              ~{Math.round(summary.totalMiles / 5) * 5} mi
             </p>
             <p className="text-xs text-[var(--muted-foreground)]">
               Total driving distance
@@ -63,12 +63,15 @@ export function TripSummary({ summary, stopIds, theme }: TripSummaryProps) {
           <Clock className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
           <div>
             <p className="text-sm font-medium">
-              {formatDriveTime(summary.totalDriveMinutes)} driving +{" "}
+              ~{formatDriveTimeRange(summary.totalDriveMinutes)} driving +{" "}
               {formatDriveTime(summary.totalTasteMinutes)} tasting
             </p>
             <p className="text-xs text-[var(--muted-foreground)]">
-              ~{formatDriveTime(summary.totalDriveMinutes + summary.totalTasteMinutes)}{" "}
+              ~{formatDriveTimeRange(summary.totalDriveMinutes + summary.totalTasteMinutes)}{" "}
               total
+            </p>
+            <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
+              Estimates only — open Google Maps for exact times
             </p>
           </div>
         </div>
