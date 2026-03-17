@@ -56,14 +56,14 @@ export function EmailCapture({
 
   if (status === "success") {
     return (
-      <div className={`rounded-xl border border-[var(--border)] bg-olive-50 dark:bg-olive-950 text-center ${compact ? "p-4" : "p-6 sm:p-8"}`}>
+      <div className={`rounded-xl border border-[var(--border)] bg-burgundy-50 dark:bg-burgundy-950 text-center ${compact ? "p-4" : "p-6 sm:p-8"}`}>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-burgundy-600 text-white mx-auto">
           <Check className="h-5 w-5" />
         </div>
-        <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+        <p className="mt-3 text-sm font-semibold text-burgundy-950 dark:text-white">
           Your guide is on the way!
         </p>
-        <p className="text-xs text-[var(--muted-foreground)] mt-1">
+        <p className="text-sm text-burgundy-800 dark:text-burgundy-100 mt-1">
           Check your inbox — or download it now:
         </p>
         <div className="mt-4 flex justify-center">
@@ -118,10 +118,10 @@ export function EmailCapture({
   }
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-olive-50 dark:bg-olive-950 p-6 sm:p-8 text-center">
+    <div className="rounded-xl border border-[var(--border)] bg-burgundy-50 dark:bg-burgundy-950 p-6 sm:p-8 text-center">
       <Mail className="h-8 w-8 mx-auto text-burgundy-600 dark:text-burgundy-400 mb-3" />
-      <h3 className="font-heading text-xl font-bold text-olive-900 dark:text-white">{heading}</h3>
-      <p className="mt-2 text-sm text-olive-700 dark:text-olive-300 max-w-md mx-auto">
+      <h3 className="font-heading text-xl font-bold text-burgundy-950 dark:text-white">{heading}</h3>
+      <p className="mt-2 text-sm text-burgundy-800 dark:text-burgundy-100 max-w-md mx-auto">
         {description}
       </p>
       <form
@@ -153,7 +153,7 @@ export function EmailCapture({
           {errorMessage}
         </p>
       )}
-      <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-3 text-xs text-burgundy-800 dark:text-burgundy-100">
         No spam, ever. Unsubscribe anytime.
       </p>
     </div>

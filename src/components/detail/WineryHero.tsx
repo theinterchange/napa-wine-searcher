@@ -36,7 +36,7 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
       )}
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {(winery.subRegion || winery.valley || winery.city) && (
-          <div className="flex items-center gap-2 text-burgundy-300 text-sm mb-4">
+          <div className="flex items-center gap-2 text-burgundy-200 text-sm mb-4">
             <MapPin className="h-4 w-4" />
             <span>
               {[winery.subRegion, winery.valley === "napa" ? "Napa Valley" : winery.valley === "sonoma" ? "Sonoma County" : null, winery.city].filter(Boolean).join(" · ")}
@@ -59,14 +59,14 @@ export function WineryHero({ winery }: { winery: WineryHeroProps }) {
                 {winery.aggregateRating.toFixed(1)}
               </span>
               {winery.totalRatings != null && (
-                <span className="text-burgundy-300">
+                <span className="text-burgundy-200">
                   ({winery.totalRatings.toLocaleString()} reviews)
                 </span>
               )}
             </div>
           )}
           {winery.priceLevel && (
-            <span className="text-gold-200 font-medium" aria-label={`Price level ${winery.priceLevel} of 4`}>
+            <span className="text-gold-300 font-medium" aria-label={`Price level ${winery.priceLevel} of 4`}>
               {"$".repeat(winery.priceLevel)}
             </span>
           )}
