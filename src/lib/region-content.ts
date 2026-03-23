@@ -224,7 +224,7 @@ export const SUBREGION_CONTENT: Record<string, SubRegionContent> = {
       "Russian River Valley is one of the world's great Pinot Noir regions, producing wines that rival the finest Burgundies. The river itself creates a natural corridor for Pacific fog to funnel inland each evening, creating the dramatic diurnal temperature swings that Pinot Noir and Chardonnay thrive on.",
       "From the Green Valley pocket in the west to the warmer eastern reaches near Healdsburg, the region offers remarkable diversity within a single AVA. Whether you prefer bright, energetic Pinots or richer, more opulent styles, Russian River Valley delivers with extraordinary consistency.",
     ],
-    knownFor: ["Pinot Noir", "Chardonnay", "Zinfandel"],
+    knownFor: ["Pinot Noir", "Chardonnay", "Syrah"],
     bestTimeToVisit: "June through October; morning fog clears to warm afternoons",
     terroir: "Goldridge sandy loam soils with heavy fog influence from the Pacific via the river corridor",
     signatureVarietal: "Pinot Noir",
@@ -232,19 +232,19 @@ export const SUBREGION_CONTENT: Record<string, SubRegionContent> = {
   "sonoma-valley": {
     description: [
       "Sonoma Valley is where California winemaking began — the site of the state's first commercial winery and the historic 1857 Buena Vista estate. The valley runs north-south between the Sonoma and Mayacamas mountain ranges, creating a diverse range of elevations and exposures.",
-      "The town of Sonoma anchors the southern end with its charming plaza and tasting rooms, while Glen Ellen and Kenwood further north offer more rural, vineyard-centric experiences. The region produces excellent Cabernet Sauvignon, Zinfandel, and increasingly impressive Rhone varieties.",
+      "The town of Sonoma anchors the southern end with its charming plaza and tasting rooms, while Glen Ellen and Kenwood further north offer more rural, vineyard-centric experiences. More than 60 grape varieties thrive here, from Chardonnay and Pinot Noir in the cooler south to Cabernet Sauvignon on the mountain slopes.",
     ],
-    knownFor: ["Cabernet Sauvignon", "Zinfandel", "Chardonnay"],
+    knownFor: ["Chardonnay", "Cabernet Sauvignon", "Pinot Noir"],
     bestTimeToVisit: "Year-round; the historic town of Sonoma is enjoyable in every season",
     terroir: "Diverse valley-floor and hillside vineyards between two mountain ranges",
-    signatureVarietal: "Zinfandel",
+    signatureVarietal: "Chardonnay",
   },
   "dry-creek-valley": {
     description: [
       "Dry Creek Valley is Zinfandel's spiritual home in California, with old-vine plantings dating back over a century. This narrow valley northwest of Healdsburg produces Zinfandels of extraordinary depth and character, often from gnarled, head-pruned vines that are among the oldest in the state.",
       "Beyond its famous Zinfandels, Dry Creek Valley also produces excellent Sauvignon Blanc and increasingly impressive Cabernet Sauvignon. The valley's warm, sheltered climate and gravelly benchland soils are ideal for these varieties, and the small-production, family-owned wineries here offer some of Sonoma's most personal tasting experiences.",
     ],
-    knownFor: ["Zinfandel", "Sauvignon Blanc", "Cabernet Sauvignon"],
+    knownFor: ["Zinfandel", "Cabernet Sauvignon", "Sauvignon Blanc"],
     bestTimeToVisit: "Spring through fall; the narrow valley is especially scenic",
     terroir: "Gravelly benchland and rocky hillside soils with warm, sheltered conditions",
     signatureVarietal: "Zinfandel",
@@ -262,9 +262,9 @@ export const SUBREGION_CONTENT: Record<string, SubRegionContent> = {
   "bennett-valley": {
     description: [
       "Bennett Valley is one of Sonoma County's hidden gems — a small, wind-cooled valley nestled between Sonoma Mountain and Taylor Mountain. The Petaluma Gap wind corridor funnels Pacific breezes through the valley each afternoon, creating one of Sonoma's coolest growing conditions.",
-      "This cooling influence makes Bennett Valley ideal for aromatic white varieties and elegant reds. The region's Merlot, Chardonnay, and Sauvignon Blanc have been gaining recognition, and the handful of wineries here offer an intimate, uncrowded alternative to more visited areas.",
+      "This cooling influence makes Bennett Valley ideal for aromatic white varieties and elegant reds. The region's Merlot and Chardonnay earned the earliest acclaim, while cool-climate Syrah has emerged as an exciting addition. The handful of wineries here offer an intimate, uncrowded alternative to more visited areas.",
     ],
-    knownFor: ["Merlot", "Chardonnay", "Sauvignon Blanc"],
+    knownFor: ["Merlot", "Chardonnay", "Syrah"],
     bestTimeToVisit: "Summer and early fall for the best weather",
     terroir: "Wind-cooled valley with volcanic soils between two mountain ranges",
     signatureVarietal: "Merlot",
