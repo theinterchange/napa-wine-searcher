@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Wine className="h-5 w-5 text-burgundy-900 dark:text-burgundy-200" />
-              <span className="font-heading text-lg font-extrabold text-burgundy-900 dark:text-gold-200">
+              <span className="font-heading text-lg font-extrabold text-burgundy-900 dark:text-gold-600">
                 Napa Sonoma Guide
               </span>
             </div>

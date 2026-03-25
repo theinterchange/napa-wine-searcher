@@ -3,20 +3,18 @@ import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos, dayTripRoutes, dayTripStops } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { ChevronRight, Route } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
-import { WineryInfoSection, HoursSection } from "@/components/detail/WineryInfoSection";
+import { WineryDescription, WinerySidebar } from "@/components/detail/WineryInfoSection";
 import { WineTable } from "@/components/detail/WineTable";
 import { TastingTable } from "@/components/detail/TastingTable";
-import { FavoriteButton } from "@/components/detail/FavoriteButton";
-import { VisitedButton } from "@/components/detail/VisitedButton";
 import { NotesEditor } from "@/components/detail/NotesEditor";
-import { AddToJournalButton } from "@/components/detail/AddToJournalButton";
-import { AddToCollectionButton } from "@/components/collections/AddToCollectionButton";
+import { FavoriteButton } from "@/components/detail/FavoriteButton";
+import { ShareButton } from "@/components/social/ShareButton";
+import { VisitedButton } from "@/components/detail/VisitedButton";
+import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
-import { ShareButton } from "@/components/social/ShareButton";
-import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
@@ -37,6 +35,7 @@ export async function generateMetadata({
     .select({
       name: wineries.name,
       shortDescription: wineries.shortDescription,
+      whyVisit: wineries.whyVisit,
       heroImageUrl: wineries.heroImageUrl,
       city: wineries.city,
     })
@@ -47,14 +46,15 @@ export async function generateMetadata({
   if (!winery) return { title: "Winery Not Found" };
 
   const title = `${winery.name} | Napa Sonoma Guide`;
+  const ogTitle = winery.name;
   const description =
-    winery.shortDescription || `Visit ${winery.name} in wine country`;
+    winery.whyVisit || winery.shortDescription || `Visit ${winery.name} in wine country`;
 
   return {
     title,
     description,
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       url: `${BASE_URL}/wineries/${slug}`,
       siteName: "Napa Sonoma Guide",
@@ -95,6 +95,7 @@ export default async function WineryDetailPage({
       phone: wineries.phone,
       email: wineries.email,
       websiteUrl: wineries.websiteUrl,
+      visitUrl: wineries.visitUrl,
       hoursJson: wineries.hoursJson,
       reservationRequired: wineries.reservationRequired,
       dogFriendly: wineries.dogFriendly,
@@ -113,6 +114,11 @@ export default async function WineryDetailPage({
       lastScrapedAt: wineries.lastScrapedAt,
       updatedAt: wineries.updatedAt,
       heroImageUrl: wineries.heroImageUrl,
+      whyVisit: wineries.whyVisit,
+      theSetting: wineries.theSetting,
+      visitorTips: wineries.visitorTips,
+      knownFor: wineries.knownFor,
+      tastingRoomVibe: wineries.tastingRoomVibe,
       subRegion: subRegions.name,
       valley: subRegions.valley,
     })
@@ -149,6 +155,7 @@ export default async function WineryDetailPage({
       .select({
         id: wineryPhotos.id,
         url: wineryPhotos.url,
+        blobUrl: wineryPhotos.blobUrl,
         altText: wineryPhotos.altText,
       })
       .from(wineryPhotos)
@@ -163,8 +170,16 @@ export default async function WineryDetailPage({
       .where(eq(dayTripStops.wineryId, winery.id)),
   ]);
 
-  // Skip the first photo if it matches the hero image (avoid duplication)
-  const galleryPhotos = photos.filter((p) => p.url !== winery.heroImageUrl);
+  // Prefer Blob URLs and skip the hero image to avoid duplication
+  const galleryPhotos = photos
+    .map((p) => ({ ...p, url: p.blobUrl || p.url }))
+    .filter((p) => p.url !== winery.heroImageUrl);
+
+  // Best booking URL: tasting sourceUrl → winery visitUrl → winery homepage
+  const bookingUrl =
+    tastings.find((t) => t.sourceUrl?.startsWith("http"))?.sourceUrl ||
+    winery.visitUrl ||
+    winery.websiteUrl;
 
   // Affiliate link for this winery's wines
   const affiliateUrl = wineryWinesUrl(winery.name);
@@ -258,16 +273,26 @@ export default async function WineryDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BreadcrumbSchema items={breadcrumbItems} />
+
       {/* Breadcrumbs */}
-      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
-          <Link href="/" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+      <div className="mx-auto max-w-5xl px-4 pt-2 pb-2 sm:px-6 lg:px-8">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+        >
+          <Link
+            href="/"
+            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+          >
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           {valleyPrefix && (
             <>
-              <Link href={valleyPrefix} className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+              <Link
+                href={valleyPrefix}
+                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+              >
                 {winery.valley === "napa" ? "Napa Valley" : "Sonoma County"}
               </Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -275,126 +300,154 @@ export default async function WineryDetailPage({
           )}
           {valleyPrefix && subRegionSlug && (
             <>
-              <Link href={`${valleyPrefix}/${subRegionSlug}`} className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+              <Link
+                href={`${valleyPrefix}/${subRegionSlug}`}
+                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+              >
                 {winery.subRegion}
               </Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
             </>
           )}
-          <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">{winery.name}</span>
+          <span
+            className="text-[var(--foreground)] font-medium truncate"
+            aria-current="page"
+          >
+            {winery.name}
+          </span>
         </nav>
       </div>
-      <WineryHero winery={winery} />
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {!winery.curated && (
-          <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
-            Last updated{" "}
-            {new Date(winery.lastScrapedAt || winery.updatedAt || "2025-01-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}.
-            {winery.websiteUrl ? (
-              <>
-                {" "}Visit{" "}
+
+      {/* Hero with photo carousel */}
+      <WineryHero winery={winery} photos={galleryPhotos} />
+
+      {/* Two-column content */}
+      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Main content — LEFT */}
+          <main className="lg:col-span-2 space-y-16">
+            {/* About heading + action buttons + Known For + editorial content */}
+            <div>
+              <h2 className="font-heading text-2xl font-bold mb-4">
+                About {winery.name}
+              </h2>
+              <div className="flex flex-wrap gap-2 mb-6">
+                <div className="contents sm:hidden">
+                  <FavoriteButton wineryId={winery.id} compact />
+                  <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
+                  <VisitedButton wineryId={winery.id} compact />
+                  <AddToCompareButton wineryId={winery.id} wineryName={winery.name} compact />
+                </div>
+                <div className="hidden sm:contents">
+                  <FavoriteButton wineryId={winery.id} />
+                  <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
+                  <VisitedButton wineryId={winery.id} />
+                  <AddToCompareButton wineryId={winery.id} wineryName={winery.name} />
+                </div>
+              </div>
+              {winery.knownFor && (
+                <div className="flex flex-wrap items-center gap-2 mb-6">
+                  <span className="text-xs font-medium text-[var(--muted-foreground)]">Known for</span>
+                  {winery.knownFor.split(",").map((item) => (
+                    <span
+                      key={item.trim()}
+                      className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
+                    >
+                      {item.trim()}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {winery.whyVisit && (
+                <p className="text-base leading-relaxed text-[var(--muted-foreground)] mb-4">
+                  {winery.whyVisit}
+                </p>
+              )}
+              {winery.description && (
+                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                  {winery.description}
+                </p>
+              )}
+              {winery.theSetting && (
+                <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
+                  {winery.theSetting}
+                </p>
+              )}
+            </div>
+
+            {/* The Tasting Room */}
+            {winery.tastingRoomVibe && (
+              <div>
+                <h3 className="font-heading text-xl font-bold mb-3">
+                  The Tasting Room
+                </h3>
+                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                  {winery.tastingRoomVibe}
+                </p>
+              </div>
+            )}
+
+            {/* Tasting Experiences */}
+            <TastingTable
+              tastings={[...tastings].sort((a, b) => (a.price ?? 999) - (b.price ?? 999))}
+              curated={!!winery.curated}
+              websiteUrl={bookingUrl}
+              phone={winery.phone}
+              wineryId={winery.id}
+              winerySlug={winery.slug}
+              wineryName={winery.name}
+            />
+
+            {/* Wines */}
+            <WineTable
+              wines={wineryWines}
+              curated={!!winery.curated}
+              websiteUrl={winery.websiteUrl}
+              phone={winery.phone}
+              affiliateUrl={affiliateUrl}
+              wineryId={winery.id}
+              wineryName={winery.name}
+              winerySlug={winery.slug}
+            />
+
+            {/* Shop Wines affiliate */}
+            {affiliateUrl && wineryWines.length > 0 && (
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+                <h3 className="font-heading text-lg font-semibold mb-2">
+                  Shop {winery.name} Wines Online
+                </h3>
+                <p className="text-sm text-[var(--muted-foreground)] mb-4">
+                  Can&apos;t visit in person? Browse and buy wines from trusted
+                  online retailers.
+                </p>
                 <a
-                  href={winery.websiteUrl}
+                  href={affiliateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium underline"
+                  className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
                 >
-                  {winery.name}&apos;s website
-                </a>{" "}
-                for the latest info on wines, prices, and hours.
-              </>
-            ) : (
-              <> Contact {winery.name} directly for the latest info on wines, prices, and hours.</>
+                  Browse Wines Online
+                </a>
+              </div>
             )}
-          </div>
-        )}
-        {winery.curated && winery.curatedAt && (
-          <p className="mb-4 text-xs text-[var(--muted-foreground)]">
-            Last verified: {new Date(winery.curatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })}
-          </p>
-        )}
-        <div className="mb-6">
-          {/* Compact (icon-only) on mobile */}
-          <div className="flex flex-wrap gap-2 sm:hidden">
-            <FavoriteButton wineryId={winery.id} compact />
-            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
-            <VisitedButton wineryId={winery.id} compact />
-            <AddToJournalButton wineryId={winery.id} wineryName={winery.name} compact />
-            <AddToCollectionButton wineryId={winery.id} compact />
-            <AddToCompareButton wineryId={winery.id} wineryName={winery.name} compact />
-          </div>
-          {/* Full labels on sm+ */}
-          <div className="hidden sm:flex sm:flex-wrap sm:gap-3">
-            <FavoriteButton wineryId={winery.id} />
-            <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
-            <VisitedButton wineryId={winery.id} />
-            <AddToJournalButton wineryId={winery.id} wineryName={winery.name} />
-            <AddToCollectionButton wineryId={winery.id} />
-            <AddToCompareButton wineryId={winery.id} wineryName={winery.name} />
-          </div>
-        </div>
 
-        {dayTrips.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            {dayTrips.map((trip) => (
-              <Link
-                key={trip.slug}
-                href={`/day-trips/${trip.slug}`}
-                className="inline-flex items-center gap-1.5 rounded-full bg-burgundy-50 dark:bg-burgundy-950 border border-burgundy-200 dark:border-burgundy-800 px-3 py-1 text-xs font-medium text-burgundy-700 dark:text-burgundy-300 hover:bg-burgundy-100 dark:hover:bg-burgundy-900 transition-colors"
-              >
-                <Route className="h-3 w-3" />
-                {trip.title}
-              </Link>
-            ))}
-          </div>
-        )}
+            {/* Notes */}
+            <div className="max-w-xl">
+              <NotesEditor wineryId={winery.id} />
+            </div>
+          </main>
 
-        {/* About + Gallery (left) / Visit Info (right) */}
-        <WineryInfoSection winery={winery} photos={galleryPhotos} />
-
-        {/* Tasting Experiences — primary visitor content */}
-        <div className="mt-8">
-          <TastingTable tastings={tastings} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
-        </div>
-
-        {/* Wines — secondary reference */}
-        <div className="mt-8">
-          <WineTable wines={wineryWines} curated={!!winery.curated} websiteUrl={winery.websiteUrl} phone={winery.phone} affiliateUrl={affiliateUrl} wineryId={winery.id} wineryName={winery.name} winerySlug={winery.slug} />
-        </div>
-
-        {/* Shop Wines Online (affiliate, only when env var set) */}
-        {affiliateUrl && wineryWines.length > 0 && (
-          <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
-            <h3 className="font-heading text-lg font-semibold mb-2">
-              Shop {winery.name} Wines Online
-            </h3>
-            <p className="text-sm text-[var(--muted-foreground)] mb-4">
-              Can&apos;t visit in person? Browse and buy {winery.name} wines from trusted online retailers.
-            </p>
-            <a
-              href={affiliateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-            >
-              Browse Wines Online
-            </a>
-          </div>
-        )}
-
-        {/* Hours — practical detail at bottom */}
-        <HoursSection hoursJson={winery.hoursJson} />
-
-        {/* Notes */}
-        <div className="mt-8 max-w-xl">
-          <NotesEditor wineryId={winery.id} />
+          {/* Sidebar — RIGHT */}
+          <aside className="lg:col-span-1 border-t border-[var(--border)] pt-8 lg:border-t-0 lg:pt-0">
+            <WinerySidebar winery={winery} dayTrips={dayTrips} />
+          </aside>
         </div>
       </div>
 
       {/* More Wineries in Sub-Region */}
       {moreInRegion.length > 0 && (
         <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-heading text-xl font-bold">
                 More Wineries in {winery.subRegion}
@@ -416,6 +469,33 @@ export default async function WineryDetailPage({
           </div>
         </section>
       )}
+
+      {/* Explore More */}
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 text-center">
+          <h3 className="font-heading text-lg font-semibold mb-2">
+            Planning a wine country trip?
+          </h3>
+          <p className="text-sm text-[var(--muted-foreground)] mb-5">
+            Explore curated day trips and build your own custom route.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <Link
+              href="/day-trips"
+              className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+            >
+              Browse Day Trips
+            </Link>
+            <Link
+              href="/plan-trip"
+              className="rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+            >
+              Plan Your Trip
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </>
   );
 }

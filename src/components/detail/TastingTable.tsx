@@ -35,7 +35,7 @@ export function TastingTable({
 }) {
   if (tastings.length === 0) {
     return (
-      <div className="mb-8">
+      <div>
         <h2 className="font-heading text-2xl font-semibold mb-4">
           Tasting Experiences
         </h2>
@@ -46,14 +46,17 @@ export function TastingTable({
           </p>
           {(websiteUrl || phone) && (
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              Contact {wineryName || "the winery"} directly for current offerings
+              Contact {wineryName || "the winery"} directly for current
+              offerings
               {" \u2014 "}
               {websiteUrl && (
                 <TrackedLink
                   href={websiteUrl}
                   clickType="website"
                   wineryId={wineryId}
-                  sourcePage={winerySlug ? `/wineries/${winerySlug}` : undefined}
+                  sourcePage={
+                    winerySlug ? `/wineries/${winerySlug}` : undefined
+                  }
                   sourceComponent="TastingTable"
                   className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
                 >
@@ -78,20 +81,21 @@ export function TastingTable({
   }
 
   return (
-    <div className="mb-8">
+    <div>
       <h2 className="font-heading text-2xl font-semibold mb-4">
         Tasting Experiences
       </h2>
       {!curated && (
         <p className="mb-3 text-xs text-[var(--muted-foreground)] italic">
-          Prices and availability are approximate and may not reflect current offerings.
+          Prices and availability are approximate and may not reflect current
+          offerings.
         </p>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="space-y-4">
         {tastings.map((t) => (
           <div
             key={t.id}
-            className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6"
+            className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between">
               <h3 className="font-heading text-lg font-semibold">{t.name}</h3>
@@ -131,10 +135,12 @@ export function TastingTable({
                 Includes: {t.includes}
               </p>
             )}
-            {(t.sourceUrl || websiteUrl) && (
-              <div className="mt-3 pt-3 border-t border-[var(--border)]">
+            {websiteUrl && (
+              <div className="mt-4 pt-4 border-t border-[var(--border)]">
                 <BookTastingCTA
-                  websiteUrl={(t.sourceUrl || websiteUrl)!}
+                  websiteUrl={
+                    t.sourceUrl?.startsWith("http") ? t.sourceUrl : websiteUrl
+                  }
                   wineryId={wineryId}
                   winerySlug={winerySlug}
                   sourceComponent="TastingTable"

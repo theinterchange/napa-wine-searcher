@@ -9,6 +9,7 @@ export const wineryPhotos = sqliteTable(
       .notNull()
       .references(() => wineries.id),
     url: text("url").notNull(),
+    blobUrl: text("blob_url"),
     source: text("source").notNull(), // "google_places" | "website"
     altText: text("alt_text"),
     fetchedAt: text("fetched_at"),

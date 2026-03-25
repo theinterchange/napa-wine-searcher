@@ -38,18 +38,6 @@
   --color-gold-900: #6c3e16;
   --color-gold-950: #3f1f08;
 
-  --color-olive-50: #f6f7ee;
-  --color-olive-100: #eaedd9;
-  --color-olive-200: #d6ddb7;
-  --color-olive-300: #bcc88c;
-  --color-olive-400: #a4b367;
-  --color-olive-500: #879849;
-  --color-olive-600: #697937;
-  --color-olive-700: #515d2d;
-  --color-olive-800: #424b28;
-  --color-olive-900: #394125;
-  --color-olive-950: #1d2311;
-
   --font-heading: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
 
@@ -220,4 +208,45 @@ h1, h2, h3, h4, h5, h6 {
   border-color: var(--border);
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
+}
+
+/* Editorial detail page utilities */
+.editorial-rule {
+  display: block;
+  width: 48px;
+  height: 2px;
+  background-color: var(--color-gold-600);
+  margin-top: 0.75rem;
+}
+
+.dark .editorial-rule {
+  background-color: var(--color-gold-700);
+}
+
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-gold-700);
+}
+
+.dark .section-label {
+  color: var(--color-gold-400);
+}
+
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  line-height: 0.8;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+  color: var(--color-burgundy-700);
+}
+
+.dark .drop-cap::first-letter {
+  color: var(--color-burgundy-400);
 }

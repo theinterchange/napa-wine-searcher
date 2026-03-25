@@ -10,6 +10,7 @@ interface BookTastingCTAProps {
   sourcePage?: string;
   sourceComponent?: string;
   size?: "sm" | "md" | "lg";
+  variant?: "filled" | "outline";
   label?: React.ReactNode;
 }
 
@@ -20,6 +21,7 @@ export function BookTastingCTA({
   sourcePage,
   sourceComponent,
   size = "md",
+  variant = "filled",
   label = "Book with Winery" as React.ReactNode,
 }: BookTastingCTAProps) {
   let href = websiteUrl;
@@ -47,7 +49,11 @@ export function BookTastingCTA({
       wineryId={wineryId}
       sourcePage={sourcePage ?? (winerySlug ? `/wineries/${winerySlug}` : undefined)}
       sourceComponent={sourceComponent}
-      className={`inline-flex items-center rounded-lg bg-gold-500 font-semibold text-burgundy-950 hover:bg-gold-400 transition-colors ${sizeClasses[size]}`}
+      className={`inline-flex items-center rounded-lg font-semibold transition-colors ${sizeClasses[size]} ${
+        variant === "outline"
+          ? "border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--muted)]"
+          : "bg-gold-500 text-burgundy-950 hover:bg-gold-400"
+      }`}
     >
       <CalendarCheck className={size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"} />
       {label}

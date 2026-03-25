@@ -1,0 +1,1 @@
+ALTER TABLE `wineries` ADD `visit_url` text;

@@ -1,0 +1,1 @@
+ALTER TABLE `winery_photos` ADD `blob_url` text;

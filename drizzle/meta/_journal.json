@@ -15,6 +15,41 @@
       "when": 1772746987756,
       "tag": "0001_abandoned_cassandra_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1773772877409,
+      "tag": "0002_loud_green_goblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1774324876216,
+      "tag": "0003_tricky_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1774397081858,
+      "tag": "0004_pretty_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1774411964142,
+      "tag": "0005_medical_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1774416809465,
+      "tag": "0006_third_smasher",
+      "breakpoints": true
     }
   ]
 }

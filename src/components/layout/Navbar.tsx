@@ -64,7 +64,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Wine className="h-6 w-6 text-burgundy-900 dark:text-burgundy-200" />
-            <span className="font-heading text-xl font-extrabold text-burgundy-900 dark:text-gold-200">
+            <span className="font-heading text-xl font-extrabold text-burgundy-900 dark:text-gold-600">
               Napa Sonoma Guide
             </span>
           </Link>

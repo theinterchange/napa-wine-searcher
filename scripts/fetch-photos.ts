@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
+import { put } from "@vercel/blob";
 import { wineries, wineryPhotos, scrapeLog } from "../src/db/schema";
 import { eq, isNotNull, sql, and } from "drizzle-orm";
 
@@ -44,6 +45,12 @@ if (!API_KEY && !dryRun) {
   process.exit(1);
 }
 
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+if (!BLOB_TOKEN && !dryRun) {
+  console.error("Missing BLOB_READ_WRITE_TOKEN in environment");
+  process.exit(1);
+}
+
 const client = createClient({ url: dbUrl, authToken: dbAuthToken });
 const db = drizzle(client);
 
@@ -81,6 +88,33 @@ async function getPhotoUrl(photoName: string): Promise<string | null> {
   }
   const data = await res.json();
   return data.photoUri || null;
+}
+
+async function uploadToBlob(
+  googleUrl: string,
+  winerySlug: string,
+  photoIndex: number
+): Promise<string | null> {
+  try {
+    const res = await fetch(googleUrl);
+    if (!res.ok) {
+      console.error(`  Failed to download image: ${res.status}`);
+      return null;
+    }
+    const contentType = res.headers.get("content-type") || "image/jpeg";
+    const ext = contentType.includes("png") ? "png" : "jpg";
+    const buffer = Buffer.from(await res.arrayBuffer());
+
+    const blob = await put(
+      `winery-photos/${winerySlug}/${photoIndex}.${ext}`,
+      buffer,
+      { access: "public", contentType, token: BLOB_TOKEN, addRandomSuffix: false, allowOverwrite: true }
+    );
+    return blob.url;
+  } catch (err) {
+    console.error(`  Blob upload failed: ${err}`);
+    return null;
+  }
 }
 
 type RefreshReason = "no photos" | "stale" | "content changed" | "force" | "targeted";
@@ -219,14 +253,22 @@ async function main() {
     }
 
     const refs = photoRefs.slice(0, MAX_PHOTOS);
-    const urls: string[] = [];
+    const photos: { googleUrl: string; blobUrl: string }[] = [];
 
-    for (const ref of refs) {
-      const photoUrl = await getPhotoUrl(ref.name);
-      if (photoUrl) urls.push(photoUrl);
+    for (let pi = 0; pi < refs.length; pi++) {
+      const googleUrl = await getPhotoUrl(refs[pi].name);
+      if (!googleUrl) continue;
+
+      const blobUrl = await uploadToBlob(googleUrl, winery.slug, pi);
+      if (blobUrl) {
+        photos.push({ googleUrl, blobUrl });
+      } else {
+        // Store Google URL as fallback even if Blob upload fails
+        photos.push({ googleUrl, blobUrl: googleUrl });
+      }
     }
 
-    if (urls.length === 0) {
+    if (photos.length === 0) {
       console.log("  No photo URLs resolved, skipping");
       await sleep(DELAY_MS);
       continue;
@@ -235,17 +277,24 @@ async function main() {
     // Delete existing photos for this winery, then insert new ones
     await db.delete(wineryPhotos).where(eq(wineryPhotos.wineryId, winery.id));
     await db.insert(wineryPhotos).values(
-      urls.map((url) => ({
+      photos.map((p) => ({
         wineryId: winery.id,
-        url,
+        url: p.googleUrl,
+        blobUrl: p.blobUrl,
         source: "google_places" as const,
         altText: `Photo of ${winery.name}`,
         fetchedAt: now,
       }))
     );
 
-    totalPhotos += urls.length;
-    console.log(`  Saved ${urls.length} photos`);
+    // Set hero image to first photo's Blob URL
+    await db
+      .update(wineries)
+      .set({ heroImageUrl: photos[0].blobUrl })
+      .where(eq(wineries.id, winery.id));
+
+    totalPhotos += photos.length;
+    console.log(`  Saved ${photos.length} photos (Blob)`);
     await sleep(DELAY_MS);
   }
 
