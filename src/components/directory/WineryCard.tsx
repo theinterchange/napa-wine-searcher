@@ -41,6 +41,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             src={winery.heroImageUrl}
             alt={winery.name}
             fill
+            unoptimized
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform group-hover:scale-105"
           />
@@ -53,7 +54,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             Verified
           </span>
         ) : (
-          <span className="absolute top-2 right-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+          <span className="absolute top-2 right-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
             Preview
           </span>
         )}
@@ -110,7 +111,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             </span>
           )}
           {winery.dogFriendly && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-olive-100 text-olive-700 dark:bg-olive-900 dark:text-olive-300">
+            <span className="text-xs px-1.5 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
               Dog OK
             </span>
           )}

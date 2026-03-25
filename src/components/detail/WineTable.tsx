@@ -54,8 +54,8 @@ function WineListItem({
 }) {
   return (
     <div className="py-4 first:pt-0">
-      <div className="flex items-baseline gap-3">
-        <h4 className="font-heading text-base font-semibold shrink-0">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h4 className="font-heading text-base font-semibold">
           {wine.name}
         </h4>
         <WineTypeBadge wineType={wine.wineType} category={wine.category} />
@@ -64,7 +64,7 @@ function WineListItem({
             {wine.vintage}
           </span>
         )}
-        <span className="flex-1" />
+        <span className="flex-1 min-w-[2rem]" />
         {wine.price != null && (
           <span className="text-sm font-semibold text-burgundy-700 dark:text-burgundy-400 shrink-0">
             {formatPrice(wine.price)}
