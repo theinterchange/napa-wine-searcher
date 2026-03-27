@@ -94,43 +94,103 @@ export default async function NapaSubRegionPage({
         </nav>
       </div>
 
-      {/* Hero */}
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold">
-          {data.region.name} Wineries
-        </h1>
-        <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
-          <span>
-            <strong className="text-[var(--foreground)]">
-              {data.wineries.length}
-            </strong>{" "}
-            {data.wineries.length === 1 ? "winery" : "wineries"}
-          </span>
-          {content && (
-            <>
-              <span className="text-[var(--border)]" aria-hidden="true">
-                |
-              </span>
-              <span className="flex items-center gap-1">
-                <Grape className="h-3.5 w-3.5" />
-                Known for {content.signatureVarietal}
-              </span>
-            </>
-          )}
-        </div>
-      </section>
+      {/* Hero with region image */}
+      {(() => {
+        const topWinery = data.wineries.find((w) => w.heroImageUrl);
+        return topWinery?.heroImageUrl ? (
+          <div className="relative bg-burgundy-900 text-white overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${topWinery.heroImageUrl})` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            </div>
+            <div className="relative mx-auto max-w-7xl px-4 pt-32 sm:pt-40 pb-8 sm:px-6 lg:px-8">
+              <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+                {data.region.name} Wineries
+              </h1>
+              <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/70">
+                <span>{data.wineries.length} wineries in our guide</span>
+                {content && (
+                  <>
+                    <span>|</span>
+                    <span className="flex items-center gap-1">
+                      <Grape className="h-3.5 w-3.5" />
+                      Known for {content.signatureVarietal}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+              {data.region.name} Wineries
+            </h1>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
+              <span>{data.wineries.length} wineries in our guide</span>
+              {content && (
+                <>
+                  <span className="text-[var(--border)]">|</span>
+                  <span className="flex items-center gap-1">
+                    <Grape className="h-3.5 w-3.5" />
+                    Known for {content.signatureVarietal}
+                  </span>
+                </>
+              )}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* About Sub-Region */}
       {content && (
-        <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-6">
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <h2 className="font-heading text-2xl font-bold mb-4">
             About {data.region.name}
           </h2>
+
+          {/* Why Visit */}
+          {content.whyVisit && (
+            <p className="text-base leading-relaxed text-[var(--muted-foreground)] mb-6 max-w-3xl">
+              {content.whyVisit}
+            </p>
+          )}
+
           <div className="max-w-3xl space-y-4 text-[var(--muted-foreground)] leading-relaxed">
             {content.description.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
+
+          {/* Top Experiences */}
+          {content.topExperiences && content.topExperiences.length > 0 && (
+            <div className="mt-8 max-w-3xl">
+              <h3 className="font-heading text-xl font-semibold mb-4">
+                Top Experiences in {data.region.name}
+              </h3>
+              <ul className="space-y-3">
+                {content.topExperiences.map((exp, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-[var(--muted-foreground)]">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-burgundy-500 shrink-0" />
+                    {exp}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Insider Tip */}
+          {content.insiderTip && (
+            <div className="mt-8 max-w-3xl rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
+              <h3 className="text-sm font-semibold mb-2">Local Tip</h3>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                {content.insiderTip}
+              </p>
+            </div>
+          )}
+
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
             <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
               <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
