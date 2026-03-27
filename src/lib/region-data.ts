@@ -257,6 +257,8 @@ export async function getMoreWineriesInRegion(
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
       curated: wineries.curated,
       heroImageUrl: wineries.heroImageUrl,
+      lat: wineries.lat,
+      lng: wineries.lng,
     })
     .from(wineries)
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
