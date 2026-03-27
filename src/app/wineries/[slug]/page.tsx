@@ -15,6 +15,8 @@ import { VisitedButton } from "@/components/detail/VisitedButton";
 import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { FAQSchema } from "@/components/seo/FAQSchema";
+import { FAQSection } from "@/components/region/FAQSection";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
@@ -443,6 +445,117 @@ export default async function WineryDetailPage({
           </aside>
         </div>
       </div>
+
+      {/* FAQ Section — generated from verified data */}
+      {(() => {
+        const faqs: { question: string; answer: string }[] = [];
+        const valleyName =
+          winery.valley === "napa"
+            ? "Napa Valley"
+            : winery.valley === "sonoma"
+              ? "Sonoma County"
+              : null;
+
+        const websiteNote = winery.websiteUrl
+          ? ` We recommend checking ${winery.name}'s website directly before visiting to confirm current policies.`
+          : " We recommend contacting the winery directly before visiting to confirm current policies.";
+
+        // Reservation
+        faqs.push({
+          question: `Do I need a reservation to visit ${winery.name}?`,
+          answer: winery.reservationRequired
+            ? `Yes, reservations are required at ${winery.name}. We recommend booking ahead, especially on weekends and during peak season (August\u2013October).${websiteNote}`
+            : `${winery.name} accepts walk-in visitors, though reservations are recommended on weekends and during busy seasons.${websiteNote}`,
+        });
+
+        // Tasting cost — only if we have tasting data
+        const tastingPrices = tastings
+          .map((t) => t.price)
+          .filter((p): p is number => p != null && p > 0);
+        if (tastingPrices.length > 0) {
+          const minPrice = Math.min(...tastingPrices);
+          const maxPrice = Math.max(...tastingPrices);
+          const priceNote = " Prices are subject to change \u2014 verify current pricing with the winery before visiting.";
+          faqs.push({
+            question: `How much does a tasting cost at ${winery.name}?`,
+            answer:
+              minPrice === maxPrice
+                ? `Tastings start at $${minPrice} per person.${priceNote}`
+                : `Tastings range from $${minPrice} to $${maxPrice} per person. ${winery.name} offers ${tastings.length} tasting experience${tastings.length > 1 ? "s" : ""}.${priceNote}`,
+          });
+        }
+
+        // Dog-friendly
+        if (winery.dogFriendly) {
+          const dogConfident = winery.dogFriendlySource;
+          faqs.push({
+            question: `Is ${winery.name} dog-friendly?`,
+            answer: winery.dogFriendlyNote
+              ? `Yes. ${winery.dogFriendlyNote}${!dogConfident ? " Policies may change, so please confirm with the winery before bringing your pet." : ""}`
+              : `Based on our research, ${winery.name} welcomes well-behaved dogs. Pet policies can change seasonally, so we recommend confirming directly with the winery before your visit.`,
+          });
+        } else {
+          faqs.push({
+            question: `Is ${winery.name} dog-friendly?`,
+            answer: `Based on our information, ${winery.name} does not allow dogs. If this is important to your visit, contact the winery to confirm their current policy or consider nearby dog-friendly wineries in ${winery.subRegion || valleyName || "the area"}.`,
+          });
+        }
+
+        // Kid-friendly
+        if (winery.kidFriendly) {
+          const kidConfidence = winery.kidFriendlyConfidence;
+          faqs.push({
+            question: `Is ${winery.name} kid-friendly?`,
+            answer: kidConfidence === "medium"
+              ? `${winery.name} may accommodate families, but we recommend confirming their children's policy directly before visiting.${winery.kidFriendlyNote ? ` ${winery.kidFriendlyNote.charAt(0).toUpperCase() + winery.kidFriendlyNote.slice(1)}.` : ""}`
+              : winery.kidFriendlyNote
+                ? `Yes. ${winery.kidFriendlyNote} Policies may vary, so it's always a good idea to check with the winery when planning a family visit.`
+                : `Yes, ${winery.name} is family-friendly. We recommend contacting the winery for specific details on their children's policy.`,
+          });
+        } else {
+          faqs.push({
+            question: `Can I bring kids to ${winery.name}?`,
+            answer: `Based on our information, ${winery.name} is geared toward adult guests (21+). If you're visiting with family, we suggest contacting the winery directly to discuss options.`,
+          });
+        }
+
+        // Location
+        if (winery.address && winery.city) {
+          faqs.push({
+            question: `Where is ${winery.name} located?`,
+            answer: `${winery.name} is located at ${winery.address}, ${winery.city}${winery.subRegion ? `, in the ${winery.subRegion} sub-region of ${valleyName}` : ""}. We recommend using the address for GPS navigation, as some wine country roads can be tricky.`,
+          });
+        }
+
+        // Hours
+        if (winery.hoursJson) {
+          try {
+            const hours = JSON.parse(winery.hoursJson);
+            const hasHours = Object.values(hours).some(
+              (v) => v && v !== "Closed"
+            );
+            if (hasHours) {
+              const sample = hours.mon || hours.tue || hours.sat;
+              faqs.push({
+                question: `What are the hours at ${winery.name}?`,
+                answer: sample
+                  ? `${winery.name} is typically open ${sample}. Hours may vary by day and season, and wineries sometimes close for private events or holidays. Always confirm hours directly with the winery before making the trip.`
+                  : `Hours vary by day and season. We recommend confirming hours directly with ${winery.name} before visiting.`,
+              });
+            }
+          } catch {}
+        }
+
+        return faqs.length > 0 ? (
+          <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+            <h2 className="font-heading text-2xl font-semibold mb-6">
+              Frequently Asked Questions
+            </h2>
+            <FAQSection faqs={faqs} />
+            <FAQSchema faqs={faqs} />
+          </section>
+        ) : null;
+      })()}
 
       {/* More Wineries in Sub-Region */}
       {moreInRegion.length > 0 && (
