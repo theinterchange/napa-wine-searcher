@@ -211,6 +211,45 @@ export const SUBREGION_CONTENT: Record<string, SubRegionContent> = {
     topExperiences: ["Antinori Napa Valley — one of Italy's most storied wine families in a Napa setting", "High-elevation tasting with volcanic terroir you can taste in every sip"],
     insiderTip: "Atlas Peak has very limited winery access. Book well in advance and consider combining with nearby Stags Leap District wineries.",
   },
+  "oak-knoll-district": {
+    description: [
+      "Oak Knoll District sits in the southern part of Napa Valley, just north of the city of Napa. The AVA was established in 2004, recognized for its cooler climate due to afternoon breezes from San Pablo Bay that moderate temperatures.",
+      "The district's benchland soils and moderate climate make it ideal for a range of varieties. Cabernet Sauvignon and Merlot thrive on the warmer western bench, while Chardonnay and Riesling excel in the cooler eastern areas.",
+    ],
+    knownFor: ["Cabernet Sauvignon", "Merlot", "Chardonnay"],
+    bestTimeToVisit: "Year-round; the moderate climate makes it comfortable in all seasons",
+    terroir: "Well-drained benchland soils with cooling bay breezes that moderate temperatures",
+    signatureVarietal: "Cabernet Sauvignon",
+    whyVisit: "Oak Knoll District bridges the gap between cool Carneros and warmer upper Napa. Its wineries include Napa pioneers like Trefethen Family Vineyards, and the proximity to downtown Napa makes it easy to combine wine tasting with the city's restaurants and shops.",
+    topExperiences: ["Trefethen Family Vineyards — a pioneering Napa estate with one of the valley's most beautiful historic properties", "Black Stallion Estate Winery — grand estate with Cabernet and Chardonnay tastings", "Exploring the intersection of cool Carneros and warm valley-floor wines"],
+    insiderTip: "Oak Knoll's afternoon bay breezes make it noticeably cooler than upper Napa — great for comfortable tastings even in summer. The wineries here tend to be less crowded than those in St. Helena or Yountville.",
+  },
+  "coombsville": {
+    description: [
+      "Coombsville is one of Napa's newest AVAs, established in 2011. Located in the southeastern hills east of the city of Napa, it occupies a sheltered bowl-shaped landscape with volcanic soils and a cooler microclimate than the valley floor.",
+      "The area's volcanic tuff and ash soils, combined with consistent cool morning fog and warm afternoon sun, create wines with distinctive minerality and structure. Small-production wineries dominate here, many by appointment only.",
+    ],
+    knownFor: ["Cabernet Sauvignon", "Syrah", "Merlot"],
+    bestTimeToVisit: "Spring through fall; the sheltered terrain provides comfortable conditions",
+    terroir: "Volcanic tuff and ash soils in a sheltered bowl with cool morning fog",
+    signatureVarietal: "Cabernet Sauvignon",
+    whyVisit: "Coombsville is Napa's newest frontier — a small, intimate AVA where boutique producers craft wines with a mineral-driven character distinct from the valley floor. With only a handful of wineries, tastings feel personal and unhurried.",
+    topExperiences: ["Palmaz Vineyards — one of the most technologically advanced caves in Napa Valley", "Small-lot, appointment-only tastings with hands-on winemakers", "Exploring the distinctive volcanic terroir east of the city of Napa"],
+    insiderTip: "Coombsville wineries are mostly by appointment and produce small quantities. Book ahead and expect a more intimate, personal tasting experience than the larger valley-floor estates.",
+  },
+  "downtown-napa": {
+    description: [
+      "Downtown Napa has transformed from a quiet agricultural town into a vibrant tasting district. The First Street corridor and surrounding blocks now host dozens of tasting rooms, bringing the wines of Napa Valley to an urban, walkable setting.",
+      "These tasting rooms offer a different experience from estate wineries — you can sample wines from multiple producers in a single afternoon, all within walking distance of restaurants, shops, and the Napa River.",
+    ],
+    knownFor: ["Urban tasting rooms", "Multi-winery walks", "Restaurant scene"],
+    bestTimeToVisit: "Year-round; indoor tasting rooms mean weather doesn't matter",
+    terroir: "Urban tasting rooms representing wines from across Napa Valley's AVAs",
+    signatureVarietal: "Various",
+    whyVisit: "Downtown Napa lets you taste wines from across the valley without driving between estates. The walkable First Street corridor combines tasting rooms with restaurants and shops — perfect for a relaxed afternoon or as a home base for your wine country trip.",
+    topExperiences: ["Walking the First Street tasting room corridor", "Dinner at one of downtown's acclaimed restaurants", "Combining urban tastings with the Napa Valley Wine Train", "Oxbow Public Market for food, wine, and artisan goods"],
+    insiderTip: "Downtown Napa is the only place in the valley where you can walk between multiple tasting rooms without driving. Start at Oxbow Public Market for lunch, then work your way down First Street. Tasting fees here tend to be lower than at estate wineries.",
+  },
   "mount-veeder": {
     description: [
       "Mount Veeder rises along the western edge of Napa Valley in the Mayacamas Mountains, producing some of the valley's most powerful and complex mountain wines. Vineyards here are planted on steep, rugged terrain that was first planted in the 1860s, making it one of Napa's oldest winegrowing areas.",
