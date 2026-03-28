@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -81,6 +82,19 @@ export function HeroFeatured({
           aria-hidden={i !== current}
         />
       ))}
+
+      {/* Preload first hero image for LCP */}
+      {wineries[0]?.heroImageUrl && (
+        <Image
+          src={wineries[0].heroImageUrl}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover pointer-events-none"
+          style={{ zIndex: -2, opacity: 0 }}
+        />
+      )}
 
       {/* Fallback bg if no image */}
       <div className="absolute inset-0 bg-burgundy-950" style={{ zIndex: -1 }} />

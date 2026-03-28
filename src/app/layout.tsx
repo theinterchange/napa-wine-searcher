@@ -7,7 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CompareFloatingBar } from "@/components/compare/CompareFloatingBar";
 import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+
 import { BASE_URL } from "@/lib/constants";
 
 const playfair = Playfair_Display({
@@ -94,7 +94,6 @@ export default function RootLayout({
           <CompareFloatingBar />
         </Providers>
         <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

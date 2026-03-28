@@ -16,6 +16,7 @@ import {
   Bookmark,
   LogOut,
   Newspaper,
+  BedDouble,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -25,8 +26,8 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/wineries", label: "Wineries" },
+  { href: "/where-to-stay", label: "Where to Stay", icon: BedDouble },
   { href: "/map", label: "Map", icon: Map },
-  { href: "/compare", label: "Compare", icon: GitCompareArrows },
   { href: "/plan-trip", label: "Plan Trip", icon: Route },
   { href: "/blog", label: "Blog", icon: Newspaper },
 ];

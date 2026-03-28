@@ -5,11 +5,13 @@ import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
 import { sql, count, eq, desc, and } from "drizzle-orm";
-import { auth } from "@/auth";
+import { SignUpPrompt } from "@/components/home/SignUpPrompt";
 import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
+
+export const revalidate = 3600; // ISR: regenerate every hour
 
 export const metadata: Metadata = {
   title: "Napa Sonoma Guide | Discover Wineries in Napa Valley & Sonoma County",
@@ -29,7 +31,9 @@ export const metadata: Metadata = {
 };
 
 async function getFeaturedWineries() {
-  return db
+  // Fetch top 10 curated wineries by rating, then shuffle in JS
+  // Avoids expensive RANDOM() full table scan in SQL
+  const top = await db
     .select({
       slug: wineries.slug,
       name: wineries.name,
@@ -41,8 +45,15 @@ async function getFeaturedWineries() {
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(eq(wineries.curated, true))
-    .orderBy(sql`RANDOM()`)
-    .limit(5);
+    .orderBy(desc(wineries.googleRating))
+    .limit(10);
+
+  // Fisher-Yates shuffle and take 5
+  for (let i = top.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [top[i], top[j]] = [top[j], top[i]];
+  }
+  return top.slice(0, 5);
 }
 
 async function getTotalWineries() {
@@ -99,11 +110,10 @@ async function getHomepageWineries() {
 }
 
 export default async function HomePage() {
-  const [featured, totalWineries, session, dayTripCount, homepageWineries, popularRegions] =
+  const [featured, totalWineries, dayTripCount, homepageWineries, popularRegions] =
     await Promise.all([
       getFeaturedWineries(),
       getTotalWineries(),
-      auth(),
       getDayTripCount(),
       getHomepageWineries(),
       getPopularSubRegions(),
@@ -206,52 +216,7 @@ export default async function HomePage() {
       {/* 5. Account CTA + Email Capture */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          {!session && (
-            <div className="max-w-3xl mx-auto mb-12 text-center">
-              <h2 className="font-heading text-2xl font-bold mb-3">
-                Create Your Free Account
-              </h2>
-              <p className="text-[var(--muted-foreground)] mb-6">
-                Get more out of your wine country experience with a free account.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left mb-6">
-                <div className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-                  <Heart className="h-5 w-5 text-burgundy-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Save Favorites</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      Bookmark wineries you love
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-                  <Route className="h-5 w-5 text-burgundy-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Plan Trips</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      Build and save custom routes
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-                  <BookOpen className="h-5 w-5 text-burgundy-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">Tasting Journal</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      Log and rate wines you try
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
-              >
-                Get Started — It&apos;s Free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          )}
+          <SignUpPrompt />
           <div className="max-w-xl mx-auto">
             <EmailCapture source="guide" />
           </div>

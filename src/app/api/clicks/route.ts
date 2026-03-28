@@ -5,7 +5,7 @@ import { outboundClicks } from "@/db/schema";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { wineryId, clickType, destinationUrl, sourcePage, sourceComponent } =
+    const { wineryId, accommodationId, clickType, destinationUrl, sourcePage, sourceComponent } =
       body;
 
     if (!clickType || !destinationUrl) {
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
 
     await db.insert(outboundClicks).values({
       wineryId: wineryId ?? null,
+      accommodationId: accommodationId ?? null,
       clickType,
       destinationUrl,
       sourcePage: sourcePage ?? null,

@@ -7,6 +7,7 @@ interface TrackedLinkProps
   href: string;
   clickType: TrackClickParams["clickType"];
   wineryId?: number | null;
+  accommodationId?: number | null;
   sourcePage?: string;
   sourceComponent?: string;
 }
@@ -15,6 +16,7 @@ export function TrackedLink({
   href,
   clickType,
   wineryId,
+  accommodationId,
   sourcePage,
   sourceComponent,
   children,
@@ -24,6 +26,7 @@ export function TrackedLink({
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     trackClick({
       wineryId,
+      accommodationId,
       clickType,
       destinationUrl: href,
       sourcePage,

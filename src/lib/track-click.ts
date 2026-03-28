@@ -1,6 +1,7 @@
 export interface TrackClickParams {
   wineryId?: number | null;
-  clickType: "website" | "book_tasting" | "buy_wine" | "affiliate" | "directions";
+  accommodationId?: number | null;
+  clickType: "website" | "book_tasting" | "buy_wine" | "affiliate" | "directions" | "book_hotel";
   destinationUrl: string;
   sourcePage?: string;
   sourceComponent?: string;

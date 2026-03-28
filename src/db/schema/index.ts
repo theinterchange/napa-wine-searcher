@@ -8,3 +8,4 @@ export * from "./scraping";
 export * from "./day-trips";
 export * from "./monetization";
 export * from "./user-engagement";
+export * from "./accommodations";

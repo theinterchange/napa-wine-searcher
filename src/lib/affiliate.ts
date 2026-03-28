@@ -19,6 +19,33 @@ export function wineSearchUrl(
   return url.toString();
 }
 
+/**
+ * Build a hotel booking URL with affiliate tracking.
+ * If the accommodation has a direct bookingUrl (affiliate deep link), use it.
+ * Otherwise fall back to the hotel's websiteUrl with UTM params.
+ */
+export function hotelBookingUrl(
+  bookingUrl: string | null,
+  websiteUrl: string | null
+): string | null {
+  const url = bookingUrl || websiteUrl;
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === "http:") parsed.protocol = "https:";
+    if (!bookingUrl) {
+      // Only add UTM params for direct website links (affiliate links have their own tracking)
+      parsed.searchParams.set("utm_source", "napasonomaguide");
+      parsed.searchParams.set("utm_medium", "affiliate");
+      parsed.searchParams.set("utm_campaign", "hotel_booking");
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
 export function wineryWinesUrl(wineryName: string): string | null {
   const affiliateId = process.env.NEXT_PUBLIC_NAPACABS_AFFILIATE_ID;
   if (!affiliateId) return null;
