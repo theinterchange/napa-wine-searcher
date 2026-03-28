@@ -48,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script
           defer
