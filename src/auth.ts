@@ -47,11 +47,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.isAdmin = user.email === process.env.ADMIN_EMAIL;
+      }
       return token;
     },
     async session({ session, token }) {
       if (token?.id) session.user.id = token.id as string;
+      if (token?.isAdmin) (session as unknown as Record<string, unknown>).isAdmin = true;
       return session;
     },
   },

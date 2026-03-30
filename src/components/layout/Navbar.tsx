@@ -125,7 +125,7 @@ export function Navbar() {
                         {label}
                       </Link>
                     ))}
-                    {session.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+                    {!!(session as unknown as Record<string, unknown>)?.isAdmin && (
                       <>
                         <div className="border-t border-[var(--border)] my-1" />
                         <Link

@@ -13,7 +13,6 @@ import {
 import { useState } from "react";
 import { formatDriveTime, formatDriveTimeRange } from "@/lib/geo";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { SaveTripButton } from "./SaveTripButton";
 
 interface TripSummaryProps {
@@ -131,16 +130,6 @@ export function TripSummary({ summary, stopIds, theme }: TripSummaryProps) {
         <SaveTripButton stopIds={stopIds} theme={theme} />
       </div>
 
-      <div className="mt-5 pt-5 border-t border-[var(--border)]">
-        <EmailCapture
-          source="itinerary"
-          heading="Email Me This Itinerary"
-          description="We'll send this route to your inbox so you can reference it on the go."
-          buttonText="Send"
-          successMessage="We'll email your itinerary shortly!"
-          compact
-        />
-      </div>
     </div>
   );
 }

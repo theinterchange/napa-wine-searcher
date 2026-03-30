@@ -6,7 +6,6 @@ import { getAllPosts, getAllTags } from "@/lib/blog";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogTagFilter } from "@/components/blog/BlogTagFilter";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { BASE_URL } from "@/lib/constants";
 
 export const revalidate = 86400;
@@ -120,10 +119,6 @@ export default async function BlogPage({
           </p>
         )}
 
-        {/* Email capture */}
-        <div className="mt-16">
-          <EmailCapture source="guide" />
-        </div>
       </div>
     </>
   );

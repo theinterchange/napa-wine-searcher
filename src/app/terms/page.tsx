@@ -37,9 +37,12 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-heading text-xl font-semibold mt-8 mb-3">4. Content Accuracy</h2>
+          <h2 className="font-heading text-xl font-semibold mt-8 mb-3">4. Content & AI Assistance</h2>
+          <p className="text-[var(--muted-foreground)] leading-relaxed mb-3">
+            Some editorial content on this site, including property descriptions, guides, and recommendations, is created with the assistance of artificial intelligence tools and reviewed by our team for accuracy. We use AI to help research and draft content, but all information is verified against public sources before publication.
+          </p>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
-            Winery information, including hours, prices, amenities, and tasting details, is provided for informational purposes only. While we strive to keep data accurate and up-to-date, winery details may change without notice. We recommend contacting wineries directly to confirm current information before visiting.
+            Winery and accommodation information, including hours, prices, amenities, and tasting details, is provided for informational purposes only. While we strive to keep data accurate and up-to-date, details may change without notice. We recommend contacting venues directly to confirm current information before visiting.
           </p>
         </section>
 

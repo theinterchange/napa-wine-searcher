@@ -755,7 +755,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
           Information on this page is sourced from public data and the
           property&apos;s website. Room types, dining options, and amenities may
           change — contact {accommodation.name} directly to confirm current
-          offerings and availability.
+          offerings and availability. This page may contain affiliate links. If
+          you book through our links, we may earn a small commission at no
+          extra cost to you.
         </p>
       </div>
 

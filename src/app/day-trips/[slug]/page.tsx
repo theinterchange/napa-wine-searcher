@@ -31,8 +31,6 @@ import {
 } from "@/lib/geo";
 import { ShareButton } from "@/components/social/ShareButton";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
-
 import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
@@ -401,16 +399,6 @@ export default async function DayTripDetailPage({
           ))}
         </div>
 
-        {/* Email This Route */}
-        <div className="mt-10 max-w-xl">
-          <EmailCapture
-            source="itinerary"
-            heading="Email This Route"
-            description="Get this day trip route sent to your inbox so you can reference it while you're out exploring wine country."
-            buttonText="Send Me This Route"
-            successMessage="We'll email this route to you shortly!"
-          />
-        </div>
       </div>
     </>
   );

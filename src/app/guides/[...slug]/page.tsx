@@ -6,7 +6,6 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import { FAQSection } from "@/components/region/FAQSection";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import {
   getAllGuides,
   getGuideBySlug,
@@ -342,9 +341,6 @@ export default async function GuidePage({
             <FAQSection faqs={guide.faqs} />
           </div>
         )}
-
-        {/* Email capture */}
-        <EmailCapture source="guide" />
 
         {/* Cross-links to related guides */}
         <div className="border-t border-[var(--border)] pt-8">

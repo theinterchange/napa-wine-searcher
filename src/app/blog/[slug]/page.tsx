@@ -7,7 +7,6 @@ import { getAllPosts, getAllSlugs, getPostBySlug } from "@/lib/blog";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { BASE_URL } from "@/lib/constants";
 
@@ -115,10 +114,6 @@ export default async function BlogPostPage({
         </section>
       )}
 
-      {/* Email capture */}
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-12">
-        <EmailCapture source="guide" />
-      </div>
     </>
   );
 }

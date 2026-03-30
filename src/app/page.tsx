@@ -10,7 +10,6 @@ import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 
 export const revalidate = 3600; // ISR: regenerate every hour
@@ -297,13 +296,10 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 6. Account CTA + Email Capture */}
+      {/* 6. Account CTA */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <SignUpPrompt />
-          <div className="max-w-xl mx-auto">
-            <EmailCapture source="guide" />
-          </div>
         </div>
       </section>
     </>
