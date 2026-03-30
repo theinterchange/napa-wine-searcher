@@ -21,7 +21,7 @@ export function ValleyHero({
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-center gap-2 mb-4">
           <Wine className="h-5 w-5 text-gold-400" />
-          <span className="text-sm font-medium text-gold-400/80">
+          <span className="text-sm font-medium text-gold-400">
             Napa Sonoma Guide
           </span>
         </div>
@@ -33,11 +33,11 @@ export function ValleyHero({
         </p>
 
         {/* Stat bar */}
-        <div className="mt-6 flex flex-wrap gap-4 text-sm text-white/60">
+        <div className="mt-6 flex flex-wrap gap-4 text-sm text-white/70">
           <span>
             <strong className="text-white">{wineryCount}</strong> Wineries
           </span>
-          <span className="text-white/30" aria-hidden="true">|</span>
+          <span className="text-white/50" aria-hidden="true">|</span>
           <span>
             <strong className="text-white">{subRegionCount}</strong> Sub-Regions
           </span>

@@ -13,11 +13,11 @@ export function RatingBadge({
 }) {
   const color =
     score >= 4.5
-      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200"
       : score >= 4.0
       ? "bg-gold-100 text-gold-800 dark:bg-gold-900 dark:text-gold-200"
       : score >= 3.5
-      ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+      ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
       : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
 
   return (

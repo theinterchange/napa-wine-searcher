@@ -27,17 +27,28 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
       return;
     }
     setLoading(true);
+    const prev = isFavorite;
+    setIsFavorite(!prev);
     try {
-      const method = isFavorite ? "DELETE" : "POST";
-      await fetch("/api/user/favorites", {
+      const method = prev ? "DELETE" : "POST";
+      const res = await fetch("/api/user/favorites", {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ wineryId }),
       });
-      const wasF = isFavorite;
-      setIsFavorite(!wasF);
-      setToast(wasF ? "Removed from favorites" : "Added to favorites");
+      if (!res.ok) {
+        console.error("Favorite toggle failed:", res.status);
+        setIsFavorite(prev);
+        setToast("Something went wrong");
+        setTimeout(() => setToast(null), 3000);
+        return;
+      }
+      setToast(prev ? "Removed from favorites" : "Added to favorites");
       setTimeout(() => setToast(null), 2000);
+    } catch {
+      setIsFavorite(prev);
+      setToast("Something went wrong");
+      setTimeout(() => setToast(null), 3000);
     } finally {
       setLoading(false);
     }

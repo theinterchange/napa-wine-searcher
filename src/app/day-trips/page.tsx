@@ -26,7 +26,7 @@ const THEME_COLORS: Record<string, string> = {
   budget:
     "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
   "dog-friendly":
-    "bg-olive-100 text-olive-700 dark:bg-olive-900 dark:text-olive-300",
+    "bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300",
   luxury:
     "bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300",
   historic:

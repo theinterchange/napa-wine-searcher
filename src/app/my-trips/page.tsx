@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { savedTrips, savedTripStops, wineries } from "@/db/schema";
+import { savedTrips, savedTripStops, wineries, visited } from "@/db/schema";
 import { eq, desc, inArray } from "drizzle-orm";
-import { Route, MapPin } from "lucide-react";
+import { Route } from "lucide-react";
 import Link from "next/link";
-import { CopyShareLink } from "@/components/trip/CopyShareLink";
+import { TripCard } from "@/components/trip/TripCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -40,10 +40,19 @@ export default async function MyTripsPage() {
         .orderBy(savedTripStops.stopOrder)
     : [];
 
-  const tripsWithStops = trips.map((trip) => ({
-    ...trip,
-    stops: allStops.filter((s) => s.tripId === trip.id),
-  }));
+  // Fetch visited winery IDs
+  const userVisited = await db
+    .select({ wineryId: visited.wineryId })
+    .from(visited)
+    .where(eq(visited.userId, session.user.id));
+  const visitedSet = new Set(userVisited.map((v) => v.wineryId));
+
+  const tripsWithStops = trips.map((trip) => {
+    const stops = allStops.filter((s) => s.tripId === trip.id);
+    const isCompleted =
+      stops.length > 0 && stops.every((s) => visitedSet.has(s.wineryId));
+    return { ...trip, stops, isCompleted };
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -55,49 +64,18 @@ export default async function MyTripsPage() {
       {tripsWithStops.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tripsWithStops.map((trip) => (
-            <div
+            <TripCard
               key={trip.id}
-              className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
-            >
-              <h3 className="font-heading font-semibold text-lg">{trip.name}</h3>
-              <div className="mt-2 space-y-1">
-                {trip.stops.map((stop, i) => (
-                  <p
-                    key={i}
-                    className="text-sm text-[var(--muted-foreground)] flex items-center gap-1.5"
-                  >
-                    <MapPin className="h-3 w-3 shrink-0" />
-                    {stop.wineryName}
-                  </p>
-                ))}
-              </div>
-              <div className="mt-4 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
-                {trip.theme && (
-                  <span className="rounded-full bg-[var(--muted)] px-2 py-0.5">
-                    {trip.theme}
-                  </span>
-                )}
-                <span>
-                  {new Date(trip.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-              <div className="mt-4 flex gap-2">
-                <Link
-                  href={`/plan-trip?stops=${trip.stops.map((s) => s.wineryId).join(",")}`}
-                  className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
-                >
-                  View Route
-                </Link>
-                {trip.shareCode && (
-                  <CopyShareLink
-                    path={`/shared/trip/${trip.shareCode}`}
-                  />
-                )}
-              </div>
-            </div>
+              trip={{
+                id: trip.id,
+                name: trip.name,
+                theme: trip.theme,
+                shareCode: trip.shareCode,
+                createdAt: trip.createdAt,
+                stops: trip.stops,
+              }}
+              isCompleted={trip.isCompleted}
+            />
           ))}
         </div>
       ) : (

@@ -32,6 +32,7 @@ export const wineJournalEntries = sqliteTable("wine_journal_entries", {
   wineryId: integer("winery_id").references(() => wineries.id, {
     onDelete: "set null",
   }),
+  entryType: text("entry_type").notNull().default("wine"),
   wineName: text("wine_name").notNull(),
   wineryName: text("winery_name"),
   vintage: integer("vintage"),

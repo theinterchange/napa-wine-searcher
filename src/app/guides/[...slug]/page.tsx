@@ -17,6 +17,7 @@ import {
   getWineriesByVarietal,
   getWineriesByTastingPrice,
   getWineriesByWinePrice,
+  getWineriesByExperience,
   getRegionComparisonData,
   getSubRegionComparisonData,
 } from "@/lib/guide-data";
@@ -84,6 +85,16 @@ async function getGuideData(guide: GuideDefinition) {
         wineries: await getWineriesByTastingPrice(guide.priceTier, guide.valley),
       };
     }
+  }
+
+  if (guide.type === "experience" && guide.experienceType) {
+    return {
+      wineries: await getWineriesByExperience(
+        guide.experienceType,
+        guide.valley,
+        guide.subRegionSlug
+      ),
+    };
   }
 
   if (guide.type === "comparison" && guide.compare) {

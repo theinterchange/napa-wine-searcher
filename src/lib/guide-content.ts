@@ -6,7 +6,7 @@ import { SUBREGION_CONTENT } from "./region-content";
 
 export interface GuideDefinition {
   slug: string;
-  type: "amenity" | "varietal" | "price" | "comparison";
+  type: "amenity" | "varietal" | "price" | "comparison" | "experience";
   title: string;
   h1: string;
   metaDescription: string;
@@ -19,6 +19,8 @@ export interface GuideDefinition {
   wineMaxPrice?: number;
   valley?: "napa" | "sonoma";
   subRegionSlug?: string;
+  // Experience type (romantic, groups, first-time)
+  experienceType?: "romantic" | "groups" | "first-time";
   // Comparison
   compare?: {
     region1: string; // valley or subregion slug
@@ -199,6 +201,74 @@ function getComparisonIntro(name1: string, name2: string): string[] {
     `Whether you're planning a day trip or a longer wine country vacation, understanding the differences will help you choose the right destination for your palate and preferences.`,
   ];
 }
+
+// ============================================================
+// Experience-based content (romantic, groups, first-time)
+// ============================================================
+
+const EXPERIENCE_INTROS: Record<string, (region: string) => string[]> = {
+  romantic: (region) => [
+    `Looking for a romantic wine tasting experience in ${region}? The best couples' wineries offer intimate settings, stunning vineyard views, and appointment-only tastings that feel like private tours. Think candlelit caves, hilltop patios, and personal attention from knowledgeable hosts.`,
+    `We've curated the highest-rated, reservation-required wineries in ${region} — the kind of places that turn a wine tasting into a memorable date. These intimate estates prioritize quality over quantity, making them ideal for a special occasion or a romantic getaway.`,
+  ],
+  groups: (region) => [
+    `Planning a group wine tasting in ${region}? Whether it's a bachelorette party, birthday celebration, or friends' trip, the best group-friendly wineries offer walk-in availability, spacious tasting rooms, and a lively atmosphere that welcomes larger parties.`,
+    `The wineries below welcome walk-in visitors, which means they're naturally set up for groups — no coordinating reservations for 10+ people. Many have outdoor patios, lawn games, and casual vibes perfect for celebrations.`,
+  ],
+  "first-time": (region) => [
+    `First time visiting ${region} wine country? Welcome! Wine tasting is more approachable than you might think. The wineries below are perfect for beginners — they're walk-in friendly, affordably priced, and highly rated by other visitors.`,
+    `Don't worry about knowing the "right" way to taste wine. These welcoming wineries have friendly staff who love introducing newcomers to wine country. Start here, and you'll quickly feel like a pro.`,
+  ],
+};
+
+const EXPERIENCE_FAQS: Record<string, (region: string) => { question: string; answer: string }[]> = {
+  romantic: (region) => [
+    {
+      question: `What are the most romantic wineries in ${region}?`,
+      answer: `The most romantic wineries in ${region} tend to be smaller, appointment-only estates with intimate tasting experiences. Look for wineries with cave tastings, private vineyard tours, hilltop views, and seated tastings with food pairings. The wineries on this page are our top picks, sorted by rating.`,
+    },
+    {
+      question: `Should we make reservations for a romantic wine tasting?`,
+      answer: `Yes — the best romantic wineries require reservations, which is actually a plus. It means fewer crowds, more personal attention, and a curated experience. Book at least a week in advance, especially for weekend visits during peak season (September-October).`,
+    },
+    {
+      question: `How many wineries should couples visit in a day?`,
+      answer: `For a relaxed, romantic experience, plan for 2-3 wineries per day. This allows you to savor each tasting without feeling rushed. Leave time for a leisurely lunch at a winery restaurant or local bistro between visits.`,
+    },
+  ],
+  groups: (region) => [
+    {
+      question: `What are the best wineries for groups in ${region}?`,
+      answer: `The best group-friendly wineries in ${region} are walk-in friendly with spacious tasting rooms and outdoor areas. They accommodate larger parties without requiring advance reservations, making coordination easier. The wineries listed on this page are our top picks.`,
+    },
+    {
+      question: `Do I need to book a limo or bus for group wine tasting?`,
+      answer: `For groups of 6+, a wine tour shuttle, limo, or hired van is strongly recommended. It eliminates the need for a designated driver and many wineries look favorably on groups that arrive by professional transport. Expect to pay $50-150 per person for a full-day tour.`,
+    },
+    {
+      question: `How many wineries can a group visit in a day?`,
+      answer: `Most groups comfortably visit 3-4 wineries in a full day. Factor in travel time between stops (15-30 minutes), tasting time (45-60 minutes each), and a lunch break. Starting early (10-11 AM) gives you the most flexibility.`,
+    },
+  ],
+  "first-time": (region) => [
+    {
+      question: `What should I know before my first wine tasting in ${region}?`,
+      answer: `No experience needed! Wineries welcome beginners. Tastings typically last 30-60 minutes and include 4-6 wines. You'll receive small pours — it's perfectly fine to use the spit bucket or not finish every pour. Wear comfortable shoes and bring water.`,
+    },
+    {
+      question: `How much does wine tasting cost in ${region}?`,
+      answer: `Tasting fees in ${region} range from free to $150+, but most beginner-friendly wineries charge $25-50 per person. Many waive the tasting fee if you purchase a bottle, making the tasting essentially free.`,
+    },
+    {
+      question: `What should I wear to a winery?`,
+      answer: `Wine country casual is the norm — think smart casual. Comfortable shoes are important if you'll be walking through vineyards. Avoid strong perfumes or colognes as they interfere with wine aromas. Layers are smart since mornings can be cool and afternoons warm.`,
+    },
+    {
+      question: `Do I need a reservation for wine tasting?`,
+      answer: `It depends on the winery. The wineries on this page are all walk-in friendly, perfect for first-timers who want flexibility. For popular or premium wineries, reservations are often required — especially on weekends. Weekday visits generally offer the most relaxed experience.`,
+    },
+  ],
+};
 
 // ============================================================
 // All guide definitions
@@ -424,6 +494,92 @@ export function getAllGuides(): GuideDefinition[] {
       intro: getComparisonIntro(name1, name2),
       faqs: [],
       compare: { region1: sr1, region2: sr2, isValley: false },
+    });
+  }
+
+  // ---- Type 5: Experience-Based (romantic, groups, first-time) ----
+
+  // Romantic wineries — valleys + select sub-regions
+  const romanticSubRegions = ["yountville", "st-helena", "calistoga", "sonoma-valley", "russian-river-valley", "dry-creek-valley"];
+  for (const valley of VALLEYS) {
+    const region = regionName(valley.key);
+    guides.push({
+      slug: `romantic-wineries-${valley.slugPart}`,
+      type: "experience",
+      title: `Romantic Wineries in ${region} | Best Couples Wine Tasting`,
+      h1: `Romantic Wineries in ${region}`,
+      metaDescription: `Discover the most romantic wineries in ${region} for couples. Intimate tastings, vineyard views, and unforgettable date ideas.`,
+      intro: EXPERIENCE_INTROS.romantic(region),
+      faqs: EXPERIENCE_FAQS.romantic(region),
+      experienceType: "romantic",
+      valley: valley.key,
+    });
+  }
+  for (const srSlug of romanticSubRegions) {
+    const sr = SUBREGIONS_WITH_VALLEY.find((s) => s.slug === srSlug);
+    if (!sr) continue;
+    const region = regionName(srSlug);
+    guides.push({
+      slug: `romantic-wineries-${srSlug}`,
+      type: "experience",
+      title: `Romantic Wineries in ${region} | Best Couples Wine Tasting`,
+      h1: `Romantic Wineries in ${region}`,
+      metaDescription: `Discover the most romantic wineries in ${region} for couples. Intimate tastings, vineyard views, and unforgettable date ideas.`,
+      intro: EXPERIENCE_INTROS.romantic(region),
+      faqs: EXPERIENCE_FAQS.romantic(region),
+      experienceType: "romantic",
+      valley: sr.valley,
+      subRegionSlug: srSlug,
+    });
+  }
+
+  // Groups & Celebrations — valleys + select sub-regions
+  const groupSubRegions = ["yountville", "st-helena", "sonoma-valley", "russian-river-valley"];
+  for (const valley of VALLEYS) {
+    const region = regionName(valley.key);
+    guides.push({
+      slug: `wineries-for-groups-${valley.slugPart}`,
+      type: "experience",
+      title: `Best Wineries for Groups in ${region} | Bachelorette & Celebrations`,
+      h1: `Best Wineries for Groups in ${region}`,
+      metaDescription: `Find group-friendly wineries in ${region}. Perfect for bachelorette parties, birthdays, and celebrations — no reservations needed.`,
+      intro: EXPERIENCE_INTROS.groups(region),
+      faqs: EXPERIENCE_FAQS.groups(region),
+      experienceType: "groups",
+      valley: valley.key,
+    });
+  }
+  for (const srSlug of groupSubRegions) {
+    const sr = SUBREGIONS_WITH_VALLEY.find((s) => s.slug === srSlug);
+    if (!sr) continue;
+    const region = regionName(srSlug);
+    guides.push({
+      slug: `wineries-for-groups-${srSlug}`,
+      type: "experience",
+      title: `Best Wineries for Groups in ${region} | Bachelorette & Celebrations`,
+      h1: `Best Wineries for Groups in ${region}`,
+      metaDescription: `Find group-friendly wineries in ${region}. Perfect for bachelorette parties, birthdays, and celebrations — no reservations needed.`,
+      intro: EXPERIENCE_INTROS.groups(region),
+      faqs: EXPERIENCE_FAQS.groups(region),
+      experienceType: "groups",
+      valley: sr.valley,
+      subRegionSlug: srSlug,
+    });
+  }
+
+  // First-Time Visitor — valleys only
+  for (const valley of VALLEYS) {
+    const region = regionName(valley.key);
+    guides.push({
+      slug: `first-time-guide-${valley.slugPart}`,
+      type: "experience",
+      title: `First-Time Visitor Guide to ${region} | Wine Tasting for Beginners`,
+      h1: `First-Time Visitor Guide to ${region}`,
+      metaDescription: `New to ${region}? Our beginner's guide covers the best walk-in wineries, what to expect, costs, etiquette, and tips for first-time wine tasters.`,
+      intro: EXPERIENCE_INTROS["first-time"](region),
+      faqs: EXPERIENCE_FAQS["first-time"](region),
+      experienceType: "first-time",
+      valley: valley.key,
     });
   }
 

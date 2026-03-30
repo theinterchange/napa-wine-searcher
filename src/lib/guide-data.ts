@@ -121,6 +121,42 @@ export async function getWineriesByWinePrice(
     .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
 }
 
+// Experience-based queries (romantic, groups, first-time)
+export async function getWineriesByExperience(
+  experienceType: "romantic" | "groups" | "first-time",
+  valley?: "napa" | "sonoma",
+  subRegionSlug?: string
+) {
+  const conditions = [];
+
+  if (experienceType === "romantic") {
+    // High-rated, appointment-only → intimate, high-end experiences
+    conditions.push(
+      eq(wineries.reservationRequired, true),
+      sql`(${wineries.aggregateRating} >= 4.0 OR ${wineries.googleRating} >= 4.3)`
+    );
+  } else if (experienceType === "groups") {
+    // Walk-in friendly → naturally group-accommodating
+    conditions.push(eq(wineries.reservationRequired, false));
+  } else if (experienceType === "first-time") {
+    // Walk-in + affordable + good ratings
+    conditions.push(
+      eq(wineries.reservationRequired, false),
+      sql`(${wineries.priceLevel} <= 2 OR ${wineries.priceLevel} IS NULL)`
+    );
+  }
+
+  if (valley) conditions.push(eq(subRegions.valley, valley));
+  if (subRegionSlug) conditions.push(eq(subRegions.slug, subRegionSlug));
+
+  return db
+    .select(wineryCardFields)
+    .from(wineries)
+    .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+    .where(and(...conditions))
+    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
+}
+
 // Comparison data between two regions
 export async function getRegionComparisonData(
   valley1: "napa" | "sonoma",

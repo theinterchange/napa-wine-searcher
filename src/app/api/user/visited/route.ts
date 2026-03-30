@@ -49,6 +49,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { wineryId, visitedDate } = await request.json();
+    if (typeof wineryId !== "number") {
+      return NextResponse.json({ error: "Invalid wineryId" }, { status: 400 });
+    }
     await db
       .insert(visited)
       .values({
@@ -61,7 +64,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("POST /api/user/visited error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -73,6 +77,9 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { wineryId } = await request.json();
+    if (typeof wineryId !== "number") {
+      return NextResponse.json({ error: "Invalid wineryId" }, { status: 400 });
+    }
     await db
       .delete(visited)
       .where(
@@ -82,6 +89,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE /api/user/visited error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Dog, Baby, UtensilsCrossed, DoorOpen, Wine, DollarSign, ArrowLeftRight } from "lucide-react";
+import { BookOpen, Dog, Baby, UtensilsCrossed, DoorOpen, Wine, DollarSign, ArrowLeftRight, Heart } from "lucide-react";
 import { getAllGuides } from "@/lib/guide-content";
 import type { Metadata } from "next";
 
@@ -38,6 +38,11 @@ const TYPE_META: Record<
     icon: <DollarSign className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400" />,
     description: "Find tastings and wines that fit your budget.",
   },
+  experience: {
+    label: "Experiences",
+    icon: <Heart className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400" />,
+    description: "Find the perfect wineries for romantic outings, group celebrations, and first-time visitors.",
+  },
   comparison: {
     label: "Region Comparisons",
     icon: <ArrowLeftRight className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400" />,
@@ -45,7 +50,7 @@ const TYPE_META: Record<
   },
 };
 
-const TYPE_ORDER = ["amenity", "varietal", "price", "comparison"];
+const TYPE_ORDER = ["amenity", "varietal", "price", "experience", "comparison"];
 
 export default function GuidesPage() {
   const allGuides = getAllGuides();
