@@ -9,7 +9,9 @@ import { SignUpPrompt } from "@/components/home/SignUpPrompt";
 import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
 import { WineryCard } from "@/components/directory/WineryCard";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { EmailCapture } from "@/components/monetization/EmailCapture";
+import { getAllAccommodations } from "@/lib/accommodation-data";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -117,13 +119,14 @@ async function getHomepageWineries() {
 }
 
 export default async function HomePage() {
-  const [featured, totalWineries, dayTripCount, homepageWineries, popularRegions] =
+  const [featured, totalWineries, dayTripCount, homepageWineries, popularRegions, topAccommodations] =
     await Promise.all([
       getFeaturedWineries(),
       getTotalWineries(),
       getDayTripCount(),
       getHomepageWineries(),
       getPopularSubRegions(),
+      getAllAccommodations().then((all) => all.slice(0, 3)),
     ]);
 
   return (
@@ -182,7 +185,81 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. Explore Wine Regions */}
+      {/* 4. Plan Your Trip — Accommodation Cards + Quick Links */}
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-heading text-2xl font-bold">
+              Plan Your Wine Country Trip
+            </h2>
+            <div className="flex gap-4 text-sm font-medium">
+              <Link href="/where-to-stay" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+                All hotels &rarr;
+              </Link>
+              <Link href="/day-trips" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+                Day trips &rarr;
+              </Link>
+            </div>
+          </div>
+
+          {/* Accommodation cards */}
+          {topAccommodations.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {topAccommodations.map((a) => (
+                <AccommodationCard key={a.slug} accommodation={a} />
+              ))}
+            </div>
+          )}
+
+          {/* Quick links row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link
+              href="/wineries"
+              className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:shadow-md hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <Wine className="h-6 w-6 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                  Browse Wineries
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  {totalWineries} wineries with tastings & ratings
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/where-to-stay"
+              className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:shadow-md hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <BedDouble className="h-6 w-6 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                  Where to Stay
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  Hand-picked hotels & resorts
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/plan-trip"
+              className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:shadow-md hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <Route className="h-6 w-6 text-burgundy-600 shrink-0" />
+              <div>
+                <p className="font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                  Plan a Trip
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  Build your winery route
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Explore Wine Regions */}
       {popularRegions.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-10 pt-2 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
@@ -219,56 +296,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      {/* 5. Plan Your Trip */}
-      <section className="border-t border-[var(--border)]">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold text-center mb-3">
-            Plan Your Wine Country Trip
-          </h2>
-          <p className="text-center text-[var(--muted-foreground)] mb-10 max-w-xl mx-auto">
-            Everything you need to plan the perfect visit — from finding the right wineries to booking where to stay.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Link
-              href="/wineries"
-              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
-            >
-              <Wine className="h-8 w-8 text-burgundy-600 mb-4" />
-              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
-                Browse Wineries
-              </h3>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Explore {totalWineries} wineries across Napa and Sonoma with tastings, ratings, and insider tips.
-              </p>
-            </Link>
-            <Link
-              href="/where-to-stay"
-              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
-            >
-              <BedDouble className="h-8 w-8 text-burgundy-600 mb-4" />
-              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
-                Where to Stay
-              </h3>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Hand-picked hotels, inns, and resorts — chosen for proximity to the best wine country experiences.
-              </p>
-            </Link>
-            <Link
-              href="/day-trips"
-              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
-            >
-              <Route className="h-8 w-8 text-burgundy-600 mb-4" />
-              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
-                Plan a Day Trip
-              </h3>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Curated winery routes with driving times, suggested stops, and local recommendations.
-              </p>
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* 6. Account CTA + Email Capture */}
       <section className="border-t border-[var(--border)]">
