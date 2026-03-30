@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape } from "lucide-react";
+import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape, BedDouble } from "lucide-react";
 import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
@@ -220,7 +220,57 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 5. Account CTA + Email Capture */}
+      {/* 5. Plan Your Trip */}
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <h2 className="font-heading text-2xl font-bold text-center mb-3">
+            Plan Your Wine Country Trip
+          </h2>
+          <p className="text-center text-[var(--muted-foreground)] mb-10 max-w-xl mx-auto">
+            Everything you need to plan the perfect visit — from finding the right wineries to booking where to stay.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <Link
+              href="/wineries"
+              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <Wine className="h-8 w-8 text-burgundy-600 mb-4" />
+              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                Browse Wineries
+              </h3>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Explore {totalWineries} wineries across Napa and Sonoma with tastings, ratings, and insider tips.
+              </p>
+            </Link>
+            <Link
+              href="/where-to-stay"
+              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <BedDouble className="h-8 w-8 text-burgundy-600 mb-4" />
+              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                Where to Stay
+              </h3>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Hand-picked hotels, inns, and resorts — chosen for proximity to the best wine country experiences.
+              </p>
+            </Link>
+            <Link
+              href="/day-trips"
+              className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+            >
+              <Route className="h-8 w-8 text-burgundy-600 mb-4" />
+              <h3 className="font-heading text-lg font-semibold mb-2 group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                Plan a Day Trip
+              </h3>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Curated winery routes with driving times, suggested stops, and local recommendations.
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Account CTA + Email Capture */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <SignUpPrompt />
