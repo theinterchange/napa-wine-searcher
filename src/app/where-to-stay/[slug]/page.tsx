@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import {
   MapPin,
@@ -22,6 +23,7 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
 import { Stay22Widget } from "@/components/accommodation/Stay22Widget";
+import { FAQSection } from "@/components/region/FAQSection";
 import { BASE_URL } from "@/lib/constants";
 
 const typeLabels: Record<string, string> = {
@@ -114,12 +116,127 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
     ? JSON.parse(accommodation.whyThisHotel)
     : [];
 
+  // Parse enriched content
+  interface RoomType {
+    name: string;
+    description: string;
+    sleeps: number | null;
+    highlights: string[];
+  }
+  interface DiningVenue {
+    name: string;
+    description: string;
+    type: string;
+  }
+  interface SpaInfo {
+    name: string | null;
+    description: string | null;
+    highlights: string[];
+  }
+  interface Activity {
+    name: string;
+    description: string;
+  }
+
+  const rooms: RoomType[] = accommodation.roomsJson
+    ? JSON.parse(accommodation.roomsJson)
+    : [];
+  const dining: DiningVenue[] = accommodation.diningJson
+    ? JSON.parse(accommodation.diningJson)
+    : [];
+  const spa: SpaInfo | null = accommodation.spaJson
+    ? JSON.parse(accommodation.spaJson)
+    : null;
+  const activities: Activity[] = accommodation.activitiesJson
+    ? JSON.parse(accommodation.activitiesJson)
+    : [];
+  const childrenAmenities: string[] = accommodation.childrenAmenitiesJson
+    ? JSON.parse(accommodation.childrenAmenitiesJson)
+    : [];
+
+  // Get section-specific photos
+  const photosByCategory = new Map<string, typeof photos>();
+  for (const p of photos) {
+    const cat = p.category || "other";
+    if (!photosByCategory.has(cat)) photosByCategory.set(cat, []);
+    photosByCategory.get(cat)!.push(p);
+  }
+  const roomPhoto = photosByCategory.get("room")?.[0];
+  const diningPhoto = photosByCategory.get("dining")?.[0];
+  const spaPhoto = photosByCategory.get("spa_pool")?.[0];
+  const groundsPhoto =
+    photosByCategory.get("grounds")?.[0] ||
+    photosByCategory.get("exterior")?.[0] ||
+    photosByCategory.get("view")?.[0];
+
   const valleyLabel =
     accommodation.valley === "napa" ? "Napa Valley" : "Sonoma County";
   const valleyHref =
     accommodation.valley === "napa"
       ? "/where-to-stay/napa-valley"
       : "/where-to-stay/sonoma-county";
+
+  // Build FAQs
+  const faqs: { question: string; answer: string }[] = [];
+  const name = accommodation.name;
+
+  if (accommodation.dogFriendly != null) {
+    faqs.push({
+      question: `Is ${name} dog-friendly?`,
+      answer: accommodation.dogFriendly
+        ? `Yes, ${name} welcomes dogs.${accommodation.dogFriendlyNote ? ` ${accommodation.dogFriendlyNote}` : ""} We recommend confirming pet policies and any fees directly with the property before booking.`
+        : `No, ${name} does not allow pets. Consider nearby pet-friendly accommodations in the area.`,
+    });
+  }
+
+  if (accommodation.adultsOnly) {
+    faqs.push({
+      question: `Is ${name} family-friendly?`,
+      answer: `${name} is an adults-only property. It's best suited for couples or groups without children.`,
+    });
+  } else if (accommodation.kidFriendly) {
+    faqs.push({
+      question: `Is ${name} family-friendly?`,
+      answer: `Yes, ${name} welcomes families with children.${accommodation.kidFriendlyNote ? ` ${accommodation.kidFriendlyNote}` : ""} Contact the property for details on family accommodations.`,
+    });
+  }
+
+  if (accommodation.priceTier) {
+    const desc: Record<number, string> = {
+      1: "a budget-friendly option",
+      2: "moderately priced",
+      3: "an upscale property",
+      4: "a luxury property",
+    };
+    faqs.push({
+      question: `How much does ${name} cost per night?`,
+      answer: `${name} is ${desc[accommodation.priceTier] || "moderately priced"} (${"$".repeat(accommodation.priceTier)}).${
+        accommodation.priceRangeMin && accommodation.priceRangeMax
+          ? ` Rates typically range from $${accommodation.priceRangeMin} to $${accommodation.priceRangeMax} per night depending on the season and room type.`
+          : " Rates vary by season and room type — check availability for current pricing."
+      }`,
+    });
+  }
+
+  if (nearbyWineries.length > 0) {
+    const wineryNames = nearbyWineries
+      .slice(0, 3)
+      .map(
+        (w) =>
+          `${w.name}${w.distanceMiles ? ` (${w.distanceMiles < 1 ? "< 1" : w.distanceMiles.toFixed(1)} mi)` : ""}`
+      );
+    faqs.push({
+      question: `What wineries are near ${name}?`,
+      answer: `${name} is conveniently located near several wineries including ${wineryNames.join(", ")}${nearbyWineries.length > 3 ? `, and ${nearbyWineries.length - 3} more` : ""}. The ${accommodation.subRegion || valleyLabel} region offers excellent wine tasting opportunities within a short drive.`,
+    });
+  }
+
+  if (amenities.length > 0) {
+    faqs.push({
+      question: `What amenities does ${name} offer?`,
+      answer: `${name} offers ${amenities.map((a) => amenityLabels[a] || a).join(", ").toLowerCase()}.${wineFeatures.length > 0 ? ` Wine country perks include ${wineFeatures.map((f) => wineFeatureLabels[f] || f).join(", ").toLowerCase()}.` : ""}`,
+    });
+  }
 
   return (
     <div>
@@ -157,9 +274,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
 
       {/* Main content */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Left column — main editorial content */}
-          <div className="lg:col-span-2 space-y-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
+          {/* Left column — narrative content */}
+          <div className="lg:col-span-2 space-y-12">
             {/* Why Stay Here */}
             {accommodation.whyStayHere && (
               <section>
@@ -174,30 +291,16 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
 
             {/* Why This Hotel — contextual reasons */}
             {whyReasons.length > 0 && (
-              <section>
-                <ul className="space-y-2">
-                  {whyReasons.map((reason, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <span className="text-[var(--muted-foreground)]">
-                        {reason}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* The Setting */}
-            {accommodation.theSetting && (
-              <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
-                  The Setting
-                </h2>
-                <p className="text-[var(--muted-foreground)] leading-relaxed">
-                  {accommodation.theSetting}
-                </p>
-              </section>
+              <ul className="space-y-2">
+                {whyReasons.map((reason, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span className="text-[var(--muted-foreground)]">
+                      {reason}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             )}
 
             {/* The Experience */}
@@ -212,14 +315,203 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Full description */}
-            {accommodation.description && (
+            {/* The Setting */}
+            {accommodation.theSetting && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-6">
+                  The Setting
+                </h2>
+                {groundsPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={groundsPhoto.url}
+                      alt={`${accommodation.name} setting`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                  {accommodation.theSetting}
+                </p>
+              </section>
+            )}
+
+            {/* Rooms & Suites */}
+            {rooms.length > 0 && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-6">
+                  Rooms & Suites
+                </h2>
+                {roomPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={roomPhoto.url}
+                      alt={`Room at ${accommodation.name}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {rooms.slice(0, 6).map((room, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+                    >
+                      <h3 className="font-heading font-semibold text-lg mb-2">
+                        {room.name}
+                      </h3>
+                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                        {room.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {rooms.length > 6 && (
+                  <p className="text-sm text-[var(--muted-foreground)] mt-3">
+                    +{rooms.length - 6} more room types available
+                  </p>
+                )}
+                <div className="mt-6">
+                  <BookHotelCTA
+                    bookingUrl={accommodation.bookingUrl}
+                    websiteUrl={accommodation.websiteUrl}
+                    accommodationId={accommodation.id}
+                    accommodationSlug={accommodation.slug}
+                    sourceComponent="rooms_section"
+                    size="md"
+                    label="Book Now"
+                  />
+                </div>
+              </section>
+            )}
+
+            {/* Dining */}
+            {dining.length > 0 && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-6">
+                  Dining
+                </h2>
+                {diningPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={diningPhoto.url}
+                      alt={`Dining at ${accommodation.name}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div className="space-y-5">
+                  {dining.map((d, i) => (
+                    <div key={i}>
+                      <div className="flex items-baseline gap-2">
+                        <h3 className="font-heading font-semibold text-lg">
+                          {d.name}
+                        </h3>
+                        <span className="text-xs text-[var(--muted-foreground)]">
+                          {d.type}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[var(--muted-foreground)] mt-1 leading-relaxed">
+                        {d.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6">
+                  <BookHotelCTA
+                    bookingUrl={accommodation.bookingUrl}
+                    websiteUrl={accommodation.websiteUrl}
+                    accommodationId={accommodation.id}
+                    accommodationSlug={accommodation.slug}
+                    sourceComponent="dining_section"
+                    size="md"
+                    label="Book Now"
+                  />
+                </div>
+              </section>
+            )}
+
+            {/* Spa & Wellness */}
+            {spa && spa.description && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-6">
+                  {spa.name || "Spa & Wellness"}
+                </h2>
+                {spaPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={spaPhoto.url}
+                      alt={`${spa.name || "Spa"} at ${accommodation.name}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                  {spa.description}
+                  {spa.highlights.length > 0 &&
+                    ` Highlights include ${spa.highlights.join(", ").toLowerCase()}.`}
+                </p>
+              </section>
+            )}
+
+            {/* Activities & Experiences */}
+            {activities.length > 0 && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-6">
+                  Activities & Experiences
+                </h2>
+                <div className="space-y-4">
+                  {activities.map((a, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+                    >
+                      <h3 className="font-heading font-semibold text-lg">
+                        {a.name}
+                      </h3>
+                      <p className="text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
+                        {a.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6">
+                  <BookHotelCTA
+                    bookingUrl={accommodation.bookingUrl}
+                    websiteUrl={accommodation.websiteUrl}
+                    accommodationId={accommodation.id}
+                    accommodationSlug={accommodation.slug}
+                    sourceComponent="activities_section"
+                    size="md"
+                    label="Book Now"
+                  />
+                </div>
+              </section>
+            )}
+
+            {/* Children's Amenities */}
+            {childrenAmenities.length > 0 && (
               <section>
                 <h2 className="font-heading text-2xl font-bold mb-4">
-                  About {accommodation.name}
+                  Family Amenities
                 </h2>
-                <div className="text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
-                  {accommodation.description}
+                <div className="flex flex-wrap gap-2">
+                  {childrenAmenities.map((a) => (
+                    <span
+                      key={a}
+                      className="rounded-full bg-[var(--muted)] px-3 py-1.5 text-sm font-medium"
+                    >
+                      {a}
+                    </span>
+                  ))}
                 </div>
               </section>
             )}
@@ -234,7 +526,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   {wineFeatures.map((f) => (
                     <span
                       key={f}
-                      className="rounded-full bg-burgundy-100 dark:bg-burgundy-900 px-3 py-1.5 text-sm font-medium text-burgundy-700 dark:text-burgundy-300"
+                      className="rounded-full bg-[var(--muted)] px-3 py-1.5 text-sm font-medium"
                     >
                       {wineFeatureLabels[f] || f}
                     </span>
@@ -243,15 +535,27 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Before You Book */}
+            {/* Insider Tips */}
             {accommodation.beforeYouBook && (
               <section>
                 <h2 className="font-heading text-2xl font-bold mb-4">
-                  Before You Book
+                  Insider Tips
                 </h2>
                 <p className="text-[var(--muted-foreground)] leading-relaxed">
                   {accommodation.beforeYouBook}
                 </p>
+              </section>
+            )}
+
+            {/* About (full description) */}
+            {accommodation.description && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-4">
+                  About {accommodation.name}
+                </h2>
+                <div className="text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
+                  {accommodation.description}
+                </div>
               </section>
             )}
 
@@ -266,7 +570,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     <div key={w.slug} className="relative">
                       <WineryCard winery={w} />
                       {w.distanceMiles != null && (
-                        <span className="absolute top-2 left-2 z-10 rounded-full bg-white/90 dark:bg-gray-900/90 px-2 py-0.5 text-xs font-medium">
+                        <span className="absolute top-2 left-2 z-10 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
                           {w.distanceMiles < 1
                             ? "< 1 mi"
                             : `${w.distanceMiles.toFixed(1)} mi`}
@@ -280,8 +584,8 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
           </div>
 
           {/* Right column — sticky sidebar */}
-          <aside className="lg:col-span-1">
-            <div className="lg:sticky lg:top-24 space-y-6">
+          <aside className="lg:col-span-1 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:scrollbar-none">
+            <div className="space-y-6">
               {/* Booking CTA */}
               <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
                 {accommodation.priceRangeMin && accommodation.priceRangeMax && (
@@ -368,7 +672,6 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     Amenities & Policies
                   </h3>
 
-                  {/* Dog / Kid / Adults Only */}
                   {(accommodation.dogFriendly ||
                     accommodation.kidFriendly ||
                     accommodation.adultsOnly) && (
@@ -446,6 +749,44 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
         </div>
       </div>
 
+      {/* Disclaimer */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-4">
+        <p className="text-xs text-[var(--muted-foreground)] italic">
+          Information on this page is sourced from public data and the
+          property&apos;s website. Room types, dining options, and amenities may
+          change — contact {accommodation.name} directly to confirm current
+          offerings and availability.
+        </p>
+      </div>
+
+      {/* FAQ Section */}
+      {faqs.length > 0 && (
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-10">
+          <h2 className="font-heading text-2xl font-bold mb-6">
+            Frequently Asked Questions
+          </h2>
+          <FAQSection faqs={faqs} />
+
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqs.map((faq) => ({
+                  "@type": "Question",
+                  name: faq.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.answer,
+                  },
+                })),
+              }),
+            }}
+          />
+        </div>
+      )}
+
       {/* Structured data */}
       <script
         type="application/ld+json"
@@ -478,15 +819,14 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             priceRange: accommodation.priceTier
               ? "$".repeat(accommodation.priceTier)
               : undefined,
-            aggregateRating:
-              accommodation.googleRating
-                ? {
-                    "@type": "AggregateRating",
-                    ratingValue: accommodation.googleRating,
-                    reviewCount: accommodation.googleReviewCount || undefined,
-                    bestRating: 5,
-                  }
-                : undefined,
+            aggregateRating: accommodation.googleRating
+              ? {
+                  "@type": "AggregateRating",
+                  ratingValue: accommodation.googleRating,
+                  reviewCount: accommodation.googleReviewCount || undefined,
+                  bestRating: 5,
+                }
+              : undefined,
           }),
         }}
       />

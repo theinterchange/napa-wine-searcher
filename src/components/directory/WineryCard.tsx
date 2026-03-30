@@ -34,7 +34,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
 
   return (
     <div className="group relative flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all">
-      <Link href={`/wineries/${winery.slug}`} className="absolute inset-0 z-0" aria-label={winery.name} />
+      <Link href={`/wineries/${winery.slug}`} className="absolute inset-0 z-10" aria-label={winery.name} />
       <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
         {winery.heroImageUrl ? (
           <Image
@@ -74,7 +74,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
               <span>
                 <Link
                   href={subRegionHref}
-                  className="relative z-10 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
+                  className="relative z-20 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
                 >
                   {winery.subRegion}
                 </Link>

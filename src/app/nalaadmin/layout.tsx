@@ -1,0 +1,58 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Wine, BedDouble, LayoutDashboard } from "lucide-react";
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+
+  if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
+    redirect("/");
+  }
+
+  return (
+    <div className="min-h-screen bg-[var(--muted)]/30">
+      <div className="border-b border-[var(--border)] bg-[var(--card)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-14 items-center gap-6">
+            <Link
+              href="/nalaadmin"
+              className="flex items-center gap-2 font-heading font-bold text-lg"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+              Admin
+            </Link>
+            <nav className="flex items-center gap-4 text-sm">
+              <Link
+                href="/nalaadmin/wineries"
+                className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <Wine className="h-4 w-4" />
+                Wineries
+              </Link>
+              <Link
+                href="/nalaadmin/accommodations"
+                className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <BedDouble className="h-4 w-4" />
+                Accommodations
+              </Link>
+            </nav>
+            <div className="ml-auto text-xs text-[var(--muted-foreground)]">
+              {session.user.email}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </div>
+    </div>
+  );
+}

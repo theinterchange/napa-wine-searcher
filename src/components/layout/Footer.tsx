@@ -100,6 +100,9 @@ export function Footer() {
           <p className="mt-4 text-center text-xs text-[var(--muted-foreground)]">
             Must be 21 or older to consume alcohol. Please drink responsibly.
           </p>
+          <p className="mt-2 text-center text-xs text-[var(--muted-foreground)]">
+            Photos and ratings powered by Google. Property details are for informational purposes — confirm directly with venues before visiting.
+          </p>
         </div>
       </div>
     </footer>

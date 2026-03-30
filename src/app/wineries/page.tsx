@@ -47,7 +47,7 @@ export default async function WineriesPage({
   const valley = params.valley || "";
   const region = params.region || "";
   const rating = params.rating || "";
-  const sort = params.sort || "rating";
+  const sort = params.sort || "";
   const varietal = params.varietal || "";
   const tastingPrice = params.tastingPrice || "";
   const amenities = params.amenities || "";
@@ -171,14 +171,24 @@ export default async function WineriesPage({
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-  // Sort — curated first, then by selected sort
+  // Ranking: log10(reviews) × 25 + rating × 40 + curated × 30 + price × 5
+  const wineryRankingScore = sql`(
+    (CASE WHEN ${wineries.totalRatings} > 0
+      THEN log(${wineries.totalRatings} + 1) / log(10) * 25
+      ELSE 0 END)
+    + COALESCE(${wineries.googleRating}, COALESCE(${wineries.aggregateRating}, 0)) * 40
+    + (CASE WHEN ${wineries.curated} = 1 THEN 30 ELSE 0 END)
+    + COALESCE(${wineries.priceLevel}, 2) * 5
+  )`;
+
+  // Sort — default uses ranking score, user can override
   const secondaryOrder = {
     rating: desc(wineries.aggregateRating),
     name: asc(wineries.name),
     "price-asc": asc(wineries.priceLevel),
     "price-desc": desc(wineries.priceLevel),
     reviews: desc(wineries.totalRatings),
-  }[sort] || desc(wineries.aggregateRating);
+  }[sort] || sql`${wineryRankingScore} DESC`;
 
   // Count
   const [{ total }] = await db
@@ -218,7 +228,7 @@ export default async function WineriesPage({
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(where)
-    .orderBy(desc(wineries.curated), secondaryOrder)
+    .orderBy(secondaryOrder)
     .limit(PAGE_SIZE)
     .offset((clampedPage - 1) * PAGE_SIZE);
 

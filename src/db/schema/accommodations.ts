@@ -52,6 +52,11 @@ export const accommodations = sqliteTable(
     googleRating: real("google_rating"),
     googleReviewCount: integer("google_review_count"),
     googlePlaceId: text("google_place_id"),
+    roomsJson: text("rooms_json"),
+    diningJson: text("dining_json"),
+    spaJson: text("spa_json"),
+    activitiesJson: text("activities_json"),
+    childrenAmenitiesJson: text("children_amenities_json"),
     seasonalNote: text("seasonal_note"),
     nearbyDining: text("nearby_dining"),
     dataConfidence: text("data_confidence"),
@@ -74,6 +79,7 @@ export const accommodationPhotos = sqliteTable(
     photoUrl: text("photo_url"),
     blobUrl: text("blob_url"),
     caption: text("caption"),
+    category: text("category"),
     sortOrder: integer("sort_order").default(0),
     createdAt: text("created_at")
       .notNull()

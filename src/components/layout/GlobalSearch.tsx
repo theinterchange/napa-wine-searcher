@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   Loader2,
   Command,
+  BedDouble,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { slugify } from "@/lib/utils";
@@ -49,6 +50,15 @@ interface SearchResults {
     title: string;
     theme: string | null;
   }[];
+  accommodations: {
+    slug: string;
+    name: string;
+    city: string | null;
+    type: string;
+    valley: string;
+    googleRating: number | null;
+    priceTier: number | null;
+  }[];
   filters: {
     label: string;
     href: string;
@@ -79,6 +89,20 @@ function flattenResults(data: SearchResults): ResultItem[] {
     });
   }
 
+  // Regions first — best landing page for location searches
+  for (const r of data.regions) {
+    const valleyPrefix = r.valley === "napa" ? "/napa-valley" : "/sonoma-county";
+    items.push({
+      id: `region-${r.slug}`,
+      label: r.name,
+      sublabel: r.valley === "napa" ? "Napa Valley" : "Sonoma County",
+      href: `${valleyPrefix}/${r.slug}`,
+      icon: Map,
+      category: "Regions",
+    });
+  }
+
+  // Wineries — primary content
   for (const w of data.wineries) {
     const rating = w.googleRating ?? w.aggregateRating;
     const parts: string[] = [];
@@ -97,6 +121,33 @@ function flattenResults(data: SearchResults): ResultItem[] {
     });
   }
 
+  // Where to Stay — trip planning companion
+  for (const acc of data.accommodations) {
+    items.push({
+      id: `acc-${acc.slug}`,
+      label: acc.name,
+      sublabel: [acc.city, acc.valley === "napa" ? "Napa Valley" : "Sonoma County"]
+        .filter(Boolean)
+        .join(" · "),
+      href: `/where-to-stay/${acc.slug}`,
+      icon: BedDouble,
+      category: "Where to Stay",
+    });
+  }
+
+  // Day Trips
+  for (const dt of data.dayTrips) {
+    items.push({
+      id: `daytrip-${dt.slug}`,
+      label: dt.title,
+      sublabel: dt.theme ?? undefined,
+      href: `/day-trips/${dt.slug}`,
+      icon: Route,
+      category: "Day Trips",
+    });
+  }
+
+  // Wine Types — discovery
   for (const wt of data.wineTypes) {
     items.push({
       id: `winetype-${wt.name}`,
@@ -108,18 +159,7 @@ function flattenResults(data: SearchResults): ResultItem[] {
     });
   }
 
-  for (const r of data.regions) {
-    const valleyPrefix = r.valley === "napa" ? "/napa-valley" : "/sonoma-county";
-    items.push({
-      id: `region-${r.slug}`,
-      label: r.name,
-      sublabel: r.valley === "napa" ? "Napa Valley" : "Sonoma County",
-      href: `${valleyPrefix}/${r.slug}`,
-      icon: Map,
-      category: "Regions",
-    });
-  }
-
+  // Cities
   for (const c of data.cities) {
     if (!c.city) continue;
     items.push({
@@ -132,26 +172,16 @@ function flattenResults(data: SearchResults): ResultItem[] {
     });
   }
 
-  for (const dt of data.dayTrips) {
-    items.push({
-      id: `daytrip-${dt.slug}`,
-      label: dt.title,
-      sublabel: dt.theme ?? undefined,
-      href: `/day-trips/${dt.slug}`,
-      icon: Route,
-      category: "Day Trips",
-    });
-  }
-
   return items;
 }
 
 const SUGGESTED_LINKS: ResultItem[] = [
   { id: "s-browse", label: "Browse All Wineries", href: "/wineries", icon: Wine, category: "Suggestions" },
-  { id: "s-napa", label: "Napa Valley Wineries", href: "/napa-valley", icon: Map, category: "Suggestions" },
-  { id: "s-sonoma", label: "Sonoma County Wineries", href: "/sonoma-county", icon: Map, category: "Suggestions" },
+  { id: "s-stay", label: "Where to Stay", href: "/where-to-stay", icon: BedDouble, category: "Suggestions" },
+  { id: "s-napa", label: "Napa Valley", href: "/napa-valley", icon: Map, category: "Suggestions" },
+  { id: "s-sonoma", label: "Sonoma County", href: "/sonoma-county", icon: Map, category: "Suggestions" },
+  { id: "s-plan", label: "Plan a Trip", href: "/plan-trip", icon: Route, category: "Suggestions" },
   { id: "s-toprated", label: "Top Rated Wineries", href: "/wineries?rating=4.5", icon: Wine, category: "Suggestions" },
-  { id: "s-dog", label: "Dog-Friendly Wineries", href: "/wineries?amenities=dog", icon: SlidersHorizontal, category: "Suggestions" },
   { id: "s-daytrips", label: "Day Trip Routes", href: "/day-trips", icon: Route, category: "Suggestions" },
 ];
 

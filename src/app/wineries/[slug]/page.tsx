@@ -18,6 +18,8 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { FAQSection } from "@/components/region/FAQSection";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
+import { getAccommodationsNearWinery } from "@/lib/accommodation-data";
+import { NearbyAccommodations } from "@/components/accommodation/NearbyAccommodations";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
@@ -187,9 +189,12 @@ export default async function WineryDetailPage({
   const affiliateUrl = wineryWinesUrl(winery.name);
 
   // Get more wineries in the same sub-region for cross-linking
-  const moreInRegion = winery.subRegion
-    ? await getMoreWineriesInRegion(winery.subRegion, winery.slug, 4)
-    : [];
+  const [moreInRegion, nearbyAccommodations] = await Promise.all([
+    winery.subRegion
+      ? getMoreWineriesInRegion(winery.subRegion, winery.slug, 4)
+      : Promise.resolve([]),
+    getAccommodationsNearWinery(winery.id, 2),
+  ]);
 
   // Build breadcrumb items
   const valleyPrefix = winery.valley === "napa" ? "/napa-valley" : winery.valley === "sonoma" ? "/sonoma-county" : null;
@@ -579,6 +584,19 @@ export default async function WineryDetailPage({
                 <WineryCard key={w.slug} winery={w} />
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Stay Nearby */}
+      {nearbyAccommodations.length > 0 && (
+        <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+            <NearbyAccommodations
+              accommodations={nearbyAccommodations}
+              title="Where to Stay Nearby"
+              valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
+            />
           </div>
         </section>
       )}

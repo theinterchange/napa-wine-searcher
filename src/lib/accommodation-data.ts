@@ -50,6 +50,11 @@ export interface AccommodationDetail extends AccommodationCard {
   whyThisHotel: string | null;
   dogFriendlyNote: string | null;
   kidFriendlyNote: string | null;
+  roomsJson: string | null;
+  diningJson: string | null;
+  spaJson: string | null;
+  activitiesJson: string | null;
+  childrenAmenitiesJson: string | null;
   updatedAt: string | null;
 }
 
@@ -57,6 +62,7 @@ export interface AccommodationPhoto {
   id: number;
   url: string;
   caption: string | null;
+  category: string | null;
 }
 
 export interface NearbyWinery {
@@ -102,6 +108,16 @@ const cardFields = {
   adultsOnly: accommodations.adultsOnly,
 };
 
+// Ranking: log10(reviews) × 30 + rating × 40 + priceTier × 15
+// Balances popularity, quality, and luxury (affiliate revenue)
+const rankingScore = sql`(
+  (CASE WHEN ${accommodations.googleReviewCount} > 0
+    THEN log(${accommodations.googleReviewCount} + 1) / log(10) * 30
+    ELSE 0 END)
+  + COALESCE(${accommodations.googleRating}, 0) * 40
+  + COALESCE(${accommodations.priceTier}, 2) * 15
+)`;
+
 export async function getAllAccommodations(
   valley?: "napa" | "sonoma"
 ): Promise<AccommodationCard[]> {
@@ -109,7 +125,7 @@ export async function getAllAccommodations(
     .select(cardFields)
     .from(accommodations)
     .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))
-    .orderBy(desc(accommodations.googleRating), asc(accommodations.name));
+    .orderBy(sql`${rankingScore} DESC`);
 
   if (valley) {
     return query.where(eq(accommodations.valley, valley));
@@ -159,6 +175,11 @@ export async function getAccommodationBySlug(
       kidFriendly: accommodations.kidFriendly,
       kidFriendlyNote: accommodations.kidFriendlyNote,
       adultsOnly: accommodations.adultsOnly,
+      roomsJson: accommodations.roomsJson,
+      diningJson: accommodations.diningJson,
+      spaJson: accommodations.spaJson,
+      activitiesJson: accommodations.activitiesJson,
+      childrenAmenitiesJson: accommodations.childrenAmenitiesJson,
       heroImageUrl: accommodations.heroImageUrl,
       thumbnailUrl: accommodations.thumbnailUrl,
       updatedAt: accommodations.updatedAt,
@@ -180,6 +201,7 @@ export async function getAccommodationPhotos(
       photoUrl: accommodationPhotos.photoUrl,
       blobUrl: accommodationPhotos.blobUrl,
       caption: accommodationPhotos.caption,
+      category: accommodationPhotos.category,
     })
     .from(accommodationPhotos)
     .where(eq(accommodationPhotos.accommodationId, accommodationId))
@@ -189,6 +211,7 @@ export async function getAccommodationPhotos(
     id: r.id,
     url: r.blobUrl || r.photoUrl || "",
     caption: r.caption,
+    category: r.category,
   }));
 }
 
@@ -233,7 +256,7 @@ export async function getAccommodationsForRegion(
     .from(accommodations)
     .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))
     .where(eq(accommodations.subRegionId, subRegionId))
-    .orderBy(desc(accommodations.googleRating))
+    .orderBy(sql`${rankingScore} DESC`)
     .limit(limit);
 }
 

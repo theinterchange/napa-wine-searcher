@@ -88,7 +88,7 @@ export default function RootLayout({
           </a>
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main id="main-content" className="flex-1 overflow-x-hidden">{children}</main>
+            <main id="main-content" className="flex-1">{children}</main>
             <Footer />
           </div>
           <CompareFloatingBar />

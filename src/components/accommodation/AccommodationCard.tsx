@@ -33,7 +33,7 @@ export function AccommodationCard({
     <div className="group relative flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all">
       <Link
         href={`/where-to-stay/${a.slug}`}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-10"
         aria-label={a.name}
       />
       <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 flex items-center justify-center overflow-hidden">
@@ -48,7 +48,7 @@ export function AccommodationCard({
         ) : (
           <BedDouble className="h-12 w-12 text-burgundy-300 dark:text-burgundy-700" />
         )}
-        <span className="absolute top-2 left-2 rounded-full bg-white/90 dark:bg-gray-900/90 px-2.5 py-0.5 text-xs font-medium text-[var(--foreground)]">
+        <span className="absolute top-2 left-2 rounded-full bg-white dark:bg-gray-900 px-2.5 py-0.5 text-xs font-semibold text-gray-900 dark:text-gray-100 shadow-sm">
           {typeLabels[a.type] || a.type}
         </span>
       </div>
@@ -71,7 +71,7 @@ export function AccommodationCard({
               <span>
                 <Link
                   href={subRegionHref}
-                  className="relative z-10 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
+                  className="relative z-20 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
                 >
                   {a.subRegion}
                 </Link>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { wineries, subRegions, wineTypes, wines, dayTripRoutes } from "@/db/schema";
+import { wineries, subRegions, wineTypes, wines, dayTripRoutes, accommodations } from "@/db/schema";
 import { sql, eq, count } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import type { Column } from "drizzle-orm";
@@ -41,14 +41,14 @@ export async function GET(request: NextRequest) {
   try {
   const q = request.nextUrl.searchParams.get("q")?.trim();
   if (!q || q.length < 2) {
-    return NextResponse.json({ wineries: [], wineTypes: [], cities: [], regions: [], dayTrips: [], filters: [] });
+    return NextResponse.json({ wineries: [], wineTypes: [], cities: [], regions: [], dayTrips: [], accommodations: [], filters: [] });
   }
 
   const normalizedQ = normalize(q);
   const pattern = `%${q}%`;
   const normalizedPattern = `%${normalizedQ}%`;
 
-  const [wineryResults, wineTypeResults, cityResults, regionResults, dayTripResults] = await Promise.all([
+  const [wineryResults, wineTypeResults, cityResults, regionResults, dayTripResults, accommodationResults] = await Promise.all([
     // Wineries: match name, city, or description (normalized for punctuation)
     db
       .select({
@@ -119,6 +119,24 @@ export async function GET(request: NextRequest) {
         sql`(${normalizedCol(dayTripRoutes.title)} LIKE ${normalizedPattern} OR ${dayTripRoutes.theme} LIKE ${pattern})`
       )
       .limit(4),
+
+    // Accommodations: match name, city, or type
+    db
+      .select({
+        slug: accommodations.slug,
+        name: accommodations.name,
+        city: accommodations.city,
+        type: accommodations.type,
+        valley: accommodations.valley,
+        googleRating: accommodations.googleRating,
+        priceTier: accommodations.priceTier,
+      })
+      .from(accommodations)
+      .where(
+        sql`(${normalizedCol(accommodations.name)} LIKE ${normalizedPattern} OR ${normalizedCol(accommodations.city)} LIKE ${normalizedPattern})`
+      )
+      .orderBy(sql`COALESCE(${accommodations.googleRating}, 0) DESC`)
+      .limit(4),
   ]);
 
   const filters = matchFilters(q);
@@ -129,6 +147,7 @@ export async function GET(request: NextRequest) {
     cities: cityResults,
     regions: regionResults,
     dayTrips: dayTripResults,
+    accommodations: accommodationResults,
     filters,
   });
   } catch (error) {

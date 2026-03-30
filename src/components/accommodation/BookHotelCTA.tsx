@@ -23,7 +23,7 @@ export function BookHotelCTA({
   sourcePage,
   sourceComponent,
   size = "md",
-  label = "Check Availability" as React.ReactNode,
+  label = "Book Now" as React.ReactNode,
 }: BookHotelCTAProps) {
   const href = hotelBookingUrl(bookingUrl, websiteUrl);
   if (!href) return null;

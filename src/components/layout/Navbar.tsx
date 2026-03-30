@@ -17,6 +17,7 @@ import {
   LogOut,
   Newspaper,
   BedDouble,
+  Settings,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -124,6 +125,19 @@ export function Navbar() {
                         {label}
                       </Link>
                     ))}
+                    {session.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+                      <>
+                        <div className="border-t border-[var(--border)] my-1" />
+                        <Link
+                          href="/nalaadmin"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors"
+                        >
+                          <Settings className="h-4 w-4" />
+                          Admin
+                        </Link>
+                      </>
+                    )}
                     <div className="border-t border-[var(--border)] my-1" />
                     <button
                       onClick={() => {
