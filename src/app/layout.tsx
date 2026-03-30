@@ -49,6 +49,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
+      <head>
+        <link
+          rel="preconnect"
+          href="https://iubllytv2maaomk9.public.blob.vercel-storage.com"
+        />
+      </head>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script
           defer

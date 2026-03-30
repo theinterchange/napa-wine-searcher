@@ -67,37 +67,26 @@ export function HeroFeatured({
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Stacked background images with crossfade */}
-      {wineries.map((winery, i) => (
-        <div
-          key={winery.slug}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${
-            i === current ? "opacity-100" : "opacity-0"
-          }`}
-          style={
-            winery.heroImageUrl
-              ? { backgroundImage: `url(${winery.heroImageUrl})` }
-              : undefined
-          }
-          aria-hidden={i !== current}
-        />
-      ))}
+      {/* Fallback bg */}
+      <div className="absolute inset-0 bg-burgundy-950" />
 
-      {/* Preload first hero image for LCP */}
-      {wineries[0]?.heroImageUrl && (
-        <Image
-          src={wineries[0].heroImageUrl}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover pointer-events-none"
-          style={{ zIndex: -2, opacity: 0 }}
-        />
+      {/* Stacked images with crossfade — using Next.js Image for optimization */}
+      {wineries.map((winery, i) =>
+        winery.heroImageUrl ? (
+          <Image
+            key={winery.slug}
+            src={winery.heroImageUrl}
+            alt={winery.name}
+            fill
+            sizes="100vw"
+            priority={i === 0}
+            className={`object-cover transition-opacity duration-1000 ${
+              i === current ? "opacity-100" : "opacity-0"
+            }`}
+            aria-hidden={i !== current}
+          />
+        ) : null
       )}
-
-      {/* Fallback bg if no image */}
-      <div className="absolute inset-0 bg-burgundy-950" style={{ zIndex: -1 }} />
 
       {/* Dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20" />
