@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { MapInfoCard } from "./MapInfoCard";
-import { Locate } from "lucide-react";
+import { Locate, Dog, Baby, TreePine, DoorOpen, Star } from "lucide-react";
 
 interface WineryMapData {
   id: number;
@@ -24,31 +23,88 @@ interface WineryMapData {
 }
 
 const NAPA_CENTER = { lat: 38.5025, lng: -122.4025 };
+const PIN_COLOR = "#722F37"; // burgundy
+
+interface FilterState {
+  valley: string;
+  dog: boolean;
+  kid: boolean;
+  picnic: boolean;
+  walkin: boolean;
+  price: string;
+  rating: string;
+}
+
+const defaultFilters: FilterState = {
+  valley: "",
+  dog: false,
+  kid: false,
+  picnic: false,
+  walkin: false,
+  price: "",
+  rating: "",
+};
 
 export function WineryMap() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [wineries, setWineries] = useState<WineryMapData[]>([]);
   const [selected, setSelected] = useState<WineryMapData | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const searchParams = useSearchParams();
 
-  useEffect(() => {
+  // Build query params from filters
+  const buildParams = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    fetch(`/api/wineries?${params.toString()}`)
+    if (filters.valley) params.set("valley", filters.valley);
+    else params.delete("valley");
+    if (filters.dog) params.set("dog", "1");
+    else params.delete("dog");
+    if (filters.picnic) params.set("picnic", "1");
+    else params.delete("picnic");
+    if (filters.price) params.set("price", filters.price);
+    else params.delete("price");
+    if (filters.rating) params.set("rating", filters.rating);
+    else params.delete("rating");
+    // kid and walkin use reservation param
+    if (filters.walkin) params.set("reservation", "0");
+    else params.delete("reservation");
+    return params.toString();
+  }, [filters, searchParams]);
+
+  useEffect(() => {
+    fetch(`/api/wineries?${buildParams()}`)
       .then((r) => r.json())
       .then(setWineries)
       .catch(console.error);
-  }, [searchParams]);
+  }, [buildParams]);
+
+  const toggle = (key: keyof FilterState, value?: string) => {
+    setFilters((prev) => {
+      if (typeof prev[key] === "boolean") {
+        return { ...prev, [key]: !prev[key] };
+      }
+      // For string filters, toggle between value and empty
+      return { ...prev, [key]: prev[key] === value ? "" : value || "" };
+    });
+    setSelected(null);
+  };
+
+  const activeCount = Object.values(filters).filter(
+    (v) => v === true || (typeof v === "string" && v !== "")
+  ).length;
 
   const handleNearMe = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      (pos) =>
         setUserLocation({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
-        });
-      },
+        }),
       (err) => console.error("Geolocation error:", err)
     );
   };
@@ -68,6 +124,111 @@ export function WineryMap() {
 
   return (
     <div className="relative h-[calc(100vh-4rem)] w-full">
+      {/* Filter bar */}
+      <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center gap-2">
+        {/* Valley */}
+        <div className="flex rounded-lg overflow-hidden border border-[var(--border)] shadow-md text-xs">
+          {[
+            { label: "All", value: "" },
+            { label: "Napa", value: "napa" },
+            { label: "Sonoma", value: "sonoma" },
+          ].map((v) => (
+            <button
+              key={v.value}
+              onClick={() => toggle("valley", v.value || undefined)}
+              className={`px-3 py-2 transition-colors ${
+                filters.valley === v.value
+                  ? "bg-burgundy-700 text-white"
+                  : "bg-[var(--card)] hover:bg-[var(--muted)]"
+              }`}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Amenity toggles */}
+        {[
+          {
+            key: "dog" as const,
+            label: "Dog Friendly",
+            icon: Dog,
+          },
+          {
+            key: "picnic" as const,
+            label: "Picnic",
+            icon: TreePine,
+          },
+          {
+            key: "walkin" as const,
+            label: "Walk-In",
+            icon: DoorOpen,
+          },
+        ].map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => toggle(key)}
+            className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium shadow-md transition-colors ${
+              filters[key]
+                ? "bg-burgundy-700 text-white border-burgundy-700"
+                : "bg-[var(--card)] border-[var(--border)] hover:bg-[var(--muted)]"
+            }`}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {label}
+          </button>
+        ))}
+
+        {/* Rating */}
+        {[
+          { label: "4.5+", value: "4.5" },
+          { label: "4.0+", value: "4.0" },
+        ].map((r) => (
+          <button
+            key={r.value}
+            onClick={() => toggle("rating", r.value)}
+            className={`flex items-center gap-1 rounded-lg border px-3 py-2 text-xs font-medium shadow-md transition-colors ${
+              filters.rating === r.value
+                ? "bg-burgundy-700 text-white border-burgundy-700"
+                : "bg-[var(--card)] border-[var(--border)] hover:bg-[var(--muted)]"
+            }`}
+          >
+            <Star className="h-3 w-3" />
+            {r.label}
+          </button>
+        ))}
+
+        {/* Price */}
+        {["1", "2", "3", "4"].map((p) => (
+          <button
+            key={p}
+            onClick={() => toggle("price", p)}
+            className={`rounded-lg border px-3 py-2 text-xs font-medium shadow-md transition-colors ${
+              filters.price === p
+                ? "bg-burgundy-700 text-white border-burgundy-700"
+                : "bg-[var(--card)] border-[var(--border)] hover:bg-[var(--muted)]"
+            }`}
+          >
+            {"$".repeat(Number(p))}
+          </button>
+        ))}
+
+        {/* Clear */}
+        {activeCount > 0 && (
+          <button
+            onClick={() => setFilters(defaultFilters)}
+            className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs font-medium shadow-md hover:bg-[var(--muted)] transition-colors"
+          >
+            Clear ({activeCount})
+          </button>
+        )}
+
+        {/* Count */}
+        <span className="rounded-lg bg-[var(--card)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--muted-foreground)] shadow-md">
+          {wineries.filter((w) => w.lat && w.lng).length} wineries
+        </span>
+      </div>
+
       <APIProvider apiKey={apiKey}>
         <Map
           defaultCenter={userLocation || NAPA_CENTER}
@@ -86,7 +247,7 @@ export function WineryMap() {
               >
                 <div
                   className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md text-white text-xs font-bold cursor-pointer hover:scale-110 transition-transform"
-                  style={{ backgroundColor: w.subRegionColor || "#8B0000" }}
+                  style={{ backgroundColor: PIN_COLOR }}
                 >
                   {w.aggregateRating?.toFixed(1)?.slice(0, 3) || "?"}
                 </div>
