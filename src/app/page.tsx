@@ -130,6 +130,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <h1 className="sr-only">Napa Sonoma Guide — Discover Wineries in Napa Valley &amp; Sonoma County</h1>
       {/* 1. Hero with Featured Wineries */}
       <HeroFeatured wineries={featured} totalWineries={totalWineries} />
 

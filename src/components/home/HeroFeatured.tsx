@@ -100,9 +100,9 @@ export function HeroFeatured({
               <BadgeCheck className="h-3.5 w-3.5" />
               Featured
             </span>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-2xl">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-2xl">
               {w.name}
-            </h1>
+            </h2>
             <div className="flex items-center gap-3 mt-2">
               {w.subRegion && (
                 <span className="text-sm text-white/80">

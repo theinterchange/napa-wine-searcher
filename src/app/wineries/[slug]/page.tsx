@@ -601,6 +601,43 @@ export default async function WineryDetailPage({
         </section>
       )}
 
+      {/* Related Guides */}
+      {(() => {
+        const valleySlug = winery.valley === "napa" ? "napa-valley" : "sonoma-county";
+        const guides: { label: string; href: string }[] = [];
+
+        if (winery.dogFriendly) guides.push({ label: "Dog-Friendly Wineries", href: `/guides/dog-friendly-wineries-${valleySlug}` });
+        if (winery.kidFriendly) guides.push({ label: "Kid-Friendly Wineries", href: `/guides/kid-friendly-wineries-${valleySlug}` });
+        if (winery.picnicFriendly) guides.push({ label: "Picnic-Friendly Wineries", href: `/guides/picnic-friendly-wineries-${valleySlug}` });
+        if (winery.priceLevel && winery.priceLevel <= 2) guides.push({ label: "Budget-Friendly Tastings", href: `/guides/cheap-wine-tastings-${valleySlug}` });
+        if (winery.priceLevel && winery.priceLevel >= 4) guides.push({ label: "Luxury Tastings", href: `/guides/luxury-wine-tastings-${valleySlug}` });
+        if (!winery.reservationRequired) guides.push({ label: "Walk-In Wineries", href: `/guides/walk-in-wineries-${valleySlug}` });
+        guides.push({ label: `${winery.valley === "napa" ? "Napa Valley" : "Sonoma County"} Guide`, href: `/${valleySlug}` });
+
+        if (guides.length === 0) return null;
+
+        return (
+          <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+            <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+              <h3 className="font-heading text-lg font-semibold mb-4">
+                Related Guides
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {guides.map((g) => (
+                  <Link
+                    key={g.href}
+                    href={g.href}
+                    className="rounded-full border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+                  >
+                    {g.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
       {/* Explore More */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 text-center">
@@ -616,6 +653,12 @@ export default async function WineryDetailPage({
               className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
             >
               Browse Day Trips
+            </Link>
+            <Link
+              href="/where-to-stay"
+              className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+            >
+              Where to Stay
             </Link>
             <Link
               href="/plan-trip"
