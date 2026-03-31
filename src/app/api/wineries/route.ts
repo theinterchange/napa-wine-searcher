@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const rating = params.get("rating") || "";
     const reservation = params.get("reservation") || "";
     const dog = params.get("dog") || "";
+    const kid = params.get("kid") || "";
     const picnic = params.get("picnic") || "";
 
     const conditions = [];
@@ -29,9 +30,10 @@ export async function GET(request: NextRequest) {
       if (isNaN(parsed)) return NextResponse.json({ error: "Invalid rating" }, { status: 400 });
       conditions.push(gte(wineries.aggregateRating, parsed));
     }
-    if (reservation === "false") conditions.push(eq(wineries.reservationRequired, false));
-    if (dog === "true") conditions.push(eq(wineries.dogFriendly, true));
-    if (picnic === "true") conditions.push(eq(wineries.picnicFriendly, true));
+    if (reservation === "false" || reservation === "0") conditions.push(eq(wineries.reservationRequired, false));
+    if (dog === "true" || dog === "1") conditions.push(eq(wineries.dogFriendly, true));
+    if (kid === "true" || kid === "1") conditions.push(eq(wineries.kidFriendly, true));
+    if (picnic === "true" || picnic === "1") conditions.push(eq(wineries.picnicFriendly, true));
 
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
