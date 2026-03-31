@@ -115,7 +115,7 @@ export function HeroFeatured({
               {w.googleRating && (
                 <span className="inline-flex items-center gap-1 text-sm text-white/90">
                   <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
-                  {w.googleRating}
+                  {w.googleRating.toFixed(1)}
                 </span>
               )}
             </div>
