@@ -273,17 +273,17 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
       </div>
 
       {/* Main content */}
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:items-start">
           {/* Left column — narrative content */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-16">
             {/* Why Stay Here */}
             {accommodation.whyStayHere && (
               <section>
                 <h2 className="font-heading text-2xl font-bold mb-4">
                   Why Stay Here
                 </h2>
-                <p className="text-[var(--muted-foreground)] leading-relaxed text-lg">
+                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
                   {accommodation.whyStayHere}
                 </p>
               </section>
@@ -309,7 +309,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 <h2 className="font-heading text-2xl font-bold mb-4">
                   The Experience
                 </h2>
-                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
                   {accommodation.theExperience}
                 </p>
               </section>
@@ -332,7 +332,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     />
                   </div>
                 )}
-                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
                   {accommodation.theSetting}
                 </p>
               </section>
@@ -454,7 +454,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     />
                   </div>
                 )}
-                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
                   {spa.description}
                   {spa.highlights.length > 0 &&
                     ` Highlights include ${spa.highlights.join(", ").toLowerCase()}.`}
@@ -541,7 +541,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 <h2 className="font-heading text-2xl font-bold mb-4">
                   Insider Tips
                 </h2>
-                <p className="text-[var(--muted-foreground)] leading-relaxed">
+                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
                   {accommodation.beforeYouBook}
                 </p>
               </section>
@@ -553,7 +553,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 <h2 className="font-heading text-2xl font-bold mb-4">
                   About {accommodation.name}
                 </h2>
-                <div className="text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
+                <div className="text-base text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
                   {accommodation.description}
                 </div>
               </section>
