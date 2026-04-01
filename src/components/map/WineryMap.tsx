@@ -31,8 +31,7 @@ interface FilterState {
   kid: boolean;
   picnic: boolean;
   walkin: boolean;
-  price: string;
-  rating: string;
+  prices: Set<string>;
 }
 
 const defaultFilters: FilterState = {
@@ -41,8 +40,7 @@ const defaultFilters: FilterState = {
   kid: false,
   picnic: false,
   walkin: false,
-  price: "",
-  rating: "",
+  prices: new Set(),
 };
 
 export function WineryMap() {
@@ -69,10 +67,8 @@ export function WineryMap() {
     else params.delete("picnic");
     if (filters.walkin) params.set("reservation", "0");
     else params.delete("reservation");
-    if (filters.price) params.set("price", filters.price);
+    if (filters.prices.size > 0) params.set("price", [...filters.prices].join(","));
     else params.delete("price");
-    if (filters.rating) params.set("rating", filters.rating);
-    else params.delete("rating");
     return params.toString();
   }, [filters, searchParams]);
 
@@ -94,9 +90,20 @@ export function WineryMap() {
     setSelected(null);
   };
 
-  const activeCount = Object.values(filters).filter(
-    (v) => v === true || (typeof v === "string" && v !== "")
-  ).length;
+  const togglePrice = (level: string) => {
+    setFilters((prev) => {
+      const next = new Set(prev.prices);
+      if (next.has(level)) next.delete(level);
+      else next.add(level);
+      return { ...prev, prices: next };
+    });
+    setSelected(null);
+  };
+
+  const activeCount =
+    Object.entries(filters).filter(
+      ([k, v]) => k !== "prices" && (v === true || (typeof v === "string" && v !== ""))
+    ).length + filters.prices.size;
 
   const handleNearMe = () => {
     if (!navigator.geolocation) return;
@@ -169,13 +176,13 @@ export function WineryMap() {
           </button>
         ))}
 
-        {/* Price */}
+        {/* Price (multi-select) */}
         {["1", "2", "3", "4"].map((p) => (
           <button
             key={p}
-            onClick={() => toggle("price", p)}
+            onClick={() => togglePrice(p)}
             className={`rounded-lg border px-3 py-2 text-xs font-medium shadow-md transition-colors ${
-              filters.price === p
+              filters.prices.has(p)
                 ? "bg-burgundy-700 text-white border-burgundy-700"
                 : "bg-[var(--card)] border-[var(--border)] hover:bg-[var(--muted)]"
             }`}
@@ -187,7 +194,7 @@ export function WineryMap() {
         {/* Clear */}
         {activeCount > 0 && (
           <button
-            onClick={() => setFilters(defaultFilters)}
+            onClick={() => setFilters({ ...defaultFilters, prices: new Set() })}
             className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs font-medium shadow-md hover:bg-[var(--muted)] transition-colors"
           >
             Clear ({activeCount})

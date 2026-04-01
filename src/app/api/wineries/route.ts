@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { wineries, subRegions } from "@/db/schema";
-import { eq, like, gte, asc, desc, and } from "drizzle-orm";
+import { eq, like, gte, asc, desc, and, inArray } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,9 +21,9 @@ export async function GET(request: NextRequest) {
     if (valley) conditions.push(eq(subRegions.valley, valley as "napa" | "sonoma"));
     if (region) conditions.push(eq(subRegions.slug, region));
     if (price) {
-      const parsed = parseInt(price);
-      if (isNaN(parsed)) return NextResponse.json({ error: "Invalid price" }, { status: 400 });
-      conditions.push(eq(wineries.priceLevel, parsed));
+      const levels = price.split(",").map(Number).filter((n) => !isNaN(n) && n >= 1 && n <= 4);
+      if (levels.length === 1) conditions.push(eq(wineries.priceLevel, levels[0]));
+      else if (levels.length > 1) conditions.push(inArray(wineries.priceLevel, levels));
     }
     if (rating) {
       const parsed = parseFloat(rating);
