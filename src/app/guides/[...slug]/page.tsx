@@ -11,6 +11,9 @@ import {
   getGuideBySlug,
   type GuideDefinition,
 } from "@/lib/guide-content";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { getAllAccommodations } from "@/lib/accommodation-data";
+import { BedDouble } from "lucide-react";
 import {
   getWineriesByAmenity,
   getWineriesByVarietal,
@@ -232,9 +235,18 @@ export default async function GuidePage({
 
   if (!guide) notFound();
 
-  const data = await getGuideData(guide);
+  const [data, allAccommodations] = await Promise.all([
+    getGuideData(guide),
+    getAllAccommodations(),
+  ]);
   type WineryCardProps = Parameters<typeof WineryCard>[0]["winery"];
   const wineries = "wineries" in data ? (data.wineries as WineryCardProps[]) : [];
+
+  // Get accommodations for the guide's valley
+  const guideValley = guide.valley;
+  const accommodations = guideValley
+    ? allAccommodations.filter((a) => a.valley === guideValley).slice(0, 3)
+    : allAccommodations.slice(0, 3);
   const comparison = "comparison" in data ? data.comparison : null;
 
   const breadcrumbItems = [
@@ -339,6 +351,28 @@ export default async function GuidePage({
               Frequently Asked Questions
             </h2>
             <FAQSection faqs={guide.faqs} />
+          </div>
+        )}
+
+        {/* Where to Stay */}
+        {accommodations.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-heading text-2xl font-semibold">
+                Where to Stay
+              </h2>
+              <Link
+                href={guideValley === "napa" ? "/where-to-stay/napa-valley" : guideValley === "sonoma" ? "/where-to-stay/sonoma-county" : "/where-to-stay"}
+                className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              >
+                All hotels &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {accommodations.map((a) => (
+                <AccommodationCard key={a.slug} accommodation={a} />
+              ))}
+            </div>
           </div>
         )}
 

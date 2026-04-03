@@ -31,6 +31,9 @@ import {
 } from "@/lib/geo";
 import { ShareButton } from "@/components/social/ShareButton";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { getAllAccommodations } from "@/lib/accommodation-data";
+import { BedDouble } from "lucide-react";
 import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
@@ -135,6 +138,13 @@ export default async function DayTripDetailPage({
   const segments = computeSegments(stops);
   const totalDrivingMiles = segments.reduce((s, seg) => s + seg.miles, 0);
   const totalDrivingMinutes = segments.reduce((s, seg) => s + seg.minutes, 0);
+
+  // Get accommodations for the route's valley
+  const routeValley = stops[0]?.valley ?? null;
+  const allAccommodations = await getAllAccommodations();
+  const nearbyAccommodations = routeValley
+    ? allAccommodations.filter((a) => a.valley === routeValley).slice(0, 3)
+    : allAccommodations.slice(0, 3);
 
   const totalTastingMinutes = stops.reduce(
     (sum, s) => sum + (s.suggestedDuration || 60),
@@ -398,6 +408,28 @@ export default async function DayTripDetailPage({
             </div>
           ))}
         </div>
+
+        {/* Where to Stay */}
+        {nearbyAccommodations.length > 0 && (
+          <section className="mt-12 border-t border-[var(--border)] pt-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-heading text-2xl font-bold">
+                Where to Stay
+              </h2>
+              <Link
+                href={routeValley === "napa" ? "/where-to-stay/napa-valley" : routeValley === "sonoma" ? "/where-to-stay/sonoma-county" : "/where-to-stay"}
+                className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              >
+                All hotels &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {nearbyAccommodations.map((a) => (
+                <AccommodationCard key={a.slug} accommodation={a} />
+              ))}
+            </div>
+          </section>
+        )}
 
       </div>
     </>

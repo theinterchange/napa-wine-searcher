@@ -158,6 +158,22 @@ const VARIETAL_INTROS: Record<string, (region: string) => string[]> = {
     `Sauvignon Blanc in ${region} ranges from bright and grassy to rich and barrel-fermented, offering a refreshing counterpoint to the region's bold reds. It's the perfect wine for a warm afternoon on a tasting room patio.`,
     `Discover ${region}'s best Sauvignon Blanc producers below.`,
   ],
+  "Red Blend": (region) => [
+    `Red blends are where ${region}'s winemakers show their creativity, combining varietals like Cabernet Sauvignon, Merlot, Cabernet Franc, and Petit Verdot into wines that are often greater than the sum of their parts. Inspired by Bordeaux tradition but shaped by California's fruit-forward terroir, these blends range from structured and age-worthy to lush and immediately drinkable.`,
+    `The wineries below are ${region}'s top red blend producers — explore their offerings to find bold, complex wines that showcase the art of blending.`,
+  ],
+  Rosé: (region) => [
+    `Rosé has gone from afterthought to essential in ${region}, with top producers crafting dry, elegant rosés from Pinot Noir, Grenache, Mourvèdre, and even Cabernet Sauvignon. These aren't sweet blush wines — they're serious, food-friendly bottles with bright acidity and flavors of strawberry, watermelon, and citrus.`,
+    `Whether you're looking for a crisp patio sipper or a rosé with the depth to pair with a meal, ${region}'s best rosé producers are worth seeking out.`,
+  ],
+  "Cabernet Franc": (region) => [
+    `Cabernet Franc is the connoisseur's grape in ${region} — more aromatic and elegant than its offspring Cabernet Sauvignon, with signature notes of violets, red currant, and graphite. Often used as a blending component, the wineries below champion Cabernet Franc as a standalone varietal, producing wines of real distinction.`,
+    `With only a handful of dedicated producers in the region, these Cab Franc specialists are worth seeking out for anyone who appreciates finesse over power.`,
+  ],
+  Syrah: (region) => [
+    `Syrah in ${region} produces bold, peppery wines with dark fruit, smoked meat, and a savory complexity that sets it apart from the region's more common varietals. Thriving in both warm hillside vineyards and cooler coastal sites, Syrah rewards adventurous tasters with some of wine country's most exciting and underappreciated bottles.`,
+    `The wineries below are ${region}'s standout Syrah producers — explore them for an alternative to the Cabernet and Pinot mainstream.`,
+  ],
 };
 
 function getVarietalIntro(varietal: string, region: string): string[] {
@@ -306,6 +322,10 @@ const VARIETALS = [
   "Zinfandel",
   "Merlot",
   "Sauvignon Blanc",
+  "Red Blend",
+  "Rosé",
+  "Cabernet Franc",
+  "Syrah",
 ];
 
 export function getAllGuides(): GuideDefinition[] {
@@ -350,7 +370,7 @@ export function getAllGuides(): GuideDefinition[] {
 
   // ---- Type 2: Varietal + Region ----
   for (const varietal of VARIETALS) {
-    const varietalSlug = varietal.toLowerCase().replace(/\s+/g, "-");
+    const varietalSlug = varietal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
     for (const valley of VALLEYS) {
       const region = regionName(valley.key);
       const slug = `best-${varietalSlug}-${valley.slugPart}`;

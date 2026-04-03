@@ -53,27 +53,53 @@ export async function getWineriesByAmenity(
     .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
 }
 
-// Varietal-based queries
+// Varietal-based queries — ranked by specialization score
+// Score = (varietal_count / total_wines) * varietal_count * rating
+// This rewards wineries that concentrate on a varietal, not just ones that happen to have one.
 export async function getWineriesByVarietal(
   varietalName: string,
   valley?: "napa" | "sonoma",
   subRegionSlug?: string
 ) {
-  const conditions = [
-    sql`LOWER(${wineTypes.name}) = LOWER(${varietalName})`,
-  ];
-
+  const conditions = [];
   if (valley) conditions.push(eq(subRegions.valley, valley));
   if (subRegionSlug) conditions.push(eq(subRegions.slug, subRegionSlug));
 
+  // Subquery: count of wines matching this varietal per winery
+  const varietalCount = db
+    .select({
+      wineryId: wines.wineryId,
+      varietalCount: count().as("varietal_count"),
+    })
+    .from(wines)
+    .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
+    .where(sql`LOWER(${wineTypes.name}) = LOWER(${varietalName})`)
+    .groupBy(wines.wineryId)
+    .as("vc");
+
+  // Subquery: total wines per winery
+  const totalCount = db
+    .select({
+      wineryId: wines.wineryId,
+      totalWines: count().as("total_wines"),
+    })
+    .from(wines)
+    .groupBy(wines.wineryId)
+    .as("tc");
+
   return db
-    .selectDistinct(wineryCardFields)
+    .select({
+      ...wineryCardFields,
+    })
     .from(wineries)
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .innerJoin(wines, eq(wines.wineryId, wineries.id))
-    .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
-    .where(and(...conditions))
-    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
+    .innerJoin(varietalCount, eq(wineries.id, varietalCount.wineryId))
+    .innerJoin(totalCount, eq(wineries.id, totalCount.wineryId))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(
+      sql`(CAST(${varietalCount.varietalCount} AS REAL) / ${totalCount.totalWines}) * ${varietalCount.varietalCount} * COALESCE(${wineries.aggregateRating}, 0) DESC`,
+      desc(wineries.curated),
+    );
 }
 
 // Price-based tasting queries

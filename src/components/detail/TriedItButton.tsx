@@ -30,7 +30,7 @@ export function TriedItButton({
     <>
       <button
         onClick={() => setShowForm(true)}
-        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors whitespace-nowrap bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors whitespace-nowrap bg-burgundy-50 text-burgundy-700 hover:bg-burgundy-100 dark:bg-burgundy-900/30 dark:text-burgundy-400 dark:hover:bg-burgundy-900/50"
       >
         {logged ? (
           <>

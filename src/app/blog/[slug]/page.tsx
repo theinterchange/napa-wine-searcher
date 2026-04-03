@@ -6,9 +6,14 @@ import remarkGfm from "remark-gfm";
 import { getAllPosts, getAllSlugs, getPostBySlug } from "@/lib/blog";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogCard } from "@/components/blog/BlogCard";
+import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { BASE_URL } from "@/lib/constants";
+import { getWineriesByAmenity } from "@/lib/guide-data";
+import { db } from "@/db";
+import { wineries, subRegions } from "@/db/schema";
+import { eq, and, lte, desc, sql } from "drizzle-orm";
 
 export const revalidate = 86400;
 
@@ -43,6 +48,51 @@ export async function generateMetadata({
   };
 }
 
+async function getWineriesForTags(tags: string[]) {
+  const tagSet = new Set(tags.map((t) => t.toLowerCase()));
+
+  // Try amenity-based match first
+  if (tagSet.has("dog-friendly")) return (await getWineriesByAmenity("dogFriendly")).slice(0, 4);
+  if (tagSet.has("kid-friendly") || tagSet.has("family")) return (await getWineriesByAmenity("kidFriendly")).slice(0, 4);
+
+  // Budget wineries
+  if (tagSet.has("budget") || tagSet.has("affordable")) {
+    return db
+      .select({
+        slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
+        city: wineries.city, subRegion: subRegions.name, valley: subRegions.valley,
+        priceLevel: wineries.priceLevel, aggregateRating: wineries.aggregateRating,
+        totalRatings: wineries.totalRatings, reservationRequired: wineries.reservationRequired,
+        dogFriendly: wineries.dogFriendly, picnicFriendly: wineries.picnicFriendly,
+        kidFriendly: wineries.kidFriendly, kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+        curated: wineries.curated, heroImageUrl: wineries.heroImageUrl,
+      })
+      .from(wineries)
+      .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(lte(wineries.priceLevel, 2))
+      .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`)
+      .limit(4);
+  }
+
+  // Valley-based fallback
+  const valley = tagSet.has("napa valley") ? "napa" : tagSet.has("sonoma county") ? "sonoma" : null;
+  return db
+    .select({
+      slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
+      city: wineries.city, subRegion: subRegions.name, valley: subRegions.valley,
+      priceLevel: wineries.priceLevel, aggregateRating: wineries.aggregateRating,
+      totalRatings: wineries.totalRatings, reservationRequired: wineries.reservationRequired,
+      dogFriendly: wineries.dogFriendly, picnicFriendly: wineries.picnicFriendly,
+      kidFriendly: wineries.kidFriendly, kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      curated: wineries.curated, heroImageUrl: wineries.heroImageUrl,
+    })
+    .from(wineries)
+    .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+    .where(valley ? eq(subRegions.valley, valley) : undefined)
+    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`)
+    .limit(4);
+}
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -52,7 +102,10 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const allPosts = getAllPosts();
+  const [allPosts, matchingWineries] = await Promise.all([
+    Promise.resolve(getAllPosts()),
+    getWineriesForTags(post.tags),
+  ]);
   const related = allPosts
     .filter((p) => p.slug !== post.slug)
     .slice(0, 3);
@@ -91,6 +144,28 @@ export default async function BlogPostPage({
       <BlogArticle post={post}>
         <MDXRemote source={post.content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
       </BlogArticle>
+
+      {/* Matching wineries */}
+      {matchingWineries.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)] mt-12">
+          <h2 className="font-heading text-2xl font-bold mb-6">
+            Explore These Wineries
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {matchingWineries.map((w) => (
+              <WineryCard key={w.slug} winery={w} />
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href="/wineries"
+              className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            >
+              Browse all wineries &rarr;
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Related posts */}
       {related.length > 0 && (

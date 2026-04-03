@@ -14,12 +14,12 @@ export interface Wine {
 export const CATEGORY_ORDER = ["red", "white", "rosé", "sparkling", "dessert", "other"];
 
 export const categoryColors: Record<string, string> = {
-  red: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  white: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-  rosé: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
-  sparkling: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  red: "bg-burgundy-100 text-burgundy-800 dark:bg-burgundy-900 dark:text-burgundy-200",
+  white: "bg-amber-50 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
+  rosé: "bg-pink-50 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
+  sparkling: "bg-sky-50 text-sky-800 dark:bg-sky-900 dark:text-sky-200",
   dessert: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
-  other: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
+  other: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200",
 };
 
 export const categoryIcons: Record<string, string> = {

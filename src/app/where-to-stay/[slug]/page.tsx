@@ -20,7 +20,9 @@ import {
   getAllAccommodations,
 } from "@/lib/accommodation-data";
 import { WineryCard } from "@/components/directory/WineryCard";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
+import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
 import { Stay22Widget } from "@/components/accommodation/Stay22Widget";
 import { FAQSection } from "@/components/region/FAQSection";
@@ -101,10 +103,21 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
   const accommodation = await getAccommodationBySlug(slug);
   if (!accommodation) notFound();
 
-  const [photos, nearbyWineries] = await Promise.all([
+  const [photos, nearbyWineries, allAccommodations] = await Promise.all([
     getAccommodationPhotos(accommodation.id),
     getNearbyWineries(accommodation.id),
+    getAllAccommodations(),
   ]);
+
+  // Related accommodations in same valley
+  const relatedAccommodations = allAccommodations
+    .filter((a) => a.valley === accommodation.valley && a.slug !== slug)
+    .slice(0, 3);
+
+  // Guides for this valley
+  const valleyGuides = getAllGuides()
+    .filter((g) => g.valley === accommodation.valley)
+    .slice(0, 5);
 
   const amenities: string[] = accommodation.amenitiesJson
     ? JSON.parse(accommodation.amenitiesJson)
@@ -577,6 +590,48 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                         </span>
                       )}
                     </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* More Places to Stay */}
+            {relatedAccommodations.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-heading text-2xl font-bold">
+                    More Places to Stay
+                  </h2>
+                  <Link
+                    href={accommodation.valley === "napa" ? "/where-to-stay/napa-valley" : "/where-to-stay/sonoma-county"}
+                    className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                  >
+                    All hotels &rarr;
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {relatedAccommodations.map((a) => (
+                    <AccommodationCard key={a.slug} accommodation={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Wine Country Guides */}
+            {valleyGuides.length > 0 && (
+              <section>
+                <h2 className="font-heading text-xl font-semibold mb-4">
+                  Wine Country Guides
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {valleyGuides.map((g) => (
+                    <Link
+                      key={g.slug}
+                      href={`/guides/${g.slug}`}
+                      className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                    >
+                      {g.h1}
+                    </Link>
                   ))}
                 </div>
               </section>

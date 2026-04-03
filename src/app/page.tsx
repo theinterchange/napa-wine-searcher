@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape, BedDouble } from "lucide-react";
+import { ArrowRight, Wine, Route, MapPin, Heart, BookOpen, Grape, BedDouble, Dog, DollarSign, Sparkles, Users } from "lucide-react";
 import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
@@ -297,7 +297,49 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 6. Account CTA */}
+      {/* 6. Planning Guides */}
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-heading text-xl font-bold">Planning Guides</h2>
+            <Link
+              href="/guides"
+              className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            >
+              All guides &rarr;
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { slug: "first-time-guide-napa-valley", label: "First Time in Napa", desc: "Where to start", icon: Sparkles },
+              { slug: "dog-friendly-wineries-napa-valley", label: "Dog-Friendly", desc: "Bring your pup", icon: Dog },
+              { slug: "cheap-wine-tastings-napa-valley", label: "Budget Tastings", desc: "Under $40", icon: DollarSign },
+              { slug: "romantic-wineries-napa-valley", label: "Romantic", desc: "Date-worthy picks", icon: Heart },
+              { slug: "best-cabernet-sauvignon-napa-valley", label: "Best Cabernet", desc: "Napa's flagship", icon: Wine },
+            ].map((g) => (
+              <Link
+                key={g.slug}
+                href={`/guides/${g.slug}`}
+                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-burgundy-50 dark:bg-burgundy-950 shrink-0">
+                  <g.icon className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors truncate">
+                    {g.label}
+                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    {g.desc}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Account CTA */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <SignUpPrompt />

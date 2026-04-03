@@ -252,7 +252,13 @@ async function main() {
       continue;
     }
 
-    const refs = photoRefs.slice(0, MAX_PHOTOS);
+    // Prefer landscape photos (width > height) for hero image
+    const landscapeFirst = [...photoRefs].sort((a, b) => {
+      const aLandscape = a.widthPx > a.heightPx ? 1 : 0;
+      const bLandscape = b.widthPx > b.heightPx ? 1 : 0;
+      return bLandscape - aLandscape;
+    });
+    const refs = landscapeFirst.slice(0, MAX_PHOTOS);
     const photos: { googleUrl: string; blobUrl: string }[] = [];
 
     for (let pi = 0; pi < refs.length; pi++) {
