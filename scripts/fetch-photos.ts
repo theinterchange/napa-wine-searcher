@@ -252,13 +252,11 @@ async function main() {
       continue;
     }
 
-    // Prefer landscape photos (width > height) for hero image
-    const landscapeFirst = [...photoRefs].sort((a, b) => {
-      const aLandscape = a.widthPx > a.heightPx ? 1 : 0;
-      const bLandscape = b.widthPx > b.heightPx ? 1 : 0;
-      return bLandscape - aLandscape;
-    });
-    const refs = landscapeFirst.slice(0, MAX_PHOTOS);
+    // Only use landscape photos (width > height); fall back to all if none are landscape
+    const landscape = photoRefs.filter((p) => p.widthPx > p.heightPx);
+    const pool = landscape.length > 0 ? landscape : photoRefs;
+    const refs = pool.slice(0, MAX_PHOTOS);
+    console.log(`  ${landscape.length}/${photoRefs.length} landscape photos available`);
     const photos: { googleUrl: string; blobUrl: string }[] = [];
 
     for (let pi = 0; pi < refs.length; pi++) {
