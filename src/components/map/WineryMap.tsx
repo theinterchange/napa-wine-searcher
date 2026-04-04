@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { useSearchParams, useRouter } from "next/navigation";
-import { MapInfoCard } from "./MapInfoCard";
-import { Locate, Dog, Baby, TreePine, DoorOpen } from "lucide-react";
+import { MapBottomCard } from "./MapBottomCard";
+import { Locate, Dog, Baby, TreePine, DoorOpen, Hotel, Leaf } from "lucide-react";
 
 interface WineryMapData {
   id: number;
@@ -17,13 +17,35 @@ interface WineryMapData {
   aggregateRating: number | null;
   totalRatings: number | null;
   shortDescription: string | null;
+  heroImageUrl: string | null;
+  websiteUrl: string | null;
   subRegion: string | null;
   subRegionColor: string | null;
   valley: string | null;
 }
 
+interface AccommodationMapData {
+  id: number;
+  slug: string;
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  city: string | null;
+  type: string;
+  priceTier: number | null;
+  googleRating: number | null;
+  bookingUrl: string | null;
+  websiteUrl: string | null;
+  heroImageUrl: string | null;
+  shortDescription: string | null;
+  dogFriendly: boolean | null;
+  kidFriendly: boolean | null;
+  adultsOnly: boolean | null;
+}
+
 const NAPA_CENTER = { lat: 38.5025, lng: -122.4025 };
 const PIN_COLOR = "#722F37"; // burgundy
+const HOTEL_PIN_COLOR = "#B8860B"; // dark gold
 
 interface FilterState {
   valley: string;
@@ -31,6 +53,7 @@ interface FilterState {
   kid: boolean;
   picnic: boolean;
   walkin: boolean;
+  sustainable: boolean;
   prices: Set<string>;
 }
 
@@ -40,6 +63,7 @@ const defaultFilters: FilterState = {
   kid: false,
   picnic: false,
   walkin: false,
+  sustainable: false,
   prices: new Set(),
 };
 
@@ -47,6 +71,9 @@ export function WineryMap() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [wineries, setWineries] = useState<WineryMapData[]>([]);
   const [selected, setSelected] = useState<WineryMapData | null>(null);
+  const [accommodations, setAccommodations] = useState<AccommodationMapData[]>([]);
+  const [selectedAccommodation, setSelectedAccommodation] = useState<AccommodationMapData | null>(null);
+  const [showHotels, setShowHotels] = useState(true);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -67,6 +94,8 @@ export function WineryMap() {
     else params.delete("picnic");
     if (filters.walkin) params.set("reservation", "0");
     else params.delete("reservation");
+    if (filters.sustainable) params.set("sustainable", "1");
+    else params.delete("sustainable");
     if (filters.prices.size > 0) params.set("price", [...filters.prices].join(","));
     else params.delete("price");
     return params.toString();
@@ -79,6 +108,17 @@ export function WineryMap() {
       .catch(console.error);
   }, [buildParams]);
 
+  // Lazy-fetch accommodations only when hotel toggle is on
+  useEffect(() => {
+    if (!showHotels) return;
+    const params = new URLSearchParams();
+    if (filters.valley) params.set("valley", filters.valley);
+    fetch(`/api/accommodations/map?${params.toString()}`)
+      .then((r) => r.json())
+      .then(setAccommodations)
+      .catch(console.error);
+  }, [showHotels, filters.valley]);
+
   const toggle = (key: keyof FilterState, value?: string) => {
     setFilters((prev) => {
       if (typeof prev[key] === "boolean") {
@@ -88,6 +128,7 @@ export function WineryMap() {
       return { ...prev, [key]: prev[key] === value ? "" : value || "" };
     });
     setSelected(null);
+    setSelectedAccommodation(null);
   };
 
   const togglePrice = (level: string) => {
@@ -133,7 +174,7 @@ export function WineryMap() {
   return (
     <div className="relative h-[calc(100vh-4rem)] w-full">
       {/* Filter bar */}
-      <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center gap-2">
+      <div className="absolute top-4 left-52 z-10 flex flex-wrap items-center gap-2">
         {/* Valley */}
         <div className="flex rounded-lg overflow-hidden border border-[var(--border)] shadow-md text-xs">
           {[
@@ -161,6 +202,7 @@ export function WineryMap() {
           { key: "kid" as const, label: "Kid Friendly", icon: Baby },
           { key: "picnic" as const, label: "Picnic", icon: TreePine },
           { key: "walkin" as const, label: "Walk-In", icon: DoorOpen },
+          { key: "sustainable" as const, label: "Sustainable", icon: Leaf },
         ].map(({ key, label, icon: Icon }) => (
           <button
             key={key}
@@ -194,17 +236,39 @@ export function WineryMap() {
         {/* Clear */}
         {activeCount > 0 && (
           <button
-            onClick={() => setFilters({ ...defaultFilters, prices: new Set() })}
+            onClick={() => {
+              setFilters({ ...defaultFilters, prices: new Set() });
+              setSelectedAccommodation(null);
+            }}
             className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs font-medium shadow-md hover:bg-[var(--muted)] transition-colors"
           >
             Clear ({activeCount})
           </button>
         )}
 
-        {/* Count */}
-        <span className="rounded-lg bg-[var(--card)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--muted-foreground)] shadow-md">
-          {wineries.filter((w) => w.lat && w.lng).length} wineries
-        </span>
+        {/* Hotels layer toggle */}
+        <label className="flex items-center gap-2 rounded-lg bg-[var(--card)] border border-[var(--border)] px-3 py-2 shadow-md cursor-pointer select-none">
+          <Hotel className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+          <span className="text-xs font-medium">Hotels</span>
+          <button
+            role="switch"
+            aria-checked={showHotels}
+            onClick={() => {
+              setShowHotels((prev) => !prev);
+              setSelected(null);
+              setSelectedAccommodation(null);
+            }}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              showHotels ? "bg-gold-500" : "bg-[var(--muted)]"
+            }`}
+          >
+            <span
+              className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
+                showHotels ? "translate-x-[18px]" : "translate-x-[3px]"
+              }`}
+            />
+          </button>
+        </label>
       </div>
 
       <APIProvider apiKey={apiKey}>
@@ -221,7 +285,10 @@ export function WineryMap() {
               <AdvancedMarker
                 key={w.id}
                 position={{ lat: w.lat!, lng: w.lng! }}
-                onClick={() => setSelected(w)}
+                onClick={() => {
+                  setSelected(w);
+                  setSelectedAccommodation(null);
+                }}
               >
                 <div
                   className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md text-white text-xs font-bold cursor-pointer hover:scale-110 transition-transform"
@@ -231,6 +298,26 @@ export function WineryMap() {
                 </div>
               </AdvancedMarker>
             ))}
+          {showHotels &&
+            accommodations
+              .filter((a) => a.lat && a.lng)
+              .map((a) => (
+                <AdvancedMarker
+                  key={`hotel-${a.id}`}
+                  position={{ lat: a.lat!, lng: a.lng! }}
+                  onClick={() => {
+                    setSelectedAccommodation(a);
+                    setSelected(null);
+                  }}
+                >
+                  <div
+                    className="flex h-7 w-7 items-center justify-center rounded-md border-2 border-white shadow-md text-white text-[10px] font-bold cursor-pointer hover:scale-110 transition-transform"
+                    style={{ backgroundColor: HOTEL_PIN_COLOR }}
+                  >
+                    {"$".repeat(a.priceTier || 2)}
+                  </div>
+                </AdvancedMarker>
+              ))}
           {userLocation && (
             <AdvancedMarker position={userLocation}>
               <div className="h-4 w-4 rounded-full bg-blue-500 border-2 border-white shadow-md" />
@@ -239,8 +326,15 @@ export function WineryMap() {
         </Map>
       </APIProvider>
 
-      {selected && (
-        <MapInfoCard winery={selected} onClose={() => setSelected(null)} />
+      {(selected || selectedAccommodation) && (
+        <MapBottomCard
+          winery={selected}
+          accommodation={selectedAccommodation}
+          onClose={() => {
+            setSelected(null);
+            setSelectedAccommodation(null);
+          }}
+        />
       )}
 
       <button

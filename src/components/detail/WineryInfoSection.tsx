@@ -9,6 +9,7 @@ import {
   Baby,
   Info,
   Route,
+  Leaf,
 } from "lucide-react";
 import Link from "next/link";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
@@ -50,6 +51,9 @@ interface WineryInfoProps {
   kidFriendlyNote: string | null;
   kidFriendlySource: string | null;
   kidFriendlyConfidence: string | null;
+  sustainableFarming: boolean | null;
+  sustainableNote: string | null;
+  sustainableSource: string | null;
   description: string | null;
   whyVisit: string | null;
   theSetting: string | null;
@@ -114,7 +118,8 @@ export function WinerySidebar({
     winery.reservationRequired ||
     winery.dogFriendly ||
     winery.picnicFriendly ||
-    winery.kidFriendly;
+    winery.kidFriendly ||
+    winery.sustainableFarming;
 
   return (
     <div className="sticky top-24 space-y-6">
@@ -231,6 +236,28 @@ export function WinerySidebar({
                 {winery.kidFriendlyConfidence === "medium" && (
                   <span className="text-xs text-amber-600 dark:text-amber-400">
                     *
+                  </span>
+                )}
+              </div>
+            )}
+            {winery.sustainableFarming && (
+              <div className="flex items-center gap-2">
+                <Leaf className="h-4 w-4 text-[var(--muted-foreground)]" />
+                {winery.sustainableSource ? (
+                  <a
+                    href={winery.sustainableSource}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                  >
+                    Sustainable
+                  </a>
+                ) : (
+                  "Sustainable"
+                )}
+                {winery.sustainableNote && (
+                  <span className="text-xs text-[var(--muted-foreground)]">
+                    — {winery.sustainableNote}
                   </span>
                 )}
               </div>

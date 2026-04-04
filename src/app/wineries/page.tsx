@@ -94,6 +94,9 @@ export default async function WineriesPage({
         case "walkin":
           conditions.push(eq(wineries.reservationRequired, false));
           break;
+        case "sustainable":
+          conditions.push(eq(wineries.sustainableFarming, true));
+          break;
       }
     }
   }

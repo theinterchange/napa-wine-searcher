@@ -110,6 +110,9 @@ export default async function WineryDetailPage({
       kidFriendlyNote: wineries.kidFriendlyNote,
       kidFriendlySource: wineries.kidFriendlySource,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      sustainableFarming: wineries.sustainableFarming,
+      sustainableNote: wineries.sustainableNote,
+      sustainableSource: wineries.sustainableSource,
       priceLevel: wineries.priceLevel,
       aggregateRating: wineries.aggregateRating,
       totalRatings: wineries.totalRatings,
@@ -255,6 +258,14 @@ export default async function WineryDetailPage({
     }),
     ...(winery.priceLevel && {
       priceRange: "$".repeat(winery.priceLevel),
+    }),
+    ...((winery.dogFriendly || winery.kidFriendly || winery.picnicFriendly || winery.sustainableFarming) && {
+      amenityFeature: [
+        ...(winery.dogFriendly ? [{ "@type": "LocationFeatureSpecification", name: "Dog Friendly", value: true }] : []),
+        ...(winery.kidFriendly ? [{ "@type": "LocationFeatureSpecification", name: "Kid Friendly", value: true }] : []),
+        ...(winery.picnicFriendly ? [{ "@type": "LocationFeatureSpecification", name: "Picnic Area", value: true }] : []),
+        ...(winery.sustainableFarming ? [{ "@type": "LocationFeatureSpecification", name: "Sustainable Farming", value: true }] : []),
+      ],
     }),
     ...(tastings.length > 0 && {
       hasOfferCatalog: {
@@ -524,6 +535,16 @@ export default async function WineryDetailPage({
           });
         }
 
+        // Sustainable farming
+        if (winery.sustainableFarming) {
+          faqs.push({
+            question: `Is ${winery.name} a sustainable winery?`,
+            answer: winery.sustainableNote
+              ? `Yes, ${winery.name} practices sustainable farming. ${winery.sustainableNote}.`
+              : `Yes, ${winery.name} is committed to sustainable farming practices. Contact the winery for details on their environmental initiatives.`,
+          });
+        }
+
         // Location
         if (winery.address && winery.city) {
           faqs.push({
@@ -609,6 +630,7 @@ export default async function WineryDetailPage({
         if (winery.dogFriendly) guides.push({ label: "Dog-Friendly Wineries", href: `/guides/dog-friendly-wineries-${valleySlug}` });
         if (winery.kidFriendly) guides.push({ label: "Kid-Friendly Wineries", href: `/guides/kid-friendly-wineries-${valleySlug}` });
         if (winery.picnicFriendly) guides.push({ label: "Picnic-Friendly Wineries", href: `/guides/picnic-friendly-wineries-${valleySlug}` });
+        if (winery.sustainableFarming) guides.push({ label: "Sustainable Wineries", href: `/guides/sustainable-wineries-${valleySlug}` });
         if (winery.priceLevel && winery.priceLevel <= 2) guides.push({ label: "Budget-Friendly Tastings", href: `/guides/cheap-wine-tastings-${valleySlug}` });
         if (winery.priceLevel && winery.priceLevel >= 4) guides.push({ label: "Luxury Tastings", href: `/guides/luxury-wine-tastings-${valleySlug}` });
         if (!winery.reservationRequired) guides.push({ label: "Walk-In Wineries", href: `/guides/walk-in-wineries-${valleySlug}` });

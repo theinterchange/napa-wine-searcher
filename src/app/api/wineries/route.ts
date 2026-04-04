@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const dog = params.get("dog") || "";
     const kid = params.get("kid") || "";
     const picnic = params.get("picnic") || "";
+    const sustainable = params.get("sustainable") || "";
 
     const conditions = [];
     if (q) conditions.push(like(wineries.name, `%${q}%`));
@@ -34,6 +35,7 @@ export async function GET(request: NextRequest) {
     if (dog === "true" || dog === "1") conditions.push(eq(wineries.dogFriendly, true));
     if (kid === "true" || kid === "1") conditions.push(eq(wineries.kidFriendly, true));
     if (picnic === "true" || picnic === "1") conditions.push(eq(wineries.picnicFriendly, true));
+    if (sustainable === "true" || sustainable === "1") conditions.push(eq(wineries.sustainableFarming, true));
 
     const where = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -49,6 +51,8 @@ export async function GET(request: NextRequest) {
         aggregateRating: wineries.aggregateRating,
         totalRatings: wineries.totalRatings,
         shortDescription: wineries.shortDescription,
+        heroImageUrl: wineries.heroImageUrl,
+        websiteUrl: wineries.websiteUrl,
         curated: wineries.curated,
         subRegion: subRegions.name,
         subRegionColor: subRegions.color,

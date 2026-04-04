@@ -18,4 +18,5 @@ export const AMENITY_OPTIONS = [
   { value: "kid", label: "Kid Friendly" },
   { value: "picnic", label: "Picnic Friendly" },
   { value: "walkin", label: "Walk-in Friendly" },
+  { value: "sustainable", label: "Sustainable" },
 ] as const;
