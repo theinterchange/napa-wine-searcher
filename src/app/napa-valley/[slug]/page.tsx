@@ -73,14 +73,14 @@ export default async function NapaSubRegionPage({
         >
           <Link
             href="/"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           <Link
             href="/napa-valley"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Napa Valley
           </Link>

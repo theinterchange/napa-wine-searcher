@@ -227,7 +227,7 @@ export default async function ComparePage({
                       <li key={t.id}>
                         <div className="flex justify-between">
                           <span className="font-medium">{t.name}</span>
-                          <span className="text-burgundy-700 dark:text-burgundy-400">
+                          <span className="text-[var(--foreground)]">
                             {t.price ? formatPrice(t.price) : "—"}
                           </span>
                         </div>
@@ -269,7 +269,7 @@ export default async function ComparePage({
                       <li>
                         <Link
                           href={`/wineries/${w.slug}`}
-                          className="text-xs text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                          className="text-xs text-[var(--foreground)] hover:underline"
                         >
                           and {remaining} more
                         </Link>
@@ -330,7 +330,7 @@ export default async function ComparePage({
                         <li key={t.id}>
                           <div className="flex justify-between">
                             <span className="font-medium">{t.name}</span>
-                            <span className="text-burgundy-700 dark:text-burgundy-400">
+                            <span className="text-[var(--foreground)]">
                               {t.price ? formatPrice(t.price) : "—"}
                             </span>
                           </div>
@@ -357,7 +357,7 @@ export default async function ComparePage({
                         <li>
                           <Link
                             href={`/wineries/${w.slug}`}
-                            className="text-xs text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                            className="text-xs text-[var(--foreground)] hover:underline"
                           >
                             and {remainingWines} more
                           </Link>

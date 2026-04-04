@@ -141,7 +141,7 @@ export function WineCategory({
                     )}
                   </div>
                   {wine.price != null && (
-                    <span className="shrink-0 text-sm font-semibold text-burgundy-700 dark:text-burgundy-400">
+                    <span className="shrink-0 text-sm font-semibold text-[var(--foreground)]">
                       {formatPrice(wine.price)}
                     </span>
                   )}

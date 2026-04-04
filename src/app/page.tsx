@@ -138,21 +138,21 @@ export default async function HomePage() {
       <section className="border-y border-[var(--border)] bg-[var(--muted)]/30">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-[var(--muted-foreground)]">
-            <Link href="/wineries" className="flex items-center gap-1.5 hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+            <Link href="/wineries" className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors">
               <Wine className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
               <strong className="text-[var(--foreground)]">{totalWineries}</strong> Wineries
             </Link>
             <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
-            <Link href="/day-trips" className="flex items-center gap-1.5 hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+            <Link href="/day-trips" className="flex items-center gap-1.5 hover:text-[var(--foreground)] transition-colors">
               <Route className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
               <strong className="text-[var(--foreground)]">{dayTripCount}</strong> Day Trip Routes
             </Link>
             <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <Link href="/napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"><strong className="text-[var(--foreground)]">Napa Valley</strong></Link>
+              <Link href="/napa-valley" className="hover:text-[var(--foreground)] transition-colors"><strong className="text-[var(--foreground)]">Napa Valley</strong></Link>
               <span className="text-[var(--border)]" aria-hidden="true">|</span>
-              <Link href="/sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"><strong className="text-[var(--foreground)]">Sonoma County</strong></Link>
+              <Link href="/sonoma-county" className="hover:text-[var(--foreground)] transition-colors"><strong className="text-[var(--foreground)]">Sonoma County</strong></Link>
             </span>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default async function HomePage() {
           <h2 className="font-heading text-2xl font-bold">Explore Wineries</h2>
           <Link
             href="/wineries"
-            className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            className="text-sm font-medium text-[var(--foreground)] hover:underline"
           >
             Browse All Wineries &rarr;
           </Link>
@@ -178,7 +178,7 @@ export default async function HomePage() {
         <div className="mt-8 text-center">
           <Link
             href="/wineries"
-            className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-600 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
           >
             Browse All Wineries &rarr;
           </Link>
@@ -193,10 +193,10 @@ export default async function HomePage() {
               Plan Your Wine Country Trip
             </h2>
             <div className="flex gap-4 text-sm font-medium">
-              <Link href="/where-to-stay" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+              <Link href="/where-to-stay" className="text-[var(--foreground)] hover:underline">
                 All hotels &rarr;
               </Link>
-              <Link href="/day-trips" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+              <Link href="/day-trips" className="text-[var(--foreground)] hover:underline">
                 Day trips &rarr;
               </Link>
             </div>
@@ -265,10 +265,10 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-heading text-xl font-bold">Explore Wine Regions</h2>
             <div className="flex gap-3 text-sm font-medium">
-              <Link href="/napa-valley" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+              <Link href="/napa-valley" className="text-[var(--foreground)] hover:underline">
                 Napa Valley &rarr;
               </Link>
-              <Link href="/sonoma-county" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+              <Link href="/sonoma-county" className="text-[var(--foreground)] hover:underline">
                 Sonoma County &rarr;
               </Link>
             </div>
@@ -304,7 +304,7 @@ export default async function HomePage() {
             <h2 className="font-heading text-xl font-bold">Planning Guides</h2>
             <Link
               href="/guides"
-              className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm font-medium text-[var(--foreground)] hover:underline"
             >
               All guides &rarr;
             </Link>

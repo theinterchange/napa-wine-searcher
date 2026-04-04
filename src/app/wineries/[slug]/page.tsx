@@ -300,7 +300,7 @@ export default async function WineryDetailPage({
         >
           <Link
             href="/"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Home
           </Link>
@@ -309,7 +309,7 @@ export default async function WineryDetailPage({
             <>
               <Link
                 href={valleyPrefix}
-                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                className="hover:text-[var(--foreground)] transition-colors"
               >
                 {winery.valley === "napa" ? "Napa Valley" : "Sonoma County"}
               </Link>
@@ -320,7 +320,7 @@ export default async function WineryDetailPage({
             <>
               <Link
                 href={`${valleyPrefix}/${subRegionSlug}`}
-                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                className="hover:text-[var(--foreground)] transition-colors"
               >
                 {winery.subRegion}
               </Link>
@@ -442,7 +442,7 @@ export default async function WineryDetailPage({
                   href={affiliateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
                 >
                   Browse Wines Online
                 </a>
@@ -594,7 +594,7 @@ export default async function WineryDetailPage({
               {valleyPrefix && subRegionSlug && (
                 <Link
                   href={`${valleyPrefix}/${subRegionSlug}`}
-                  className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                  className="text-sm font-medium text-[var(--foreground)] hover:underline"
                 >
                   View all &rarr;
                 </Link>
@@ -684,7 +684,7 @@ export default async function WineryDetailPage({
             </Link>
             <Link
               href="/plan-trip"
-              className="rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              className="rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
             >
               Plan Your Trip
             </Link>

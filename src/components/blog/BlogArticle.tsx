@@ -21,11 +21,11 @@ export function BlogArticle({
     <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-16">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] py-6">
-        <Link href="/" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+        <Link href="/" className="hover:text-[var(--foreground)] transition-colors">
           Home
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/blog" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+        <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
           Blog
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />

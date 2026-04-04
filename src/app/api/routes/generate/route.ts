@@ -61,10 +61,11 @@ const WINE_CATEGORY_MAP: Record<string, string[]> = {
 };
 
 // Time budget → stop count ranges
+// Each stop ≈ 75-90 min (tasting + buffer to explore/leave) + 15-20 min driving between stops
 const TIME_BUDGET_STOPS: Record<string, { min: number; max: number; minutes: number }> = {
-  half: { min: 2, max: 3, minutes: 180 },
-  full: { min: 3, max: 5, minutes: 360 },
-  extended: { min: 5, max: 6, minutes: 480 },
+  half: { min: 2, max: 2, minutes: 210 },     // ~3.5h: 2 stops × 75 min + driving
+  full: { min: 3, max: 4, minutes: 420 },      // ~7h: 3-4 stops × 75 min + driving + lunch
+  extended: { min: 4, max: 5, minutes: 540 },  // ~9h: 4-5 stops × 75 min + driving + lunch
 };
 
 export async function GET(request: NextRequest) {
@@ -186,6 +187,7 @@ export async function GET(request: NextRequest) {
       subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
       hoursJson: wineries.hoursJson,
+      visitUrl: wineries.visitUrl,
     })
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
@@ -307,6 +309,7 @@ export async function GET(request: NextRequest) {
         subRegionSlug: subRegions.slug,
         valley: subRegions.valley,
         hoursJson: wineries.hoursJson,
+        visitUrl: wineries.visitUrl,
       })
       .from(wineries)
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
@@ -557,19 +560,19 @@ export async function GET(request: NextRequest) {
     return reasons.slice(0, 3);
   }
 
-  // Strip hoursJson from response
-  const cleanStop = ({ hoursJson, ...rest }: (typeof ordered)[number]) => rest;
+  // Strip hoursJson from alternatives only (stops keep it for hours display)
+  const cleanAlt = ({ hoursJson, visitUrl, ...rest }: (typeof ordered)[number]) => rest;
 
   return NextResponse.json({
     stops: ordered.map((s, i) => ({
-      ...cleanStop(s),
+      ...s,
       tasting: priceMap.get(s.id) || null,
       tastingDurationMinutes: durationMap.get(s.id) || 60,
       segmentAfter: stopSegments[i] || null,
       matchReasons: getMatchReasons(s, i),
     })),
     alternatives: Object.fromEntries(
-      Object.entries(alternatives).map(([k, v]) => [k, v.map(cleanStop)])
+      Object.entries(alternatives).map(([k, v]) => [k, v.map(cleanAlt)])
     ),
     summary: {
       totalMiles: Math.round(totalMiles * 10) / 10,
@@ -619,6 +622,8 @@ async function loadCuratedRoute(slug: string) {
       subRegion: subRegions.name,
       subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
+      hoursJson: wineries.hoursJson,
+      visitUrl: wineries.visitUrl,
       notes: dayTripStops.notes,
       suggestedDuration: dayTripStops.suggestedDuration,
     })

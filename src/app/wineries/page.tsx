@@ -292,7 +292,7 @@ export default async function WineriesPage({
       <div className="mt-12 text-center">
         <Link
           href="/day-trips"
-          className="inline-flex items-center gap-2 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)] hover:underline"
         >
           <Route className="h-4 w-4" />
           Explore Day Trip Routes

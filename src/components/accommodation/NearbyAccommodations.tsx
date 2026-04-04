@@ -22,7 +22,7 @@ export function NearbyAccommodations({
         <h2 className="font-heading text-2xl font-bold">{title}</h2>
         <Link
           href={valley ? `/where-to-stay/${valley === "napa" ? "napa-valley" : "sonoma-county"}` : "/where-to-stay"}
-          className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+          className="text-sm font-medium text-[var(--foreground)] hover:underline"
         >
           View all
         </Link>

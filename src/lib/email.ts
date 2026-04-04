@@ -169,6 +169,83 @@ export async function sendTripRecapEmail(email: string, data: TripRecapData) {
   }
 }
 
+interface PitchEmailData {
+  wineryName: string;
+  totalClicks: number;
+  periodLabel: string;
+  trendPercent: number | null;
+  subscriberCount: number;
+}
+
+export async function sendWineryPitchEmail(
+  recipientEmail: string,
+  subject: string,
+  data: PitchEmailData
+) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY not set — skipping pitch email");
+    return;
+  }
+
+  const resend = new Resend(apiKey);
+  const trendLine =
+    data.trendPercent !== null && data.trendPercent !== 0
+      ? `<p style="color:#059669;font-size:14px;">📈 That's ${data.trendPercent > 0 ? "up" : "down"} <strong>${Math.abs(data.trendPercent)}%</strong> compared to the previous period.</p>`
+      : "";
+
+  const html = `
+    <div style="max-width:600px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1f2937;">
+      <h1 style="color:#7f1d1d;font-size:24px;margin-bottom:4px;">Partnership Opportunity — ${data.wineryName}</h1>
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
+
+      <p>Hi there,</p>
+
+      <p>I'm Michael from <a href="${BASE_URL}" style="color:#7f1d1d;text-decoration:none;font-weight:600;">Napa Sonoma Guide</a>, a wine country discovery platform helping visitors plan their Napa and Sonoma trips.</p>
+
+      <p>Your winery, <strong>${data.wineryName}</strong>, already has a listing on our site. Here's how it's performing:</p>
+
+      <div style="background:#fef2f2;border-radius:8px;padding:16px;margin:16px 0;">
+        <p style="margin:0 0 8px;font-size:20px;font-weight:700;color:#7f1d1d;">${data.totalClicks} clicks</p>
+        <p style="margin:0;color:#6b7280;font-size:14px;">from engaged wine country visitors (${data.periodLabel})</p>
+        ${trendLine}
+      </div>
+
+      <p>Our platform reaches <strong>${data.subscriberCount}+ email subscribers</strong> actively planning wine country trips, plus organic search traffic from people searching for Napa and Sonoma wineries.</p>
+
+      <h2 style="color:#7f1d1d;font-size:18px;margin-top:24px;">Featured Listing Benefits</h2>
+      <ul style="color:#374151;line-height:1.8;">
+        <li>Priority placement in search results and recommendations</li>
+        <li>Enhanced listing with more photos, tasting menu details, and video</li>
+        <li>"Featured Winery" badge on your listing</li>
+        <li>Inclusion in our monthly email to subscribers</li>
+        <li>Dedicated blog post or guide feature</li>
+      </ul>
+
+      <p>Featured listings start at <strong>$100/month</strong>, cancel anytime. Would you be interested in a quick call to discuss?</p>
+
+      <p>Best,<br/><strong>Michael Chen</strong><br/>Napa Sonoma Guide<br/><a href="${BASE_URL}" style="color:#7f1d1d;text-decoration:none;">${BASE_URL.replace("https://www.", "")}</a></p>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
+      <p style="color:#9ca3af;font-size:12px;text-align:center;">
+        Sent from <a href="${BASE_URL}" style="color:#7f1d1d;text-decoration:none;">Napa Sonoma Guide</a>
+      </p>
+    </div>
+  `;
+
+  const { error } = await resend.emails.send({
+    from: `Napa Sonoma Guide <noreply@${SITE_DOMAIN}>`,
+    to: recipientEmail,
+    subject,
+    html,
+  });
+
+  if (error) {
+    console.error(`Resend error sending pitch email: ${error.message}`);
+    throw new Error("Failed to send pitch email");
+  }
+}
+
 export async function notifyNewSubscriber(email: string, source: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {

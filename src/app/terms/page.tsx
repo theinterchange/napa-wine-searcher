@@ -92,7 +92,7 @@ export default function TermsPage() {
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">11. Contact</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
             For questions about these terms, contact us at{" "}
-            <a href="mailto:legal@winecountryguide.com" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+            <a href="mailto:legal@winecountryguide.com" className="text-[var(--foreground)] hover:underline">
               legal@winecountryguide.com
             </a>.
           </p>

@@ -5,9 +5,9 @@ import type { MDXComponents } from "mdx/types";
 function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href ?? "";
   if (href.startsWith("/") || href.startsWith("#")) {
-    return <Link {...props} href={href} className="text-burgundy-700 dark:text-burgundy-400 underline underline-offset-2 hover:text-burgundy-900 dark:hover:text-burgundy-300 transition-colors" />;
+    return <Link {...props} href={href} className="text-[var(--foreground)] underline underline-offset-2 hover:text-burgundy-900 dark:hover:text-burgundy-300 transition-colors" />;
   }
-  return <a {...props} target="_blank" rel="noopener noreferrer" className="text-burgundy-700 dark:text-burgundy-400 underline underline-offset-2 hover:text-burgundy-900 dark:hover:text-burgundy-300 transition-colors" />;
+  return <a {...props} target="_blank" rel="noopener noreferrer" className="text-[var(--foreground)] underline underline-offset-2 hover:text-burgundy-900 dark:hover:text-burgundy-300 transition-colors" />;
 }
 
 function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {

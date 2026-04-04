@@ -43,7 +43,7 @@ export function WineTable({
                   href={websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                  className="text-[var(--foreground)] underline font-medium"
                 >
                   visit their website
                 </a>
@@ -52,7 +52,7 @@ export function WineTable({
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                  className="text-[var(--foreground)] underline font-medium"
                 >
                   call {phone}
                 </a>

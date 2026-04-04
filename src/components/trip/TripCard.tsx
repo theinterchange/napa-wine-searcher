@@ -120,7 +120,7 @@ export function TripCard({
         <div className="mt-4 flex gap-2">
           <Link
             href={`/plan-trip?stops=${trip.stops.map((s) => s.wineryId).join(",")}`}
-            className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            className="text-sm text-[var(--foreground)] hover:underline"
           >
             View Route
           </Link>

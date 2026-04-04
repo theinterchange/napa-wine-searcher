@@ -99,7 +99,7 @@ export default async function DayTripsPage() {
               )}
               <span>{route.stopCount} stops</span>
             </div>
-            <div className="mt-4 flex items-center gap-1 text-sm font-medium text-burgundy-700 dark:text-burgundy-400">
+            <div className="mt-4 flex items-center gap-1 text-sm font-medium text-[var(--foreground)]">
               View route <ArrowRight className="h-4 w-4" />
             </div>
           </Link>

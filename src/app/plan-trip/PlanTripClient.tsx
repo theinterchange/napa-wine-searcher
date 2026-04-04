@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Sparkles, ChevronRight } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { TripPlanner } from "@/components/trip/TripPlanner";
 import { TripWizard, type WizardParams } from "@/components/trip/TripWizard";
 import { useSession } from "next-auth/react";
@@ -21,12 +20,27 @@ function decodeWizardParams(encoded: string): WizardParams | null {
   }
 }
 
+export interface HomeBase {
+  name: string;
+  slug: string;
+  lat?: number;
+  lng?: number;
+  bookingUrl: string | null;
+  websiteUrl: string | null;
+}
+
 interface PlanTripClientProps {
   initialFrom?: string;
   initialTheme?: string;
   initialStops?: string;
   initialValley?: string;
   autoWizard?: boolean;
+  startLat?: string;
+  startLng?: string;
+  startName?: string;
+  startSlug?: string;
+  startBookingUrl?: string;
+  startWebsiteUrl?: string;
 }
 
 export function PlanTripClient({
@@ -35,9 +49,42 @@ export function PlanTripClient({
   initialStops,
   initialValley,
   autoWizard = false,
+  startLat,
+  startLng,
+  startName,
+  startSlug,
+  startBookingUrl,
+  startWebsiteUrl,
 }: PlanTripClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Build home base from accommodation params
+  const [homeBase] = useState<HomeBase | null>(() => {
+    if (startName && startSlug) {
+      return {
+        name: decodeURIComponent(startName),
+        slug: startSlug,
+        lat: startLat ? parseFloat(startLat) : undefined,
+        lng: startLng ? parseFloat(startLng) : undefined,
+        bookingUrl: startBookingUrl ? decodeURIComponent(startBookingUrl) : null,
+        websiteUrl: startWebsiteUrl ? decodeURIComponent(startWebsiteUrl) : null,
+      };
+    }
+    return null;
+  });
+
+  // Build initial wizard params from accommodation starting point
+  const accommodationWizardParams = useMemo<WizardParams | undefined>(() => {
+    if (startLat && startLng && startName) {
+      return {
+        originLat: parseFloat(startLat),
+        originLng: parseFloat(startLng),
+        originLabel: decodeURIComponent(startName),
+      };
+    }
+    return undefined;
+  }, [startLat, startLng, startName]);
 
   // Restore wizard params from URL on mount
   const [restoredFromUrl] = useState<{ params?: WizardParams; completed: boolean }>(() => {
@@ -67,18 +114,13 @@ export function PlanTripClient({
     setWizardCompleted(true);
     setShowWizard(false);
     setEditStep(undefined);
-    // Persist to URL for browser back navigation
     const encoded = encodeWizardParams(params);
     const url = new URL(window.location.href);
     url.searchParams.set("wp", encoded);
     window.history.replaceState({}, "", url.toString());
   };
 
-  const handleWizardSkip = () => {
-    setShowWizard(false);
-  };
-
-  const handleWizardCTAClick = () => {
+  const handleOpenWizard = () => {
     if (REQUIRE_AUTH_FOR_WIZARD && !session) {
       router.push("/login?callbackUrl=" + encodeURIComponent("/plan-trip?wizard=1"));
       return;
@@ -86,12 +128,11 @@ export function PlanTripClient({
     setShowWizard(true);
   };
 
-  // If the wizard was completed, show the TripPlanner with wizard params
-  // and don't show the CTA or quick-start label
+  // Wizard-completed view
   if (wizardCompleted) {
     return (
       <div>
-        {showWizard ? (
+        {showWizard && (
           <div className="mb-8">
             <TripWizard
               onComplete={handleWizardComplete}
@@ -104,97 +145,58 @@ export function PlanTripClient({
               initialParams={wizardParams}
             />
           </div>
-        ) : (
-          <>
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Route personalized with your preferences.
-              </p>
-              <button
-                onClick={() => {
-                  setWizardCompleted(false);
-                  setWizardParams(undefined);
-                  setEditStep(undefined);
-                  setShowWizard(true);
-                  // Clear URL state
-                  const url = new URL(window.location.href);
-                  url.searchParams.delete("wp");
-                  window.history.replaceState({}, "", url.toString());
-                  // Clear session cache
-                  try { sessionStorage.removeItem("trip-planner-route"); } catch {}
-                }}
-                className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
-              >
-                Start over with wizard
-              </button>
-            </div>
-            <TripPlanner
-              initialFrom={initialFrom}
-              initialTheme={initialTheme}
-              initialStops={initialStops}
-              initialValley={initialValley}
-              wizardParams={wizardParams}
-              onEditPreference={(step: number) => {
-                setEditStep(step);
-                setShowWizard(true);
-              }}
-              key="wizard-result"
-            />
-          </>
         )}
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      {/* Wizard view */}
-      {showWizard ? (
-        <div className="mb-8">
-          <TripWizard
-            onComplete={handleWizardComplete}
-            onSkip={handleWizardSkip}
-            initialStep={editStep}
-          />
-        </div>
-      ) : (
-        /* Wizard CTA card */
-        <button
-          onClick={handleWizardCTAClick}
-          className="w-full mb-8 group rounded-xl border border-burgundy-200 dark:border-burgundy-800 bg-gradient-to-r from-burgundy-50 to-burgundy-100/50 dark:from-burgundy-950/40 dark:to-burgundy-900/20 p-6 text-left hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-burgundy-100 dark:bg-burgundy-900/50 text-burgundy-700 dark:text-burgundy-400">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-[var(--foreground)]">
-                  Plan My Perfect Day
-                </h2>
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  Answer a few quick questions and we&apos;ll build a personalized route just for you
-                </p>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-[var(--muted-foreground)] group-hover:text-burgundy-600 dark:group-hover:text-burgundy-400 transition-colors" />
-          </div>
-        </button>
-      )}
-
-      {/* Quick-start label + controls */}
-      {!showWizard && (
-        <>
-          <p className="text-sm font-medium text-[var(--muted-foreground)] mb-3">
-            Or jump right in:
-          </p>
+        {!showWizard && (
           <TripPlanner
             initialFrom={initialFrom}
             initialTheme={initialTheme}
             initialStops={initialStops}
             initialValley={initialValley}
+            wizardParams={wizardParams}
+            homeBase={homeBase}
+            onOpenWizard={() => {
+              setWizardCompleted(false);
+              setWizardParams(undefined);
+              setEditStep(undefined);
+              setShowWizard(true);
+              const url = new URL(window.location.href);
+              url.searchParams.delete("wp");
+              window.history.replaceState({}, "", url.toString());
+              try { sessionStorage.removeItem("trip-planner-route"); } catch {}
+            }}
+            onEditPreference={(step: number) => {
+              setEditStep(step);
+              setShowWizard(true);
+            }}
+            key="wizard-result"
           />
-        </>
+        )}
+      </div>
+    );
+  }
+
+  // Default view — controls + route immediately, wizard opens as overlay
+  return (
+    <div>
+      {showWizard && (
+        <div className="mb-8">
+          <TripWizard
+            onComplete={handleWizardComplete}
+            onSkip={() => setShowWizard(false)}
+            initialStep={editStep}
+            initialParams={accommodationWizardParams}
+          />
+        </div>
+      )}
+      {!showWizard && (
+        <TripPlanner
+          initialFrom={initialFrom}
+          initialTheme={initialTheme}
+          initialStops={initialStops}
+          initialValley={initialValley}
+          homeBase={homeBase}
+          onOpenWizard={handleOpenWizard}
+        />
       )}
     </div>
   );

@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="text-center">
-        <Wine className="mx-auto h-12 w-12 text-burgundy-700 dark:text-burgundy-400 opacity-50" />
+        <Wine className="mx-auto h-12 w-12 text-[var(--foreground)] opacity-50" />
         <h1 className="mt-4 font-heading text-2xl font-bold">
           Page Not Found
         </h1>

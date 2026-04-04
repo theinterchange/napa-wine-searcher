@@ -24,7 +24,6 @@ import { AccommodationCard } from "@/components/accommodation/AccommodationCard"
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
 import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
-import { Stay22Widget } from "@/components/accommodation/Stay22Widget";
 import { FAQSection } from "@/components/region/FAQSection";
 import { BASE_URL } from "@/lib/constants";
 
@@ -392,6 +391,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   <BookHotelCTA
                     bookingUrl={accommodation.bookingUrl}
                     websiteUrl={accommodation.websiteUrl}
+                    accommodationName={accommodation.name}
+                    lat={accommodation.lat}
+                    lng={accommodation.lng}
                     accommodationId={accommodation.id}
                     accommodationSlug={accommodation.slug}
                     sourceComponent="rooms_section"
@@ -440,6 +442,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   <BookHotelCTA
                     bookingUrl={accommodation.bookingUrl}
                     websiteUrl={accommodation.websiteUrl}
+                    accommodationName={accommodation.name}
+                    lat={accommodation.lat}
+                    lng={accommodation.lng}
                     accommodationId={accommodation.id}
                     accommodationSlug={accommodation.slug}
                     sourceComponent="dining_section"
@@ -500,6 +505,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   <BookHotelCTA
                     bookingUrl={accommodation.bookingUrl}
                     websiteUrl={accommodation.websiteUrl}
+                    accommodationName={accommodation.name}
+                    lat={accommodation.lat}
+                    lng={accommodation.lng}
                     accommodationId={accommodation.id}
                     accommodationSlug={accommodation.slug}
                     sourceComponent="activities_section"
@@ -604,7 +612,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   </h2>
                   <Link
                     href={accommodation.valley === "napa" ? "/where-to-stay/napa-valley" : "/where-to-stay/sonoma-county"}
-                    className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                    className="text-sm font-medium text-[var(--foreground)] hover:underline"
                   >
                     All hotels &rarr;
                   </Link>
@@ -656,6 +664,9 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 <BookHotelCTA
                   bookingUrl={accommodation.bookingUrl}
                   websiteUrl={accommodation.websiteUrl}
+                  accommodationName={accommodation.name}
+                  lat={accommodation.lat}
+                  lng={accommodation.lng}
                   accommodationId={accommodation.id}
                   accommodationSlug={accommodation.slug}
                   sourceComponent="sidebar_cta"
@@ -666,14 +677,6 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* Stay22 Price Comparison */}
-              {accommodation.lat && accommodation.lng && (
-                <Stay22Widget
-                  name={accommodation.name}
-                  lat={accommodation.lat}
-                  lng={accommodation.lng}
-                />
-              )}
 
               {/* Contact */}
               <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-3">
@@ -685,7 +688,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(accommodation.address)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                      className="hover:text-[var(--foreground)]"
                     >
                       {accommodation.address}
                     </a>
@@ -696,7 +699,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     <Phone className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <a
                       href={`tel:${accommodation.phone}`}
-                      className="hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                      className="hover:text-[var(--foreground)]"
                     >
                       {accommodation.phone}
                     </a>
@@ -709,7 +712,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                       href={accommodation.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-burgundy-700 dark:hover:text-burgundy-400 truncate"
+                      className="hover:text-[var(--foreground)] truncate"
                     >
                       Visit website
                     </a>
@@ -764,7 +767,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                       {accommodation.adultsOnly && (
                         <div className="flex items-start gap-2 text-sm">
                           <Info className="h-4 w-4 mt-0.5 text-burgundy-600" />
-                          <span className="font-medium text-burgundy-700 dark:text-burgundy-400">
+                          <span className="font-medium text-[var(--foreground)]">
                             Adults Only
                           </span>
                         </div>
@@ -793,7 +796,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
 
               {/* Plan a trip */}
               <Link
-                href={`/plan-trip${accommodation.lat && accommodation.lng ? `?startLat=${accommodation.lat}&startLng=${accommodation.lng}&startName=${encodeURIComponent(accommodation.name)}` : ""}`}
+                href={`/plan-trip?wizard=1${accommodation.lat && accommodation.lng ? `&startLat=${accommodation.lat}&startLng=${accommodation.lng}` : ""}&startName=${encodeURIComponent(accommodation.name)}&startSlug=${accommodation.slug}${accommodation.bookingUrl ? `&startBookingUrl=${encodeURIComponent(accommodation.bookingUrl)}` : ""}${accommodation.websiteUrl ? `&startWebsiteUrl=${encodeURIComponent(accommodation.websiteUrl)}` : ""}`}
                 className="flex items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
               >
                 <Route className="h-4 w-4" />

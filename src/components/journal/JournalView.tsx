@@ -148,7 +148,7 @@ function WineryGroupSection({
               <Link
                 href={`/wineries/${group.winerySlug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                className="font-medium text-[var(--foreground)] hover:underline"
               >
                 {group.wineryName}
               </Link>
@@ -207,7 +207,7 @@ function VisitCard({ visit }: { visit: VisitedWinery }) {
             {visit.winerySlug ? (
               <Link
                 href={`/wineries/${visit.winerySlug}`}
-                className="text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                className="text-[var(--foreground)] hover:underline"
               >
                 {visit.wineryName}
               </Link>

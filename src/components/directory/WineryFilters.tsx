@@ -259,7 +259,7 @@ export function WineryFilters({
       {hasFilters && (
         <button
           onClick={clearFilters}
-          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-burgundy-700 dark:text-burgundy-400 hover:bg-[var(--muted)] transition-colors"
+          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
         >
           <X className="h-3.5 w-3.5" />
           Clear all

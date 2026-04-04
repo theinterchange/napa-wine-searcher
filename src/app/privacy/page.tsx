@@ -111,7 +111,7 @@ export default function PrivacyPage() {
           <h2 className="font-heading text-xl font-semibold mt-8 mb-3">10. Contact Us</h2>
           <p className="text-[var(--muted-foreground)] leading-relaxed">
             If you have questions about this privacy policy or your data, please contact us at{" "}
-            <a href="mailto:theinterchangestudio@gmail.com" className="text-burgundy-700 dark:text-burgundy-400 hover:underline">
+            <a href="mailto:theinterchangestudio@gmail.com" className="text-[var(--foreground)] hover:underline">
               theinterchangestudio@gmail.com
             </a>.
           </p>

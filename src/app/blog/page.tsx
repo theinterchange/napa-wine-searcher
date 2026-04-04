@@ -76,7 +76,7 @@ export default async function BlogPage({
         <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] mb-8">
           <Link
             href="/"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Home
           </Link>

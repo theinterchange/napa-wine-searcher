@@ -88,20 +88,20 @@ const TIME_OPTIONS = [
   {
     key: "half" as const,
     label: "Half Day",
-    desc: "~3 hours, 2-3 stops",
+    desc: "~3.5 hours, 2 wineries",
     detail: "Perfect for a morning or afternoon",
   },
   {
     key: "full" as const,
     label: "Full Day",
-    desc: "~6 hours, 3-5 stops",
-    detail: "A complete wine country experience",
+    desc: "~7 hours, 3-4 wineries",
+    detail: "A complete wine country experience with time for lunch",
   },
   {
     key: "extended" as const,
     label: "Extended",
-    desc: "~8 hours, 5-6 stops",
-    detail: "The ultimate tasting marathon",
+    desc: "~9 hours, 4-5 wineries",
+    detail: "The ultimate tasting marathon with lunch break",
   },
 ];
 
@@ -333,7 +333,7 @@ function TripWizardInner({ onComplete, onSkip, onSaveStep, initialStep, initialP
               key={i}
               className={`flex items-center gap-1 text-xs transition-colors ${
                 i + 1 === step && !showSummary
-                  ? "text-burgundy-700 dark:text-burgundy-400 font-medium"
+                  ? "text-[var(--foreground)] font-medium"
                   : i + 1 < step || showSummary
                     ? "text-burgundy-600/60 dark:text-burgundy-500/60"
                     : "text-[var(--muted-foreground)]"
@@ -669,7 +669,7 @@ function StepStartingPoint({
         </button>
 
         {hasLocation && (
-          <div className="text-sm text-burgundy-700 dark:text-burgundy-400 flex items-center gap-1">
+          <div className="text-sm text-[var(--foreground)] flex items-center gap-1">
             <Check className="h-4 w-4 shrink-0" />
             <span>
               Location set: {originLabel || `${originLat!.toFixed(4)}, ${originLng!.toFixed(4)}`}
@@ -781,7 +781,7 @@ function StepEndingPoint({
 
         {hasEnd && (
           <div className="flex items-center gap-2">
-            <div className="text-sm text-burgundy-700 dark:text-burgundy-400 flex items-center gap-1">
+            <div className="text-sm text-[var(--foreground)] flex items-center gap-1">
               <Check className="h-4 w-4 shrink-0" />
               <span>
                 Ending at: {endLabel || `${endLat!.toFixed(4)}, ${endLng!.toFixed(4)}`}

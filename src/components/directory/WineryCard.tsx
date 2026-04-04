@@ -74,7 +74,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
               <span>
                 <Link
                   href={subRegionHref}
-                  className="relative z-20 hover:text-burgundy-700 dark:hover:text-burgundy-400 hover:underline transition-colors"
+                  className="relative z-20 hover:text-[var(--foreground)] hover:underline transition-colors"
                 >
                   {winery.subRegion}
                 </Link>

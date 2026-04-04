@@ -202,10 +202,10 @@ function ComparisonTable({
         <thead className="bg-[var(--muted)]">
           <tr>
             <th className="text-left p-4 font-medium" />
-            <th className="text-left p-4 font-semibold text-burgundy-700 dark:text-burgundy-400">
+            <th className="text-left p-4 font-semibold text-[var(--foreground)]">
               {region1Label}
             </th>
-            <th className="text-left p-4 font-semibold text-burgundy-700 dark:text-burgundy-400">
+            <th className="text-left p-4 font-semibold text-[var(--foreground)]">
               {region2Label}
             </th>
           </tr>
@@ -268,14 +268,14 @@ export default async function GuidePage({
         >
           <Link
             href="/"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           <Link
             href="/guides"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Guides
           </Link>
@@ -363,7 +363,7 @@ export default async function GuidePage({
               </h2>
               <Link
                 href={guideValley === "napa" ? "/where-to-stay/napa-valley" : guideValley === "sonoma" ? "/where-to-stay/sonoma-county" : "/where-to-stay"}
-                className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                className="text-sm font-medium text-[var(--foreground)] hover:underline"
               >
                 All hotels &rarr;
               </Link>

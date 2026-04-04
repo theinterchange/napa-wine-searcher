@@ -45,7 +45,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
           <button
             onClick={save}
             disabled={loading}
-            className="flex items-center gap-1 text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            className="flex items-center gap-1 text-sm text-[var(--foreground)] hover:underline"
           >
             <Save className="h-3.5 w-3.5" />
             Save

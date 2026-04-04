@@ -136,7 +136,7 @@ export default async function JournalPage() {
           <div className="flex items-center justify-center gap-3">
             <Link
               href="/wineries"
-              className="rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              className="rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
             >
               Browse Wineries
             </Link>

@@ -112,7 +112,7 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
 
         <div className="flex rounded-lg border border-[var(--border)] overflow-hidden text-sm">
           {(["all", "napa", "sonoma"] as const).map((v) => (
-            <button key={v} onClick={() => setValley(v)} className={`px-3 py-1.5 transition-colors ${valley === v ? "bg-burgundy-700 text-white" : "bg-[var(--card)] hover:bg-[var(--muted)]"}`}>
+            <button key={v} onClick={() => setValley(v)} className={`px-3 py-1.5 transition-colors ${valley === v ? "bg-burgundy-900 text-white" : "bg-[var(--card)] hover:bg-[var(--muted)]"}`}>
               {v === "all" ? "All" : v === "napa" ? "Napa" : "Sonoma"}
             </button>
           ))}
@@ -120,7 +120,7 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
 
         <div className="flex rounded-lg border border-[var(--border)] overflow-hidden text-sm">
           {(["all", "curated", "not-curated"] as const).map((c) => (
-            <button key={c} onClick={() => setCuratedFilter(c)} className={`px-3 py-1.5 transition-colors ${curatedFilter === c ? "bg-burgundy-700 text-white" : "bg-[var(--card)] hover:bg-[var(--muted)]"}`}>
+            <button key={c} onClick={() => setCuratedFilter(c)} className={`px-3 py-1.5 transition-colors ${curatedFilter === c ? "bg-burgundy-900 text-white" : "bg-[var(--card)] hover:bg-[var(--muted)]"}`}>
               {c === "all" ? "All" : c === "curated" ? "Curated" : "Not Curated"}
             </button>
           ))}

@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { wineries } from "./wineries";
 
 export const outboundClicks = sqliteTable("outbound_clicks", {
@@ -26,3 +26,17 @@ export const emailSubscribers = sqliteTable("email_subscribers", {
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
 });
+
+export const pitchEmails = sqliteTable("pitch_emails", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  wineryId: integer("winery_id")
+    .notNull()
+    .references(() => wineries.id),
+  recipientEmail: text("recipient_email").notNull(),
+  subject: text("subject").notNull(),
+  sentAt: text("sent_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+}, (t) => [
+  index("idx_pitch_emails_winery_id").on(t.wineryId),
+]);

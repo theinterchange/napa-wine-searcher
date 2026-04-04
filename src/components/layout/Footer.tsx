@@ -23,17 +23,17 @@ export function Footer() {
             <h3 className="font-heading font-semibold mb-3">Explore</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
               <li>
-                <Link href="/wineries" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/wineries" className="hover:text-[var(--foreground)] transition-colors">
                   All Wineries
                 </Link>
               </li>
               <li>
-                <Link href="/map" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/map" className="hover:text-[var(--foreground)] transition-colors">
                   Map View
                 </Link>
               </li>
               <li>
-                <Link href="/compare" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/compare" className="hover:text-[var(--foreground)] transition-colors">
                   Compare Wineries
                 </Link>
               </li>
@@ -43,12 +43,12 @@ export function Footer() {
             <h3 className="font-heading font-semibold mb-3">Regions</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
               <li>
-                <Link href="/napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/napa-valley" className="hover:text-[var(--foreground)] transition-colors">
                   Napa Valley
                 </Link>
               </li>
               <li>
-                <Link href="/sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/sonoma-county" className="hover:text-[var(--foreground)] transition-colors">
                   Sonoma County
                 </Link>
               </li>
@@ -58,27 +58,27 @@ export function Footer() {
             <h3 className="font-heading font-semibold mb-3">Guides & Blog</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
               <li>
-                <Link href="/blog" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/guides/dog-friendly-wineries-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/guides/dog-friendly-wineries-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
                   Dog-Friendly Wineries
                 </Link>
               </li>
               <li>
-                <Link href="/guides/best-cabernet-sauvignon-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/guides/best-cabernet-sauvignon-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
                   Best Cabernet Sauvignon
                 </Link>
               </li>
               <li>
-                <Link href="/guides/cheap-wine-tastings-napa-valley" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/guides/cheap-wine-tastings-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
                   Affordable Tastings
                 </Link>
               </li>
               <li>
-                <Link href="/guides/napa-valley-vs-sonoma-county" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+                <Link href="/guides/napa-valley-vs-sonoma-county" className="hover:text-[var(--foreground)] transition-colors">
                   Napa vs Sonoma
                 </Link>
               </li>
@@ -89,10 +89,10 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>&copy; {new Date().getFullYear()} Napa Sonoma Guide.</p>
             <div className="flex items-center gap-4">
-              <Link href="/privacy" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+              <Link href="/privacy" className="hover:text-[var(--foreground)] transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors">
+              <Link href="/terms" className="hover:text-[var(--foreground)] transition-colors">
                 Terms of Service
               </Link>
             </div>

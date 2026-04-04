@@ -159,7 +159,7 @@ export default async function BlogPostPage({
           <div className="mt-8 text-center">
             <Link
               href="/wineries"
-              className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm font-medium text-[var(--foreground)] hover:underline"
             >
               Browse all wineries &rarr;
             </Link>
@@ -181,7 +181,7 @@ export default async function BlogPostPage({
           <div className="mt-8 text-center">
             <Link
               href="/blog"
-              className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm font-medium text-[var(--foreground)] hover:underline"
             >
               View all posts
             </Link>

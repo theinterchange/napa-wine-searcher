@@ -170,7 +170,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--background)] px-4 py-3">
           <Link
             href={`/wineries/${slug}`}
-            className="inline-flex items-center gap-1 text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+            className="inline-flex items-center gap-1 text-sm font-medium text-[var(--foreground)] hover:underline"
           >
             View Full Page
             <ExternalLink className="h-3.5 w-3.5" />
@@ -197,7 +197,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
             </p>
             <Link
               href={`/wineries/${slug}`}
-              className="mt-2 inline-block text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="mt-2 inline-block text-sm text-[var(--foreground)] hover:underline"
             >
               Go to full page &rarr;
             </Link>
@@ -277,7 +277,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
                   {description.length > 180 && (
                     <button
                       onClick={() => setDescExpanded(!descExpanded)}
-                      className="mt-1 text-xs font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                      className="mt-1 text-xs font-medium text-[var(--foreground)] hover:underline"
                     >
                       {descExpanded ? "Show less" : "Read more"}
                     </button>
@@ -304,7 +304,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
                     <Phone className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <a
                       href={`tel:${data.phone}`}
-                      className="text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                      className="text-[var(--foreground)] hover:underline"
                     >
                       {data.phone}
                     </a>
@@ -317,7 +317,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
                       href={data.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-burgundy-700 dark:text-burgundy-400 hover:underline truncate"
+                      className="text-[var(--foreground)] hover:underline truncate"
                     >
                       {data.websiteUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
                     </a>
@@ -353,7 +353,7 @@ export function WineryPreviewPanel({ slug, onClose }: WineryPreviewPanelProps) {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">{t.name}</span>
                           {t.price != null && (
-                            <span className="text-sm font-semibold text-burgundy-700 dark:text-burgundy-400">
+                            <span className="text-sm font-semibold text-[var(--foreground)]">
                               ${Math.round(t.price)}
                             </span>
                           )}

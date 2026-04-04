@@ -7,6 +7,9 @@ import { hotelBookingUrl } from "@/lib/affiliate";
 interface BookHotelCTAProps {
   bookingUrl: string | null;
   websiteUrl: string | null;
+  accommodationName?: string;
+  lat?: number | null;
+  lng?: number | null;
   accommodationId?: number;
   accommodationSlug?: string;
   sourcePage?: string;
@@ -18,6 +21,9 @@ interface BookHotelCTAProps {
 export function BookHotelCTA({
   bookingUrl,
   websiteUrl,
+  accommodationName,
+  lat,
+  lng,
   accommodationId,
   accommodationSlug,
   sourcePage,
@@ -25,7 +31,11 @@ export function BookHotelCTA({
   size = "md",
   label = "Book Now" as React.ReactNode,
 }: BookHotelCTAProps) {
-  const href = hotelBookingUrl(bookingUrl, websiteUrl);
+  const stay22 =
+    accommodationName && lat && lng
+      ? { name: accommodationName, lat, lng }
+      : undefined;
+  const href = hotelBookingUrl(bookingUrl, websiteUrl, stay22);
   if (!href) return null;
 
   const sizeClasses = {

@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
         <div className="text-center">
-          <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
+          <Wine className="mx-auto h-10 w-10 text-[var(--foreground)]" />
           <h1 className="mt-4 font-heading text-2xl font-bold">
             Reset Password
           </h1>

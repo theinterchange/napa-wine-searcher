@@ -26,15 +26,15 @@ export default async function PlanTripPage({
   const params = await searchParams;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Breadcrumbs */}
       <nav
         aria-label="Breadcrumb"
-        className="mb-6 flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+        className="mb-4 flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
       >
         <Link
           href="/"
-          className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+          className="hover:text-[var(--foreground)] transition-colors"
         >
           Home
         </Link>
@@ -47,12 +47,10 @@ export default async function PlanTripPage({
         </span>
       </nav>
 
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="font-heading text-3xl font-bold">Plan Your Trip</h1>
-        <p className="mt-3 text-[var(--muted-foreground)] max-w-2xl">
-          Build a custom wine country itinerary. Pick a style, set your
-          preferences, and we&apos;ll generate an optimized route. Swap wineries,
-          shuffle for fresh picks, or share your plan with friends.
+        <p className="mt-1 text-[var(--muted-foreground)]">
+          Build a custom wine country itinerary — pick a style, generate a route, and book your tastings.
         </p>
       </div>
 
@@ -62,6 +60,12 @@ export default async function PlanTripPage({
         initialStops={params.stops}
         initialValley={params.valley}
         autoWizard={params.wizard === "1"}
+        startLat={params.startLat}
+        startLng={params.startLng}
+        startName={params.startName}
+        startSlug={params.startSlug}
+        startBookingUrl={params.startBookingUrl}
+        startWebsiteUrl={params.startWebsiteUrl}
       />
     </div>
   );

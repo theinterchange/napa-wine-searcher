@@ -20,26 +20,59 @@ export function wineSearchUrl(
 }
 
 /**
+ * Build a Stay22 Allez deep link for a specific property.
+ * Returns null when the affiliate ID env var is not set.
+ */
+export function stay22BookingUrl(
+  name: string,
+  lat: number,
+  lng: number
+): string | null {
+  const affiliateId = process.env.NEXT_PUBLIC_STAY22_AFFILIATE_ID;
+  if (!affiliateId) return null;
+
+  const url = new URL("https://www.stay22.com/allez/roam");
+  url.searchParams.set("aid", affiliateId);
+  url.searchParams.set("hotelname", name);
+  url.searchParams.set("lat", String(lat));
+  url.searchParams.set("lng", String(lng));
+  return url.toString();
+}
+
+/**
  * Build a hotel booking URL with affiliate tracking.
- * If the accommodation has a direct bookingUrl (affiliate deep link), use it.
- * Otherwise fall back to the hotel's websiteUrl with UTM params.
+ * Priority: direct bookingUrl → Stay22 Allez link → websiteUrl with UTM params.
  */
 export function hotelBookingUrl(
   bookingUrl: string | null,
-  websiteUrl: string | null
+  websiteUrl: string | null,
+  stay22?: { name: string; lat: number; lng: number }
 ): string | null {
-  const url = bookingUrl || websiteUrl;
-  if (!url) return null;
-
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === "http:") parsed.protocol = "https:";
-    if (!bookingUrl) {
-      // Only add UTM params for direct website links (affiliate links have their own tracking)
-      parsed.searchParams.set("utm_source", "napasonomaguide");
-      parsed.searchParams.set("utm_medium", "affiliate");
-      parsed.searchParams.set("utm_campaign", "hotel_booking");
+  // 1. Direct affiliate deep link from DB
+  if (bookingUrl) {
+    try {
+      const parsed = new URL(bookingUrl);
+      if (parsed.protocol === "http:") parsed.protocol = "https:";
+      return parsed.toString();
+    } catch {
+      // fall through
     }
+  }
+
+  // 2. Stay22 Allez link (if we have coordinates)
+  if (stay22) {
+    const allez = stay22BookingUrl(stay22.name, stay22.lat, stay22.lng);
+    if (allez) return allez;
+  }
+
+  // 3. Hotel website with UTM params
+  if (!websiteUrl) return null;
+  try {
+    const parsed = new URL(websiteUrl);
+    if (parsed.protocol === "http:") parsed.protocol = "https:";
+    parsed.searchParams.set("utm_source", "napasonomaguide");
+    parsed.searchParams.set("utm_medium", "affiliate");
+    parsed.searchParams.set("utm_campaign", "hotel_booking");
     return parsed.toString();
   } catch {
     return null;

@@ -25,7 +25,7 @@ export function AffiliateWineLink({
       wineryId={wineryId}
       sourcePage={winerySlug ? `/wineries/${winerySlug}` : undefined}
       sourceComponent="AffiliateWineLink"
-      className={`inline-flex items-center gap-1 text-burgundy-700 dark:text-burgundy-400 hover:underline ${
+      className={`inline-flex items-center gap-1 text-[var(--foreground)] hover:underline ${
         size === "sm" ? "text-xs" : "text-sm"
       }`}
     >

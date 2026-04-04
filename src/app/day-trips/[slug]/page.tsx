@@ -202,14 +202,14 @@ export default async function DayTripDetailPage({
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
           <Link
             href="/"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           <Link
             href="/day-trips"
-            className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+            className="hover:text-[var(--foreground)] transition-colors"
           >
             Day Trips
           </Link>
@@ -418,7 +418,7 @@ export default async function DayTripDetailPage({
               </h2>
               <Link
                 href={routeValley === "napa" ? "/where-to-stay/napa-valley" : routeValley === "sonoma" ? "/where-to-stay/sonoma-county" : "/where-to-stay"}
-                className="text-sm font-medium text-burgundy-700 dark:text-burgundy-400 hover:underline"
+                className="text-sm font-medium text-[var(--foreground)] hover:underline"
               >
                 All hotels &rarr;
               </Link>

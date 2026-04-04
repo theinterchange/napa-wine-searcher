@@ -93,7 +93,7 @@ export function NearbyMap({ center, name, nearby }: NearbyMapProps) {
             <Link
               key={w.slug}
               href={`/wineries/${w.slug}`}
-              className="text-xs text-[var(--muted-foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+              className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
             >
               {w.name} &rarr;
             </Link>

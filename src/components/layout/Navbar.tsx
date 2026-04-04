@@ -73,7 +73,7 @@ export function Navbar() {
 
           <GlobalSearch hideButton={pathname === "/"} />
 
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
@@ -81,8 +81,8 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-1 text-sm font-medium transition-colors border-b-2 pb-0.5",
                   isActive(href)
-                    ? "text-burgundy-700 dark:text-burgundy-400 border-burgundy-700 dark:border-burgundy-400"
-                    : "text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 border-transparent"
+                    ? "text-[var(--foreground)] font-semibold border-[var(--foreground)]"
+                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border-transparent"
                 )}
               >
                 {Icon && <Icon className="h-4 w-4" />}
@@ -95,7 +95,7 @@ export function Navbar() {
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   aria-expanded={userMenuOpen}
-                  className="flex items-center gap-2 text-sm font-medium hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
+                  className="flex items-center gap-2 text-sm font-medium hover:text-[var(--foreground)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
                 >
                   {session.user?.image && (
                     <img
@@ -118,7 +118,7 @@ export function Navbar() {
                         className={cn(
                           "flex items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors",
                           isActive(href) &&
-                            "text-burgundy-700 dark:text-burgundy-400"
+                            "text-[var(--foreground)] font-semibold"
                         )}
                       >
                         <Icon className="h-4 w-4" />
@@ -155,14 +155,14 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="rounded-md bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                className="rounded-md bg-burgundy-900 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
               >
                 Sign In
               </Link>
             )}
           </div>
 
-          <div className="flex md:hidden items-center gap-1">
+          <div className="flex lg:hidden items-center gap-1">
             <button
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
@@ -179,7 +179,7 @@ export function Navbar() {
         </div>
 
         {open && (
-          <div className="md:hidden border-t border-[var(--border)] py-4 space-y-3">
+          <div className="lg:hidden border-t border-[var(--border)] py-4 space-y-3">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
@@ -187,7 +187,7 @@ export function Navbar() {
                 className={cn(
                   "block text-sm font-medium",
                   isActive(href)
-                    ? "text-burgundy-700 dark:text-burgundy-400"
+                    ? "text-[var(--foreground)] font-semibold"
                     : ""
                 )}
                 onClick={() => setOpen(false)}
@@ -204,7 +204,7 @@ export function Navbar() {
                     className={cn(
                       "flex items-center gap-2 text-sm font-medium",
                       isActive(href)
-                        ? "text-burgundy-700 dark:text-burgundy-400"
+                        ? "text-[var(--foreground)] font-semibold"
                         : ""
                     )}
                     onClick={() => setOpen(false)}

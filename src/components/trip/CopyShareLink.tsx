@@ -18,7 +18,7 @@ export function CopyShareLink({ path }: { path: string }) {
     <>
       <button
         onClick={handleCopy}
-        className="text-sm text-[var(--muted-foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 flex items-center gap-1"
+        className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1"
       >
         {copied ? (
           <>

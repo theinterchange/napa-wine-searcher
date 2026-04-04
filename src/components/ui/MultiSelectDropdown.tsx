@@ -119,7 +119,7 @@ export function MultiSelectDropdown({
             <button
               type="button"
               onClick={clear}
-              className="flex w-full items-center gap-1.5 border-b border-[var(--border)] px-3 py-2 text-xs text-burgundy-700 dark:text-burgundy-400 hover:bg-[var(--muted)] transition-colors"
+              className="flex w-full items-center gap-1.5 border-b border-[var(--border)] px-3 py-2 text-xs text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
             >
               <X className="h-3 w-3" />
               Clear

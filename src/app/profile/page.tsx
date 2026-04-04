@@ -277,7 +277,7 @@ export default async function ProfilePage() {
           {recentJournal.length > 0 && (
             <Link
               href="/journal"
-              className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm text-[var(--foreground)] hover:underline"
             >
               View All
             </Link>
@@ -343,7 +343,7 @@ export default async function ProfilePage() {
           {userCollections.length > 0 && (
             <Link
               href="/collections"
-              className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm text-[var(--foreground)] hover:underline"
             >
               View All
             </Link>
@@ -380,7 +380,7 @@ export default async function ProfilePage() {
           {userTrips.length > 0 && (
             <Link
               href="/my-trips"
-              className="text-sm text-burgundy-700 dark:text-burgundy-400 hover:underline"
+              className="text-sm text-[var(--foreground)] hover:underline"
             >
               View All
             </Link>

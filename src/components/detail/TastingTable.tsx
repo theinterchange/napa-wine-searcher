@@ -58,7 +58,7 @@ export function TastingTable({
                     winerySlug ? `/wineries/${winerySlug}` : undefined
                   }
                   sourceComponent="TastingTable"
-                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                  className="text-[var(--foreground)] underline font-medium"
                 >
                   visit their website
                 </TrackedLink>
@@ -67,7 +67,7 @@ export function TastingTable({
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="text-burgundy-700 dark:text-burgundy-400 underline font-medium"
+                  className="text-[var(--foreground)] underline font-medium"
                 >
                   call {phone}
                 </a>
@@ -100,7 +100,7 @@ export function TastingTable({
             <div className="flex items-start justify-between">
               <h3 className="font-heading text-lg font-semibold">{t.name}</h3>
               {t.price != null && (
-                <span className="text-lg font-semibold text-burgundy-700 dark:text-burgundy-400">
+                <span className="text-lg font-semibold text-[var(--foreground)]">
                   {formatPrice(t.price)}
                 </span>
               )}

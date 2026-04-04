@@ -56,7 +56,7 @@ export function JournalEntryCard({ entry, onDelete, onEdit }: JournalEntryCardPr
               {entry.winerySlug ? (
                 <Link
                   href={`/wineries/${entry.winerySlug}`}
-                  className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                  className="hover:text-[var(--foreground)] transition-colors"
                 >
                   {entry.wineryName}
                 </Link>
@@ -70,7 +70,7 @@ export function JournalEntryCard({ entry, onDelete, onEdit }: JournalEntryCardPr
           {onEdit && (
             <button
               onClick={() => onEdit(entry)}
-              className="p-1 text-[var(--muted-foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+              className="p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
             >
               <Pencil className="h-4 w-4" />
             </button>

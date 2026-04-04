@@ -79,7 +79,7 @@ export default async function CollectionDetailPage({
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
-        <Link href="/collections" className="hover:text-burgundy-700 dark:hover:text-burgundy-400">
+        <Link href="/collections" className="hover:text-[var(--foreground)]">
           Collections
         </Link>
         <ChevronRight className="h-4 w-4" />

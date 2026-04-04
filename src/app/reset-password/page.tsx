@@ -52,7 +52,7 @@ function ResetPasswordForm() {
   if (!token || !email) {
     return (
       <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-        <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
+        <Wine className="mx-auto h-10 w-10 text-[var(--foreground)]" />
         <h1 className="mt-4 font-heading text-2xl font-bold">Link Expired</h1>
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
           This reset link has expired or is invalid. Please request a new one.
@@ -70,7 +70,7 @@ function ResetPasswordForm() {
   return (
     <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
       <div className="text-center">
-        <Wine className="mx-auto h-10 w-10 text-burgundy-700 dark:text-burgundy-400" />
+        <Wine className="mx-auto h-10 w-10 text-[var(--foreground)]" />
         <h1 className="mt-4 font-heading text-2xl font-bold">
           Set New Password
         </h1>

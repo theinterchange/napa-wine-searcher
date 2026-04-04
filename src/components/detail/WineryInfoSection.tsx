@@ -146,7 +146,7 @@ export function WinerySidebar({
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([winery.address, winery.city, winery.state, winery.zip].filter(Boolean).join(", "))}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                className="hover:text-[var(--foreground)] transition-colors"
               >
                 {[
                   winery.address,
@@ -158,12 +158,12 @@ export function WinerySidebar({
               </a>
             </div>
           )}
-          {winery.phone && (
+          {winery.phone && winery.phone !== "null" && (
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
               <a
                 href={`tel:${winery.phone}`}
-                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 transition-colors"
+                className="hover:text-[var(--foreground)] transition-colors"
               >
                 {winery.phone}
               </a>
@@ -178,7 +178,7 @@ export function WinerySidebar({
                 wineryId={winery.id}
                 sourcePage={`/wineries/${winery.slug}`}
                 sourceComponent="WinerySidebar"
-                className="hover:text-burgundy-700 dark:hover:text-burgundy-400 truncate transition-colors"
+                className="hover:text-[var(--foreground)] truncate transition-colors"
               >
                 Website
               </TrackedLink>
@@ -190,7 +190,7 @@ export function WinerySidebar({
         {hasAmenities && (
           <div className="mt-5 pt-5 border-t border-[var(--border)] space-y-2 text-sm">
             {winery.reservationRequired && (
-              <div className="flex items-center gap-2 text-burgundy-700 dark:text-burgundy-400">
+              <div className="flex items-center gap-2 text-[var(--foreground)]">
                 <CalendarCheck className="h-4 w-4" />
                 Reservation Required
               </div>
@@ -203,7 +203,7 @@ export function WinerySidebar({
                     href={winery.dogFriendlySource}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                    className="underline hover:text-[var(--foreground)]"
                   >
                     Dog Friendly
                   </a>
@@ -226,7 +226,7 @@ export function WinerySidebar({
                     href={winery.kidFriendlySource}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
+                    className="underline hover:text-[var(--foreground)]"
                   >
                     Kid Friendly
                   </a>
@@ -241,25 +241,27 @@ export function WinerySidebar({
               </div>
             )}
             {winery.sustainableFarming && (
-              <div className="flex items-center gap-2">
-                <Leaf className="h-4 w-4 text-[var(--muted-foreground)]" />
-                {winery.sustainableSource ? (
-                  <a
-                    href={winery.sustainableSource}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-burgundy-700 dark:hover:text-burgundy-400"
-                  >
-                    Sustainable
-                  </a>
-                ) : (
-                  "Sustainable"
-                )}
-                {winery.sustainableNote && (
-                  <span className="text-xs text-[var(--muted-foreground)]">
-                    — {winery.sustainableNote}
-                  </span>
-                )}
+              <div className="flex items-start gap-2">
+                <Leaf className="h-4 w-4 shrink-0 mt-0.5 text-[var(--muted-foreground)]" />
+                <div>
+                  {winery.sustainableSource ? (
+                    <a
+                      href={winery.sustainableSource}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-[var(--foreground)]"
+                    >
+                      Sustainable
+                    </a>
+                  ) : (
+                    <span>Sustainable</span>
+                  )}
+                  {winery.sustainableNote && (
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      {" "}· {winery.sustainableNote}
+                    </span>
+                  )}
+                </div>
               </div>
             )}
             {(winery.dogFriendly || winery.kidFriendly) && (
