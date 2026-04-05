@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Check, Loader2, Download } from "lucide-react";
+import { Mail, Check, Loader2 } from "lucide-react";
 
 interface EmailCaptureProps {
   source: "itinerary" | "guide" | "exit_intent";
@@ -64,18 +64,8 @@ export function EmailCapture({
           Your guide is on the way!
         </p>
         <p className="text-sm text-burgundy-800 dark:text-burgundy-100 mt-1">
-          Check your inbox — or download it now:
+          Check your inbox for the planning guide. Create a free account to download it anytime and unlock saved wineries, trip planning, and a tasting journal.
         </p>
-        <div className="mt-4 flex justify-center">
-          <a
-            href="/api/guide/download"
-            download
-            className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
-          >
-            <Download className="h-4 w-4" />
-            Download Your Free Guide (PDF)
-          </a>
-        </div>
       </div>
     );
   }
@@ -99,7 +89,7 @@ export function EmailCapture({
           <button
             type="submit"
             disabled={status === "loading"}
-            className="shrink-0 rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 disabled:opacity-50 transition-colors"
+            className="shrink-0 rounded-lg bg-burgundy-900 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 disabled:opacity-50 transition-colors"
           >
             {status === "loading" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -139,7 +129,7 @@ export function EmailCapture({
         <button
           type="submit"
           disabled={status === "loading"}
-          className="shrink-0 rounded-lg bg-burgundy-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 disabled:opacity-50 transition-colors"
+          className="shrink-0 rounded-lg bg-burgundy-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-burgundy-800 disabled:opacity-50 transition-colors"
         >
           {status === "loading" ? (
             <Loader2 className="h-4 w-4 animate-spin mx-auto" />

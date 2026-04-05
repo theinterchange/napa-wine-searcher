@@ -7,6 +7,7 @@ import {
   tastingExperiences,
 } from "@/db/schema";
 import { eq, and, sql, count, desc, min, max, avg, lte, gte } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 
 // Standard winery card fields used across all guide pages
 const wineryCardFields = {
@@ -50,7 +51,7 @@ export async function getWineriesByAmenity(
     .from(wineries)
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(and(...conditions))
-    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
+    .orderBy(wineryRankingDesc);
 }
 
 // Varietal-based queries — ranked by specialization score
@@ -144,7 +145,7 @@ export async function getWineriesByWinePrice(
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .innerJoin(wines, eq(wines.wineryId, wineries.id))
     .where(and(...conditions))
-    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
+    .orderBy(wineryRankingDesc);
 }
 
 // Experience-based queries (romantic, groups, first-time)
@@ -180,7 +181,7 @@ export async function getWineriesByExperience(
     .from(wineries)
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(and(...conditions))
-    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`);
+    .orderBy(wineryRankingDesc);
 }
 
 // Comparison data between two regions

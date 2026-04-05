@@ -1,11 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ChevronRight, Grape, Route, Clock } from "lucide-react";
+import { db } from "@/db";
+import { wineries, subRegions } from "@/db/schema";
+import { eq, desc, and, isNotNull, sql } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 import { getSubRegionDetail, getAllSubRegions } from "@/lib/region-data";
 import { SUBREGION_CONTENT } from "@/lib/region-content";
+import { getAllAccommodations } from "@/lib/accommodation-data";
 import { WineryCard } from "@/components/directory/WineryCard";
-import { SubRegionGrid } from "@/components/region/SubRegionGrid";
+import { RegionCard } from "@/components/home/RegionCard";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 
 import { BASE_URL } from "@/lib/constants";
@@ -44,6 +51,31 @@ export async function generateMetadata({
   };
 }
 
+async function getSiblingRegionImages(
+  siblingRegions: { name: string; slug: string; count: number }[]
+) {
+  const top4 = siblingRegions.slice(0, 4);
+  const images = await Promise.all(
+    top4.map(async (sr) => {
+      const [topWinery] = await db
+        .select({ heroImageUrl: wineries.heroImageUrl })
+        .from(wineries)
+        .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+        .where(
+          and(
+            eq(subRegions.slug, sr.slug),
+            eq(wineries.curated, true),
+            isNotNull(wineries.heroImageUrl)
+          )
+        )
+        .orderBy(wineryRankingDesc)
+        .limit(1);
+      return { slug: sr.slug, heroImageUrl: topWinery?.heroImageUrl ?? null };
+    })
+  );
+  return Object.fromEntries(images.map((i) => [i.slug, i.heroImageUrl]));
+}
+
 export default async function NapaSubRegionPage({
   params,
 }: {
@@ -54,6 +86,29 @@ export default async function NapaSubRegionPage({
   if (!data || data.region.valley !== "napa") notFound();
 
   const content = SUBREGION_CONTENT[slug];
+
+  const [accommodations, siblingImages] = await Promise.all([
+    getAllAccommodations().then((all) =>
+      all.filter((a) => a.valley === "napa").slice(0, 3)
+    ),
+    getSiblingRegionImages(data.siblingRegions),
+  ]);
+
+  // Enrich sibling regions for RegionCards
+  const enrichedSiblings = data.siblingRegions.slice(0, 4).map((sr) => {
+    const regionContent = SUBREGION_CONTENT[sr.slug];
+    return {
+      ...sr,
+      heroImageUrl: siblingImages[sr.slug] ?? null,
+      signatureVarietal: regionContent?.signatureVarietal ?? "Wine Country",
+      whyVisit:
+        regionContent?.whyVisit ??
+        regionContent?.description?.[0] ??
+        `Discover ${sr.count} wineries in ${sr.name}.`,
+    };
+  });
+
+  const topWinery = data.wineries.find((w) => w.heroImageUrl);
 
   return (
     <>
@@ -71,68 +126,37 @@ export default async function NapaSubRegionPage({
           aria-label="Breadcrumb"
           className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
         >
-          <Link
-            href="/"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
-            Home
-          </Link>
+          <Link href="/" className="hover:text-[var(--foreground)] transition-colors">Home</Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <Link
-            href="/napa-valley"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
-            Napa Valley
-          </Link>
+          <Link href="/napa-valley" className="hover:text-[var(--foreground)] transition-colors">Napa Valley</Link>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <span
-            className="text-[var(--foreground)] font-medium truncate"
-            aria-current="page"
-          >
+          <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">
             {data.region.name}
           </span>
         </nav>
       </div>
 
-      {/* Hero with region image */}
-      {(() => {
-        const topWinery = data.wineries.find((w) => w.heroImageUrl);
-        return topWinery?.heroImageUrl ? (
-          <div className="relative bg-burgundy-900 text-white overflow-hidden">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${topWinery.heroImageUrl})` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            </div>
-            <div className="relative mx-auto max-w-7xl px-4 pt-32 sm:pt-40 pb-8 sm:px-6 lg:px-8">
-              <h1 className="font-heading text-3xl sm:text-4xl font-bold">
-                {data.region.name} Wineries
-              </h1>
-              <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/70">
-                <span>{data.wineries.length} wineries in our guide</span>
-                {content && (
-                  <>
-                    <span>|</span>
-                    <span className="flex items-center gap-1">
-                      <Grape className="h-3.5 w-3.5" />
-                      Known for {content.signatureVarietal}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Hero with next/image */}
+      {topWinery?.heroImageUrl ? (
+        <div className="relative bg-burgundy-900 text-white overflow-hidden">
+          <Image
+            src={topWinery.heroImageUrl}
+            alt={`Wineries in ${data.region.name}, Napa Valley`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+          <div className="relative mx-auto max-w-7xl px-4 pt-32 sm:pt-40 pb-8 sm:px-6 lg:px-8">
             <h1 className="font-heading text-3xl sm:text-4xl font-bold">
               {data.region.name} Wineries
             </h1>
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
-              <span>{data.wineries.length} wineries in our guide</span>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/70">
+              <span>{data.wineries.length} wineries to explore</span>
               {content && (
                 <>
-                  <span className="text-[var(--border)]">|</span>
+                  <span>|</span>
                   <span className="flex items-center gap-1">
                     <Grape className="h-3.5 w-3.5" />
                     Known for {content.signatureVarietal}
@@ -140,9 +164,27 @@ export default async function NapaSubRegionPage({
                 </>
               )}
             </div>
-          </section>
-        );
-      })()}
+          </div>
+        </div>
+      ) : (
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+            {data.region.name} Wineries
+          </h1>
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
+            <span>{data.wineries.length} wineries to explore</span>
+            {content && (
+              <>
+                <span className="text-[var(--border)]">|</span>
+                <span className="flex items-center gap-1">
+                  <Grape className="h-3.5 w-3.5" />
+                  Known for {content.signatureVarietal}
+                </span>
+              </>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* About Sub-Region */}
       {content && (
@@ -151,7 +193,6 @@ export default async function NapaSubRegionPage({
             About {data.region.name}
           </h2>
 
-          {/* Why Visit */}
           {content.whyVisit && (
             <p className="text-base leading-relaxed text-[var(--muted-foreground)] mb-6 max-w-3xl">
               {content.whyVisit}
@@ -164,7 +205,6 @@ export default async function NapaSubRegionPage({
             ))}
           </div>
 
-          {/* Top Experiences */}
           {content.topExperiences && content.topExperiences.length > 0 && (
             <div className="mt-8 max-w-3xl">
               <h3 className="font-heading text-xl font-semibold mb-4">
@@ -181,7 +221,6 @@ export default async function NapaSubRegionPage({
             </div>
           )}
 
-          {/* Insider Tip */}
           {content.insiderTip && (
             <div className="mt-8 max-w-3xl rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
               <h3 className="text-sm font-semibold mb-2">Local Tip</h3>
@@ -193,29 +232,29 @@ export default async function NapaSubRegionPage({
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
             <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                Known For
-              </h3>
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">Known For</h3>
               <p className="text-sm">{content.knownFor.join(", ")}</p>
             </div>
             <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                Terroir
-              </h3>
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">Terroir</h3>
               <p className="text-sm">{content.terroir}</p>
             </div>
             <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
-              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                Best Time to Visit
-              </h3>
+              <h3 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-1">Best Time to Visit</h3>
               <p className="text-sm">{content.bestTimeToVisit}</p>
             </div>
           </div>
         </section>
       )}
 
-      {/* All Wineries */}
+      {/* Wineries — with heading */}
       <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+        <h2 className="font-heading text-2xl font-bold mb-2">
+          Wineries in {data.region.name}
+        </h2>
+        <p className="text-sm text-[var(--muted-foreground)] mb-6">
+          {data.wineries.length} {data.wineries.length === 1 ? "winery" : "wineries"} to explore — sorted by rating, verified wineries first.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.wineries.map((w) => (
             <WineryCard key={w.slug} winery={w} />
@@ -223,55 +262,94 @@ export default async function NapaSubRegionPage({
         </div>
       </section>
 
-      {/* Related Day Trips */}
+      {/* Day Trips */}
       {data.relatedTrips.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-6">
-            Day Trips in {data.region.name}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.relatedTrips.map((trip) => (
-              <Link
-                key={trip.slug}
-                href={`/day-trips/${trip.slug}`}
-                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
-              >
-                <Route className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="font-heading text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
-                    {trip.title}
-                  </h3>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
-                    {trip.theme && (
-                      <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-300">
-                        {trip.theme}
-                      </span>
-                    )}
-                    {trip.estimatedHours && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {trip.estimatedHours}h
-                      </span>
-                    )}
+        <section className="border-t border-[var(--border)]">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <h2 className="font-heading text-2xl font-bold mb-6">
+              Day Trips in {data.region.name}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {data.relatedTrips.map((trip) => (
+                <Link
+                  key={trip.slug}
+                  href={`/day-trips/${trip.slug}`}
+                  className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
+                >
+                  <Route className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
+                      {trip.title}
+                    </h3>
+                    <div className="mt-1 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+                      {trip.theme && (
+                        <span className="rounded-full bg-burgundy-50 dark:bg-burgundy-950 px-2 py-0.5 text-burgundy-700 dark:text-burgundy-300">
+                          {trip.theme}
+                        </span>
+                      )}
+                      {trip.estimatedHours && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {trip.estimatedHours}h
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Explore More of Napa Valley */}
-      {data.siblingRegions.length > 0 && (
-        <section className="border-t border-[var(--border)] bg-[var(--card)]">
+      {/* Where to Stay */}
+      {accommodations.length > 0 && (
+        <section className="border-t border-[var(--border)]">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-bold mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-heading text-2xl font-bold">
+                Where to Stay Near {data.region.name}
+              </h2>
+              <Link
+                href="/where-to-stay/napa-valley"
+                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+              >
+                All Napa hotels &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {accommodations.map((a) => (
+                <AccommodationCard key={a.slug} accommodation={a} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Explore More — RegionCards */}
+      {enrichedSiblings.length > 0 && (
+        <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <h2 className="font-heading text-2xl font-bold mb-2">
               Explore More of Napa Valley
             </h2>
-            <SubRegionGrid
-              subRegions={data.siblingRegions}
-              valley="napa"
-            />
+            <p className="text-sm text-[var(--muted-foreground)] mb-8">
+              Discover neighboring regions, each with its own character and wines.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {enrichedSiblings.map((sr) => (
+                <RegionCard
+                  key={sr.slug}
+                  name={sr.name}
+                  slug={sr.slug}
+                  valley="napa"
+                  count={sr.count}
+                  signatureVarietal={sr.signatureVarietal}
+                  whyVisit={sr.whyVisit}
+                  heroImageUrl={sr.heroImageUrl}
+                />
+              ))}
+            </div>
           </div>
         </section>
       )}

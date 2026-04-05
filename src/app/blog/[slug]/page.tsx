@@ -14,6 +14,7 @@ import { getWineriesByAmenity } from "@/lib/guide-data";
 import { db } from "@/db";
 import { wineries, subRegions } from "@/db/schema";
 import { eq, and, lte, desc, sql } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 
 export const revalidate = 86400;
 
@@ -70,7 +71,7 @@ async function getWineriesForTags(tags: string[]) {
       .from(wineries)
       .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
       .where(lte(wineries.priceLevel, 2))
-      .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`)
+      .orderBy(wineryRankingDesc)
       .limit(4);
   }
 
@@ -89,7 +90,7 @@ async function getWineriesForTags(tags: string[]) {
     .from(wineries)
     .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(valley ? eq(subRegions.valley, valley) : undefined)
-    .orderBy(desc(wineries.curated), sql`COALESCE(${wineries.aggregateRating}, 0) DESC`)
+    .orderBy(wineryRankingDesc)
     .limit(4);
 }
 

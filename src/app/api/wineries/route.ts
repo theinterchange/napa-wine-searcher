@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { wineries, subRegions } from "@/db/schema";
 import { eq, like, gte, asc, desc, and, inArray } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 
 export async function GET(request: NextRequest) {
   try {
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
       .from(wineries)
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
       .where(where)
-      .orderBy(desc(wineries.aggregateRating));
+      .orderBy(wineryRankingDesc);
 
     return NextResponse.json(results);
   } catch (error) {

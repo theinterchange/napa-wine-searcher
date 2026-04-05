@@ -2,16 +2,16 @@
 
 import { CheckCircle2, Circle, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 export function VisitedButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [isVisited, setIsVisited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -23,7 +23,7 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
 
   const toggle = async () => {
     if (!session) {
-      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      setShowAuthModal(true);
       return;
     }
     setLoading(true);
@@ -81,6 +81,12 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
           <Check className="h-4 w-4 text-emerald-400 dark:text-emerald-600" />
           {toast}
         </div>
+      )}
+      {showAuthModal && (
+        <AuthGateModal
+          message="Track which wineries have been visited and build a personal map of wine country discoveries."
+          onClose={() => setShowAuthModal(false)}
+        />
       )}
     </>
   );

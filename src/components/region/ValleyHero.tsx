@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Wine, Map, ArrowRight } from "lucide-react";
 
 interface ValleyHeroProps {
@@ -7,6 +8,7 @@ interface ValleyHeroProps {
   wineryCount: number;
   subRegionCount: number;
   valley: "napa" | "sonoma";
+  heroImageUrl?: string | null;
 }
 
 export function ValleyHero({
@@ -15,10 +17,26 @@ export function ValleyHero({
   wineryCount,
   subRegionCount,
   valley,
+  heroImageUrl,
 }: ValleyHeroProps) {
   return (
-    <section className="relative bg-burgundy-950">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <section className="relative bg-burgundy-950 overflow-hidden">
+      {/* Background image with gradient */}
+      {heroImageUrl && (
+        <>
+          <Image
+            src={heroImageUrl}
+            alt={`${valley === "napa" ? "Napa Valley" : "Sonoma County"} wine country`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+        </>
+      )}
+
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-center gap-2 mb-4">
           <Wine className="h-5 w-5 text-gold-400" />
           <span className="text-sm font-medium text-gold-400">

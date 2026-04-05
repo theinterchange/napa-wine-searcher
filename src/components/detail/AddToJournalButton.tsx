@@ -2,10 +2,10 @@
 
 import { BookOpen } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { JournalEntryForm } from "@/components/journal/JournalEntryForm";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 interface AddToJournalButtonProps {
   wineryId: number;
@@ -21,12 +21,12 @@ export function AddToJournalButton({
   compact,
 }: AddToJournalButtonProps) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleClick = () => {
     if (!session) {
-      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      setShowAuthModal(true);
       return;
     }
     setShowForm(true);
@@ -53,6 +53,12 @@ export function AddToJournalButton({
           prefilledWine={prefilledWine}
           onClose={() => setShowForm(false)}
           onSaved={() => setShowForm(false)}
+        />
+      )}
+      {showAuthModal && (
+        <AuthGateModal
+          message="Log wines, rate tastings, and build a personal journal that grows with every visit."
+          onClose={() => setShowAuthModal(false)}
         />
       )}
     </>

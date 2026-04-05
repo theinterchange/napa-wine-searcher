@@ -2,9 +2,9 @@
 
 import { ListPlus, Check, Plus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 interface Collection {
   id: number;
@@ -14,8 +14,8 @@ interface Collection {
 
 export function AddToCollectionButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [memberOf, setMemberOf] = useState<Set<number>>(new Set());
   const [newName, setNewName] = useState("");
@@ -44,7 +44,7 @@ export function AddToCollectionButton({ wineryId, compact }: { wineryId: number;
 
   const handleClick = () => {
     if (!session) {
-      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+      setShowAuthModal(true);
       return;
     }
     setOpen(!open);
@@ -129,7 +129,7 @@ export function AddToCollectionButton({ wineryId, compact }: { wineryId: number;
                     className={cn(
                       "h-4 w-4 rounded border flex items-center justify-center shrink-0",
                       memberOf.has(col.id)
-                        ? "bg-burgundy-700 border-burgundy-700"
+                        ? "bg-burgundy-900 border-burgundy-700"
                         : "border-[var(--border)]"
                     )}
                   >
@@ -163,13 +163,19 @@ export function AddToCollectionButton({ wineryId, compact }: { wineryId: number;
               <button
                 onClick={createAndAdd}
                 disabled={creating || !newName.trim()}
-                className="rounded-lg bg-burgundy-700 px-2 py-1.5 text-white disabled:opacity-50"
+                className="rounded-lg bg-burgundy-900 px-2 py-1.5 text-white disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
               </button>
             </div>
           </div>
         </div>
+      )}
+      {showAuthModal && (
+        <AuthGateModal
+          message="Organize wineries into collections — group by region, style, or any theme that fits the trip."
+          onClose={() => setShowAuthModal(false)}
+        />
       )}
     </div>
   );

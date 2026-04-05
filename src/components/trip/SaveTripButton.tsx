@@ -3,6 +3,7 @@
 import { Save, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 interface SaveTripButtonProps {
   stopIds: number[];
@@ -16,8 +17,7 @@ export function SaveTripButton({ stopIds, theme, valley }: SaveTripButtonProps) 
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  if (!session) return null;
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   async function handleSave() {
     if (!name.trim()) return;
@@ -69,7 +69,7 @@ export function SaveTripButton({ stopIds, theme, valley }: SaveTripButtonProps) 
         <button
           onClick={handleSave}
           disabled={saving || !name.trim()}
-          className="rounded-lg bg-burgundy-700 px-3 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
+          className="rounded-lg bg-burgundy-900 px-3 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
         >
           {saving ? "..." : "Save"}
         </button>
@@ -84,12 +84,26 @@ export function SaveTripButton({ stopIds, theme, valley }: SaveTripButtonProps) 
   }
 
   return (
-    <button
-      onClick={() => setShowInput(true)}
-      className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
-    >
-      <Save className="h-4 w-4" />
-      Save Trip
-    </button>
+    <>
+      <button
+        onClick={() => {
+          if (!session) {
+            setShowAuthModal(true);
+            return;
+          }
+          setShowInput(true);
+        }}
+        className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+      >
+        <Save className="h-4 w-4" />
+        Save Trip
+      </button>
+      {showAuthModal && (
+        <AuthGateModal
+          message="Save this itinerary to revisit later, share with travel companions, and track completed trips."
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
+    </>
   );
 }

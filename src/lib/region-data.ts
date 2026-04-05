@@ -9,6 +9,7 @@ import {
   dayTripStops,
 } from "@/db/schema";
 import { eq, sql, count, and, desc, asc, min, max } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 
 export async function getValleyOverview(valley: "napa" | "sonoma") {
   const [topWineries, subRegionRows, amenityCounts, priceRange] =
@@ -38,10 +39,7 @@ export async function getValleyOverview(valley: "napa" | "sonoma") {
         .from(wineries)
         .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
         .where(eq(subRegions.valley, valley))
-        .orderBy(
-          desc(wineries.curated),
-          sql`COALESCE(${wineries.googleRating}, 0) DESC`
-        )
+        .orderBy(wineryRankingDesc)
         .limit(12),
 
       // Sub-region breakdown with counts
@@ -162,10 +160,7 @@ export async function getSubRegionDetail(slug: string) {
         .from(wineries)
         .innerJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
         .where(eq(wineries.subRegionId, region.id))
-        .orderBy(
-          desc(wineries.curated),
-          sql`COALESCE(${wineries.googleRating}, 0) DESC`
-        ),
+        .orderBy(wineryRankingDesc),
 
       // Top varietals in this sub-region
       db

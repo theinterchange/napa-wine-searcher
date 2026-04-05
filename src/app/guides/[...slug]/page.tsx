@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { FAQSection } from "@/components/region/FAQSection";
@@ -13,7 +14,6 @@ import {
 } from "@/lib/guide-content";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { getAllAccommodations } from "@/lib/accommodation-data";
-import { BedDouble } from "lucide-react";
 import {
   getWineriesByAmenity,
   getWineriesByVarietal,
@@ -25,6 +25,20 @@ import {
 } from "@/lib/guide-data";
 
 import { BASE_URL } from "@/lib/constants";
+
+// Static hero image mapping for popular guides
+const GUIDE_HERO_IMAGES: Record<string, string> = {
+  "first-time-guide-napa-valley": "/images/blog/napa-first-time-hero.jpg",
+  "first-time-guide-sonoma-county": "/images/blog/napa-first-time-hero.jpg",
+  "dog-friendly-wineries-napa-valley": "/images/blog/dog-friendly-wineries-hero.jpg",
+  "dog-friendly-wineries-sonoma-county": "/images/blog/dog-friendly-wineries-hero.jpg",
+  "cheap-wine-tastings-napa-valley": "/images/blog/budget-wine-tasting-hero.jpg",
+  "cheap-wine-tastings-sonoma-county": "/images/blog/budget-wine-tasting-hero.jpg",
+  "best-cabernet-sauvignon-napa-valley": "/images/blog/napa-avas-hero.jpg",
+  "napa-valley-vs-sonoma-county": "/images/blog/napa-vs-sonoma-hero.jpg",
+  "wineries-for-groups-napa-valley": "/images/blog/wineries-for-groups-hero.jpg",
+  "wineries-for-groups-sonoma-county": "/images/blog/wineries-for-groups-hero.jpg",
+};
 
 export async function generateStaticParams() {
   const guides = getAllGuides();
@@ -117,6 +131,34 @@ async function getGuideData(guide: GuideDefinition) {
   }
 
   return { wineries: [] };
+}
+
+function getRelatedGuides(currentGuide: GuideDefinition) {
+  const allGuides = getAllGuides();
+
+  // Prioritize: same type + same region, then same type different region, then same region different type
+  const sameTypeRegion = allGuides.filter(
+    (g) =>
+      g.slug !== currentGuide.slug &&
+      g.type === currentGuide.type &&
+      g.valley === currentGuide.valley
+  );
+  const sameType = allGuides.filter(
+    (g) =>
+      g.slug !== currentGuide.slug &&
+      g.type === currentGuide.type &&
+      g.valley !== currentGuide.valley
+  );
+  const sameRegion = allGuides.filter(
+    (g) =>
+      g.slug !== currentGuide.slug &&
+      g.type !== currentGuide.type &&
+      g.valley === currentGuide.valley &&
+      !g.subRegionSlug // Only valley-level guides
+  );
+
+  const related = [...sameTypeRegion, ...sameType, ...sameRegion];
+  return related.slice(0, 6);
 }
 
 function ComparisonTable({
@@ -242,12 +284,14 @@ export default async function GuidePage({
   type WineryCardProps = Parameters<typeof WineryCard>[0]["winery"];
   const wineries = "wineries" in data ? (data.wineries as WineryCardProps[]) : [];
 
-  // Get accommodations for the guide's valley
   const guideValley = guide.valley;
   const accommodations = guideValley
     ? allAccommodations.filter((a) => a.valley === guideValley).slice(0, 3)
     : allAccommodations.slice(0, 3);
   const comparison = "comparison" in data ? data.comparison : null;
+
+  const relatedGuides = getRelatedGuides(guide);
+  const heroImage = GUIDE_HERO_IMAGES[guide.slug] ?? null;
 
   const breadcrumbItems = [
     { name: "Home", href: "/" },
@@ -260,48 +304,76 @@ export default async function GuidePage({
       <BreadcrumbSchema items={breadcrumbItems} />
       {guide.faqs.length > 0 && <FAQSchema faqs={guide.faqs} />}
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Breadcrumbs */}
-        <nav
-          aria-label="Breadcrumb"
-          className="mb-6 flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
-        >
-          <Link
-            href="/"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
-            Home
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <Link
-            href="/guides"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
-            Guides
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <span
-            className="text-[var(--foreground)] font-medium truncate"
-            aria-current="page"
-          >
-            {guide.h1}
-          </span>
-        </nav>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
-            {guide.h1}
-          </h1>
-          {guide.intro.map((p, i) => (
-            <p
-              key={i}
-              className="mt-4 text-[var(--muted-foreground)] leading-relaxed max-w-3xl"
+      {/* Hero — image when available, muted header otherwise */}
+      {heroImage ? (
+        <div className="relative bg-burgundy-900 text-white overflow-hidden">
+          <Image
+            src={heroImage}
+            alt={guide.h1}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+          <div className="relative mx-auto max-w-7xl px-4 pt-24 sm:pt-32 pb-8 sm:px-6 lg:px-8">
+            {/* Breadcrumbs over image */}
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-4 flex items-center gap-1 text-sm text-white/60"
             >
-              {p}
-            </p>
-          ))}
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <Link href="/guides" className="hover:text-white transition-colors">Guides</Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-white/80 font-medium truncate">{guide.h1}</span>
+            </nav>
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold max-w-3xl">
+              {guide.h1}
+            </h1>
+            {guide.intro.length > 0 && (
+              <p className="mt-4 text-base text-white/70 leading-relaxed max-w-2xl">
+                {guide.intro[0]}
+              </p>
+            )}
+          </div>
         </div>
+      ) : (
+        <div className="bg-[var(--muted)]/30 border-b border-[var(--border)]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-4 flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+            >
+              <Link href="/" className="hover:text-[var(--foreground)] transition-colors">Home</Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <Link href="/guides" className="hover:text-[var(--foreground)] transition-colors">Guides</Link>
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">{guide.h1}</span>
+            </nav>
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+              {guide.h1}
+            </h1>
+            {guide.intro.map((p, i) => (
+              <p key={i} className="mt-4 text-[var(--muted-foreground)] leading-relaxed max-w-3xl">
+                {p}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Intro text for hero-image guides (second paragraph onwards) */}
+        {heroImage && guide.intro.length > 1 && (
+          <div className="mb-8 max-w-3xl">
+            {guide.intro.slice(1).map((p, i) => (
+              <p key={i} className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+                {p}
+              </p>
+            ))}
+          </div>
+        )}
 
         {/* Comparison table */}
         {guide.type === "comparison" && comparison && (
@@ -325,7 +397,7 @@ export default async function GuidePage({
                 : `${wineries.length} ${wineries.length === 1 ? "Winery" : "Wineries"} Found`}
             </h2>
             <p className="text-sm text-[var(--muted-foreground)] mb-6">
-              Sorted by rating and verification status
+              Sorted by rating — verified wineries appear first.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {wineries.map((w) => (
@@ -338,8 +410,8 @@ export default async function GuidePage({
         {wineries.length === 0 && guide.type !== "comparison" && (
           <div className="mb-10 rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
             <p className="text-[var(--muted-foreground)]">
-              No wineries currently match this filter. Check back soon as we add
-              more data.
+              No wineries currently match this filter. Check back soon as more
+              data is added.
             </p>
           </div>
         )}
@@ -376,26 +448,38 @@ export default async function GuidePage({
           </div>
         )}
 
-        {/* Cross-links to related guides */}
-        <div className="border-t border-[var(--border)] pt-8">
-          <h2 className="font-heading text-xl font-semibold mb-4">
-            More Wine Country Guides
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {getAllGuides()
-              .filter((g) => g.slug !== guide.slug)
-              .slice(0, 8)
-              .map((g) => (
+        {/* Related Guides — structured by relevance */}
+        {relatedGuides.length > 0 && (
+          <div className="border-t border-[var(--border)] pt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-xl font-semibold">
+                Related Guides
+              </h2>
+              <Link
+                href="/guides"
+                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+              >
+                All guides &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {relatedGuides.map((g) => (
                 <Link
                   key={g.slug}
                   href={`/guides/${g.slug}`}
-                  className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                  className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
                 >
-                  {g.h1}
+                  <h3 className="text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                    {g.h1}
+                  </h3>
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)] line-clamp-2">
+                    {g.intro[0]?.slice(0, 100)}...
+                  </p>
                 </Link>
               ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

@@ -2,7 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { Save, Pencil } from "lucide-react";
+import { Save, Pencil, Lock } from "lucide-react";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 export function NotesEditor({ wineryId }: { wineryId: number }) {
   const { data: session } = useSession();
@@ -18,7 +19,35 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
       .catch(() => {});
   }, [session, wineryId]);
 
-  if (!session) return null;
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  if (!session) {
+    return (
+      <>
+        <button
+          onClick={() => setShowAuthModal(true)}
+          className="w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-left hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-colors"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+              <Pencil className="h-4 w-4" />
+              Tasting Notes
+            </h3>
+            <Lock className="h-4 w-4 text-[var(--muted-foreground)]" />
+          </div>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Create a free account to keep personal notes on every winery visited.
+          </p>
+        </button>
+        {showAuthModal && (
+          <AuthGateModal
+            message="Keep personal notes on every winery — remember what stood out, what to try next time, and tips for future visits."
+            onClose={() => setShowAuthModal(false)}
+          />
+        )}
+      </>
+    );
+  }
 
   const save = async () => {
     setLoading(true);

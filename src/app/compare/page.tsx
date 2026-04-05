@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
 import { eq, inArray, desc, sql } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 import { Star, Globe } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ShareCompareButton } from "@/components/compare/ShareCompareButton";
@@ -20,7 +21,7 @@ async function getFeaturedWineries() {
     .select({ id: wineries.id, name: wineries.name, googleRating: wineries.googleRating })
     .from(wineries)
     .where(sql`${wineries.curated} = 1`)
-    .orderBy(desc(wineries.googleRating))
+    .orderBy(wineryRankingDesc)
     .limit(6);
 }
 

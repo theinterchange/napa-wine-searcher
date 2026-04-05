@@ -8,6 +8,7 @@ import { WineryFilters } from "@/components/directory/WineryFilters";
 import { WinerySearch } from "@/components/directory/WinerySearch";
 import { Pagination } from "@/components/directory/Pagination";
 import { TASTING_PRICE_TIERS } from "@/lib/filters";
+import { wineryRankingScore } from "@/lib/winery-ranking";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
@@ -174,15 +175,7 @@ export default async function WineriesPage({
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-  // Ranking: log10(reviews) × 25 + rating × 40 + curated × 30 + price × 5
-  const wineryRankingScore = sql`(
-    (CASE WHEN ${wineries.totalRatings} > 0
-      THEN log(${wineries.totalRatings} + 1) / log(10) * 25
-      ELSE 0 END)
-    + COALESCE(${wineries.googleRating}, COALESCE(${wineries.aggregateRating}, 0)) * 40
-    + (CASE WHEN ${wineries.curated} = 1 THEN 30 ELSE 0 END)
-    + COALESCE(${wineries.priceLevel}, 2) * 5
-  )`;
+  // Ranking score imported from @/lib/winery-ranking
 
   // Sort — default uses ranking score, user can override
   const secondaryOrder = {

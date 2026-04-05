@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { wineries, subRegions, wineTypes, wines, dayTripRoutes, accommodations } from "@/db/schema";
 import { sql, eq, count } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
+import { wineryRankingDesc } from "@/lib/winery-ranking";
 import type { Column } from "drizzle-orm";
 
 const FILTER_SHORTCUTS = [
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
       .where(
         sql`(${normalizedCol(wineries.name)} LIKE ${normalizedPattern} OR ${normalizedCol(wineries.city)} LIKE ${normalizedPattern} OR ${wineries.shortDescription} LIKE ${pattern})`
       )
-      .orderBy(sql`${wineries.curated} DESC, COALESCE(${wineries.googleRating}, 0) DESC`)
+      .orderBy(wineryRankingDesc)
       .limit(6),
 
     // Wine types: match name, include winery count
