@@ -88,34 +88,32 @@ export function EmailCapture({
 
     if (compact) {
       return (
-        <div className="rounded-xl border border-[var(--border)] bg-burgundy-50 dark:bg-burgundy-950 p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-burgundy-600 text-white">
-              <Check className="h-4 w-4" />
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-burgundy-600 text-white">
+              <Check className="h-3.5 w-3.5" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-burgundy-950 dark:text-white">
-                Your guide is on the way!
-              </p>
-              <p className="text-xs text-burgundy-800 dark:text-burgundy-100 mt-1">
-                Check your inbox shortly.
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <Link
-                  href={signupHref}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-burgundy-900 px-3 py-2 text-xs font-semibold text-white hover:bg-burgundy-800 transition-colors"
-                >
-                  Create Free Account
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-                <Link
-                  href="/wineries"
-                  className="text-xs font-medium text-burgundy-900 dark:text-burgundy-200 hover:underline"
-                >
-                  or browse wineries &rarr;
-                </Link>
-              </div>
-            </div>
+            <p className="text-sm font-semibold">
+              Your guide is on the way!
+            </p>
+          </div>
+          <p className="text-xs text-[var(--muted-foreground)] mb-3">
+            Check your inbox. Create a free account to save wineries, track visits, log tastings, and plan trips.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href={signupHref}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-burgundy-900 px-3 py-2 text-xs font-semibold text-white hover:bg-burgundy-800 transition-colors"
+            >
+              Create Free Account
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link
+              href="/wineries"
+              className="text-xs font-medium text-[var(--foreground)] hover:underline"
+            >
+              or browse wineries &rarr;
+            </Link>
           </div>
         </div>
       );
@@ -168,9 +166,6 @@ export function EmailCapture({
               Create Free Account
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <p className="text-xs text-burgundy-700 dark:text-burgundy-300">
-              No credit card. Free forever.
-            </p>
           </div>
 
           {/* Secondary navigation — for users who don't want an account */}
