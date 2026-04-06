@@ -94,6 +94,11 @@ export function HeroFeatured({
       {/* Content */}
       <div className="relative h-full min-h-[400px] sm:min-h-[500px] flex flex-col justify-end">
         <div className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+          {/* Page H1 — editorial kicker above the featured badge */}
+          <h1 className="text-[0.7rem] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.15em] text-white/75 mb-3 sm:whitespace-nowrap">
+            Napa &amp; Sonoma Wineries — The Complete Visitor&apos;s Guide
+          </h1>
+
           {/* Slide content with fade animation */}
           <div key={current} className="animate-fade-in min-h-[120px] sm:min-h-[140px]">
             <span className="inline-flex items-center gap-1 rounded-full bg-gold-500/90 px-2.5 py-0.5 text-xs font-semibold text-burgundy-950 mb-2">

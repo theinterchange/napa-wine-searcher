@@ -48,7 +48,8 @@ export default function PrivacyPage() {
             <li><strong>Vercel</strong> — hosting and image optimization</li>
             <li><strong>Turso</strong> — database hosting (your data is encrypted in transit)</li>
             <li><strong>Resend</strong> — transactional email delivery (password resets only)</li>
-            <li><strong>Plausible Analytics</strong> — privacy-friendly, cookie-free analytics that collects no personal data</li>
+            <li><strong>Vercel Web Analytics</strong> — privacy-friendly pageview analytics, no cookies, no personal data collected</li>
+            <li><strong>Cloudflare Web Analytics</strong> — server-side pageview measurement via our CDN, cookie-free</li>
             <li><strong>Google Maps</strong> — map display and location services on map pages</li>
           </ul>
           <p className="text-[var(--muted-foreground)] leading-relaxed mt-2">

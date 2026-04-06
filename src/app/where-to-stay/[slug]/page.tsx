@@ -25,6 +25,7 @@ import { AccommodationHero } from "@/components/accommodation/AccommodationHero"
 import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
 import { FAQSection } from "@/components/region/FAQSection";
+import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BASE_URL } from "@/lib/constants";
 
 const typeLabels: Record<string, string> = {
@@ -826,24 +827,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             Frequently Asked Questions
           </h2>
           <FAQSection faqs={faqs} />
-
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                mainEntity: faqs.map((faq) => ({
-                  "@type": "Question",
-                  name: faq.question,
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: faq.answer,
-                  },
-                })),
-              }),
-            }}
-          />
+          <FAQSchema faqs={faqs} />
         </div>
       )}
 

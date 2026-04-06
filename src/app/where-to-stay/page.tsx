@@ -29,21 +29,20 @@ export default async function WhereToStayPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-      {/* Hero */}
-      <div className="text-center mb-12">
-        <h1 className="font-heading text-3xl font-bold mb-4">
+      {/* Hero — compact intro so first row of hotels stays above the fold */}
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold mb-3">
           Where to Stay in Wine Country
         </h1>
-        <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto">
-          Your wine country trip starts with the right home base. We&apos;ve
-          hand-picked the best hotels, inns, and resorts across Napa and
-          Sonoma — chosen for their proximity to great wineries, not just
-          their thread count.
+        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
+          Hand-picked hotels, inns, and resorts across Napa and Sonoma — chosen
+          for their proximity to great wineries, the quality of the experience,
+          and value at every price point.
         </p>
       </div>
 
       {/* Valley quick links */}
-      <div className="flex flex-wrap justify-center gap-4 mb-12">
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
         <Link
           href="/where-to-stay/napa-valley"
           className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-3 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
@@ -85,25 +84,6 @@ export default async function WhereToStayPage() {
           </p>
         </div>
       )}
-
-      {/* SEO content */}
-      <div className="mt-16 prose prose-burgundy dark:prose-invert max-w-3xl mx-auto">
-        <h2>Planning Your Wine Country Stay</h2>
-        <p>
-          Choosing where to stay in Napa Valley or Sonoma County can make or
-          break your wine trip. Stay too far from the wineries you want to
-          visit, and you&apos;ll spend your trip in a car instead of a tasting
-          room. We&apos;ve selected each property based on its location
-          relative to the best wineries, the quality of the experience, and
-          value at each price point.
-        </p>
-        <p>
-          Whether you&apos;re looking for a luxury resort in Calistoga with
-          its own spa, a charming inn walking distance from Healdsburg&apos;s
-          tasting rooms, or a budget-friendly hotel in downtown Napa, our
-          picks are designed to put you at the center of wine country.
-        </p>
-      </div>
 
       {/* Structured data */}
       <script

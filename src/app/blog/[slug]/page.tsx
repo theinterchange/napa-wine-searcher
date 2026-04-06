@@ -7,10 +7,12 @@ import { getAllPosts, getAllSlugs, getPostBySlug } from "@/lib/blog";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { WineryCard } from "@/components/directory/WineryCard";
+import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { BASE_URL } from "@/lib/constants";
 import { getWineriesByAmenity } from "@/lib/guide-data";
+import { getAllAccommodations } from "@/lib/accommodation-data";
 import { db } from "@/db";
 import { wineries, subRegions } from "@/db/schema";
 import { eq, and, lte, desc, sql } from "drizzle-orm";
@@ -103,9 +105,21 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const [allPosts, matchingWineries] = await Promise.all([
+  // Determine valley from post tags for accommodation suggestions
+  const tagSet = new Set(post.tags.map((t) => t.toLowerCase()));
+  const postValley: "napa" | "sonoma" | null =
+    tagSet.has("napa valley") || tagSet.has("napa") || tagSet.has("bottlerock")
+      ? "napa"
+      : tagSet.has("sonoma county") || tagSet.has("sonoma")
+        ? "sonoma"
+        : null;
+
+  const [allPosts, matchingWineries, matchingAccommodations] = await Promise.all([
     Promise.resolve(getAllPosts()),
     getWineriesForTags(post.tags),
+    postValley
+      ? getAllAccommodations(postValley).then((all) => all.slice(0, 3))
+      : Promise.resolve([]),
   ]);
   const related = allPosts
     .filter((p) => p.slug !== post.slug)
@@ -164,6 +178,39 @@ export default async function BlogPostPage({
             >
               Browse all wineries &rarr;
             </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Where to Stay — nearby accommodations with booking CTAs */}
+      {matchingAccommodations.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)]">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-heading text-2xl font-bold">
+              Where to Stay Nearby
+            </h2>
+            <Link
+              href={
+                postValley === "napa"
+                  ? "/where-to-stay/napa-valley"
+                  : postValley === "sonoma"
+                    ? "/where-to-stay/sonoma-county"
+                    : "/where-to-stay"
+              }
+              className="text-sm font-medium text-[var(--foreground)] hover:underline"
+            >
+              All hotels &rarr;
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {matchingAccommodations.map((a) => (
+              <AccommodationCard
+                key={a.slug}
+                accommodation={a}
+                showBookingCTA
+                sourceComponent="BlogWhereToStay"
+              />
+            ))}
           </div>
         </section>
       )}

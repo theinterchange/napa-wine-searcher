@@ -4,33 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Wine,
-  Map,
   Menu,
   X,
-  GitCompareArrows,
   ChevronDown,
   User,
   FolderOpen,
   Route,
   BookOpen,
-  Bookmark,
   LogOut,
-  Newspaper,
-  BedDouble,
   Settings,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { ThemeToggle } from "./ThemeToggle";
 import { GlobalSearch } from "./GlobalSearch";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/wineries", label: "Wineries" },
-  { href: "/where-to-stay", label: "Where to Stay", icon: BedDouble },
-  { href: "/map", label: "Map", icon: Map },
-  { href: "/plan-trip", label: "Plan Trip", icon: Route },
-  { href: "/blog", label: "Blog", icon: Newspaper },
+  { href: "/where-to-stay", label: "Where to Stay" },
+  { href: "/guides", label: "Guides" },
+  { href: "/plan-trip", label: "Plan Trip" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const userMenuLinks = [
@@ -64,32 +58,30 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex shrink-0 items-center gap-2">
             <Wine className="h-6 w-6 text-burgundy-900 dark:text-burgundy-200" />
-            <span className="font-heading text-xl font-extrabold text-burgundy-900 dark:text-gold-600">
+            <span className="font-heading text-xl font-extrabold text-burgundy-900 dark:text-gold-600 whitespace-nowrap">
               Napa Sonoma Guide
             </span>
           </Link>
 
           <GlobalSearch hideButton={pathname === "/"} />
 
-          <div className="hidden lg:flex items-center gap-6">
-            {navLinks.map(({ href, label, icon: Icon }) => (
+          <div className="hidden lg:flex items-center gap-5">
+            {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "flex items-center gap-1 text-sm font-medium transition-colors border-b-2 pb-0.5",
+                  "whitespace-nowrap text-sm font-medium transition-colors border-b-2 pb-0.5",
                   isActive(href)
                     ? "text-[var(--foreground)] font-semibold border-[var(--foreground)]"
                     : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border-transparent"
                 )}
               >
-                {Icon && <Icon className="h-4 w-4" />}
                 {label}
               </Link>
             ))}
-            <ThemeToggle />
             {session ? (
               <div className="relative" ref={menuRef}>
                 <button
@@ -233,7 +225,6 @@ export function Navbar() {
                 Sign In
               </Link>
             )}
-            <ThemeToggle />
           </div>
         )}
       </div>

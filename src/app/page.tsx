@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Wine, Route, Heart, BookOpen, Dog, DollarSign, Sparkles, BedDouble, Leaf, Baby, Download } from "lucide-react";
+import { ArrowRight, Wine, Route, Heart, Dog, DollarSign, Sparkles, BedDouble } from "lucide-react";
 import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
-import { sql, count, eq, desc, and, isNotNull } from "drizzle-orm";
+import { sql, count, eq, and, isNotNull } from "drizzle-orm";
 import { HeroFeatured } from "@/components/home/HeroFeatured";
 import { QuickFilterBar } from "@/components/home/QuickFilterBar";
-import { AccountCTA } from "@/components/home/AccountCTA";
 import { EditorialInterlude } from "@/components/home/EditorialInterlude";
 import { RegionCard } from "@/components/home/RegionCard";
 import { GuideCard } from "@/components/home/GuideCard";
@@ -71,33 +70,6 @@ async function getTotalWineries() {
   return total;
 }
 
-async function getAmenityCounts() {
-  const [[dogResult], [kidResult], [sustainableResult], [walkInResult]] =
-    await Promise.all([
-      db
-        .select({ total: count() })
-        .from(wineries)
-        .where(eq(wineries.dogFriendly, true)),
-      db
-        .select({ total: count() })
-        .from(wineries)
-        .where(eq(wineries.kidFriendly, true)),
-      db
-        .select({ total: count() })
-        .from(wineries)
-        .where(eq(wineries.sustainableFarming, true)),
-      db
-        .select({ total: count() })
-        .from(wineries)
-        .where(eq(wineries.reservationRequired, false)),
-    ]);
-  return {
-    dogFriendly: dogResult.total,
-    kidFriendly: kidResult.total,
-    sustainable: sustainableResult.total,
-    walkIn: walkInResult.total,
-  };
-}
 
 async function getPopularSubRegions() {
   const regions = await db
@@ -254,7 +226,6 @@ export default async function HomePage() {
   const [
     featured,
     totalWineries,
-    amenityCounts,
     homepageWineries,
     popularRegions,
     topAccommodations,
@@ -263,7 +234,6 @@ export default async function HomePage() {
   ] = await Promise.all([
     getFeaturedWineries(),
     getTotalWineries(),
-    getAmenityCounts(),
     getHomepageWineries(),
     getPopularSubRegions(),
     getAllAccommodations().then((all) => all.slice(0, 3)),
@@ -290,51 +260,10 @@ export default async function HomePage() {
 
   return (
     <>
-      <h1 className="sr-only">Napa Sonoma Guide — Discover Wineries in Napa Valley &amp; Sonoma County</h1>
-
-      {/* 1. Hero with Featured Wineries */}
+      {/* 1. Hero with Featured Wineries (contains page H1) */}
       <HeroFeatured wineries={featured} totalWineries={totalWineries} />
 
-      {/* 2. Amenity Discovery Bar */}
-      <section className="border-y border-[var(--border)] bg-[var(--muted)]/30">
-        <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-sm">
-            <Link
-              href="/guides/dog-friendly-wineries-napa-valley"
-              className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <Dog className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <strong className="text-[var(--foreground)]">{amenityCounts.dogFriendly}</strong> Dog-Friendly
-            </Link>
-            <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
-            <Link
-              href="/guides/kid-friendly-wineries-napa-valley"
-              className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <Baby className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <strong className="text-[var(--foreground)]">{amenityCounts.kidFriendly}</strong> Kid-Friendly
-            </Link>
-            <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
-            <Link
-              href="/wineries?amenities=walkin"
-              className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <Wine className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <strong className="text-[var(--foreground)]">{amenityCounts.walkIn}</strong> Walk-In Welcome
-            </Link>
-            <span className="hidden sm:inline text-[var(--border)]" aria-hidden="true">|</span>
-            <Link
-              href="/wineries?amenities=sustainable"
-              className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <Leaf className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
-              <strong className="text-[var(--foreground)]">{amenityCounts.sustainable}</strong> Sustainable
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Seasonal Banners — auto-managed by start/end dates */}
+      {/* 2. Seasonal Banners — auto-managed by start/end dates (amenity discovery lives in QuickFilterBar inside Explore Wineries) */}
       {seasonalBanners.map((banner) => (
         <SeasonalBanner key={banner.id} banner={banner} />
       ))}
@@ -462,7 +391,12 @@ export default async function HomePage() {
           {topAccommodations.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {topAccommodations.map((a) => (
-                <AccommodationCard key={a.slug} accommodation={a} />
+                <AccommodationCard
+                  key={a.slug}
+                  accommodation={a}
+                  showBookingCTA
+                  sourceComponent="HomepageFeatured"
+                />
               ))}
             </div>
           )}
@@ -529,42 +463,8 @@ export default async function HomePage() {
           Whether it&apos;s a first sip or a fiftieth visit — the right guide makes all the difference.
         </p>
 
-        {/* Featured: Free Planning Guide Download */}
-        <Link
-          href="/signup"
-          className="group flex flex-col sm:flex-row rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
-        >
-          <div className="relative sm:w-2/5 aspect-[16/9] sm:aspect-auto bg-burgundy-100 dark:bg-burgundy-900 overflow-hidden">
-            <Image
-              src="/images/blog/napa-spring-hero.jpg"
-              alt="Napa Valley vineyards with mustard flowers in spring"
-              fill
-              sizes="(max-width: 640px) 100vw, 40vw"
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-          </div>
-          <div className="flex flex-col justify-center flex-1 p-5 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
-              Free Download
-            </span>
-            <h3 className="mt-2 font-heading text-xl sm:text-2xl font-bold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
-              Wine Country Planning Guide
-            </h3>
-            <p className="mt-3 text-sm text-[var(--muted-foreground)] leading-relaxed line-clamp-3">
-              Everything needed for an unforgettable visit — the best wineries
-              by region, insider tasting tips, seasonal advice, and how to make
-              the most of every stop. Create a free account to download.
-            </p>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--foreground)] group-hover:underline">
-              <Download className="h-4 w-4" />
-              Get the Free Guide
-              <ArrowRight className="h-3.5 w-3.5" />
-            </span>
-          </div>
-        </Link>
-
-        {/* All 5 guide cards in a grid below */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
+        {/* 5 guide cards in a grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
           {guides.map((g) => (
             <GuideCard
               key={g.slug}
@@ -612,8 +512,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 10. Account CTA — after proving value, pitch the account */}
-      <AccountCTA />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Wine, BedDouble, LayoutDashboard, BarChart3 } from "lucide-react";
+import { Wine, BedDouble, LayoutDashboard, BarChart3, Mail, ExternalLink } from "lucide-react";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -50,9 +50,23 @@ export default async function AdminLayout({
                 <BarChart3 className="h-4 w-4" />
                 Analytics
               </Link>
+              <Link
+                href="/nalaadmin/analytics/subscribers"
+                className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <Mail className="h-4 w-4" />
+                Subscribers
+              </Link>
+              <Link
+                href="/nalaadmin/analytics/clicks"
+                className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Clicks
+              </Link>
             </nav>
             <div className="ml-auto text-xs text-[var(--muted-foreground)]">
-              {session.user.email}
+              {session?.user?.email}
             </div>
           </div>
         </div>

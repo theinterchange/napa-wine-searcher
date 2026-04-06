@@ -6,7 +6,20 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/profile", "/my-visits", "/login"],
+      disallow: [
+        "/api/",
+        "/profile",
+        "/my-visits",
+        "/my-trips",
+        "/journal",
+        "/collections",
+        "/compare",
+        "/login",
+        "/signup",
+        "/forgot-password",
+        "/reset-password",
+        "/nalaadmin",
+      ],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };

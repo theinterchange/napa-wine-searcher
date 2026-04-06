@@ -33,14 +33,13 @@ export default async function NapaValleyStayPage() {
         <span className="text-[var(--foreground)]">Napa Valley</span>
       </nav>
 
-      <div className="text-center mb-12">
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold mb-3">
           Where to Stay in Napa Valley
         </h1>
-        <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto">
-          From luxury resorts in Calistoga to charming inns in Yountville,
-          these are our picks for the best places to stay during your Napa
-          Valley wine trip.
+        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
+          From luxury resorts in Calistoga to charming inns in Yountville —
+          our picks for the best places to stay during your Napa Valley wine trip.
         </p>
       </div>
 

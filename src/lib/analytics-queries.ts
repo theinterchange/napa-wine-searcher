@@ -361,3 +361,252 @@ export async function getWineryPitchHistory(wineryId: number) {
     .where(eq(pitchEmails.wineryId, wineryId))
     .orderBy(desc(pitchEmails.sentAt));
 }
+
+// ===== Subscribers list =====
+
+export async function getAllSubscribers() {
+  return db
+    .select({
+      id: emailSubscribers.id,
+      email: emailSubscribers.email,
+      source: emailSubscribers.source,
+      subscribedAt: emailSubscribers.subscribedAt,
+    })
+    .from(emailSubscribers)
+    .orderBy(desc(emailSubscribers.subscribedAt));
+}
+
+export async function getSubscriberTrend(startDate: DateFilter) {
+  const where = subDateWhere(startDate);
+  return db
+    .select({
+      date: sql<string>`strftime('%Y-%m-%d', ${emailSubscribers.subscribedAt})`.as(
+        "date"
+      ),
+      total: count(),
+    })
+    .from(emailSubscribers)
+    .where(where)
+    .groupBy(sql`strftime('%Y-%m-%d', ${emailSubscribers.subscribedAt})`)
+    .orderBy(sql`strftime('%Y-%m-%d', ${emailSubscribers.subscribedAt})`);
+}
+
+// ===== Click destinations =====
+
+export async function getClicksByDestination(
+  startDate: DateFilter,
+  limit = 100
+) {
+  const where = dateWhere(startDate);
+  return db
+    .select({
+      destinationUrl: outboundClicks.destinationUrl,
+      clickType: outboundClicks.clickType,
+      total: count(),
+      lastClicked: sql<string>`MAX(${outboundClicks.createdAt})`.as(
+        "last_clicked"
+      ),
+    })
+    .from(outboundClicks)
+    .where(where)
+    .groupBy(outboundClicks.destinationUrl, outboundClicks.clickType)
+    .orderBy(desc(count()))
+    .limit(limit);
+}
+
+export async function getRecentClicks(limit = 200) {
+  return db
+    .select({
+      id: outboundClicks.id,
+      createdAt: outboundClicks.createdAt,
+      clickType: outboundClicks.clickType,
+      destinationUrl: outboundClicks.destinationUrl,
+      sourcePage: outboundClicks.sourcePage,
+      sourceComponent: outboundClicks.sourceComponent,
+      wineryId: outboundClicks.wineryId,
+      wineryName: wineries.name,
+      winerySlug: wineries.slug,
+      accommodationId: outboundClicks.accommodationId,
+      accommodationName: accommodations.name,
+      accommodationSlug: accommodations.slug,
+    })
+    .from(outboundClicks)
+    .leftJoin(wineries, eq(outboundClicks.wineryId, wineries.id))
+    .leftJoin(
+      accommodations,
+      eq(outboundClicks.accommodationId, accommodations.id)
+    )
+    .orderBy(desc(outboundClicks.createdAt))
+    .limit(limit);
+}
+
+// ===== Traffic sources =====
+
+export async function getTopSourcePages(startDate: DateFilter, limit = 20) {
+  const conditions = [isNotNull(outboundClicks.sourcePage)];
+  if (startDate) conditions.push(gte(outboundClicks.createdAt, startDate));
+  return db
+    .select({
+      sourcePage: outboundClicks.sourcePage,
+      total: count(),
+    })
+    .from(outboundClicks)
+    .where(and(...conditions))
+    .groupBy(outboundClicks.sourcePage)
+    .orderBy(desc(count()))
+    .limit(limit);
+}
+
+export async function getTopSourceComponents(
+  startDate: DateFilter,
+  limit = 20
+) {
+  const conditions = [isNotNull(outboundClicks.sourceComponent)];
+  if (startDate) conditions.push(gte(outboundClicks.createdAt, startDate));
+  return db
+    .select({
+      sourceComponent: outboundClicks.sourceComponent,
+      total: count(),
+    })
+    .from(outboundClicks)
+    .where(and(...conditions))
+    .groupBy(outboundClicks.sourceComponent)
+    .orderBy(desc(count()))
+    .limit(limit);
+}
+
+// ===== Hour × day-of-week heatmap =====
+// SQLite strftime: %w = day of week (0=Sunday), %H = hour (00-23)
+
+export async function getClicksByHourOfWeek(startDate: DateFilter) {
+  const where = dateWhere(startDate);
+  return db
+    .select({
+      dow: sql<string>`strftime('%w', ${outboundClicks.createdAt})`.as("dow"),
+      hour: sql<string>`strftime('%H', ${outboundClicks.createdAt})`.as("hour"),
+      total: count(),
+    })
+    .from(outboundClicks)
+    .where(where)
+    .groupBy(
+      sql`strftime('%w', ${outboundClicks.createdAt})`,
+      sql`strftime('%H', ${outboundClicks.createdAt})`
+    );
+}
+
+// ===== Click type × source page breakdown =====
+
+export async function getClickTypeBySourcePage(
+  startDate: DateFilter,
+  limit = 8
+) {
+  const conditions = [isNotNull(outboundClicks.sourcePage)];
+  if (startDate) conditions.push(gte(outboundClicks.createdAt, startDate));
+
+  // Get top N source pages, then per-type counts for those pages
+  const topPages = await db
+    .select({
+      sourcePage: outboundClicks.sourcePage,
+      total: count(),
+    })
+    .from(outboundClicks)
+    .where(and(...conditions))
+    .groupBy(outboundClicks.sourcePage)
+    .orderBy(desc(count()))
+    .limit(limit);
+
+  const pageNames = topPages
+    .map((p) => p.sourcePage)
+    .filter((p): p is string => p !== null);
+  if (pageNames.length === 0) return [];
+
+  const breakdown = await db
+    .select({
+      sourcePage: outboundClicks.sourcePage,
+      clickType: outboundClicks.clickType,
+      total: count(),
+    })
+    .from(outboundClicks)
+    .where(
+      and(
+        ...conditions,
+        sql`${outboundClicks.sourcePage} IN (${sql.join(
+          pageNames.map((p) => sql`${p}`),
+          sql`, `
+        )})`
+      )
+    )
+    .groupBy(outboundClicks.sourcePage, outboundClicks.clickType);
+
+  return { topPages, breakdown };
+}
+
+// ===== Week-over-week comparison =====
+
+export async function getWeekOverWeekStats() {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString();
+  const twoWeeksAgo = new Date(now.getTime() - 14 * 86400000).toISOString();
+
+  const [thisWeekClicks, lastWeekClicks, thisWeekSubs, lastWeekSubs] =
+    await Promise.all([
+      db
+        .select({ total: count() })
+        .from(outboundClicks)
+        .where(gte(outboundClicks.createdAt, weekAgo)),
+      db
+        .select({ total: count() })
+        .from(outboundClicks)
+        .where(
+          and(
+            gte(outboundClicks.createdAt, twoWeeksAgo),
+            sql`${outboundClicks.createdAt} < ${weekAgo}`
+          )
+        ),
+      db
+        .select({ total: count() })
+        .from(emailSubscribers)
+        .where(gte(emailSubscribers.subscribedAt, weekAgo)),
+      db
+        .select({ total: count() })
+        .from(emailSubscribers)
+        .where(
+          and(
+            gte(emailSubscribers.subscribedAt, twoWeeksAgo),
+            sql`${emailSubscribers.subscribedAt} < ${weekAgo}`
+          )
+        ),
+    ]);
+
+  function pct(curr: number, prev: number) {
+    if (prev === 0) return curr > 0 ? 100 : 0;
+    return Math.round(((curr - prev) / prev) * 100);
+  }
+
+  return {
+    clicks: {
+      current: thisWeekClicks[0].total,
+      previous: lastWeekClicks[0].total,
+      changePercent: pct(thisWeekClicks[0].total, lastWeekClicks[0].total),
+    },
+    subscribers: {
+      current: thisWeekSubs[0].total,
+      previous: lastWeekSubs[0].total,
+      changePercent: pct(thisWeekSubs[0].total, lastWeekSubs[0].total),
+    },
+  };
+}
+
+// ===== Zero-click wineries count =====
+
+export async function getZeroClickWineryCount() {
+  const [totalResult] = await db
+    .select({ total: count() })
+    .from(wineries);
+  const clicked = await db
+    .select({ wineryId: outboundClicks.wineryId })
+    .from(outboundClicks)
+    .where(isNotNull(outboundClicks.wineryId))
+    .groupBy(outboundClicks.wineryId);
+  return totalResult.total - clicked.length;
+}

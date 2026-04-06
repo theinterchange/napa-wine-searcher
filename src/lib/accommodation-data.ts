@@ -27,6 +27,11 @@ export interface AccommodationCard {
   dogFriendly: boolean | null;
   kidFriendly: boolean | null;
   adultsOnly: boolean | null;
+  // Booking fields — enable inline Stay22 booking CTAs on cards
+  bookingUrl: string | null;
+  websiteUrl: string | null;
+  lat: number | null;
+  lng: number | null;
 }
 
 export interface AccommodationDetail extends AccommodationCard {
@@ -106,6 +111,10 @@ const cardFields = {
   dogFriendly: accommodations.dogFriendly,
   kidFriendly: accommodations.kidFriendly,
   adultsOnly: accommodations.adultsOnly,
+  bookingUrl: accommodations.bookingUrl,
+  websiteUrl: accommodations.websiteUrl,
+  lat: accommodations.lat,
+  lng: accommodations.lng,
 };
 
 // Ranking: log10(reviews) × 30 + rating × 40 + priceTier × 15

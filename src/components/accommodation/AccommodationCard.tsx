@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, BedDouble, Star, Dog, Baby, Heart } from "lucide-react";
+import { MapPin, BedDouble, Star } from "lucide-react";
 import type { AccommodationCard as AccommodationCardData } from "@/lib/accommodation-data";
+import { BookHotelCTA } from "./BookHotelCTA";
 
 const typeLabels: Record<string, string> = {
   hotel: "Hotel",
@@ -18,8 +19,13 @@ const valleyPrefix: Record<string, string> = {
 
 export function AccommodationCard({
   accommodation,
+  showBookingCTA = false,
+  sourceComponent,
 }: {
   accommodation: AccommodationCardData & { distanceMiles?: number | null };
+  /** If true, render an inline "Book Now" Stay22 CTA below the card body */
+  showBookingCTA?: boolean;
+  sourceComponent?: string;
 }) {
   const a = accommodation;
   const subRegionHref =
@@ -132,6 +138,21 @@ export function AccommodationCard({
             </span>
           )}
         </div>
+        {showBookingCTA && (a.bookingUrl || a.websiteUrl) && (
+          <div className="relative z-20 mt-4">
+            <BookHotelCTA
+              bookingUrl={a.bookingUrl}
+              websiteUrl={a.websiteUrl}
+              accommodationName={a.name}
+              lat={a.lat}
+              lng={a.lng}
+              accommodationSlug={a.slug}
+              sourceComponent={sourceComponent ?? "AccommodationCard"}
+              size="sm"
+              label="Book Now"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

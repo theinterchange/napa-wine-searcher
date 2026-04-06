@@ -34,6 +34,7 @@ import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import { BedDouble } from "lucide-react";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { BASE_URL } from "@/lib/constants";
 
 export async function generateStaticParams() {
@@ -196,6 +197,13 @@ export default async function DayTripDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Day Trips", href: "/day-trips" },
+          { name: route.title, href: `/day-trips/${route.slug}` },
+        ]}
       />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}

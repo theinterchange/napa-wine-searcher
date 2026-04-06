@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { wineries, accommodations, outboundClicks } from "@/db/schema";
-import { count, eq } from "drizzle-orm";
+import { count, eq, isNotNull } from "drizzle-orm";
 import Link from "next/link";
 import { Wine, BedDouble, BarChart3, ArrowRight, MousePointerClick } from "lucide-react";
 
@@ -21,10 +21,7 @@ export default async function AdminDashboard() {
     db
       .select({ withRooms: count() })
       .from(accommodations)
-      .where(
-        // rooms_json IS NOT NULL
-        eq(accommodations.roomsJson, accommodations.roomsJson)
-      ),
+      .where(isNotNull(accommodations.roomsJson)),
     db.select({ totalClicks: count() }).from(outboundClicks),
   ]);
 

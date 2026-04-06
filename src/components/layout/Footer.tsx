@@ -1,9 +1,14 @@
 import { Wine } from "lucide-react";
 import Link from "next/link";
+import { FooterEmailCapture } from "./FooterEmailCapture";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Footer() {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--card)]">
+      {/* Email capture strip — hidden on auth routes and for logged-in users */}
+      <FooterEmailCapture />
+
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -25,6 +30,21 @@ export function Footer() {
               <li>
                 <Link href="/wineries" className="hover:text-[var(--foreground)] transition-colors">
                   All Wineries
+                </Link>
+              </li>
+              <li>
+                <Link href="/where-to-stay" className="hover:text-[var(--foreground)] transition-colors">
+                  Where to Stay
+                </Link>
+              </li>
+              <li>
+                <Link href="/day-trips" className="hover:text-[var(--foreground)] transition-colors">
+                  Day Trips
+                </Link>
+              </li>
+              <li>
+                <Link href="/plan-trip" className="hover:text-[var(--foreground)] transition-colors">
+                  Plan a Trip
                 </Link>
               </li>
               <li>
@@ -57,6 +77,11 @@ export function Footer() {
           <div>
             <h3 className="font-heading font-semibold mb-3">Guides & Blog</h3>
             <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
+              <li>
+                <Link href="/guides" className="hover:text-[var(--foreground)] transition-colors font-medium">
+                  Browse All Guides
+                </Link>
+              </li>
               <li>
                 <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
                   Blog
@@ -95,6 +120,7 @@ export function Footer() {
               <Link href="/terms" className="hover:text-[var(--foreground)] transition-colors">
                 Terms of Service
               </Link>
+              <ThemeToggle />
             </div>
           </div>
           <p className="mt-4 text-center text-xs text-[var(--muted-foreground)]">

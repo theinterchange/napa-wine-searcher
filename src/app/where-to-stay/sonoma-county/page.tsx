@@ -33,14 +33,14 @@ export default async function SonomaCountyStayPage() {
         <span className="text-[var(--foreground)]">Sonoma County</span>
       </nav>
 
-      <div className="text-center mb-12">
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-4">
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold mb-3">
           Where to Stay in Sonoma County
         </h1>
-        <p className="text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto">
+        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
           From boutique hotels in Healdsburg to vineyard retreats in Russian
-          River Valley, these are our picks for the best places to stay
-          during your Sonoma wine trip.
+          River Valley — our picks for the best places to stay during your
+          Sonoma wine trip.
         </p>
       </div>
 
