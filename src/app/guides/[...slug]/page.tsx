@@ -408,11 +408,55 @@ export default async function GuidePage({
         )}
 
         {wineries.length === 0 && guide.type !== "comparison" && (
-          <div className="mb-10 rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
-            <p className="text-[var(--muted-foreground)]">
-              No wineries currently match this filter. Check back soon as more
-              data is added.
+          <div className="mb-10 rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-10 text-center">
+            <p className="text-[var(--foreground)] font-medium mb-2">
+              No wineries currently match this filter
             </p>
+            <p className="text-sm text-[var(--muted-foreground)] mb-6">
+              We&apos;re still adding data for this category. In the meantime, try browsing
+              all wineries or explore a related guide below.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link
+                href={guideValley === "napa" ? "/wineries?valley=napa" : guideValley === "sonoma" ? "/wineries?valley=sonoma" : "/wineries"}
+                className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              >
+                Browse All Wineries
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            {relatedGuides.length > 0 && (
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                {relatedGuides.slice(0, 3).map((g) => (
+                  <Link
+                    key={g.slug}
+                    href={`/guides/${g.slug}`}
+                    className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-burgundy-400 transition-colors"
+                  >
+                    {g.h1}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Plan Your Visit CTA */}
+        {wineries.length > 0 && guide.type !== "comparison" && (
+          <div className="mb-10 rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 px-6 py-8 text-center">
+            <h2 className="font-heading text-xl font-semibold mb-2">
+              Ready to visit?
+            </h2>
+            <p className="text-sm text-[var(--muted-foreground)] mb-5 max-w-lg mx-auto">
+              Build a custom itinerary with these wineries — add tastings, lunch, and travel time to create your perfect day.
+            </p>
+            <Link
+              href={guideValley === "napa" ? "/plan-trip?valley=napa" : guideValley === "sonoma" ? "/plan-trip?valley=sonoma" : "/plan-trip"}
+              className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+            >
+              Plan Your Trip
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         )}
 
@@ -461,10 +505,10 @@ export default async function GuidePage({
                 Related Guides
               </h2>
               <Link
-                href="/guides"
+                href={guideValley === "napa" ? "/napa-valley" : guideValley === "sonoma" ? "/sonoma-county" : "/wineries"}
                 className="text-sm font-medium text-[var(--foreground)] hover:underline"
               >
-                All guides &rarr;
+                {guideValley === "napa" ? "Explore Napa Valley" : guideValley === "sonoma" ? "Explore Sonoma County" : "Browse all wineries"} &rarr;
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

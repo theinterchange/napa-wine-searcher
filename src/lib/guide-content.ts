@@ -60,6 +60,24 @@ function regionName(slug: string): string {
 }
 
 // ============================================================
+// SEO-optimized metaDescription generators (per type/subtype)
+// ============================================================
+
+const AMENITY_META: Record<string, (region: string) => string> = {
+  dogFriendly: (r) => `Every confirmed dog-friendly winery in ${r} — outdoor patios, leash policies, and tips for tasting with your pup.`,
+  kidFriendly: (r) => `Family-friendly wineries in ${r} with lawn games, grape juice, and outdoor spaces. Plan a wine country day the whole family enjoys.`,
+  picnicFriendly: (r) => `The best picnic-friendly wineries in ${r}. Pack a lunch, spread a blanket, and sip wine with vineyard views.`,
+  walkIn: (r) => `No reservation needed. Walk-in friendly wineries in ${r} for spontaneous wine country stops — sorted by rating.`,
+};
+
+const PRICE_META: Record<string, (region: string) => string> = {
+  free: (r) => `Free wine tastings in ${r} — they exist. Complimentary pours, member perks, and fee-waiver tips.`,
+  budget: (r) => `Wine tasting under $40 in ${r}. Affordable wineries that don't compromise on quality — sorted by rating.`,
+  mid: (r) => `The best mid-range tastings ($40–80) in ${r}. Exceptional wines and intimate experiences at a sweet-spot price.`,
+  luxury: (r) => `Worth-every-penny luxury tastings in ${r} — $100+ for private tours, rare wines, and unforgettable experiences.`,
+};
+
+// ============================================================
 // Amenity intro content
 // ============================================================
 
@@ -341,7 +359,7 @@ export function getAllGuides(): GuideDefinition[] {
         type: "amenity",
         title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
         h1: `${amenity.label} in ${region}`,
-        metaDescription: `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
+        metaDescription: AMENITY_META[amenity.key]?.(region) || `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
         faqs: AMENITY_FAQS[amenity.key]?.(region) || [],
         amenity: amenity.key,
@@ -358,7 +376,7 @@ export function getAllGuides(): GuideDefinition[] {
         type: "amenity",
         title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
         h1: `${amenity.label} in ${region}`,
-        metaDescription: `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
+        metaDescription: AMENITY_META[amenity.key]?.(region) || `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
         faqs: AMENITY_FAQS[amenity.key]?.(region) || [],
         amenity: amenity.key,
@@ -379,7 +397,7 @@ export function getAllGuides(): GuideDefinition[] {
         type: "varietal",
         title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
         h1: `Best ${varietal} in ${region}`,
-        metaDescription: `Discover the best ${varietal} producers in ${region}. Browse wineries, compare prices, and plan your tasting tour.`,
+        metaDescription: `The best ${varietal} in ${region} — top-rated producers with tasting fees, reservation info, and what makes each worth visiting.`,
         intro: getVarietalIntro(varietal, region),
         faqs: [
           {
@@ -410,7 +428,7 @@ export function getAllGuides(): GuideDefinition[] {
         type: "varietal",
         title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
         h1: `Best ${varietal} in ${region}`,
-        metaDescription: `Discover the best ${varietal} producers in ${region}. Browse wineries, compare prices, and plan your tasting tour.`,
+        metaDescription: `The best ${varietal} in ${region} — top-rated producers with tasting fees, reservation info, and what makes each worth visiting.`,
         intro: getVarietalIntro(varietal, region),
         faqs: [],
         varietal,
@@ -436,7 +454,7 @@ export function getAllGuides(): GuideDefinition[] {
         type: "price",
         title: `${tier.label} in ${region} | Napa Sonoma Guide`,
         h1: `${tier.label} in ${region}`,
-        metaDescription: `Find ${tier.label.toLowerCase()} in ${region}. Browse wineries with pricing, ratings, and tasting details.`,
+        metaDescription: PRICE_META[tier.key]?.(region) || `Find ${tier.label.toLowerCase()} in ${region}. Browse wineries with pricing, ratings, and tasting details.`,
         intro: PRICE_INTROS[tier.key]?.(region) || [],
         faqs: [
           {

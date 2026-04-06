@@ -13,22 +13,22 @@ import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Browse Wineries | Napa Sonoma Guide",
+  title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
   description:
-    "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+    "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
   openGraph: {
-    title: "Browse Wineries | Napa Sonoma Guide",
+    title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
     description:
-      "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+      "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
     url: `${BASE_URL}/wineries`,
     siteName: "Napa Sonoma Guide",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Browse Wineries | Napa Sonoma Guide",
+    title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
     description:
-      "Explore wineries across Napa and Sonoma Valleys with filters for region, price, rating, and more.",
+      "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
   },
   alternates: {
     canonical: `${BASE_URL}/wineries`,
