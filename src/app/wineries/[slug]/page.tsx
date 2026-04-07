@@ -191,11 +191,8 @@ export default async function WineryDetailPage({
   const settingPhoto = photos.find((p) => p.category === "setting");
   const tastingRoomPhoto = photos.find((p) => p.category === "tasting_room");
 
-  // Best booking URL: tasting sourceUrl → winery visitUrl → winery homepage
-  const bookingUrl =
-    tastings.find((t) => t.sourceUrl?.startsWith("http"))?.sourceUrl ||
-    winery.visitUrl ||
-    winery.websiteUrl;
+  // General booking URL for "Book with Winery" CTA: visit page → homepage
+  const bookingUrl = winery.visitUrl || winery.websiteUrl;
 
   // Affiliate link for this winery's wines
   const affiliateUrl = wineryWinesUrl(winery.name);
