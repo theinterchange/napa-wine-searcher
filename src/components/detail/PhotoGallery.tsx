@@ -65,6 +65,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             alt={feature.altText || "Winery photo"}
             fill
             sizes="(max-width: 768px) 100vw, 700px"
+            quality={85}
             className="object-cover"
             priority
           />
@@ -85,6 +86,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
                   alt={photo.altText || "Winery photo"}
                   fill
                   sizes="(max-width: 768px) 50vw, 350px"
+                  quality={85}
                   className="object-cover"
                 />
               </button>
@@ -133,9 +135,14 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             </button>
           )}
 
-          <img
+          <Image
+            key={photos[lightboxIndex].id}
             src={photos[lightboxIndex].url}
             alt={photos[lightboxIndex].altText || "Winery photo"}
+            width={1200}
+            height={800}
+            sizes="90vw"
+            quality={90}
             className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
             onClick={(e) => e.stopPropagation()}
           />

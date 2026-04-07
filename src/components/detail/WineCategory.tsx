@@ -81,7 +81,7 @@ export function WineCategory({
               <thead className="bg-[var(--muted)]">
                 <tr>
                   <th className="text-left p-4 font-medium">Wine</th>
-                  <th className="text-left p-4 font-medium min-w-[160px]">Type</th>
+                  <th className="text-left p-4 font-medium min-w-[200px]">Type</th>
                   <th className="text-left p-4 font-medium">Vintage</th>
                   <th className="text-left p-4 font-medium">Price</th>
                   {wineryId && <th className="p-4 font-medium" />}

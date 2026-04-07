@@ -30,6 +30,7 @@ export function ValleyHero({
             fill
             priority
             sizes="100vw"
+            quality={85}
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />

@@ -79,6 +79,7 @@ export function HeroFeatured({
             alt={winery.name}
             fill
             sizes="100vw"
+            quality={85}
             priority={i === 0}
             className={`object-cover transition-opacity duration-1000 ${
               i === current ? "opacity-100" : "opacity-0"

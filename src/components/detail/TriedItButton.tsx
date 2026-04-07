@@ -2,9 +2,10 @@
 
 import { Check, Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { JournalEntryForm } from "@/components/journal/JournalEntryForm";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 interface TriedItButtonProps {
   wineId: number;
@@ -26,8 +27,17 @@ export function TriedItButton({
   const [logged, setLogged] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  // Auto-open form after signup/login
+  useEffect(() => {
+    if (!session) return;
+    if (consumePendingAction("tried-it", wineId)) {
+      setShowForm(true);
+    }
+  }, [session, wineId]);
+
   const handleClick = () => {
     if (!session) {
+      setPendingAction("tried-it", wineId);
       setShowAuthModal(true);
       return;
     }
@@ -38,7 +48,7 @@ export function TriedItButton({
     <>
       <button
         onClick={handleClick}
-        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors whitespace-nowrap bg-burgundy-50 text-burgundy-700 hover:bg-burgundy-100 dark:bg-burgundy-900/30 dark:text-burgundy-400 dark:hover:bg-burgundy-900/50"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors whitespace-nowrap bg-[var(--muted)] text-[var(--foreground)] hover:bg-[var(--border)]"
       >
         {logged ? (
           <>

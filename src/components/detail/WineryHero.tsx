@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import {
   MapPin,
   Wine as WineIcon,
@@ -91,12 +92,30 @@ export function WineryHero({
       onMouseLeave={() => setPaused(false)}
     >
       {allImages.length > 0 ? (
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-[background-image] duration-700 ease-in-out"
-          style={{ backgroundImage: `url(${allImages[current]})` }}
-        >
+        <>
+          {allImages.map((url, i) => {
+            const shouldRender =
+              i === current ||
+              i === (current + 1) % allImages.length ||
+              i === (current - 1 + allImages.length) % allImages.length;
+            if (!shouldRender) return null;
+            return (
+              <Image
+                key={url}
+                src={url}
+                alt={`${winery.name} photo ${i + 1}`}
+                fill
+                sizes="100vw"
+                quality={85}
+                priority={i === 0}
+                className={`object-cover transition-opacity duration-700 ease-in-out ${
+                  i === current ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            );
+          })}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        </div>
+        </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-burgundy-800 via-burgundy-900 to-burgundy-950">
           <div className="absolute inset-0 flex items-center justify-center opacity-10">
