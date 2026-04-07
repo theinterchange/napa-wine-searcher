@@ -110,6 +110,23 @@ export default async function SonomaCountyPage() {
     };
   });
 
+  const placeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: "Sonoma County",
+    description: content.metaDescription,
+    url: `${BASE_URL}/sonoma-county`,
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 38.5110,
+      longitude: -122.8373,
+    },
+    containedInPlace: {
+      "@type": "Place",
+      name: "California, United States",
+    },
+  };
+
   return (
     <>
       <BreadcrumbSchema
@@ -119,6 +136,10 @@ export default async function SonomaCountyPage() {
         ]}
       />
       <FAQSchema faqs={content.faq} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+      />
 
       <ValleyHero
         title={content.title}

@@ -109,6 +109,18 @@ export default async function SonomaSubRegionPage({
 
   const topWinery = data.wineries.find((w) => w.heroImageUrl);
 
+  const placeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: data.region.name,
+    description: content?.description[0] ?? `Explore wineries in ${data.region.name}, Sonoma County.`,
+    url: `${BASE_URL}/sonoma-county/${slug}`,
+    containedInPlace: {
+      "@type": "Place",
+      name: "Sonoma County, California",
+    },
+  };
+
   return (
     <>
       <BreadcrumbSchema
@@ -117,6 +129,10 @@ export default async function SonomaSubRegionPage({
           { name: "Sonoma County", href: "/sonoma-county" },
           { name: data.region.name, href: `/sonoma-county/${slug}` },
         ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
       />
 
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
@@ -235,7 +251,9 @@ export default async function SonomaSubRegionPage({
           {data.wineries.length} {data.wineries.length === 1 ? "winery" : "wineries"} to explore — sorted by rating, verified wineries first.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.wineries.map((w) => <WineryCard key={w.slug} winery={w} />)}
+          {data.wineries.map((w) => (
+            <WineryCard key={w.slug} winery={w} />
+          ))}
         </div>
       </section>
 

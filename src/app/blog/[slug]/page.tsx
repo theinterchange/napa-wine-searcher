@@ -11,6 +11,7 @@ import { AccommodationCard } from "@/components/accommodation/AccommodationCard"
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { BASE_URL } from "@/lib/constants";
+import { AddToTripButton } from "@/components/trip/AddToTripButton";
 import { getWineriesByAmenity } from "@/lib/guide-data";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import { db } from "@/db";
@@ -36,6 +37,7 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Napa Sonoma Guide`,
     description: post.description,
+    keywords: post.tags,
     openGraph: {
       title: post.title,
       description: post.description,
@@ -44,6 +46,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.date,
       authors: [post.author],
+      tags: post.tags,
       ...(post.heroImage && {
         images: [{ url: `${BASE_URL}${post.heroImage}`, width: 1200, height: 630 }],
       }),
@@ -62,7 +65,7 @@ async function getWineriesForTags(tags: string[]) {
   if (tagSet.has("budget") || tagSet.has("affordable")) {
     return db
       .select({
-        slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
+        id: wineries.id, slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
         city: wineries.city, subRegion: subRegions.name, valley: subRegions.valley,
         priceLevel: wineries.priceLevel, aggregateRating: wineries.aggregateRating,
         totalRatings: wineries.totalRatings, reservationRequired: wineries.reservationRequired,
@@ -81,7 +84,7 @@ async function getWineriesForTags(tags: string[]) {
   const valley = tagSet.has("napa valley") ? "napa" : tagSet.has("sonoma county") ? "sonoma" : null;
   return db
     .select({
-      slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
+      id: wineries.id, slug: wineries.slug, name: wineries.name, shortDescription: wineries.shortDescription,
       city: wineries.city, subRegion: subRegions.name, valley: subRegions.valley,
       priceLevel: wineries.priceLevel, aggregateRating: wineries.aggregateRating,
       totalRatings: wineries.totalRatings, reservationRequired: wineries.reservationRequired,
@@ -132,6 +135,8 @@ export default async function BlogPostPage({
     description: post.description,
     image: post.heroImage ? `${BASE_URL}${post.heroImage}` : undefined,
     datePublished: post.date,
+    url: `${BASE_URL}/blog/${post.slug}`,
+    mainEntityOfPage: `${BASE_URL}/blog/${post.slug}`,
     author: {
       "@type": "Organization",
       name: post.author,
@@ -140,6 +145,9 @@ export default async function BlogPostPage({
       "@type": "Organization",
       name: "Napa Sonoma Guide",
     },
+    keywords: post.tags?.join(", "),
+    articleSection: "Wine Country Travel",
+    inLanguage: "en-US",
   };
 
   return (
@@ -167,8 +175,11 @@ export default async function BlogPostPage({
             Explore These Wineries
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {matchingWineries.map((w) => (
-              <WineryCard key={w.slug} winery={w} />
+            {matchingWineries.map((w, i) => (
+              <div key={w.slug} className="relative">
+                <WineryCard winery={w} />
+                <AddToTripButton wineryId={w.id} winerySlug={w.slug} wineryName={w.name} showLabel={i === 0} />
+              </div>
             ))}
           </div>
           <div className="mt-8 text-center">

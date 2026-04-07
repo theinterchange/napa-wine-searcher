@@ -63,8 +63,26 @@ export default async function WhereToStayPage({
     clampedPage * PAGE_SIZE
   );
 
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Where to Stay in Wine Country",
+    description: "Hand-picked hotels, inns, and resorts across Napa and Sonoma wine country.",
+    numberOfItems: accommodations.length,
+    itemListElement: paged.slice(0, 10).map((a, i) => ({
+      "@type": "ListItem",
+      position: (clampedPage - 1) * PAGE_SIZE + i + 1,
+      name: a.name,
+      url: `${BASE_URL}/where-to-stay/${a.slug}`,
+    })),
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       {/* Hero — compact intro so first row of hotels stays above the fold */}
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold mb-3">

@@ -110,6 +110,18 @@ export default async function NapaSubRegionPage({
 
   const topWinery = data.wineries.find((w) => w.heroImageUrl);
 
+  const placeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: data.region.name,
+    description: content?.description[0] ?? `Explore wineries in ${data.region.name}, Napa Valley.`,
+    url: `${BASE_URL}/napa-valley/${slug}`,
+    containedInPlace: {
+      "@type": "Place",
+      name: "Napa Valley, California",
+    },
+  };
+
   return (
     <>
       <BreadcrumbSchema
@@ -118,6 +130,10 @@ export default async function NapaSubRegionPage({
           { name: "Napa Valley", href: "/napa-valley" },
           { name: data.region.name, href: `/napa-valley/${slug}` },
         ]}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
       />
 
       {/* Breadcrumb */}

@@ -12,6 +12,7 @@ import {
   getGuideBySlug,
   type GuideDefinition,
 } from "@/lib/guide-content";
+import { AddToTripButton } from "@/components/trip/AddToTripButton";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import {
@@ -299,10 +300,26 @@ export default async function GuidePage({
     { name: guide.h1, href: `/guides/${guide.slug}` },
   ];
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.h1,
+    description: guide.metaDescription,
+    url: `${BASE_URL}/guides/${guide.slug}`,
+    author: { "@type": "Organization", name: "Napa Sonoma Guide" },
+    publisher: { "@type": "Organization", name: "Napa Sonoma Guide" },
+    mainEntityOfPage: `${BASE_URL}/guides/${guide.slug}`,
+    inLanguage: "en-US",
+  };
+
   return (
     <>
       <BreadcrumbSchema items={breadcrumbItems} />
       {guide.faqs.length > 0 && <FAQSchema faqs={guide.faqs} />}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
 
       {/* Hero — image when available, muted header otherwise */}
       {heroImage ? (
@@ -400,8 +417,11 @@ export default async function GuidePage({
               Sorted by rating — verified wineries appear first.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wineries.map((w) => (
-                <WineryCard key={w.slug} winery={w} />
+              {wineries.map((w, i) => (
+                <div key={w.slug} className="relative">
+                  <WineryCard winery={w} />
+                  <AddToTripButton wineryId={w.id} winerySlug={w.slug} wineryName={w.name} showLabel={i === 0} />
+                </div>
               ))}
             </div>
           </div>

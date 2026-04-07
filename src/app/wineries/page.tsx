@@ -242,8 +242,26 @@ export default async function WineriesPage({
     .orderBy(desc(count()))
     .having(sql`count(*) > 0`);
 
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Wineries in Napa Valley and Sonoma County",
+    description: "Explore 225+ wineries across Napa Valley and Sonoma County with ratings, tasting prices, and reservation info.",
+    numberOfItems: total,
+    itemListElement: results.slice(0, 10).map((w, i) => ({
+      "@type": "ListItem",
+      position: (clampedPage - 1) * PAGE_SIZE + i + 1,
+      name: w.name,
+      url: `${BASE_URL}/wineries/${w.slug}`,
+    })),
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold mb-3">Browse Wineries</h1>
         <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">

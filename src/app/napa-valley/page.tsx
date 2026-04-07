@@ -112,6 +112,23 @@ export default async function NapaValleyPage() {
     };
   });
 
+  const placeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: "Napa Valley",
+    description: content.metaDescription,
+    url: `${BASE_URL}/napa-valley`,
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 38.5025,
+      longitude: -122.2654,
+    },
+    containedInPlace: {
+      "@type": "Place",
+      name: "California, United States",
+    },
+  };
+
   return (
     <>
       <BreadcrumbSchema
@@ -121,6 +138,10 @@ export default async function NapaValleyPage() {
         ]}
       />
       <FAQSchema faqs={content.faq} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+      />
 
       {/* 1. Hero */}
       <ValleyHero
