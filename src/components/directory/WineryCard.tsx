@@ -8,6 +8,7 @@ const valleyPrefix: Record<string, string> = {
 };
 
 interface WineryCardProps {
+  id: number;
   slug: string;
   name: string;
   shortDescription: string | null;

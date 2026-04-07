@@ -190,9 +190,17 @@ export function TripPlanner({
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState(initialTheme || "");
   const [valley, setValley] = useState(initialValley || "");
-  const [stopCount, setStopCount] = useState(4);
+  const [stopCount, setStopCount] = useState(() => {
+    // When loading pre-selected wineries, match the stop count to actual selections
+    if (initialStops) {
+      const count = initialStops.split(",").filter(Boolean).length;
+      return Math.max(2, Math.min(count, 6));
+    }
+    return 4;
+  });
   const [savedWizardParams, setSavedWizardParams] = useState<WizardParams | undefined>(wizardParams);
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
+  const hasPreselectedStops = Boolean(initialStops);
   const [startTime, setStartTime] = useState("10:00");
   const skipCacheRef = useRef(false);
 
@@ -296,9 +304,9 @@ export function TripPlanner({
     []
   );
 
-  // Initial load — try cache first (skip cache when wizard params are present)
+  // Initial load — try cache first (skip cache when wizard params or preselected stops are present)
   useEffect(() => {
-    if (!skipCacheRef.current && !wizardParams && loadFromCache()) return;
+    if (!skipCacheRef.current && !wizardParams && !initialStops && loadFromCache()) return;
     skipCacheRef.current = false;
 
     if (initialFrom) {
@@ -496,6 +504,45 @@ export function TripPlanner({
     <div>
       {/* Controls */}
       <div className="mb-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5">
+        {hasPreselectedStops ? (
+          /* Simplified controls when wineries were pre-selected via "Add to trip" */
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-[var(--foreground)]">
+                Your selected wineries ({stops.length || initialStops?.split(",").filter(Boolean).length || 0})
+              </p>
+              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                Route optimized by driving distance. Swap or remove stops below.
+              </p>
+            </div>
+            <div className="flex items-end gap-3">
+              <div>
+                <label className="block text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1.5">Start Time</label>
+                <select
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-1.5 text-sm"
+                >
+                  {START_TIME_OPTIONS.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {onOpenWizard && (
+                <button
+                  onClick={onOpenWizard}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-1.5 text-sm font-medium hover:border-[var(--foreground)]/30 transition-colors"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Build My Perfect Trip
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Row 1: Style pills */}
         <div>
           <label className="block text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Style</label>
@@ -591,10 +638,12 @@ export function TripPlanner({
               className="ml-auto inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium hover:border-[var(--foreground)]/30 transition-colors"
             >
               <Sparkles className="h-4 w-4" />
-              Personalize route
+              Build My Perfect Trip
             </button>
           )}
         </div>
+        </>
+        )}
 
         {/* Wizard preferences summary */}
         {savedWizardParams && (

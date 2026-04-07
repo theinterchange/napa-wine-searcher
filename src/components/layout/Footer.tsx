@@ -52,11 +52,6 @@ export function Footer() {
                   Map View
                 </Link>
               </li>
-              <li>
-                <Link href="/compare" className="hover:text-[var(--foreground)] transition-colors">
-                  Compare Wineries
-                </Link>
-              </li>
             </ul>
           </div>
           <div>

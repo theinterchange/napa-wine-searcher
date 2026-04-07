@@ -11,6 +11,7 @@ import { wineryRankingDesc } from "@/lib/winery-ranking";
 
 // Standard winery card fields used across all guide pages
 const wineryCardFields = {
+  id: wineries.id,
   slug: wineries.slug,
   name: wineries.name,
   shortDescription: wineries.shortDescription,

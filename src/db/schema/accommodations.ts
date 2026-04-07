@@ -57,6 +57,7 @@ export const accommodations = sqliteTable(
     spaJson: text("spa_json"),
     activitiesJson: text("activities_json"),
     childrenAmenitiesJson: text("children_amenities_json"),
+    highlightTags: text("highlight_tags"),
     seasonalNote: text("seasonal_note"),
     nearbyDining: text("nearby_dining"),
     dataConfidence: text("data_confidence"),

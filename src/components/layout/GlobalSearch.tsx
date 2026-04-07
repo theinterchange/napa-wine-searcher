@@ -327,11 +327,11 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
         {/* Desktop trigger */}
         <button
           onClick={() => setOpen(true)}
-          className="hidden md:flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--muted)]/50 px-4 py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
+          className="hidden md:flex w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3.5 py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
         >
-          <Search className="h-4 w-4" />
-          <span className="max-w-[180px] truncate">Search wineries, wines...</span>
-          <kbd className="ml-2 hidden lg:inline-flex items-center gap-0.5 rounded border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
+          <Search className="h-4 w-4 shrink-0" />
+          <span className="flex-1 text-left">Search wineries, regions, wines...</span>
+          <kbd className="shrink-0 inline-flex items-center gap-0.5 rounded border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
             <Command className="h-2.5 w-2.5" />K
           </kbd>
         </button>
@@ -339,7 +339,7 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
         {/* Mobile trigger */}
         <button
           onClick={() => setOpen(true)}
-          className="md:hidden p-2 text-[var(--foreground)]"
+          className="md:hidden p-2 text-[var(--muted-foreground)]"
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
@@ -458,9 +458,8 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
 
   return (
     <>
-      {/* Desktop trigger (hidden when open since modal is showing) */}
-      <div className="hidden md:block w-[260px] lg:w-[300px]" />
-      {/* Mobile trigger placeholder */}
+      {/* Placeholder to prevent layout shift while modal is open */}
+      <div className="hidden md:block w-full" />
       <div className="md:hidden w-9" />
       {typeof window !== "undefined" && createPortal(modal, document.body)}
     </>

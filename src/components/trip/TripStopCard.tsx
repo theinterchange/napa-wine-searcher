@@ -62,7 +62,7 @@ export function TripStopCard({
     <div>
       <div className="flex gap-4">
         {/* Timeline */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center min-w-[3.5rem]">
           <div className="flex flex-col items-center gap-0.5">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-burgundy-900 text-white text-xs font-bold">
               {index + 1}

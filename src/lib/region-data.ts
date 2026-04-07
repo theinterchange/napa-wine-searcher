@@ -17,6 +17,7 @@ export async function getValleyOverview(valley: "napa" | "sonoma") {
       // Top 12 wineries by Google rating
       db
         .select({
+          id: wineries.id,
           slug: wineries.slug,
           name: wineries.name,
           shortDescription: wineries.shortDescription,
@@ -138,6 +139,7 @@ export async function getSubRegionDetail(slug: string) {
       // All wineries in this sub-region
       db
         .select({
+          id: wineries.id,
           slug: wineries.slug,
           name: wineries.name,
           shortDescription: wineries.shortDescription,
@@ -235,6 +237,7 @@ export async function getMoreWineriesInRegion(
 ) {
   return db
     .select({
+      id: wineries.id,
       slug: wineries.slug,
       name: wineries.name,
       shortDescription: wineries.shortDescription,

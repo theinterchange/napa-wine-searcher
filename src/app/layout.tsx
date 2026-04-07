@@ -5,7 +5,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { CompareFloatingBar } from "@/components/compare/CompareFloatingBar";
+import { FloatingTripBar } from "@/components/trip/FloatingTripBar";
 import { Analytics } from "@vercel/analytics/next";
 
 import { BASE_URL } from "@/lib/constants";
@@ -97,7 +97,7 @@ export default function RootLayout({
             <main id="main-content" className="flex-1">{children}</main>
             <Footer />
           </div>
-          <CompareFloatingBar />
+          <FloatingTripBar />
         </Providers>
         <Analytics />
       </body>

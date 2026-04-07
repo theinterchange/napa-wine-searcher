@@ -2,44 +2,46 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 
-const STORAGE_KEY = "compare-selected-wineries";
-const MAX_COMPARE = 4;
+const STORAGE_KEY = "trip-builder-wineries";
+const MAX_TRIP_STOPS = 5;
 
-interface CompareWinery {
+interface TripWinery {
   id: number;
+  slug: string;
   name: string;
 }
 
-interface CompareContextValue {
-  selectedWineries: CompareWinery[];
+interface TripBuilderContextValue {
+  selectedWineries: TripWinery[];
   selectedIds: number[];
-  toggle: (id: number, name: string) => void;
+  toggle: (id: number, slug: string, name: string) => void;
   remove: (id: number) => void;
   clear: () => void;
   isSelected: (id: number) => boolean;
   isFull: boolean;
+  count: number;
 }
 
-const CompareContext = createContext<CompareContextValue | null>(null);
+const TripBuilderContext = createContext<TripBuilderContextValue | null>(null);
 
-function loadFromStorage(): CompareWinery[] {
+function loadFromStorage(): TripWinery[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as CompareWinery[];
+    return JSON.parse(raw) as TripWinery[];
   } catch {
     return [];
   }
 }
 
-function saveToStorage(wineries: CompareWinery[]) {
+function saveToStorage(wineries: TripWinery[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(wineries));
   } catch {}
 }
 
-export function CompareProvider({ children }: { children: ReactNode }) {
-  const [selectedWineries, setSelectedWineries] = useState<CompareWinery[]>([]);
+export function TripBuilderProvider({ children }: { children: ReactNode }) {
+  const [selectedWineries, setSelectedWineries] = useState<TripWinery[]>([]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -54,7 +56,8 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   }, [selectedWineries, mounted]);
 
   const selectedIds = selectedWineries.map((w) => w.id);
-  const isFull = selectedWineries.length >= MAX_COMPARE;
+  const isFull = selectedWineries.length >= MAX_TRIP_STOPS;
+  const count = selectedWineries.length;
 
   const isSelected = useCallback(
     (id: number) => selectedWineries.some((w) => w.id === id),
@@ -62,12 +65,12 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   );
 
   const toggle = useCallback(
-    (id: number, name: string) => {
+    (id: number, slug: string, name: string) => {
       setSelectedWineries((prev) => {
         const exists = prev.some((w) => w.id === id);
         if (exists) return prev.filter((w) => w.id !== id);
-        if (prev.length >= MAX_COMPARE) return prev;
-        return [...prev, { id, name }];
+        if (prev.length >= MAX_TRIP_STOPS) return prev;
+        return [...prev, { id, slug, name }];
       });
     },
     []
@@ -82,16 +85,16 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <CompareContext.Provider
-      value={{ selectedWineries, selectedIds, toggle, remove, clear, isSelected, isFull }}
+    <TripBuilderContext.Provider
+      value={{ selectedWineries, selectedIds, toggle, remove, clear, isSelected, isFull, count }}
     >
       {children}
-    </CompareContext.Provider>
+    </TripBuilderContext.Provider>
   );
 }
 
-export function useCompare() {
-  const ctx = useContext(CompareContext);
-  if (!ctx) throw new Error("useCompare must be used within CompareProvider");
+export function useTripBuilder() {
+  const ctx = useContext(TripBuilderContext);
+  if (!ctx) throw new Error("useTripBuilder must be used within TripBuilderProvider");
   return ctx;
 }

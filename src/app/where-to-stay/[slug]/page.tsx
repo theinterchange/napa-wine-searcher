@@ -290,6 +290,28 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
           {/* Left column — narrative content */}
           <div className="lg:col-span-2 space-y-10">
+            {/* Highlight tags */}
+            {(() => {
+              const tags: string[] = accommodation.highlightTags
+                ? JSON.parse(accommodation.highlightTags)
+                : [];
+              return tags.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-medium text-[var(--muted-foreground)] shrink-0">
+                    Known for
+                  </span>
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              ) : null;
+            })()}
+
             {/* Why Stay Here + bullet reasons */}
             {(accommodation.whyStayHere || whyReasons.length > 0) && (
               <section className="space-y-4">

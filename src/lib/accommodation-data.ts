@@ -53,6 +53,7 @@ export interface AccommodationDetail extends AccommodationCard {
   theExperience: string | null;
   beforeYouBook: string | null;
   whyThisHotel: string | null;
+  highlightTags: string | null;
   dogFriendlyNote: string | null;
   kidFriendlyNote: string | null;
   roomsJson: string | null;
@@ -71,6 +72,7 @@ export interface AccommodationPhoto {
 }
 
 export interface NearbyWinery {
+  id: number;
   slug: string;
   name: string;
   shortDescription: string | null;
@@ -175,6 +177,7 @@ export async function getAccommodationBySlug(
       theExperience: accommodations.theExperience,
       beforeYouBook: accommodations.beforeYouBook,
       whyThisHotel: accommodations.whyThisHotel,
+      highlightTags: accommodations.highlightTags,
       bestFor: accommodations.bestFor,
       bestForTags: accommodations.bestForTags,
       googleRating: accommodations.googleRating,
@@ -229,6 +232,7 @@ export async function getNearbyWineries(
 ): Promise<NearbyWinery[]> {
   return db
     .select({
+      id: wineries.id,
       slug: wineries.slug,
       name: wineries.name,
       shortDescription: wineries.shortDescription,
