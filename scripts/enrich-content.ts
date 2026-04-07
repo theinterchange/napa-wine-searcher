@@ -63,12 +63,12 @@ const EditorialContent = z.object({
   whyVisit: z
     .string()
     .describe(
-      "2 sentences max. The hook — what makes THIS winery worth rearranging your itinerary for? Lead with the most compelling specific detail: a legendary wine, a jaw-dropping view, a one-of-a-kind experience. No generic praise."
+      "2-3 sentences. Convince the reader to book a tasting RIGHT NOW. Lead with the single most compelling reason — a legendary wine, a view that stops you in your tracks, an experience you can't get anywhere else. Then paint what the moment feels like — the anticipation, the first sip, the 'wow' factor. This should make someone reach for the Book Tasting button."
     ),
   theSetting: z
     .string()
     .describe(
-      "2-3 sentences. Transport the reader to the arrival moment. What catches their eye first? Describe the architecture, the landscape, the light, the feel of the space. Use concrete, sensory details specific to THIS property — not generic 'rolling hills and beautiful views'. Make someone think 'I need to see this.'"
+      "3-4 sentences. What makes this place look and feel different from every other winery? Lead with the single most distinctive visual element — the one thing a visitor would photograph first. Is it a castle? A barn? A cliffside? A converted gas station? A sleek glass cube? Describe THAT, then the immediate surroundings and atmosphere. No generic landscape descriptions. If you can swap in another winery's name and the description still works, it's too generic — rewrite it."
     ),
   knownFor: z
     .string()
@@ -78,7 +78,7 @@ const EditorialContent = z.object({
   tastingRoomVibe: z
     .string()
     .describe(
-      "2-3 sentences. Describe the tasting experience — not just the room, but the feeling. The pace, the conversation with the host, the pour, the moment you taste the flagship wine. Whether it's a bar, a patio, a cave, or a table under an oak tree — make it specific and real. Help someone picture themselves mid-tasting, glass in hand."
+      "3-4 sentences. Describe what it's ACTUALLY like to do a tasting here, referencing the SPECIFIC tasting experiences this winery offers (listed in the prompt context). If they have a cave tour tasting, describe what it feels like in the cave. If they have a food pairing, describe the pairing moment. If they have a reserve flight, describe what makes tasting those reserve wines special. Drop the reader into a real moment from one of THEIR actual tasting formats. Every winery has different offerings — reflect THOSE, not a generic wine tasting. Never mention 'clinking glasses' or 'knowledgeable hosts'."
     ),
   visitorTips: z
     .string()
@@ -98,7 +98,7 @@ const EditorialContent = z.object({
   highlightTags: z
     .array(z.string())
     .describe(
-      "4-6 short tags (2-4 words each) that describe this winery at a glance. Pick PRIMARILY from this controlled list: Cabernet, Pinot Noir, Chardonnay, Sparkling, Zinfandel, Bordeaux Blends, Rosé, Sauvignon Blanc, Cave Tours, Outdoor Tasting, Food Pairing, Walk-Ins Welcome, By Appointment, Family-Owned, Historic Estate, Boutique, Luxury, Casual & Fun, Modern, Mountain Views, Valley Views, Garden Setting, Downtown, Hilltop, Couples, Groups, Dog-Friendly, Kid-Friendly, Budget-Friendly, Splurge-Worthy, Sustainable, Organic, Picnic Area. You may include ONE short winery-specific tag (2-4 words) if there's something truly distinctive — e.g. 'Castle Architecture', 'NFL Founders', 'Gravity-Flow Winery'. No full sentences, no obscure wine names, no fragments."
+      "4-6 short tags that describe what makes this winery worth visiting. Pick from this list: Cabernet, Pinot Noir, Chardonnay, Sparkling, Zinfandel, Bordeaux Blends, Rosé, Sauvignon Blanc, Cave Tours, Food Pairing, Walk-Ins Welcome, By Appointment, Historic Estate, Boutique, Luxury, Casual & Fun, Modern, Mountain Views, Valley Views, Garden Setting, Downtown, Hilltop, Couples, Groups, Dog-Friendly, Kid-Friendly, Budget-Friendly, Splurge-Worthy, Sustainable, Organic, Picnic Area. DO NOT use 'Outdoor Tasting' (too generic), 'Family-Owned' (too common), or 'Family-Friendly' (use Kid-Friendly instead). Use 'Cabernet' not 'Cabernet Sauvignon'. You may include ONE winery-specific tag if something is truly distinctive and universally understandable (e.g. 'Castle Architecture', 'NFL Founders', '1973 Judgment of Paris'). Only pick tags that DIFFERENTIATE this winery."
     ),
 });
 
@@ -305,12 +305,21 @@ Your job: help someone FEEL what it's like to visit this place. Use specific, co
       const completion = await openai.chat.completions.parse({
         model: "gpt-4o-mini",
         temperature: 0.7,
-        max_tokens: 800,
+        max_tokens: 1200,
         messages: [
           {
             role: "system",
-            content:
-              "You are writing for a trusted wine country travel guide (napasonomaguide.com). Your voice: warm third-person, authoritative through specificity — like Condé Nast Traveler, not a brochure. No first person ('I', 'we'). No marketing fluff. No clichés ('hidden gem', 'must-visit', 'unforgettable', 'world-class'). No flowery language that feels fake. Every sentence earns its place by helping someone picture themselves there and decide if it's right for them. Use concrete sensory details — what you see, the energy, the light, the space. If the winery's own website gave you specific facts (grape varieties, winemaking techniques, history), weave those in naturally but NEVER copy their phrasing. Your content must be 100% original.",
+            content: `You are writing for napasonomaguide.com — a trusted wine country travel guide. Write as if you personally know this winery inside and out. Each winery should read like it was written by a different person who deeply understands that specific place.
+
+VOICE: Warm third-person, like a knowledgeable friend. No first person. No marketing speak. No filler.
+
+CRITICAL RULES FOR ORIGINALITY:
+- Every winery MUST have a unique opening sentence structure. Never reuse openers across wineries.
+- BANNED phrases: "clink of glasses", "rolling hills", "sun-drenched", "nestled", "palpable", "lush vineyards", "breathtaking", "warm glow", "golden light", "inviting atmosphere", "knowledgeable hosts/staff", "curated selection", "rich aromas", "velvety tannins"
+- BANNED openers: Never start with "Upon arrival", "The tasting", "Arriving at", "Approaching", "As you", "As visitors", "The winery's", "Guests are greeted", "The gentle clink"
+- Instead: Start with the ONE thing that makes THIS place unlike any other winery. A specific architectural detail, a sound unique to this place, a view you can't get elsewhere, the owner's dog greeting you at the gate.
+- Use the winery's own website copy as a source of FACTS (grape varieties, history, techniques) but write in completely original language. Never echo their phrasing.
+- If you don't have a real specific detail, say less rather than making up generic filler.`,
           },
           { role: "user", content: prompt },
         ],
