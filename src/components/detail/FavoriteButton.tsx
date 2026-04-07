@@ -2,9 +2,10 @@
 
 import { Heart, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 export function FavoriteButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
@@ -12,6 +13,7 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const pendingHandled = useRef(false);
 
   useEffect(() => {
     if (!session) return;
@@ -21,11 +23,26 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
       .catch(() => {});
   }, [session, wineryId]);
 
-  const toggle = async () => {
+  // Auto-execute pending action after signup/login
+  useEffect(() => {
+    if (!session || pendingHandled.current) return;
+    pendingHandled.current = true;
+    if (consumePendingAction("favorite", wineryId)) {
+      // Small delay to let initial state fetch complete
+      setTimeout(() => toggleAction(), 500);
+    }
+  }, [session, wineryId]);
+
+  const toggle = () => {
     if (!session) {
+      setPendingAction("favorite", wineryId);
       setShowAuthModal(true);
       return;
     }
+    toggleAction();
+  };
+
+  const toggleAction = async () => {
     setLoading(true);
     const prev = isFavorite;
     setIsFavorite(!prev);

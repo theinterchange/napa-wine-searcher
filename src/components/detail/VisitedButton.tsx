@@ -2,9 +2,10 @@
 
 import { CheckCircle2, Circle, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 export function VisitedButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
   const { data: session } = useSession();
@@ -12,6 +13,7 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const pendingHandled = useRef(false);
 
   useEffect(() => {
     if (!session) return;
@@ -21,11 +23,25 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
       .catch(() => {});
   }, [session, wineryId]);
 
-  const toggle = async () => {
+  // Auto-execute pending action after signup/login
+  useEffect(() => {
+    if (!session || pendingHandled.current) return;
+    pendingHandled.current = true;
+    if (consumePendingAction("visited", wineryId)) {
+      setTimeout(() => toggleAction(), 500);
+    }
+  }, [session, wineryId]);
+
+  const toggle = () => {
     if (!session) {
+      setPendingAction("visited", wineryId);
       setShowAuthModal(true);
       return;
     }
+    toggleAction();
+  };
+
+  const toggleAction = async () => {
     setLoading(true);
     const prev = isVisited;
     setIsVisited(!prev);

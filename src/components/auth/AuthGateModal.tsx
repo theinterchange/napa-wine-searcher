@@ -79,11 +79,11 @@ export function AuthGateModal({ message, onClose }: AuthGateModalProps) {
             {message}
           </p>
 
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-4">
             {FEATURES.map((f) => (
               <div key={f.label} className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-burgundy-100 dark:bg-burgundy-900/40">
-                  <f.icon className="h-4 w-4 text-burgundy-600 dark:text-burgundy-400" />
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-burgundy-200 dark:border-burgundy-800 bg-burgundy-50 dark:bg-burgundy-950">
+                  <f.icon className="h-4 w-4 text-burgundy-700 dark:text-burgundy-300" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold">{f.label}</p>

@@ -50,7 +50,7 @@ export function SignUpPrompt() {
         href="/signup"
         className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
       >
-        Get Started — It&apos;s Free
+        Create Free Account
         <ArrowRight className="h-4 w-4" />
       </Link>
     </div>

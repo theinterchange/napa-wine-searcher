@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 interface Collection {
   id: number;
@@ -21,6 +22,16 @@ export function AddToCollectionButton({ wineryId, compact }: { wineryId: number;
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const pendingHandled = useRef(false);
+
+  // Auto-open dropdown after signup/login
+  useEffect(() => {
+    if (!session || pendingHandled.current) return;
+    pendingHandled.current = true;
+    if (consumePendingAction("collection", wineryId)) {
+      setOpen(true);
+    }
+  }, [session, wineryId]);
 
   useEffect(() => {
     if (!session || !open) return;
@@ -44,6 +55,7 @@ export function AddToCollectionButton({ wineryId, compact }: { wineryId: number;
 
   const handleClick = () => {
     if (!session) {
+      setPendingAction("collection", wineryId);
       setShowAuthModal(true);
       return;
     }

@@ -2,8 +2,9 @@
 
 import { Save, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 interface SaveTripButtonProps {
   stopIds: number[];
@@ -18,6 +19,14 @@ export function SaveTripButton({ stopIds, theme, valley }: SaveTripButtonProps) 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Auto-open name input after signup/login
+  useEffect(() => {
+    if (!session) return;
+    if (consumePendingAction("save-trip", stopIds[0])) {
+      setShowInput(true);
+    }
+  }, [session, stopIds]);
 
   async function handleSave() {
     if (!name.trim()) return;
@@ -88,6 +97,7 @@ export function SaveTripButton({ stopIds, theme, valley }: SaveTripButtonProps) 
       <button
         onClick={() => {
           if (!session) {
+            setPendingAction("save-trip", stopIds[0]);
             setShowAuthModal(true);
             return;
           }

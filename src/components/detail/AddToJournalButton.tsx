@@ -2,10 +2,11 @@
 
 import { BookOpen } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { JournalEntryForm } from "@/components/journal/JournalEntryForm";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
 interface AddToJournalButtonProps {
   wineryId: number;
@@ -24,8 +25,17 @@ export function AddToJournalButton({
   const [showForm, setShowForm] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  // Auto-open form after signup/login
+  useEffect(() => {
+    if (!session) return;
+    if (consumePendingAction("journal", wineryId)) {
+      setShowForm(true);
+    }
+  }, [session, wineryId]);
+
   const handleClick = () => {
     if (!session) {
+      setPendingAction("journal", wineryId);
       setShowAuthModal(true);
       return;
     }

@@ -268,9 +268,6 @@ export function EmailCapture({
           {errorMessage}
         </p>
       )}
-      <p className="mt-3 text-xs text-burgundy-800 dark:text-burgundy-100">
-        No spam, ever. Unsubscribe anytime.
-      </p>
     </div>
   );
 }

@@ -90,7 +90,7 @@ export function AccountCTA() {
               href="/signup"
               className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
             >
-              Create Your Free Account
+              Create Free Account
               <ArrowRight className="h-4 w-4" />
             </Link>
             <p className="text-xs text-[var(--muted-foreground)]">

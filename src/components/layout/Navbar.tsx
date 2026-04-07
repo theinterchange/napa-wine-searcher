@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Wine,
   Menu,
   X,
   ChevronDown,
@@ -22,7 +21,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/wineries", label: "Wineries" },
   { href: "/where-to-stay", label: "Where to Stay" },
-  { href: "/guides", label: "Guides" },
   { href: "/plan-trip", label: "Plan Trip" },
   { href: "/blog", label: "Blog" },
 ];
@@ -57,47 +55,58 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex shrink-0 items-center gap-2">
-            <Wine className="h-6 w-6 text-burgundy-900 dark:text-burgundy-200" />
-            <span className="font-heading text-xl font-extrabold text-burgundy-900 dark:text-gold-600 whitespace-nowrap">
+        <div className="flex h-14 items-center gap-6">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 shrink-0" aria-hidden="true">
+              <rect width="32" height="32" rx="6" className="fill-burgundy-900 dark:fill-burgundy-800" />
+              <path d="M16 6c-3 0-6 4-6 8 0 3.3 2.2 5.5 5 6v5h-3a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-5c2.8-.5 5-2.7 5-6 0-4-3-8-6-8z" fill="#d4a843" />
+            </svg>
+            <span className="font-heading text-lg font-bold text-burgundy-900 dark:text-gold-500 whitespace-nowrap">
               Napa Sonoma Guide
             </span>
           </Link>
 
-          <GlobalSearch hideButton={pathname === "/"} />
+          <div className="hidden lg:block flex-1">
+            <GlobalSearch hideButton={pathname === "/"} />
+          </div>
 
-          <div className="hidden lg:flex items-center gap-5">
+          <div className="hidden lg:flex items-center h-full gap-1 shrink-0">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "whitespace-nowrap text-sm font-medium transition-colors border-b-2 pb-0.5",
+                  "relative flex items-center h-full px-3 text-sm transition-colors",
                   isActive(href)
-                    ? "text-[var(--foreground)] font-semibold border-[var(--foreground)]"
-                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] border-transparent"
+                    ? "text-[var(--foreground)] font-semibold"
+                    : "text-[var(--foreground)] hover:text-[var(--foreground)] font-medium opacity-60 hover:opacity-100"
                 )}
               >
                 {label}
+                {isActive(href) && (
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-burgundy-900 dark:bg-gold-500 rounded-full" />
+                )}
               </Link>
             ))}
             {session ? (
-              <div className="relative" ref={menuRef}>
+              <div className="relative ml-2" ref={menuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   aria-expanded={userMenuOpen}
-                  className="flex items-center gap-2 text-sm font-medium hover:text-[var(--foreground)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2 rounded"
+                  aria-label="Account menu"
+                  className="flex items-center gap-1.5 rounded-full p-0.5 hover:ring-2 hover:ring-[var(--border)] transition-all focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
                 >
-                  {session.user?.image && (
+                  {session.user?.image ? (
                     <img
                       src={session.user.image}
                       alt=""
-                      className="h-7 w-7 rounded-full"
+                      className="h-8 w-8 rounded-full border border-[var(--border)]"
                     />
+                  ) : (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300 text-sm font-semibold border border-[var(--border)]">
+                      {session.user?.name?.charAt(0)?.toUpperCase() || <User className="h-4 w-4" />}
+                    </span>
                   )}
-                  {session.user?.name}
-                  <ChevronDown className="h-3.5 w-3.5" />
                 </button>
 
                 {userMenuOpen && (
@@ -147,7 +156,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="rounded-md bg-burgundy-900 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                className="rounded-lg bg-burgundy-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
               >
                 Sign In
               </Link>
@@ -155,6 +164,7 @@ export function Navbar() {
           </div>
 
           <div className="flex lg:hidden items-center gap-1">
+            <GlobalSearch hideButton={pathname === "/"} />
             <button
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
@@ -189,6 +199,22 @@ export function Navbar() {
             ))}
             {session ? (
               <>
+                <div className="flex items-center gap-3 pb-2 mb-2 border-b border-[var(--border)]">
+                  {session.user?.image ? (
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="h-8 w-8 rounded-full border border-[var(--border)]"
+                    />
+                  ) : (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300 text-sm font-semibold border border-[var(--border)]">
+                      {session.user?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </span>
+                  )}
+                  <span className="text-sm font-medium text-[var(--foreground)]">
+                    {session.user?.name || "Account"}
+                  </span>
+                </div>
                 {userMenuLinks.map(({ href, label, icon: Icon }) => (
                   <Link
                     key={href}
