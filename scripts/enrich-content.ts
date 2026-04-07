@@ -63,33 +63,121 @@ const EditorialContent = z.object({
   whyVisit: z
     .string()
     .describe(
-      "2 sentences max. What makes this winery worth a special trip? Be specific to THIS winery — mention their signature wine, unique experience, or defining characteristic. No generic wine-country praise."
+      "2 sentences max. The hook — what makes THIS winery worth rearranging your itinerary for? Lead with the most compelling specific detail: a legendary wine, a jaw-dropping view, a one-of-a-kind experience. No generic praise."
     ),
   theSetting: z
     .string()
     .describe(
-      "2 sentences. What do you actually see when you arrive? The architecture, landscape, views. Paint a specific picture someone can visualize."
+      "2-3 sentences. Transport the reader to the arrival moment. What catches their eye first? Describe the architecture, the landscape, the light, the feel of the space. Use concrete, sensory details specific to THIS property — not generic 'rolling hills and beautiful views'. Make someone think 'I need to see this.'"
     ),
   knownFor: z
     .string()
     .describe(
-      "3-5 items separated by commas. What is this winery famous for? e.g. 'Estate Cabernet Sauvignon, Château-style architecture, Cave tours, Hilltop vineyard views'. Be specific to this winery, not generic."
+      "DEPRECATED — return empty string. Use highlightTags instead."
     ),
   tastingRoomVibe: z
     .string()
     .describe(
-      "2-3 sentences. What's the tasting room experience actually like? The energy, service style, crowd, seating, what makes it memorable. Help someone picture themselves there."
+      "2-3 sentences. Describe the tasting experience — not just the room, but the feeling. The pace, the conversation with the host, the pour, the moment you taste the flagship wine. Whether it's a bar, a patio, a cave, or a table under an oak tree — make it specific and real. Help someone picture themselves mid-tasting, glass in hand."
     ),
   visitorTips: z
     .string()
     .describe(
       "Short, practical, scannable tips. Use this format: 'Reservations required [timeframe] ahead. Parking: [situation]. Dress: [code]. Allow [time]. Best for: [type of visitor].' Keep it factual and brief. Do NOT mention specific tasting prices or recommend specific tasting packages. Do NOT use flowery language."
     ),
+  whyThisWinery: z
+    .array(z.string())
+    .describe(
+      "3-5 specific, factually verifiable reasons someone should visit THIS winery. Each reason should be one concise sentence. Focus on what's unique: signature wines, winemaking approach, views, architecture, history, tasting format, setting. No generic praise."
+    ),
+  bestForTags: z
+    .array(z.string())
+    .describe(
+      "DEPRECATED — return empty array. Use highlightTags instead."
+    ),
+  highlightTags: z
+    .array(z.string())
+    .describe(
+      "4-6 short tags (2-4 words each) that describe this winery at a glance. Pick PRIMARILY from this controlled list: Cabernet, Pinot Noir, Chardonnay, Sparkling, Zinfandel, Bordeaux Blends, Rosé, Sauvignon Blanc, Cave Tours, Outdoor Tasting, Food Pairing, Walk-Ins Welcome, By Appointment, Family-Owned, Historic Estate, Boutique, Luxury, Casual & Fun, Modern, Mountain Views, Valley Views, Garden Setting, Downtown, Hilltop, Couples, Groups, Dog-Friendly, Kid-Friendly, Budget-Friendly, Splurge-Worthy, Sustainable, Organic, Picnic Area. You may include ONE short winery-specific tag (2-4 words) if there's something truly distinctive — e.g. 'Castle Architecture', 'NFL Founders', 'Gravity-Flow Winery'. No full sentences, no obscure wine names, no fragments."
+    ),
 });
 
-const DELAY_MS = 200;
+const DELAY_MS = 300;
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+/**
+ * Fetch editorial copy from a winery's website.
+ * Tries homepage + /visit or /about pages. Extracts meta descriptions
+ * and visible body text, then returns a trimmed summary.
+ */
+async function fetchWineryCopy(websiteUrl: string): Promise<string | null> {
+  const urls = [websiteUrl];
+  // Try common subpages for richer editorial content
+  const base = websiteUrl.replace(/\/$/, "");
+  urls.push(`${base}/visit`, `${base}/about`, `${base}/story`);
+
+  const allText: string[] = [];
+
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        headers: { "User-Agent": "NapaSonomaGuide/1.0 (editorial research)" },
+        signal: AbortSignal.timeout(8000),
+        redirect: "follow",
+      });
+      if (!res.ok) continue;
+
+      const html = await res.text();
+
+      // Extract meta description
+      const metaMatch = html.match(/meta\s+(?:name|property)="(?:description|og:description)"[^>]*content="([^"]*)"/i)
+        || html.match(/content="([^"]*)"[^>]*(?:name|property)="(?:description|og:description)"/i);
+      if (metaMatch?.[1]) {
+        allText.push(metaMatch[1]);
+      }
+
+      // Strip scripts, styles, nav, header, footer, then tags
+      let body = html
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+        .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, "")
+        .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, "")
+        .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&#8217;/g, "'")
+        .replace(/&#8220;|&#8221;/g, '"')
+        .replace(/&#8211;/g, "-")
+        .replace(/&#\d+;/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      // Extract sentences that contain wine/visit-related keywords
+      const sentences = body.match(/[A-Z][^.!?]{20,}[.!?]/g) || [];
+      const relevant = sentences.filter((s) =>
+        /wine|tasting|vineyard|estate|valley|cellar|barrel|cave|terr|harvest|craft|blend|vintage|experience|welcome|visit|discover|journey|story|heritage|tradition|family|generation|landscape|view|mountain|hill|sunset|garden|picnic|patio|lounge/i.test(s)
+      ).filter((s) =>
+        // Filter out code/CSS/JS fragments
+        !/\{|\}|function|var |const |import |export |px|rgb|font|margin|padding|display|width|height/i.test(s)
+      );
+
+      if (relevant.length > 0) {
+        allText.push(...relevant.slice(0, 8));
+      }
+    } catch {
+      // Timeout or network error — skip this URL
+    }
+  }
+
+  if (allText.length === 0) return null;
+
+  // Deduplicate and trim
+  const unique = [...new Set(allText)];
+  const combined = unique.join(" ").slice(0, 1500);
+  return combined;
 }
 
 async function main() {
@@ -116,6 +204,7 @@ async function main() {
       dogFriendly: wineries.dogFriendly,
       kidFriendly: wineries.kidFriendly,
       picnicFriendly: wineries.picnicFriendly,
+      websiteUrl: wineries.websiteUrl,
       whyVisit: wineries.whyVisit,
     })
     .from(wineries);
@@ -178,7 +267,19 @@ async function main() {
       .filter(Boolean)
       .join(", ");
 
-    const prompt = `Write editorial content for this winery profile page. The content should inspire someone to want to visit and share this page with friends.
+    // Fetch editorial copy from the winery's own website for context
+    let wineryCopy = "";
+    if (winery.websiteUrl) {
+      const copy = await fetchWineryCopy(winery.websiteUrl);
+      if (copy) {
+        wineryCopy = `\nFrom the winery's own website (use ONLY as factual context — do NOT copy phrases or sentence structures):\n${copy}`;
+        console.log(`  Fetched ${copy.length} chars from website`);
+      } else {
+        console.log(`  No website copy extracted`);
+      }
+    }
+
+    const prompt = `Write editorial content for this winery profile page.
 
 Winery: ${winery.name}
 Location: ${winery.city || ""}${subRegion ? `, ${subRegion.name} (${subRegion.valley === "napa" ? "Napa Valley" : "Sonoma County"})` : ""}
@@ -186,9 +287,9 @@ Description: ${winery.description || winery.shortDescription || "No description 
 Rating: ${winery.aggregateRating || winery.googleRating || "N/A"}/5 (${winery.totalRatings || winery.googleReviewCount || 0} reviews)
 Price level: ${"$".repeat(winery.priceLevel || 2)}
 ${tastingContext}
-${amenities ? `Amenities: ${amenities}` : ""}
+${amenities ? `Amenities: ${amenities}` : ""}${wineryCopy}
 
-Write in a warm, sophisticated editorial voice — like a well-traveled friend recommending their favorite spot. Be specific to THIS winery, not generic. Avoid clichés like "hidden gem" or "must-visit."`;
+Your job: help someone FEEL what it's like to visit this place. Use specific, concrete details — what they'll see, hear, smell, taste. Ground every sentence in something real about THIS winery. No generic wine-country filler. Write like a knowledgeable friend who's been there and wants to share what makes it worth the trip.`;
 
     console.log(
       `[${processed}/${toProcess.length}] ${winery.name}${dryRun ? " (dry run)" : ""}`
@@ -209,7 +310,7 @@ Write in a warm, sophisticated editorial voice — like a well-traveled friend r
           {
             role: "system",
             content:
-              "You are writing for a trusted wine country travel guide. Write like a knowledgeable local friend giving recommendations — specific, practical, honest. No marketing fluff, no clichés ('hidden gem', 'must-visit', 'unforgettable'), no generic wine praise. Every sentence should help someone decide if this winery is right for them and what to expect.",
+              "You are writing for a trusted wine country travel guide (napasonomaguide.com). Your voice: warm third-person, authoritative through specificity — like Condé Nast Traveler, not a brochure. No first person ('I', 'we'). No marketing fluff. No clichés ('hidden gem', 'must-visit', 'unforgettable', 'world-class'). No flowery language that feels fake. Every sentence earns its place by helping someone picture themselves there and decide if it's right for them. Use concrete sensory details — what you see, the energy, the light, the space. If the winery's own website gave you specific facts (grape varieties, winemaking techniques, history), weave those in naturally but NEVER copy their phrasing. Your content must be 100% original.",
           },
           { role: "user", content: prompt },
         ],
@@ -235,6 +336,9 @@ Write in a warm, sophisticated editorial voice — like a well-traveled friend r
           visitorTips: content.visitorTips,
           knownFor: content.knownFor,
           tastingRoomVibe: content.tastingRoomVibe,
+          whyThisWinery: JSON.stringify(content.whyThisWinery),
+          bestForTags: JSON.stringify(content.bestForTags),
+          highlightTags: JSON.stringify(content.highlightTags),
         })
         .where(eq(wineries.id, winery.id));
 

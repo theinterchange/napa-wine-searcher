@@ -1,11 +1,10 @@
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db/schema";
-import { eq, like, gte, lte, asc, desc, sql, and, count, inArray } from "drizzle-orm";
+import { eq, gte, lte, asc, desc, sql, and, count, inArray } from "drizzle-orm";
 import Link from "next/link";
 import { Route } from "lucide-react";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { WineryFilters } from "@/components/directory/WineryFilters";
-import { WinerySearch } from "@/components/directory/WinerySearch";
 import { Pagination } from "@/components/directory/Pagination";
 import { TASTING_PRICE_TIERS } from "@/lib/filters";
 import { wineryRankingScore } from "@/lib/winery-ranking";
@@ -44,7 +43,6 @@ export default async function WineriesPage({
 }) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page || "1", 10));
-  const q = params.q || "";
   const valley = params.valley || "";
   const region = params.region || "";
   const rating = params.rating || "";
@@ -55,9 +53,6 @@ export default async function WineriesPage({
 
   // Build conditions
   const conditions = [];
-  if (q) {
-    conditions.push(like(wineries.name, `%${q}%`));
-  }
   if (valley) {
     const valleys = valley.split(",").filter(Boolean);
     if (valleys.length === 1) {
@@ -249,15 +244,13 @@ export default async function WineriesPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold">Browse Wineries</h1>
-        <p className="mt-2 text-[var(--muted-foreground)]">
-          {total} {total === 1 ? "winery" : "wineries"} found
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold mb-3">Browse Wineries</h1>
+        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
+          Explore {total}+ wineries across Napa Valley and Sonoma County — from
+          iconic estates to hidden gems. Filter by region, varietal, price, and
+          experience to find your perfect tasting.
         </p>
-      </div>
-
-      <div className="mb-6">
-        <WinerySearch />
       </div>
 
       <div className="mb-8">

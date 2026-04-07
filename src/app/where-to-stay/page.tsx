@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { getAllAccommodations } from "@/lib/accommodation-data";
+import { AccommodationFilters } from "@/components/accommodation/AccommodationFilters";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
-import { BedDouble, MapPin } from "lucide-react";
-import Link from "next/link";
+import { Pagination } from "@/components/directory/Pagination";
+import { BedDouble } from "lucide-react";
 import { BASE_URL } from "@/lib/constants";
 
 export const revalidate = 3600;
+
+const PAGE_SIZE = 18;
 
 export const metadata: Metadata = {
   title: "Where to Stay in Wine Country",
@@ -19,16 +22,49 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function WhereToStayPage() {
-  const accommodations = await getAllAccommodations();
+export default async function WhereToStayPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const valley = params.valley || "";
+  const type = params.type || "";
+  const sort = params.sort || "";
 
-  const napaCount = accommodations.filter((a) => a.valley === "napa").length;
-  const sonomaCount = accommodations.filter(
-    (a) => a.valley === "sonoma"
-  ).length;
+  let accommodations = await getAllAccommodations();
+
+  // Apply filters
+  if (valley) {
+    const valleys = valley.split(",").filter(Boolean);
+    accommodations = accommodations.filter((a) => valleys.includes(a.valley));
+  }
+  if (type) {
+    const types = type.split(",").filter(Boolean);
+    accommodations = accommodations.filter((a) => types.includes(a.type));
+  }
+
+  // Apply sort
+  if (sort === "name") {
+    accommodations.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sort === "reviews") {
+    accommodations.sort(
+      (a, b) => (b.googleReviewCount ?? 0) - (a.googleReviewCount ?? 0)
+    );
+  }
+  // Default sort (rating) is already handled by getAllAccommodations ranking
+
+  const total = accommodations.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const clampedPage = Math.min(page, Math.max(1, totalPages));
+  const paged = accommodations.slice(
+    (clampedPage - 1) * PAGE_SIZE,
+    clampedPage * PAGE_SIZE
+  );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero — compact intro so first row of hotels stays above the fold */}
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold mb-3">
@@ -41,49 +77,33 @@ export default async function WhereToStayPage() {
         </p>
       </div>
 
-      {/* Valley quick links */}
-      <div className="flex flex-wrap justify-center gap-4 mb-8">
-        <Link
-          href="/where-to-stay/napa-valley"
-          className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-3 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
-        >
-          <MapPin className="h-4 w-4" />
-          Napa Valley
-          <span className="text-[var(--muted-foreground)]">
-            ({napaCount})
-          </span>
-        </Link>
-        <Link
-          href="/where-to-stay/sonoma-county"
-          className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-3 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
-        >
-          <MapPin className="h-4 w-4" />
-          Sonoma County
-          <span className="text-[var(--muted-foreground)]">
-            ({sonomaCount})
-          </span>
-        </Link>
-      </div>
+      {/* Filters */}
+      <AccommodationFilters />
 
-      {/* All accommodations */}
-      {accommodations.length > 0 ? (
+      {/* Grid */}
+      {paged.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accommodations.map((a) => (
+          {paged.map((a) => (
             <AccommodationCard key={a.slug} accommodation={a} />
           ))}
         </div>
       ) : (
         <div className="text-center py-16">
           <BedDouble className="mx-auto h-12 w-12 text-[var(--muted-foreground)] mb-4" />
-          <h2 className="font-heading text-xl font-semibold mb-2">
-            Coming Soon
-          </h2>
-          <p className="text-[var(--muted-foreground)]">
-            We&apos;re curating the best places to stay in wine country.
-            Check back soon for our hand-picked recommendations.
+          <p className="text-lg text-[var(--muted-foreground)]">
+            No accommodations match your filters.
           </p>
         </div>
       )}
+
+      {/* Pagination */}
+      <div className="mt-8">
+        <Pagination
+          currentPage={clampedPage}
+          totalPages={totalPages}
+          basePath="/where-to-stay"
+        />
+      </div>
 
       {/* Structured data */}
       <script

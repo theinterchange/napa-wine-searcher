@@ -12,6 +12,7 @@ export const wineryPhotos = sqliteTable(
     blobUrl: text("blob_url"),
     source: text("source").notNull(), // "google_places" | "website"
     altText: text("alt_text"),
+    category: text("category"),
     fetchedAt: text("fetched_at"),
   },
   (table) => [unique().on(table.wineryId, table.url)]

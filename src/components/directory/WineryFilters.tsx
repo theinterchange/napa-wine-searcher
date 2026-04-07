@@ -53,7 +53,7 @@ export function WineryFilters({
   const valley = searchParams.get("valley") || "";
   const region = searchParams.get("region") || "";
   const rating = searchParams.get("rating") || "";
-  const sort = searchParams.get("sort") || "rating";
+  const sort = searchParams.get("sort") || "";
   const varietal = searchParams.get("varietal") || "";
   const tastingPrice = searchParams.get("tastingPrice") || "";
   const amenities = searchParams.get("amenities") || "";
@@ -61,7 +61,7 @@ export function WineryFilters({
   const selectedValleys = valley ? valley.split(",") : [];
   const selectedRegions = region ? region.split(",") : [];
   const selectedRating = rating ? [rating] : [];
-  const selectedSort = sort ? [sort] : ["rating"];
+  const selectedSort = sort ? [sort] : [];
   const selectedVarietals = varietal ? varietal.split(",") : [];
   const selectedTastingPrices = tastingPrice ? tastingPrice.split(",") : [];
   const selectedAmenities = amenities ? amenities.split(",") : [];
@@ -251,7 +251,7 @@ export function WineryFilters({
         label="Sort"
         options={SORT_OPTIONS}
         selected={selectedSort}
-        onChange={(v) => updateParam("sort", v.length > 0 ? v : ["rating"])}
+        onChange={(v) => updateParam("sort", v)}
         multiSelect={false}
         icon={ArrowUpDown}
         variant="sort"

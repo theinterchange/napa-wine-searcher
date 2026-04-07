@@ -1,9 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "@/db";
 import { wineries, subRegions, wines, wineTypes, tastingExperiences, wineryPhotos, dayTripRoutes, dayTripStops } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import { WineryHero } from "@/components/detail/WineryHero";
 import { WineryDescription, WinerySidebar } from "@/components/detail/WineryInfoSection";
 import { WineTable } from "@/components/detail/WineTable";
@@ -12,7 +13,7 @@ import { NotesEditor } from "@/components/detail/NotesEditor";
 import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { ShareButton } from "@/components/social/ShareButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
-import { AddToCompareButton } from "@/components/compare/AddToCompareButton";
+import { AddToTripDetailButton } from "@/components/detail/AddToTripDetailButton";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FAQSchema } from "@/components/seo/FAQSchema";
@@ -126,6 +127,9 @@ export default async function WineryDetailPage({
       visitorTips: wineries.visitorTips,
       knownFor: wineries.knownFor,
       tastingRoomVibe: wineries.tastingRoomVibe,
+      whyThisWinery: wineries.whyThisWinery,
+      bestForTags: wineries.bestForTags,
+      highlightTags: wineries.highlightTags,
       subRegion: subRegions.name,
       valley: subRegions.valley,
     })
@@ -164,6 +168,7 @@ export default async function WineryDetailPage({
         url: wineryPhotos.url,
         blobUrl: wineryPhotos.blobUrl,
         altText: wineryPhotos.altText,
+        category: wineryPhotos.category,
       })
       .from(wineryPhotos)
       .where(eq(wineryPhotos.wineryId, winery.id)),
@@ -181,6 +186,10 @@ export default async function WineryDetailPage({
   const galleryPhotos = photos
     .map((p) => ({ ...p, url: p.blobUrl || p.url }))
     .filter((p) => p.url !== winery.heroImageUrl);
+
+  // Categorized photos for inline placement
+  const settingPhoto = photos.find((p) => p.category === "setting");
+  const tastingRoomPhoto = photos.find((p) => p.category === "tasting_room");
 
   // Best booking URL: tasting sourceUrl → winery visitUrl → winery homepage
   const bookingUrl =
@@ -340,69 +349,133 @@ export default async function WineryDetailPage({
       <WineryHero winery={winery} photos={galleryPhotos} />
 
       {/* Two-column content */}
-      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main content — LEFT */}
-          <main className="lg:col-span-2 space-y-16">
-            {/* About heading + action buttons + Known For + editorial content */}
-            <div>
-              <h2 className="font-heading text-2xl font-bold mb-4">
-                About {winery.name}
-              </h2>
-              <div className="flex flex-wrap gap-2 mb-6">
+          <main className="lg:col-span-2 space-y-10">
+            {/* Action buttons + tags */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
                 <div className="contents sm:hidden">
                   <FavoriteButton wineryId={winery.id} compact />
                   <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
                   <VisitedButton wineryId={winery.id} compact />
-                  <AddToCompareButton wineryId={winery.id} wineryName={winery.name} compact />
+                  <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} compact />
                 </div>
                 <div className="hidden sm:contents">
                   <FavoriteButton wineryId={winery.id} />
                   <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
                   <VisitedButton wineryId={winery.id} />
-                  <AddToCompareButton wineryId={winery.id} wineryName={winery.name} />
+                  <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
                 </div>
               </div>
-              {winery.knownFor && (
-                <div className="flex flex-wrap items-center gap-2 mb-6">
-                  <span className="text-xs font-medium text-[var(--muted-foreground)]">Known for</span>
-                  {winery.knownFor.split(",").map((item) => (
-                    <span
-                      key={item.trim()}
-                      className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
-                    >
-                      {item.trim()}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {winery.whyVisit && (
-                <p className="text-base leading-relaxed text-[var(--muted-foreground)] mb-4">
-                  {winery.whyVisit}
-                </p>
-              )}
-              {winery.description && (
+
+              {/* Highlight tags */}
+              {(() => {
+                const tags: string[] = winery.highlightTags ? JSON.parse(winery.highlightTags) : [];
+                return tags.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-medium text-[var(--muted-foreground)] shrink-0">Known for</span>
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                ) : null;
+              })()}
+            </div>
+
+            {/* About — full description */}
+            {winery.description && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-4">
+                  About {winery.name}
+                </h2>
                 <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
                   {winery.description}
                 </p>
-              )}
-              {winery.theSetting && (
-                <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
+              </section>
+            )}
+
+            {/* Why Visit + bullet reasons */}
+            {(winery.whyVisit || winery.whyThisWinery) && (
+              <section className="space-y-4">
+                {winery.whyVisit && (
+                  <>
+                    <h2 className="font-heading text-2xl font-bold">
+                      Why Visit {winery.name}
+                    </h2>
+                    <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                      {winery.whyVisit}
+                    </p>
+                  </>
+                )}
+                {(() => {
+                  const reasons: string[] = winery.whyThisWinery ? JSON.parse(winery.whyThisWinery) : [];
+                  return reasons.length > 0 ? (
+                    <ul className="space-y-2">
+                      {reasons.map((reason, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span className="text-[var(--muted-foreground)]">
+                            {reason}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null;
+                })()}
+              </section>
+            )}
+
+            {/* The Setting */}
+            {winery.theSetting && (
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-4">
+                  The Setting
+                </h2>
+                {settingPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={settingPhoto.blobUrl || settingPhoto.url}
+                      alt={settingPhoto.altText || `${winery.name} setting`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 66vw"
+                    />
+                  </div>
+                )}
+                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
                   {winery.theSetting}
                 </p>
-              )}
-            </div>
+              </section>
+            )}
 
-            {/* The Tasting Room */}
+            {/* The Tasting Experience */}
             {winery.tastingRoomVibe && (
-              <div>
-                <h3 className="font-heading text-xl font-bold mb-3">
-                  The Tasting Room
-                </h3>
+              <section>
+                <h2 className="font-heading text-2xl font-bold mb-4">
+                  The Tasting Experience
+                </h2>
+                {tastingRoomPhoto && (
+                  <div className="relative aspect-[2/1] rounded-xl overflow-hidden mb-6">
+                    <Image
+                      src={tastingRoomPhoto.blobUrl || tastingRoomPhoto.url}
+                      alt={tastingRoomPhoto.altText || `${winery.name} tasting room`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 66vw"
+                    />
+                  </div>
+                )}
                 <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
                   {winery.tastingRoomVibe}
                 </p>
-              </div>
+              </section>
             )}
 
             {/* Tasting Experiences */}

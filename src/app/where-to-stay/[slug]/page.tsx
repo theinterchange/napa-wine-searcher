@@ -286,34 +286,36 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
       </div>
 
       {/* Main content */}
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:items-start">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
           {/* Left column — narrative content */}
-          <div className="lg:col-span-2 space-y-16">
-            {/* Why Stay Here */}
-            {accommodation.whyStayHere && (
-              <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
-                  Why Stay Here
-                </h2>
-                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
-                  {accommodation.whyStayHere}
-                </p>
+          <div className="lg:col-span-2 space-y-10">
+            {/* Why Stay Here + bullet reasons */}
+            {(accommodation.whyStayHere || whyReasons.length > 0) && (
+              <section className="space-y-4">
+                {accommodation.whyStayHere && (
+                  <>
+                    <h2 className="font-heading text-2xl font-bold">
+                      Why Stay Here
+                    </h2>
+                    <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                      {accommodation.whyStayHere}
+                    </p>
+                  </>
+                )}
+                {whyReasons.length > 0 && (
+                  <ul className="space-y-2">
+                    {whyReasons.map((reason, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span className="text-[var(--muted-foreground)]">
+                          {reason}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </section>
-            )}
-
-            {/* Why This Hotel — contextual reasons */}
-            {whyReasons.length > 0 && (
-              <ul className="space-y-2">
-                {whyReasons.map((reason, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span className="text-[var(--muted-foreground)]">
-                      {reason}
-                    </span>
-                  </li>
-                ))}
-              </ul>
             )}
 
             {/* The Experience */}

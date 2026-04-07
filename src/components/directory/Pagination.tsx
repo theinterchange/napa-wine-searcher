@@ -1,30 +1,32 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Pagination({
   currentPage,
   totalPages,
+  basePath = "/wineries",
 }: {
   currentPage: number;
   totalPages: number;
+  basePath?: string;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   if (totalPages <= 1) return null;
 
-  const goToPage = (page: number) => {
+  const hrefForPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     if (page > 1) {
       params.set("page", String(page));
     } else {
       params.delete("page");
     }
-    router.push(`/wineries?${params.toString()}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const qs = params.toString();
+    return `${basePath}${qs ? `?${qs}` : ""}`;
   };
 
   const pages: (number | "...")[] = [];
@@ -46,43 +48,64 @@ export function Pagination({
 
   return (
     <nav aria-label="Pagination" className="flex items-center justify-center gap-1">
-      <button
-        onClick={() => goToPage(currentPage - 1)}
-        disabled={currentPage <= 1}
-        aria-label="Previous page"
-        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
+      {currentPage <= 1 ? (
+        <span
+          aria-disabled="true"
+          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center opacity-50 cursor-not-allowed"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </span>
+      ) : (
+        <Link
+          href={hrefForPage(currentPage - 1)}
+          aria-label="Previous page"
+          scroll={true}
+          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Link>
+      )}
       {pages.map((page, i) =>
         page === "..." ? (
           <span key={`dots-${i}`} className="px-2 text-[var(--muted-foreground)]">
             ...
           </span>
-        ) : (
-          <button
+        ) : page === currentPage ? (
+          <span
             key={page}
-            onClick={() => goToPage(page)}
-            aria-current={page === currentPage ? "page" : undefined}
-            className={cn(
-              "min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2",
-              page === currentPage
-                ? "bg-burgundy-700 text-white"
-                : "hover:bg-[var(--muted)]"
-            )}
+            aria-current="page"
+            className="min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium bg-burgundy-700 text-white"
           >
             {page}
-          </button>
+          </span>
+        ) : (
+          <Link
+            key={page}
+            href={hrefForPage(page)}
+            scroll={true}
+            className="min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+          >
+            {page}
+          </Link>
         )
       )}
-      <button
-        onClick={() => goToPage(currentPage + 1)}
-        disabled={currentPage >= totalPages}
-        aria-label="Next page"
-        className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
+      {currentPage >= totalPages ? (
+        <span
+          aria-disabled="true"
+          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center opacity-50 cursor-not-allowed"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </span>
+      ) : (
+        <Link
+          href={hrefForPage(currentPage + 1)}
+          aria-label="Next page"
+          scroll={true}
+          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Link>
+      )}
     </nav>
   );
 }
