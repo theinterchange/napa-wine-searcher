@@ -335,7 +335,7 @@ export default async function NapaSubRegionPage({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {accommodations.map((a) => (
-                <AccommodationCard key={a.slug} accommodation={a} />
+                <AccommodationCard key={a.slug} accommodation={a} showBookingCTA />
               ))}
             </div>
           </div>

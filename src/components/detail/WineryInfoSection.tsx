@@ -7,13 +7,28 @@ import {
   TreePine,
   CalendarCheck,
   Baby,
-  Info,
   Route,
   Leaf,
 } from "lucide-react";
 import Link from "next/link";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { BookTastingCTA } from "@/components/monetization/BookTastingCTA";
+
+/** Strip existing UTM params and append our own tracking */
+function addUtm(url: string, flag: string): string {
+  try {
+    const u = new URL(url);
+    // Remove existing UTM params
+    [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k));
+    // Add ours
+    u.searchParams.set("utm_source", "napasonomaguide");
+    u.searchParams.set("utm_medium", "referral");
+    u.searchParams.set("utm_campaign", flag);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
 
 interface Hours {
   mon?: string;
@@ -114,12 +129,21 @@ export function WinerySidebar({
     .toLowerCase()
     .slice(0, 3);
 
-  const hasAmenities =
-    winery.reservationRequired ||
-    winery.dogFriendly ||
-    winery.picnicFriendly ||
-    winery.kidFriendly ||
-    winery.sustainableFarming;
+  // Display rule (post 2026-04-09 nullable refactor):
+  //   value === null  → omit row (we don't know)
+  //   value === true  → "Dog/Kid Friendly", wrapped in source link if present
+  //   value === false → "No Pets" / "Adults Only" / "Service Dogs Only", linked if source
+  // No "medium / Confirm policy" tier — the schema now stores real NULLs for unknown.
+  const dogIsServiceOnly =
+    winery.dogFriendly === false &&
+    !!winery.dogFriendlyNote?.toLowerCase().includes("service");
+  const dogLabel =
+    winery.dogFriendly === true
+      ? "Dog Friendly"
+      : dogIsServiceOnly
+      ? "Service Dogs Only"
+      : "No Pets";
+  const kidLabel = winery.kidFriendly ? "Kid Friendly" : "Adults Only";
 
   return (
     <div className="sticky top-24 space-y-6">
@@ -186,92 +210,90 @@ export function WinerySidebar({
           )}
         </div>
 
-        {/* Amenities (before hours — more important) */}
-        {hasAmenities && (
-          <div className="mt-5 pt-5 border-t border-[var(--border)] space-y-2 text-sm">
-            {winery.reservationRequired && (
-              <div className="flex items-center gap-2 text-[var(--foreground)]">
-                <CalendarCheck className="h-4 w-4" />
-                Reservation Required
-              </div>
-            )}
-            {winery.dogFriendly && (
-              <div className="flex items-center gap-2">
-                <Dog className="h-4 w-4 text-[var(--muted-foreground)]" />
+        {/* Amenities — always show dog and kid labels */}
+        <div className="mt-5 pt-5 border-t border-[var(--border)] space-y-2.5 text-sm">
+          {winery.reservationRequired && (
+            <div className="flex items-center gap-2 text-[var(--foreground)]">
+              <CalendarCheck className="h-4 w-4" />
+              Reservation Required
+            </div>
+          )}
+
+          {/* Dog — omit when null, render label as fact otherwise (linked if source) */}
+          {winery.dogFriendly != null && (
+            <div className="flex items-start gap-2">
+              <Dog className="h-4 w-4 shrink-0 mt-0.5 text-[var(--muted-foreground)]" />
+              <div>
                 {winery.dogFriendlySource ? (
                   <a
-                    href={winery.dogFriendlySource}
+                    href={addUtm(winery.dogFriendlySource, "dog-policy")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline hover:text-[var(--foreground)]"
                   >
-                    Dog Friendly
+                    {dogLabel}
                   </a>
                 ) : (
-                  "Dog Friendly"
+                  <span>{dogLabel}</span>
+                )}
+                {winery.dogFriendlyNote && (
+                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{winery.dogFriendlyNote}</p>
                 )}
               </div>
-            )}
-            {winery.picnicFriendly && (
-              <div className="flex items-center gap-2">
-                <TreePine className="h-4 w-4 text-[var(--muted-foreground)]" />
-                Picnic Friendly
-              </div>
-            )}
-            {winery.kidFriendly && (
-              <div className="flex items-center gap-2">
-                <Baby className="h-4 w-4 text-[var(--muted-foreground)]" />
+            </div>
+          )}
+
+          {/* Kid — omit when null, render label as fact otherwise (linked if source) */}
+          {winery.kidFriendly != null && (
+            <div className="flex items-start gap-2">
+              <Baby className="h-4 w-4 shrink-0 mt-0.5 text-[var(--muted-foreground)]" />
+              <div>
                 {winery.kidFriendlySource ? (
                   <a
-                    href={winery.kidFriendlySource}
+                    href={addUtm(winery.kidFriendlySource, "kid-policy")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline hover:text-[var(--foreground)]"
                   >
-                    Kid Friendly
+                    {kidLabel}
                   </a>
                 ) : (
-                  "Kid Friendly"
+                  <span>{kidLabel}</span>
                 )}
-                {winery.kidFriendlyConfidence === "medium" && (
-                  <span className="text-xs text-amber-600 dark:text-amber-400">
-                    *
-                  </span>
+                {winery.kidFriendlyNote && (
+                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{winery.kidFriendlyNote}</p>
                 )}
               </div>
-            )}
-            {winery.sustainableFarming && (
-              <div className="flex items-start gap-2">
-                <Leaf className="h-4 w-4 shrink-0 mt-0.5 text-[var(--muted-foreground)]" />
-                <div>
-                  {winery.sustainableSource ? (
-                    <a
-                      href={winery.sustainableSource}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline hover:text-[var(--foreground)]"
-                    >
-                      Sustainable
-                    </a>
-                  ) : (
-                    <span>Sustainable</span>
-                  )}
-                  {winery.sustainableNote && (
-                    <span className="text-xs text-[var(--muted-foreground)]">
-                      {" "}· {winery.sustainableNote}
-                    </span>
-                  )}
-                </div>
+            </div>
+          )}
+
+          {/* Picnic — only show when true */}
+          {winery.picnicFriendly && (
+            <div className="flex items-center gap-2">
+              <TreePine className="h-4 w-4 text-[var(--muted-foreground)]" />
+              Picnic Friendly
+            </div>
+          )}
+
+          {/* Sustainable — only show when true */}
+          {winery.sustainableFarming && (
+            <div className="flex items-start gap-2">
+              <Leaf className="h-4 w-4 shrink-0 mt-0.5 text-[var(--muted-foreground)]" />
+              <div>
+                {winery.sustainableSource ? (
+                  <a href={addUtm(winery.sustainableSource!, "sustainable")} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--foreground)]">
+                    Sustainable
+                  </a>
+                ) : (
+                  <span>Sustainable</span>
+                )}
+                {winery.sustainableNote && (
+                  <span className="text-xs text-[var(--muted-foreground)]"> · {winery.sustainableNote}</span>
+                )}
               </div>
-            )}
-            {(winery.dogFriendly || winery.kidFriendly) && (
-              <p className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] mt-1">
-                <Info className="h-3 w-3 shrink-0" />
-                Confirm policies before visiting
-              </p>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Hours */}
         {hours && (

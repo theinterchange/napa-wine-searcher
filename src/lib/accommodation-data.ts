@@ -55,7 +55,9 @@ export interface AccommodationDetail extends AccommodationCard {
   whyThisHotel: string | null;
   highlightTags: string | null;
   dogFriendlyNote: string | null;
+  dogFriendlySource: string | null;
   kidFriendlyNote: string | null;
+  kidFriendlySource: string | null;
   roomsJson: string | null;
   diningJson: string | null;
   spaJson: string | null;
@@ -184,8 +186,10 @@ export async function getAccommodationBySlug(
       googleReviewCount: accommodations.googleReviewCount,
       dogFriendly: accommodations.dogFriendly,
       dogFriendlyNote: accommodations.dogFriendlyNote,
+      dogFriendlySource: accommodations.dogFriendlySource,
       kidFriendly: accommodations.kidFriendly,
       kidFriendlyNote: accommodations.kidFriendlyNote,
+      kidFriendlySource: accommodations.kidFriendlySource,
       adultsOnly: accommodations.adultsOnly,
       roomsJson: accommodations.roomsJson,
       diningJson: accommodations.diningJson,

@@ -15,9 +15,10 @@ function WineTypeBadge({ wineType, category }: { wineType: string | null; catego
   if (!wineType) return null;
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
+      className={`inline-block max-w-full truncate rounded-full px-2 py-0.5 text-xs font-medium ${
         categoryColors[category || ""] || categoryColors.other
       }`}
+      title={wineType}
     >
       {wineType}
     </span>
@@ -77,38 +78,45 @@ export function WineCategory({
         <>
           {/* Desktop table */}
           <div className="hidden md:block border-t border-[var(--border)]">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm table-fixed">
+              <colgroup>
+                <col />
+                <col className="w-[160px]" />
+                <col className="w-[72px]" />
+                <col className="w-[72px]" />
+                {wineryId && <col className="w-[90px]" />}
+              </colgroup>
               <thead className="bg-[var(--muted)]">
-                <tr>
-                  <th className="text-left p-4 font-medium">Wine</th>
-                  <th className="text-left p-4 font-medium min-w-[200px]">Type</th>
-                  <th className="text-left p-4 font-medium">Vintage</th>
-                  <th className="text-left p-4 font-medium">Price</th>
-                  {wineryId && <th className="p-4 font-medium" />}
+                <tr className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+                  <th className="text-left px-3 py-2 font-medium">Wine</th>
+                  <th className="text-left px-3 py-2 font-medium">Type</th>
+                  <th className="text-left px-3 py-2 font-medium">Vintage</th>
+                  <th className="text-left px-3 py-2 font-medium">Price</th>
+                  {wineryId && <th className="px-3 py-2 font-medium" />}
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {sorted.map((wine) => (
                   <tr key={wine.id} className="hover:bg-[var(--muted)]/50">
-                    <td className="p-4">
-                      <div className="font-medium">{wine.name}</div>
+                    <td className="px-3 py-2.5" title={wine.name}>
+                      <div className="font-medium truncate">{wine.name}</div>
                       {wine.description && (
-                        <div className="mt-1 text-xs text-[var(--muted-foreground)] line-clamp-1">
+                        <div className="mt-0.5 text-xs text-[var(--muted-foreground)] truncate">
                           {wine.description}
                         </div>
                       )}
                     </td>
-                    <td className="p-4">
+                    <td className="px-3 py-2.5">
                       <WineTypeBadge wineType={wine.wineType} category={wine.category} />
                     </td>
-                    <td className="p-4 text-[var(--muted-foreground)]">
+                    <td className="px-3 py-2.5 text-[var(--muted-foreground)]">
                       {wine.vintage || "NV"}
                     </td>
-                    <td className="p-4">
+                    <td className="px-3 py-2.5 font-medium">
                       {wine.price != null && formatPrice(wine.price)}
                     </td>
                     {wineryId && (
-                      <td className="p-4">
+                      <td className="px-3 py-2.5">
                         <TriedItButton
                           wineId={wine.id}
                           wineName={wine.name}

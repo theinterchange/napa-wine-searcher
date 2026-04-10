@@ -1,0 +1,19 @@
+[
+  {"slug": "alila-napa-valley", "dogFriendly": false, "dogNote": "Service animals only", "kidFriendly": true, "kidNote": "Minors allowed with signed supervision agreement. Max 2 guests per room", "adultsOnly": false, "source": "https://www.hyatt.com/alila-hotels-and-resorts/en-US/apcal-alila-napa-valley/policies"},
+  {"slug": "andaz-napa-by-hyatt", "dogFriendly": true, "dogNote": "Dogs welcome, $150 non-refundable fee. Bed, bowls, and treats provided. 3 days advance notice required", "source": "https://www.hyatt.com/andaz/en-US/apcrn-andaz-napa/policies"},
+  {"slug": "archer-hotel-napa", "dogFriendly": true, "dogNote": "Dogs up to 50 lbs welcome, $150 pet cleaning deposit", "source": "https://archerhotel.com/napa/pups-welcome"},
+  {"slug": "auberge-du-soleil", "dogFriendly": false, "dogNote": "Service dogs only", "kidFriendly": false, "adultsOnly": true, "source": "https://auberge.com/auberge-du-soleil/hotel-policies/"},
+  {"slug": "boon-hotel-spa", "dogFriendly": true, "dogNote": "Select rooms only, must pre-arrange. Fees start at $75/night. No dogs on holiday weekends", "kidFriendly": false, "adultsOnly": true, "source": "https://boonhotels.com/about-boon-hotel-spa/"},
+  {"slug": "calistoga-inn-restaurant-brewery-calistoga-ca", "dogFriendly": false, "dogNote": "Dogs welcome on restaurant patio only, not in hotel rooms", "source": "https://www.calistogainn.com/hotel"},
+  {"slug": "fairmont-sonoma-mission-inn-and-spa", "dogFriendly": true, "dogNote": "Pet fee $150/pet/stay, max 2 animals. Leashed at all times. Not permitted in spa or pool water", "source": "https://www.fairmont-sonoma.com/stay/pet-policies/"},
+  {"slug": "four-seasons-resort-and-residences-napa-valley", "dogFriendly": true, "dogNote": "Up to 2 dogs totaling 70 lbs or less. No emotional support pets", "source": "https://www.fourseasons.com/napavalley/accommodations/"},
+  {"slug": "h2hotel", "dogFriendly": true, "dogNote": "Dogs 50 lbs or less, $99/stay. Must be crated if left unattended", "source": "https://h2hotel.com/hotel/dog-policy/"},
+  {"slug": "harmon-guest-house", "dogFriendly": true, "dogNote": "Dogs 50 lbs or less, $99/stay. Dog bed and bowl provided", "source": "https://www.harmonguesthouse.com/information/dog-policy/"},
+  {"slug": "hotel-healdsburg", "dogFriendly": true, "dogNote": "Dogs 50 lbs or less, $99/stay. Dog bed and bowl provided", "source": "https://hotelhealdsburg.com/information/dog-policy/"},
+  {"slug": "hotel-napa-valley-an-ascend-collection-hotel", "dogFriendly": true, "dogNote": "Pet-friendly, contact hotel for accommodations", "source": "https://www.hotelnapavalley.com/pet-friendly"},
+  {"slug": "inn-on-the-russian-river", "dogFriendly": true, "dogNote": "$50/night pet fee, 1 dog per room, pet-friendly rooms only", "source": "https://www.innontherussianriver.com/terms-and-conditions"},
+  {"slug": "ledson-hotel", "dogFriendly": false, "kidFriendly": false, "kidNote": "No children under 12", "adultsOnly": false, "source": "https://ledsonhotel.com/contact-and-directions/"},
+  {"slug": "mine-farm-the-inn-at-guerneville-ca", "dogFriendly": true, "dogNote": "Dogs in Carriage House rooms only, $30/night, max 2 dogs, must be 18+ months", "kidFriendly": false, "adultsOnly": true, "source": "https://mineandfarminn.com/mf-faqs/"},
+  {"slug": "montage-healdsburg", "dogFriendly": true, "dogNote": "Dogs and cats under 45 lbs, $125 fee, max 2 pets", "source": "https://www.montage.com/healdsburg/faqs/"},
+  {"slug": "napa-river-inn", "dogFriendly": true, "dogNote": "$50/night, max 2 pets. VIP Pet Program with custom blanket, bowls, and treats", "source": "https://www.napariverinn.com/the-hotel/services-amenities/vip-very-important-pet-program/"}
+]

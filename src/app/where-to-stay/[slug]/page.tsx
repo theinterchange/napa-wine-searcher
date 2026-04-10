@@ -734,7 +734,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   <div className="flex items-center gap-2 text-sm">
                     <Globe className="h-4 w-4 text-[var(--muted-foreground)]" />
                     <a
-                      href={accommodation.websiteUrl}
+                      href={(() => { try { const u = new URL(accommodation.websiteUrl!); [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k)); u.searchParams.set("utm_source", "napasonomaguide"); u.searchParams.set("utm_medium", "referral"); u.searchParams.set("utm_campaign", "hotel-website"); return u.toString(); } catch { return accommodation.websiteUrl!; } })()}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-[var(--foreground)] truncate"
@@ -745,64 +745,60 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Amenities & Policies */}
-              {(amenities.length > 0 ||
-                accommodation.dogFriendly ||
-                accommodation.kidFriendly ||
-                accommodation.adultsOnly) && (
+              {/* Amenities & Policies — null = unknown (omit), true/false = stated fact */}
+              {(accommodation.dogFriendly != null || accommodation.adultsOnly === true || amenities.length > 0) && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
                   <h3 className="font-heading text-lg font-semibold">
                     Amenities & Policies
                   </h3>
 
-                  {(accommodation.dogFriendly ||
-                    accommodation.kidFriendly ||
-                    accommodation.adultsOnly) && (
-                    <div className="space-y-2.5">
-                      {accommodation.dogFriendly && (
+                  <div className="space-y-2.5">
+                    {/* Dog — omit when null, render label as fact otherwise */}
+                    {accommodation.dogFriendly != null && (() => {
+                      const dogIsServiceOnly =
+                        accommodation.dogFriendly === false &&
+                        !!accommodation.dogFriendlyNote?.toLowerCase().includes("service");
+                      const dogLabel =
+                        accommodation.dogFriendly === true
+                          ? "Dog Friendly"
+                          : dogIsServiceOnly
+                          ? "Service Dogs Only"
+                          : "No Pets";
+                      const addUtm = (url: string, campaign: string) => { try { const u = new URL(url); [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k)); u.searchParams.set("utm_source", "napasonomaguide"); u.searchParams.set("utm_medium", "referral"); u.searchParams.set("utm_campaign", campaign); return u.toString(); } catch { return url; } };
+                      const dogHref = accommodation.dogFriendlySource ? addUtm(accommodation.dogFriendlySource, "dog-policy") : null;
+                      return (
                         <div className="flex items-start gap-2 text-sm">
-                          <Dog className="h-4 w-4 mt-0.5 text-gold-600" />
+                          <Dog className="h-4 w-4 mt-0.5 shrink-0 text-[var(--muted-foreground)]" />
                           <div>
-                            <span className="font-medium text-gold-700 dark:text-gold-400">
-                              Dog Friendly
-                            </span>
+                            {dogHref ? (
+                              <a href={dogHref} target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-[var(--foreground)]">{dogLabel}</a>
+                            ) : (
+                              <span className="font-medium">{dogLabel}</span>
+                            )}
                             {accommodation.dogFriendlyNote && (
-                              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                                {accommodation.dogFriendlyNote}
-                              </p>
+                              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{accommodation.dogFriendlyNote}</p>
                             )}
                           </div>
                         </div>
-                      )}
-                      {accommodation.kidFriendly && (
-                        <div className="flex items-start gap-2 text-sm">
-                          <Baby className="h-4 w-4 mt-0.5 text-emerald-600" />
-                          <div>
-                            <span className="font-medium text-emerald-700 dark:text-emerald-400">
-                              Kid Friendly
-                            </span>
-                            {accommodation.kidFriendlyNote && (
-                              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                                {accommodation.kidFriendlyNote}
-                              </p>
-                            )}
-                          </div>
+                      );
+                    })()}
+
+                    {/* Kids — only show "Adults Only" when explicitly true. Kid-friendly is implied by default for hotels */}
+                    {accommodation.adultsOnly === true && (() => {
+                      const addUtm = (url: string, campaign: string) => { try { const u = new URL(url); [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k)); u.searchParams.set("utm_source", "napasonomaguide"); u.searchParams.set("utm_medium", "referral"); u.searchParams.set("utm_campaign", campaign); return u.toString(); } catch { return url; } };
+                      const kidHref = accommodation.kidFriendlySource ? addUtm(accommodation.kidFriendlySource, "adults-only") : null;
+                      return (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Baby className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
+                          {kidHref ? (
+                            <a href={kidHref} target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-[var(--foreground)]">Adults Only</a>
+                          ) : (
+                            <span className="font-medium">Adults Only</span>
+                          )}
                         </div>
-                      )}
-                      {accommodation.adultsOnly && (
-                        <div className="flex items-start gap-2 text-sm">
-                          <Info className="h-4 w-4 mt-0.5 text-burgundy-600" />
-                          <span className="font-medium text-[var(--foreground)]">
-                            Adults Only
-                          </span>
-                        </div>
-                      )}
-                      <p className="text-xs text-[var(--muted-foreground)] italic">
-                        Confirm policies directly with the property before
-                        booking.
-                      </p>
-                    </div>
-                  )}
+                      );
+                    })()}
+                  </div>
 
                   {amenities.length > 0 && (
                     <div className="flex flex-wrap gap-2">
