@@ -154,14 +154,23 @@ async function main() {
 
     updates.updatedAt = new Date().toISOString();
 
-    if (changes.length === 0) { unchanged++; continue; }
+    // Skip only AUDIT-driven entries when there are no changes.
+    // Manual entries must always be applied — the audit's currentDb is a
+    // stale snapshot and the live DB may have been wiped to NULL by the
+    // migration script. Without this, hotels whose manual values match the
+    // audit-time currentDb (e.g. ledson-hotel dogFriendly=false when the
+    // audit also saw false) would be silently skipped, leaving their fields
+    // NULL in the DB.
+    if (changes.length === 0 && !mc) { unchanged++; continue; }
 
     const source = mc ? "MANUAL" : "AUDIT";
     console.log(`🏨 ${entry.name} [${source}]`);
     for (const c of changes) console.log(`   ${c}`);
 
     if (shouldApply) {
-      await db.update(accommodations).set(updates).where(eq(accommodations.id, entry.id));
+      // Match on slug — local and Turso have different numeric IDs, so id-based
+      // WHERE clauses silently miss on Turso. Slug is unique + stable.
+      await db.update(accommodations).set(updates).where(eq(accommodations.slug, entry.slug));
     }
     if (mc) manualApplied++;
     applied++;

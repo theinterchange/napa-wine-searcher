@@ -102,6 +102,12 @@ async function main() {
   let unreachable = 0;
 
   for (const entry of audit) {
+    // Accommodations are owned exclusively by apply-accommodation-amenities.ts
+    // (which loads amenity-manual-corrections-accommodations.json). If this
+    // script processes them via its audit branch, it writes NULL for reachable
+    // hotels with no quotes, clobbering manual data set by the other script.
+    if (entry.type !== "winery") continue;
+
     const mc = manualBySlug.get(entry.slug);
     const isWinery = entry.type === "winery";
 
@@ -261,7 +267,11 @@ async function main() {
 
     updates.updatedAt = new Date().toISOString();
 
-    if (changes.length === 0) {
+    // Skip only AUDIT-driven entries when there are no changes.
+    // Manual entries must always be applied — the audit's currentDb snapshot
+    // may be stale (e.g. after migration wiped fields to NULL), so a manual
+    // value that matches the stale snapshot still needs to be persisted.
+    if (changes.length === 0 && !mc) {
       unchanged++;
       continue;
     }
@@ -271,10 +281,12 @@ async function main() {
     for (const c of changes) console.log(`   ${c}`);
 
     if (shouldApply) {
+      // Match on slug — local and Turso have different numeric IDs, so id-based
+      // WHERE clauses silently miss on Turso. Slug is unique + stable.
       if (isWinery) {
-        await db.update(wineries).set(updates).where(eq(wineries.id, entry.id));
+        await db.update(wineries).set(updates).where(eq(wineries.slug, entry.slug));
       } else {
-        await db.update(accommodations).set(updates).where(eq(accommodations.id, entry.id));
+        await db.update(accommodations).set(updates).where(eq(accommodations.slug, entry.slug));
       }
     }
 

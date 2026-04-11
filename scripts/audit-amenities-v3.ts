@@ -286,9 +286,14 @@ const FAQ_PATHS = [
   "/visit/faq", "/visit-us/faq", "/frequently-asked-questions",
   "/guest-policies", "/guest-policy", "/policies", "/pages/policies",
   "/visitor-information", "/plan-your-visit/faq",
-  // Accommodation-specific
+  // Accommodation-specific (expanded 2026-04-10)
   "/hotel-policies", "/house-rules", "/about/policies", "/about/faq",
   "/stay/policies", "/stay/faq", "/guest-information",
+  "/contact-and-directions", // Ledson Hotel uses this for policies
+  "/bookings", // SingleThread hosts policies on booking page
+  "/expectations", // Sonoma Bungalows
+  "/pricing-and-faq", // Ranch at Lake Sonoma
+  "/tasting-policy", // Cakebread
 ];
 const VISIT_PATHS = ["/visit", "/visit-us", "/plan-your-visit", "/experiences", "/tastings"];
 const DOG_PATHS = [
@@ -296,6 +301,9 @@ const DOG_PATHS = [
   "/pages/pet-policy", "/pages/dog-friendly",
   // Accommodation-specific
   "/stay/pet-friendly", "/rooms/pet-friendly", "/pages/pet-friendly",
+  "/pups-welcome", // Archer Hotel
+  "/dog-policy", "/hotel/dog-policy", "/information/dog-policy", // h2hotel/harmon/healdsburg style
+  "/napa/pups-welcome", // Archer Hotel full path
 ];
 const KID_PATHS = ["/family-friendly", "/family-friendly-wineries", "/families", "/family", "/kids", "/children", "/pages/family", "/pages/families"];
 const SUSTAINABLE_PATHS = ["/sustainability", "/sustainable", "/napa-green", "/organic", "/farming", "/globally-responsible", "/pages/sustainability"];
@@ -371,7 +379,13 @@ function isAgeGateQuote(quote: string): boolean {
     "must be 21 to purchase", "must be 21 to consume"].some((p) => lower.includes(p));
 }
 
-async function discoverAndFetchPages(browserPage: Page, websiteUrl: string): Promise<PageData[]> {
+async function discoverAndFetchPages(
+  browserPage: Page,
+  websiteUrl: string,
+  entityType: "winery" | "accommodation" = "winery",
+  slug?: string,
+  name?: string
+): Promise<PageData[]> {
   const pages: PageData[] = [];
   let baseUrl: string;
   try { baseUrl = new URL(websiteUrl).origin; } catch { return []; }
@@ -404,6 +418,28 @@ async function discoverAndFetchPages(browserPage: Page, websiteUrl: string): Pro
   // Round 1: ALL FAQ/policy pages (don't break — /faq and /faqs can be different pages)
   for (const path of FAQ_PATHS) {
     await tryPage(baseUrl + path);
+  }
+
+  // Round 1.5: ExploreTock FAQ (wineries only) — ~30% of wineries host their FAQ
+  // there instead of their own site. Try several slug variants since Tock URLs
+  // don't always match our database slug exactly.
+  if (entityType === "winery" && (slug || name)) {
+    const variants = new Set<string>();
+    if (slug) {
+      variants.add(slug);
+      variants.add(slug.replace(/-/g, ""));
+      // Strip common suffixes like "-winery", "-vineyards", "-family"
+      variants.add(slug.replace(/-(winery|vineyards?|family|cellars?|estate)(-.*)?$/, ""));
+    }
+    if (name) {
+      variants.add(name.toLowerCase().replace(/[^a-z0-9]+/g, ""));
+      variants.add(name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]+/g, ""));
+    }
+    for (const v of variants) {
+      if (!v) continue;
+      await tryPage(`https://www.exploretock.com/${v}/faq`);
+      await tryPage(`https://www.exploretock.com/${v}`);
+    }
   }
 
   // Round 2: ALL visit pages
@@ -692,7 +728,7 @@ async function main() {
           picnicFriendly: !!w.picnicFriendly, sustainable: !!w.sustainableFarming,
         };
 
-        const pageData = await discoverAndFetchPages(browserPage, w.websiteUrl!);
+        const pageData = await discoverAndFetchPages(browserPage, w.websiteUrl!, "winery", w.slug, w.name);
 
         if (pageData.length === 0) {
           console.log(" UNREACHABLE");
@@ -780,7 +816,7 @@ async function main() {
           adultsOnly: !!a.adultsOnly, picnicFriendly: false, sustainable: false,
         };
 
-        const pageData = await discoverAndFetchPages(browserPage, a.websiteUrl!);
+        const pageData = await discoverAndFetchPages(browserPage, a.websiteUrl!, "accommodation", a.slug, a.name);
 
         if (pageData.length === 0) {
           console.log(" UNREACHABLE");

@@ -1,4 +1,4 @@
-import { Star, Dog, Baby, UserX } from "lucide-react";
+import { Star, Dog, UserX } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
@@ -110,16 +110,11 @@ export function AccommodationInfoCard({
         </div>
 
         {/* Amenity badges */}
-        {(accommodation.dogFriendly || accommodation.kidFriendly || accommodation.adultsOnly) && (
+        {(accommodation.dogFriendly || accommodation.adultsOnly) && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {accommodation.dogFriendly && (
               <span className="inline-flex items-center gap-1 rounded-full bg-[var(--muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
                 <Dog className="h-3 w-3" /> Dog OK
-              </span>
-            )}
-            {accommodation.kidFriendly && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
-                <Baby className="h-3 w-3" /> Kid Friendly
               </span>
             )}
             {accommodation.adultsOnly && (
