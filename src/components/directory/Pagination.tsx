@@ -29,21 +29,35 @@ export function Pagination({
     return `${basePath}${qs ? `?${qs}` : ""}`;
   };
 
+  // Sibling-count windowing: always show first + last, ±SIBLING_COUNT around current,
+  // and expand the window at the edges so we don't render anemic strips like [1] 2 … 19.
+  const SIBLING_COUNT = 2;
+  const TOTAL_VISIBLE = 2 * SIBLING_COUNT + 5; // first + last + current + 2*siblings + 2 dots = 9
+
+  const range = (start: number, end: number) =>
+    Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
   const pages: (number | "...")[] = [];
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  if (totalPages <= TOTAL_VISIBLE) {
+    pages.push(...range(1, totalPages));
   } else {
-    pages.push(1);
-    if (currentPage > 3) pages.push("...");
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(totalPages - 1, currentPage + 1);
-      i++
-    ) {
-      pages.push(i);
+    const leftSibling = Math.max(currentPage - SIBLING_COUNT, 1);
+    const rightSibling = Math.min(currentPage + SIBLING_COUNT, totalPages);
+    const showLeftDots = leftSibling > 2;
+    const showRightDots = rightSibling < totalPages - 1;
+
+    if (!showLeftDots && showRightDots) {
+      // Near start: [1..(2*siblings+3), …, last]
+      const leftCount = 3 + 2 * SIBLING_COUNT;
+      pages.push(...range(1, leftCount), "...", totalPages);
+    } else if (showLeftDots && !showRightDots) {
+      // Near end: [1, …, (last-(2*siblings+2))..last]
+      const rightCount = 3 + 2 * SIBLING_COUNT;
+      pages.push(1, "...", ...range(totalPages - rightCount + 1, totalPages));
+    } else {
+      // Middle: [1, …, leftSibling..rightSibling, …, last]
+      pages.push(1, "...", ...range(leftSibling, rightSibling), "...", totalPages);
     }
-    if (currentPage < totalPages - 2) pages.push("...");
-    pages.push(totalPages);
   }
 
   return (

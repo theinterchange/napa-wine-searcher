@@ -19,6 +19,11 @@ const TYPE_OPTIONS: DropdownOption[] = [
   { value: "vacation_rental", label: "Vacation Rental" },
 ];
 
+const FEATURE_OPTIONS: DropdownOption[] = [
+  { value: "dog", label: "Pet Friendly" },
+  { value: "adultsOnly", label: "Adults Only" },
+];
+
 const SORT_OPTIONS: DropdownOption[] = [
   { value: "rating", label: "Highest Rated" },
   { value: "name", label: "Name A-Z" },
@@ -32,10 +37,12 @@ export function AccommodationFilters() {
 
   const valley = searchParams.get("valley") || "";
   const type = searchParams.get("type") || "";
+  const features = searchParams.get("features") || "";
   const sort = searchParams.get("sort") || "";
 
   const selectedValleys = valley ? valley.split(",") : [];
   const selectedTypes = type ? type.split(",") : [];
+  const selectedFeatures = features ? features.split(",") : [];
   const selectedSort = sort ? [sort] : [];
 
   const updateParam = useCallback(
@@ -56,7 +63,7 @@ export function AccommodationFilters() {
     router.push("/where-to-stay");
   };
 
-  const hasFilters = valley || type;
+  const hasFilters = valley || type || features;
 
   // Active filter tags
   const activeFilters: { key: string; label: string; paramValue?: string }[] = [];
@@ -68,6 +75,10 @@ export function AccommodationFilters() {
   for (const t of selectedTypes) {
     const opt = TYPE_OPTIONS.find((o) => o.value === t);
     activeFilters.push({ key: "type", label: opt?.label || t, paramValue: t });
+  }
+  for (const f of selectedFeatures) {
+    const opt = FEATURE_OPTIONS.find((o) => o.value === f);
+    activeFilters.push({ key: "features", label: opt?.label || f, paramValue: f });
   }
 
   const removeFilter = (key: string, paramValue?: string) => {
@@ -100,6 +111,12 @@ export function AccommodationFilters() {
         options={TYPE_OPTIONS}
         selected={selectedTypes}
         onChange={(v) => updateParam("type", v)}
+      />
+      <MultiSelectDropdown
+        label="Features"
+        options={FEATURE_OPTIONS}
+        selected={selectedFeatures}
+        onChange={(v) => updateParam("features", v)}
       />
       <MultiSelectDropdown
         label="Sort"

@@ -31,6 +31,7 @@ export default async function WhereToStayPage({
   const page = Math.max(1, parseInt(params.page || "1", 10));
   const valley = params.valley || "";
   const type = params.type || "";
+  const features = params.features || "";
   const sort = params.sort || "";
 
   let accommodations = await getAllAccommodations();
@@ -43,6 +44,15 @@ export default async function WhereToStayPage({
   if (type) {
     const types = type.split(",").filter(Boolean);
     accommodations = accommodations.filter((a) => types.includes(a.type));
+  }
+  if (features) {
+    const featureList = features.split(",").filter(Boolean);
+    if (featureList.includes("dog")) {
+      accommodations = accommodations.filter((a) => a.dogFriendly === true);
+    }
+    if (featureList.includes("adultsOnly")) {
+      accommodations = accommodations.filter((a) => a.adultsOnly === true);
+    }
   }
 
   // Apply sort

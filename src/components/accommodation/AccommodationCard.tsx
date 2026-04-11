@@ -59,12 +59,12 @@ export function AccommodationCard({
         </span>
       </div>
       <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-3">
           <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
             {a.name}
           </h3>
           <span
-            className="shrink-0 text-sm text-[var(--muted-foreground)]"
+            className="shrink-0 text-sm tracking-wider text-[var(--muted-foreground)]"
             aria-label={`Price level ${a.priceTier || 2} of 4`}
           >
             {"$".repeat(a.priceTier || 2)}
@@ -72,7 +72,7 @@ export function AccommodationCard({
         </div>
         {(a.subRegion || a.city) && (
           <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
-            <MapPin className="h-3.5 w-3.5" />
+            <MapPin className="h-3.5 w-3.5 shrink-0" />
             {subRegionHref ? (
               <span>
                 <Link
@@ -81,55 +81,59 @@ export function AccommodationCard({
                 >
                   {a.subRegion}
                 </Link>
-                {a.city && ` · ${a.city}`}
+                {a.city && a.city !== a.subRegion && ` · ${a.city}`}
               </span>
             ) : (
               <span>
-                {[a.subRegion, a.city].filter(Boolean).join(" · ")}
+                {[a.subRegion, a.city]
+                  .filter((v, i, arr) => v && arr.indexOf(v) === i)
+                  .join(" · ")}
               </span>
             )}
           </div>
         )}
-        <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
+        <p
+          className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1"
+          title={a.shortDescription ?? undefined}
+        >
           {a.shortDescription}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
-          {a.googleRating != null && (
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-              <span className="text-sm font-medium">
-                {a.googleRating.toFixed(1)}
-              </span>
-              {a.googleReviewCount != null && (
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  ({a.googleReviewCount.toLocaleString()})
-                </span>
-              )}
-            </div>
-          )}
+        {/* Amenity row — fixed height, single line, hides overflow so cards align */}
+        <div className="mt-3 flex items-center gap-1.5 h-5 overflow-hidden">
           {a.dogFriendly && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
               Dog OK
             </span>
           )}
-          {a.kidFriendly && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
-              Kid Friendly
-            </span>
-          )}
           {a.adultsOnly && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
               Adults Only
             </span>
           )}
           {tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)]"
+              className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)]"
             >
               {tag}
             </span>
           ))}
+        </div>
+        {/* Rating row — fixed height so it aligns across cards */}
+        <div className="mt-2 flex items-center gap-2 h-5">
+          {a.googleRating != null && (
+            <div className="flex items-center gap-1.5">
+              <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+              <span className="text-sm font-semibold tabular-nums">
+                {a.googleRating.toFixed(1)}
+              </span>
+              {a.googleReviewCount != null && (
+                <span className="text-xs text-[var(--muted-foreground)] tabular-nums">
+                  ({a.googleReviewCount.toLocaleString()})
+                </span>
+              )}
+            </div>
+          )}
           {a.distanceMiles != null && (
             <span className="text-xs text-[var(--muted-foreground)]">
               {a.distanceMiles < 1
@@ -139,7 +143,7 @@ export function AccommodationCard({
           )}
         </div>
         {showBookingCTA && (a.bookingUrl || a.websiteUrl) && (
-          <div className="relative z-20 mt-4">
+          <div className="relative z-20 mt-3">
             <BookHotelCTA
               bookingUrl={a.bookingUrl}
               websiteUrl={a.websiteUrl}
