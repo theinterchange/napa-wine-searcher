@@ -68,6 +68,14 @@ const TIME_BUDGET_STOPS: Record<string, { min: number; max: number; minutes: num
   extended: { min: 4, max: 5, minutes: 540 },  // ~9h: 4-5 stops × 75 min + driving + lunch
 };
 
+// Rough valley bounding boxes for same-valley scoring preference.
+// Returns null for neutral origins (SFO, SF, anywhere outside wine country) so the bonus is skipped.
+function classifyValley(lat: number, lng: number): "napa" | "sonoma" | null {
+  if (lng >= -122.45 && lng <= -122.15 && lat >= 38.15 && lat <= 38.70) return "napa";
+  if (lng >= -123.10 && lng <= -122.45 && lat >= 38.20 && lat <= 38.80) return "sonoma";
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   try {
   const sp = request.nextUrl.searchParams;
@@ -326,6 +334,22 @@ export async function GET(request: NextRequest) {
   const originPt = hasOrigin ? { lat: originLat!, lng: originLng! } : null;
   const destPt = hasEnd ? { lat: endLat!, lng: endLng! } : null;
 
+  // Loop trips (origin ≈ end, e.g. hotel round-trip) need different scoring than true point-to-point:
+  // the degenerate origin→end line collapses the detour scale factor and under-penalizes far wineries.
+  const originDestDist = hasOrigin && hasEnd
+    ? haversineDistance(originPt!.lat, originPt!.lng, destPt!.lat, destPt!.lng)
+    : null;
+  const isLoopTrip = originDestDist != null && originDestDist < 1;
+
+  // Same-valley soft preference: origin must classify to a valley AND user didn't filter valley explicitly.
+  // For point-to-point trips, also require destination to sit in the same valley — otherwise the user clearly
+  // wants to cross valleys and a bonus would suppress stops along the route.
+  const rawOriginValley = hasOrigin && !valley ? classifyValley(originLat!, originLng!) : null;
+  const destValley = rawOriginValley && hasEnd ? classifyValley(endLat!, endLng!) : null;
+  const originValley = rawOriginValley && (isLoopTrip || !hasEnd || destValley === rawOriginValley)
+    ? rawOriginValley
+    : null;
+
   // Score every non-anchor candidate
   const slotsToFill = stopCount - selected.length;
   const scoredCandidates = candidates
@@ -336,17 +360,26 @@ export async function GET(request: NextRequest) {
       const normalizedRating = Math.min(1, Math.max(0, (rating - 3) / 2));
       let score: number;
 
-      if (hasOrigin && hasEnd) {
+      if (isLoopTrip) {
+        // Loop: anchor on distance from home base, not on origin→end line
+        const dist = haversineDistance(originPt!.lat, originPt!.lng, c.lat!, c.lng!);
+        const proximity = 1 / (1 + dist / 20);
+        score = wineRelevance * 0.35 + proximity * 0.45 + normalizedRating * 0.20;
+      } else if (hasOrigin && hasEnd) {
         const detour = computeDetour(originPt!, { lat: c.lat!, lng: c.lng! }, destPt!);
-        const scaleFactor = Math.max(haversineDistance(originPt!.lat, originPt!.lng, destPt!.lat, destPt!.lng), 10);
+        const scaleFactor = Math.max(originDestDist!, 20);
         const routeEfficiency = 1 / (1 + detour / scaleFactor);
         score = wineRelevance * 0.35 + routeEfficiency * 0.45 + normalizedRating * 0.20;
       } else if (hasOrigin) {
         const dist = haversineDistance(originLat!, originLng!, c.lat!, c.lng!);
-        const proximity = Math.max(0, 1 - dist / 60);
+        const proximity = Math.max(0, 1 - dist / 30);
         score = wineRelevance * 0.40 + proximity * 0.35 + normalizedRating * 0.25;
       } else {
         score = wineRelevance * 0.60 + normalizedRating * 0.40;
+      }
+
+      if (originValley && c.valley === originValley) {
+        score *= 1.15;
       }
 
       return { candidate: c, score };
@@ -412,8 +445,10 @@ export async function GET(request: NextRequest) {
         const trialSegs = computeSegments(trialStops);
         const trialDrive = trialSegs.reduce((s, seg) => s + seg.minutes, 0);
         const saving = totalDrive - trialDrive;
-        if (saving > bestSaving) {
-          bestSaving = saving;
+        // Protect high wine-relevance stops: 60% match ≈ 9 min of "protection" before it looks worth dropping
+        const dropScore = saving - (wineScoreMap.get(ordered[i].id) || 0) * 15;
+        if (dropScore > bestSaving) {
+          bestSaving = dropScore;
           bestDropIdx = i;
         }
       }
