@@ -83,7 +83,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/guides/dog-friendly-wineries-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
+                <Link href="/dog-friendly-wineries" className="hover:text-[var(--foreground)] transition-colors">
                   Dog-Friendly Wineries
                 </Link>
               </li>

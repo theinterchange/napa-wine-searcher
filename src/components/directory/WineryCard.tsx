@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Wine, BadgeCheck } from "lucide-react";
+import { displaySubRegionName } from "@/lib/subregion-display";
 
 const valleyPrefix: Record<string, string> = {
   napa: "/napa-valley",
@@ -77,13 +78,13 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
                   href={subRegionHref}
                   className="relative z-20 hover:text-[var(--foreground)] hover:underline transition-colors"
                 >
-                  {winery.subRegion}
+                  {displaySubRegionName(winery.subRegion)}
                 </Link>
                 {winery.city && ` · ${winery.city}`}
               </span>
             ) : (
               <span>
-                {[winery.subRegion, winery.city].filter(Boolean).join(" · ")}
+                {[displaySubRegionName(winery.subRegion), winery.city].filter(Boolean).join(" · ")}
               </span>
             )}
           </div>
@@ -91,42 +92,46 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
         <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
           {winery.shortDescription}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
-          {winery.aggregateRating != null && (
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-              <span className="text-sm font-medium">
-                {winery.aggregateRating.toFixed(1)}
-              </span>
-              {winery.totalRatings != null && (
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  ({winery.totalRatings.toLocaleString()})
-                </span>
-              )}
-            </div>
-          )}
+        {/* Amenity pills — fixed height so cards align across a row */}
+        <div className="mt-3 flex items-center gap-1.5 h-5 overflow-hidden">
           {winery.reservationRequired && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300">
               Reservation
             </span>
           )}
           {winery.dogFriendly && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
               Dog OK
             </span>
           )}
           {winery.kidFriendly && winery.kidFriendlyConfidence === "high" && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
               Kid Friendly
             </span>
           )}
           {winery.kidFriendly && winery.kidFriendlyConfidence === "medium" && (
             <span
-              className="text-xs px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+              className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
               title="Check with winery"
             >
               Kid Friendly*
             </span>
+          )}
+        </div>
+        {/* Rating row — fixed height, separate from pills */}
+        <div className="mt-2 flex items-center gap-2 h-5">
+          {winery.aggregateRating != null && (
+            <div className="flex items-center gap-1.5">
+              <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+              <span className="text-sm font-semibold tabular-nums">
+                {winery.aggregateRating.toFixed(1)}
+              </span>
+              {winery.totalRatings != null && (
+                <span className="text-xs text-[var(--muted-foreground)] tabular-nums">
+                  ({winery.totalRatings.toLocaleString()})
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>

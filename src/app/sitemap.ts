@@ -5,14 +5,66 @@ import { eq } from "drizzle-orm";
 import { getAllGuides } from "@/lib/guide-content";
 import { getAllPosts } from "@/lib/blog";
 import { BASE_URL } from "@/lib/constants";
+import {
+  getQualifyingSubregions,
+  getLastVerifiedDate,
+} from "@/lib/category-data";
+import { getDefinedScopes } from "@/lib/category-content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [allWineries, allRoutes, allSubRegions, allAccommodations] = await Promise.all([
+  const [
+    allWineries,
+    allRoutes,
+    allSubRegions,
+    allAccommodations,
+    dogQualifyingSubs,
+    dogHubVerified,
+    dogNapaVerified,
+    dogSonomaVerified,
+  ] = await Promise.all([
     db.select({ slug: wineries.slug, updatedAt: wineries.updatedAt }).from(wineries),
     db.select({ slug: dayTripRoutes.slug }).from(dayTripRoutes),
     db.select({ slug: subRegions.slug, valley: subRegions.valley }).from(subRegions),
     db.select({ slug: accommodations.slug, updatedAt: accommodations.updatedAt }).from(accommodations),
+    getQualifyingSubregions("dog"),
+    getLastVerifiedDate("dog", { kind: "hub" }),
+    getLastVerifiedDate("dog", { kind: "valley", valley: "napa" }),
+    getLastVerifiedDate("dog", { kind: "valley", valley: "sonoma" }),
   ]);
+
+  // Dog cluster: hub + valleys + qualifying subregions whose editorial
+  // content is wired in category-content.ts (DOG_META). Anything else
+  // would 404 — gate it here so the sitemap stays consistent with the
+  // catch-all route's generateStaticParams.
+  const dogDefinedKeys = new Set(getDefinedScopes("dog"));
+  const dogClusterEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/dog-friendly-wineries`,
+      lastModified: dogHubVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/dog-friendly-wineries/napa-valley`,
+      lastModified: dogNapaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/dog-friendly-wineries/sonoma-county`,
+      lastModified: dogSonomaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...dogQualifyingSubs
+      .filter((sr) => dogDefinedKeys.has(`subregion:${sr.slug}`))
+      .map((sr) => ({
+        url: `${BASE_URL}/dog-friendly-wineries/${sr.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.85,
+      })),
+  ];
 
   const wineryEntries: MetadataRoute.Sitemap = allWineries.map((w) => ({
     url: `${BASE_URL}/wineries/${w.slug}`,
@@ -77,6 +129,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.7,
     },
+    ...dogClusterEntries,
     ...subRegionEntries,
     ...wineryEntries,
     ...allRoutes.map((r) => ({

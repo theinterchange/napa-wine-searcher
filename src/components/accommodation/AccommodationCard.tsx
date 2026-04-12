@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MapPin, BedDouble, Star } from "lucide-react";
 import type { AccommodationCard as AccommodationCardData } from "@/lib/accommodation-data";
+import { displaySubRegionName } from "@/lib/subregion-display";
 import { BookHotelCTA } from "./BookHotelCTA";
 
 const typeLabels: Record<string, string> = {
@@ -79,13 +80,13 @@ export function AccommodationCard({
                   href={subRegionHref}
                   className="relative z-20 hover:text-[var(--foreground)] hover:underline transition-colors"
                 >
-                  {a.subRegion}
+                  {displaySubRegionName(a.subRegion)}
                 </Link>
                 {a.city && a.city !== a.subRegion && ` · ${a.city}`}
               </span>
             ) : (
               <span>
-                {[a.subRegion, a.city]
+                {[displaySubRegionName(a.subRegion), a.city]
                   .filter((v, i, arr) => v && arr.indexOf(v) === i)
                   .join(" · ")}
               </span>

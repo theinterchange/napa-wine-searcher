@@ -30,6 +30,7 @@ function addUtm(url: string, flag: string): string {
   }
 }
 
+
 interface Hours {
   mon?: string;
   tue?: string;

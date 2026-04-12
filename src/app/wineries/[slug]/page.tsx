@@ -228,6 +228,20 @@ export default async function WineryDetailPage({
   ];
 
   // JSON-LD structured data
+  // sameAs aggregates the official website + every external citation source
+  // for the amenity claims (dog/kid/sustainable). AI crawlers and search
+  // engines treat this array as the canonical citation list — surfacing
+  // these makes the entity quotable in AI Overviews and rich results.
+  const sameAsUrls = [
+    winery.websiteUrl,
+    winery.dogFriendlySource,
+    winery.kidFriendlySource,
+    winery.sustainableSource,
+  ].filter((u): u is string => !!u && u.trim() !== "");
+  // Dedupe — a producer's own visitor page is sometimes the source for
+  // multiple amenities, no need to list it twice.
+  const uniqueSameAs = Array.from(new Set(sameAsUrls));
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "Winery"],
@@ -237,7 +251,15 @@ export default async function WineryDetailPage({
     ...(winery.heroImageUrl && { image: winery.heroImageUrl }),
     ...(winery.phone && { telephone: winery.phone }),
     ...(winery.email && { email: winery.email }),
-    ...(winery.websiteUrl && { sameAs: winery.websiteUrl }),
+    ...(uniqueSameAs.length > 0 && { sameAs: uniqueSameAs }),
+    // Top-level petsAllowed — Google reads this before amenityFeature
+    ...(winery.dogFriendly != null && { petsAllowed: winery.dogFriendly }),
+    // Audience signal for kid-friendly venues
+    ...(winery.kidFriendly === true && {
+      audience: { "@type": "Audience", audienceType: "Family" },
+    }),
+    // Freshness signal — when was the editorial data last verified
+    ...(winery.curatedAt && { dateModified: winery.curatedAt }),
     address: {
       "@type": "PostalAddress",
       ...(winery.address && { streetAddress: winery.address }),

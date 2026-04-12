@@ -51,6 +51,14 @@ export const accommodations = sqliteTable(
     kidFriendlyNote: text("kid_friendly_note"),
     kidFriendlySource: text("kid_friendly_source"),
     adultsOnly: integer("adults_only", { mode: "boolean" }),
+    // Sustainable / eco / green accommodation policies. Added in plan
+    // cryptic-riding-fern (2026-04-10) for the future /sustainable-hotels-*
+    // category routes. Columns are nullable — NULL means "no info" per the
+    // amenity null semantics convention. Migration is GENERATED but not yet
+    // pushed to local or Turso; awaiting Michael's content-update window.
+    sustainable: integer("sustainable", { mode: "boolean" }),
+    sustainableNote: text("sustainable_note"),
+    sustainableSource: text("sustainable_source"),
     googleRating: real("google_rating"),
     googleReviewCount: integer("google_review_count"),
     googlePlaceId: text("google_place_id"),
