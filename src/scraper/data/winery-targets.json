@@ -1912,7 +1912,7 @@
   },
   {
     "name": "St. Supéry Estate Vineyards & Winery",
-    "slug": "st-sup-ry-estate-vineyards-winery",
+    "slug": "st-supery-estate-vineyards-winery",
     "websiteUrl": "http://www.stsupery.com/",
     "valley": "napa",
     "subRegion": "st-helena",
@@ -2457,8 +2457,8 @@
     "rank": 117
   },
   {
-    "name": "Shadybrook Estate Winery in יקב אלקוצר",
-    "slug": "shadybrook-estate-winery-in",
+    "name": "Shadybrook Estate Winery",
+    "slug": "shadybrook-estate-winery",
     "websiteUrl": "http://www.shadybrookestate.com/",
     "valley": "napa",
     "subRegion": "stags-leap-district",
@@ -2605,7 +2605,7 @@
   },
   {
     "name": "Domaine de la Rivière",
-    "slug": "domaine-de-la-rivi-re",
+    "slug": "domaine-de-la-riviere",
     "websiteUrl": "https://domaineriviere.com/",
     "valley": "sonoma",
     "subRegion": "russian-river-valley",
