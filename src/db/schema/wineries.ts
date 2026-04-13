@@ -33,6 +33,8 @@ export const wineries = sqliteTable("wineries", {
   dogFriendlyNote: text("dog_friendly_note"),
   dogFriendlySource: text("dog_friendly_source"),
   picnicFriendly: integer("picnic_friendly", { mode: "boolean" }).default(false),
+  picnicFriendlyNote: text("picnic_friendly_note"),
+  picnicFriendlySource: text("picnic_friendly_source"),
   kidFriendly: integer("kid_friendly", { mode: "boolean" }),
   kidFriendlyNote: text("kid_friendly_note"),
   kidFriendlySource: text("kid_friendly_source"),

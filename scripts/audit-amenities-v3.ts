@@ -102,21 +102,31 @@ function extractLinksFromText(page: Page, baseUrl: string, patterns: RegExp): Pr
 }
 
 // --- Quote extraction via GPT-4o-mini ---
-const EXTRACT_PROMPT = `Extract exact quotes from this winery/hotel webpage about these topics. Quote the EXACT text, do not paraphrase. Include the surrounding context (section heading or experience name if visible).
+const EXTRACT_PROMPT = `Extract exact quotes from this winery/hotel webpage about these topics. Quote the EXACT text, do not paraphrase.
+
+For each quote, capture:
+- "quote": the exact text
+- "context": the section heading, experience name, or page area this appears under
+- "scope": one of "property-wide", "experience-specific", or "event-specific"
+  - "property-wide" = general visitor policy, FAQ answer about all visits, or default rules
+  - "experience-specific" = rule that applies only to a named tasting experience (e.g., "Reserve Tasting is 21+")
+  - "event-specific" = rule for a specific dated event (e.g., "Holiday Dinner — no children")
+
+This distinction is CRITICAL. A rule like "This event is 21+" or "no pets at our Wine Dinner" is event-specific, NOT a blanket property policy. Only quotes that clearly apply to ALL visits or the GENERAL visitor policy should be "property-wide".
 
 Topics:
-- DOGS/PETS: dogs, pets, leash, four-legged, fur friends, service animals, no pets
+- DOGS/PETS: dogs, pets, leash, four-legged, fur friends, service animals, no pets, canine, pup
 - CHILDREN/KIDS: children, kids, family welcome, minors, infants, babies, 21+ visitor policy, adults only, all ages, strollers
-  IMPORTANT: IGNORE standard alcohol website age gates ("must be 21 to enter this website", "by entering this site you confirm you are of legal drinking age"). Only quote VISITOR POLICIES about physical visits.
+  IMPORTANT: IGNORE standard alcohol website age gates ("must be 21 to enter this website"). Only quote VISITOR POLICIES about physical visits.
 - PICNIC: picnic, bring your own food, outside food, outdoor dining areas
 - SUSTAINABLE: organic, biodynamic, dry farming, sustainable, regenerative, solar, Napa Green, LEED, certified
 
 Respond with ONLY valid JSON:
 {
-  "dogs": [{"quote": "exact text", "context": "section or heading this appears under"}],
-  "kids": [{"quote": "exact text", "context": "section or heading"}],
-  "picnic": [{"quote": "exact text", "context": "section or heading"}],
-  "sustainable": [{"quote": "exact text", "context": "section or heading"}]
+  "dogs": [{"quote": "exact text", "context": "section or heading", "scope": "property-wide|experience-specific|event-specific"}],
+  "kids": [{"quote": "exact text", "context": "section or heading", "scope": "property-wide|experience-specific|event-specific"}],
+  "picnic": [{"quote": "exact text", "context": "section or heading", "scope": "property-wide|experience-specific|event-specific"}],
+  "sustainable": [{"quote": "exact text", "context": "section or heading", "scope": "property-wide|experience-specific|event-specific"}]
 }
 
 Empty arrays for topics with no mentions. Keep quotes under 150 chars each.`;
@@ -124,6 +134,7 @@ Empty arrays for topics with no mentions. Keep quotes under 150 chars each.`;
 interface ExtractedQuote {
   quote: string;
   context: string;
+  scope?: "property-wide" | "experience-specific" | "event-specific";
 }
 
 interface ExtractedQuotes {
@@ -157,22 +168,38 @@ async function extractQuotes(text: string): Promise<ExtractedQuotes | null> {
 // --- Holistic classification via LLM ---
 const CLASSIFY_PROMPT = `You are determining a winery/hotel's OVERALL policy based on ALL quotes collected from their website.
 
+Each quote has a "scope" field: "property-wide", "experience-specific", or "event-specific".
+- Property-wide quotes describe general visitor policy.
+- Experience-specific quotes apply only to a named tasting or tour.
+- Event-specific quotes apply to a dated event.
+
+CRITICAL RULES FOR CLASSIFICATION:
+1. Property-wide quotes carry the most weight.
+2. An event-specific restriction (e.g., "This holiday dinner is 21+") does NOT mean the property bans children — it means that ONE event does.
+3. If one experience bans dogs/kids but another allows them, the OVERALL policy is WELCOME (with conditions).
+4. "No [dogs/kids] indoors" + "allowed outdoors" = WELCOME, not a ban. Many wineries allow dogs/kids outdoors only.
+5. "No [dogs/kids] at [specific experience name]" alone is NOT a blanket ban.
+
 For each topic, classify the OVERALL policy as one of:
 
 DOGS:
-- WELCOME: Property welcomes dogs. Even if dogs are restricted from specific areas (pool, dining room, indoors), as long as they're allowed on property, it's WELCOME.
-- CONDITIONAL: Dogs allowed with restrictions (fee, size limit, specific rooms) — this is still positive.
-- SERVICE_ONLY: ONLY service animals allowed, no regular pets.
-- BLANKET_BAN: Property explicitly says no pets / not pet-friendly as a whole-property policy.
+- WELCOME: Property welcomes regular pet dogs in at least one area (outdoors, patio, garden, specific tasting). "Dogs on leash outdoors" = WELCOME. "Dogs at outdoor tastings only" = WELCOME.
+- CONDITIONAL: Dogs allowed with specific restrictions (fee, size limit, breed limit, designated rooms only) — still positive.
+- SERVICE_ONLY: The ONLY mention of animals is service dogs or ADA-required animals. No mention of welcoming regular pet dogs anywhere. "Only animals that satisfy ADA requirements" without any other dog-friendly language = SERVICE_ONLY, not WELCOME.
+- BLANKET_BAN: Property explicitly says no pets / not pet-friendly as a whole-property policy, with no exceptions for any area.
 - NO_INFO: No relevant information found.
 
+CRITICAL for DOGS: "Not permitted indoors" + "welcome outdoors/on patio/leashed on property" = WELCOME. Focus on whether regular pet dogs can visit AT ALL, not whether they can go everywhere. But "only service animals" or "only ADA animals" with NO mention of regular dogs being welcome = SERVICE_ONLY.
+
 KIDS:
-- WELCOME: Property welcomes children/families. Even if SOME experiences are 21+, if ANY experience or area welcomes children, the overall policy is WELCOME.
+- WELCOME: Property welcomes children/families at one or more experiences or areas. Even if SOME experiences are 21+, if ANY regular experience or area welcomes children, classify as WELCOME.
 - AGE_MINIMUM: Children above a certain age welcome (e.g., 12+). Still positive.
-- BLANKET_BAN: ALL visitors must be 21+, no children/infants on property at all, explicitly adults-only.
+- BLANKET_BAN: The property as a whole requires all visitors to be 21+, no children/infants anywhere on property, explicitly adults-only with NO family-friendly alternative.
 - NO_INFO: No relevant info, or only website age gates found.
 
-CRITICAL for KIDS: Many wineries have BOTH adults-only experiences AND family-friendly experiences. If you see "21+ for [specific experience]" alongside "families welcome" or "infants allowed at [other experience]", the overall policy is WELCOME. Only classify as BLANKET_BAN if there is NO family-friendly option anywhere.
+CRITICAL for KIDS: Many wineries have BOTH adults-only experiences AND family-friendly experiences. "21+ for [specific experience]" alongside "families welcome" or "children allowed at [other experience]" = WELCOME. Only classify as BLANKET_BAN if EVERY experience and area on the property is 21+ with zero family-friendly options.
+
+CRITICAL SCOPE RULE FOR ALL TOPICS: If the ONLY evidence is one or more event-specific or experience-specific quotes (scope: "event-specific" or "experience-specific"), and there are NO property-wide quotes, you MUST classify as NO_INFO — not BLANKET_BAN, not WELCOME. A single event saying "21+ for this dinner" or "no pets at this event" tells you nothing about the property's general policy. Do NOT escalate event-specific restrictions to property-wide conclusions.
 
 PICNIC:
 - WELCOME: Guests can bring their own food to eat outdoors. Picnic tables/grounds available for visitor-brought food.
@@ -188,8 +215,8 @@ SUSTAINABLE:
 
 Respond with ONLY valid JSON:
 {
-  "dogs": {"overall": "WELCOME|CONDITIONAL|SERVICE_ONLY|BLANKET_BAN|NO_INFO", "reasoning": "brief explanation citing specific quotes"},
-  "kids": {"overall": "WELCOME|AGE_MINIMUM|BLANKET_BAN|NO_INFO", "reasoning": "brief explanation"},
+  "dogs": {"overall": "WELCOME|CONDITIONAL|SERVICE_ONLY|BLANKET_BAN|NO_INFO", "reasoning": "brief explanation citing specific quotes and their scope"},
+  "kids": {"overall": "WELCOME|AGE_MINIMUM|BLANKET_BAN|NO_INFO", "reasoning": "brief explanation citing specific quotes and their scope"},
   "picnic": {"overall": "WELCOME|FOOD_SERVICE|BLANKET_BAN|NO_INFO", "reasoning": "brief explanation"},
   "sustainable": {"overall": "CERTIFIED|PRACTICING|VAGUE|NO_INFO", "reasoning": "brief explanation"}
 }`;
@@ -205,19 +232,23 @@ async function classifyAllQuotes(
   name: string,
   allQuotes: ExtractedQuotes,
 ): Promise<ClassificationResult | null> {
+  const formatQuote = (q: ExtractedQuote) => {
+    const scope = q.scope || "unknown";
+    return `- "${q.quote}" (context: ${q.context}, scope: ${scope})`;
+  };
   const userContent = `Property: ${name}
 
 Dog/pet quotes from their website:
-${allQuotes.dogs.map((q) => `- "${q.quote}" (context: ${q.context})`).join("\n") || "None found"}
+${allQuotes.dogs.map(formatQuote).join("\n") || "None found"}
 
 Kid/family quotes from their website:
-${allQuotes.kids.map((q) => `- "${q.quote}" (context: ${q.context})`).join("\n") || "None found"}
+${allQuotes.kids.map(formatQuote).join("\n") || "None found"}
 
 Picnic quotes from their website:
-${allQuotes.picnic.map((q) => `- "${q.quote}" (context: ${q.context})`).join("\n") || "None found"}
+${allQuotes.picnic.map(formatQuote).join("\n") || "None found"}
 
 Sustainable quotes from their website:
-${allQuotes.sustainable.map((q) => `- "${q.quote}" (context: ${q.context})`).join("\n") || "None found"}`;
+${allQuotes.sustainable.map(formatQuote).join("\n") || "None found"}`;
 
   try {
     const response = await openai.chat.completions.create({
@@ -286,6 +317,8 @@ const FAQ_PATHS = [
   "/visit/faq", "/visit-us/faq", "/frequently-asked-questions",
   "/guest-policies", "/guest-policy", "/policies", "/pages/policies",
   "/visitor-information", "/plan-your-visit/faq",
+  "/visit/visitation-protocols", "/visit/visitor-policies", "/visit/policies",
+  "/visitor-policies", "/visitation-protocols",
   // Accommodation-specific (expanded 2026-04-10)
   "/hotel-policies", "/house-rules", "/about/policies", "/about/faq",
   "/stay/policies", "/stay/faq", "/guest-information",
@@ -324,11 +357,12 @@ interface PageData {
 // If a flag has no quotes after first pass, re-extract from the same pages
 // with a more targeted prompt specifically for the missing topic
 async function extractFocused(text: string, topic: "dogs" | "kids" | "picnic" | "sustainable"): Promise<ExtractedQuote[]> {
+  const scopeInstr = `For "scope": use "property-wide" if the quote is a general visitor policy or FAQ answer, "experience-specific" if it applies to a named tasting/tour, or "event-specific" if it applies to a dated event.`;
   const prompts: Record<string, string> = {
-    dogs: `Search this text VERY carefully for ANY mention of dogs, pets, animals, leash, four-legged, fur friends, canine, pups, service animals, pet policy, pet fee, "no pets". Look for FAQ answers, policy sections, or any sentence that mentions pets. Quote the EXACT text. Respond with JSON: [{"quote": "exact text", "context": "section heading"}]. Empty array if truly nothing found.`,
-    kids: `Search this text VERY carefully for ANY mention of children, kids, family, families, infants, babies, minors, strollers, 21+ visitor requirement, "adults only", "all ages", "family friendly". Look especially for FAQ answers about children, age policies, or family experiences. IGNORE website age gates ("must be 21 to enter this site"). Quote the EXACT text. Respond with JSON: [{"quote": "exact text", "context": "section heading"}]. Empty array if truly nothing found.`,
-    picnic: `Search this text VERY carefully for ANY mention of picnic, outside food, bring your own food, outdoor dining, lawn seating, food & wine pairing outdoors. Quote the EXACT text. Respond with JSON: [{"quote": "exact text", "context": "section heading"}]. Empty array if truly nothing found.`,
-    sustainable: `Search this text VERY carefully for ANY mention of organic, biodynamic, dry farming, sustainable, regenerative, solar, Napa Green, LEED, certified, environmental, carbon footprint. Quote the EXACT text. Respond with JSON: [{"quote": "exact text", "context": "section heading"}]. Empty array if truly nothing found.`,
+    dogs: `Search this text VERY carefully for ANY mention of dogs, pets, animals, leash, four-legged, fur friends, canine, pups, service animals, pet policy, pet fee, "no pets". Look for FAQ answers, policy sections, or any sentence that mentions pets. Quote the EXACT text. ${scopeInstr} Respond with JSON: [{"quote": "exact text", "context": "section heading", "scope": "property-wide|experience-specific|event-specific"}]. Empty array if truly nothing found.`,
+    kids: `Search this text VERY carefully for ANY mention of children, kids, family, families, infants, babies, minors, strollers, 21+ visitor requirement, "adults only", "all ages", "family friendly". Look especially for FAQ answers about children, age policies, or family experiences. IGNORE website age gates ("must be 21 to enter this site"). Quote the EXACT text. ${scopeInstr} Respond with JSON: [{"quote": "exact text", "context": "section heading", "scope": "property-wide|experience-specific|event-specific"}]. Empty array if truly nothing found.`,
+    picnic: `Search this text VERY carefully for ANY mention of picnic, outside food, bring your own food, outdoor dining, lawn seating, food & wine pairing outdoors. Quote the EXACT text. ${scopeInstr} Respond with JSON: [{"quote": "exact text", "context": "section heading", "scope": "property-wide|experience-specific|event-specific"}]. Empty array if truly nothing found.`,
+    sustainable: `Search this text VERY carefully for ANY mention of organic, biodynamic, dry farming, sustainable, regenerative, solar, Napa Green, LEED, certified, environmental, carbon footprint. Quote the EXACT text. ${scopeInstr} Respond with JSON: [{"quote": "exact text", "context": "section heading", "scope": "property-wide|experience-specific|event-specific"}]. Empty array if truly nothing found.`,
   };
 
   try {
