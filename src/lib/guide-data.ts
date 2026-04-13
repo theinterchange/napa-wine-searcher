@@ -42,7 +42,12 @@ export async function getWineriesByAmenity(
   if (amenity === "dogFriendly") conditions.push(eq(wineries.dogFriendly, true));
   else if (amenity === "kidFriendly") conditions.push(eq(wineries.kidFriendly, true));
   else if (amenity === "picnicFriendly") conditions.push(eq(wineries.picnicFriendly, true));
-  else if (amenity === "walkIn") conditions.push(eq(wineries.reservationRequired, false));
+  else if (amenity === "walkIn") {
+    // Luxury wineries (price_level=4) list reservation_required=false in Google
+    // data but in practice require appointments — exclude to keep walk-in lists honest.
+    conditions.push(eq(wineries.reservationRequired, false));
+    conditions.push(sql`(${wineries.priceLevel} IS NULL OR ${wineries.priceLevel} < 4)`);
+  }
 
   if (valley) conditions.push(eq(subRegions.valley, valley));
   if (subRegionSlug) conditions.push(eq(subRegions.slug, subRegionSlug));
@@ -149,21 +154,15 @@ export async function getWineriesByWinePrice(
     .orderBy(wineryRankingDesc);
 }
 
-// Experience-based queries (romantic, groups, first-time)
+// Experience-based queries (groups, first-time)
 export async function getWineriesByExperience(
-  experienceType: "romantic" | "groups" | "first-time",
+  experienceType: "groups" | "first-time",
   valley?: "napa" | "sonoma",
   subRegionSlug?: string
 ) {
   const conditions = [];
 
-  if (experienceType === "romantic") {
-    // High-rated, appointment-only → intimate, high-end experiences
-    conditions.push(
-      eq(wineries.reservationRequired, true),
-      sql`(${wineries.aggregateRating} >= 4.0 OR ${wineries.googleRating} >= 4.3)`
-    );
-  } else if (experienceType === "groups") {
+  if (experienceType === "groups") {
     // Walk-in friendly → naturally group-accommodating
     conditions.push(eq(wineries.reservationRequired, false));
   } else if (experienceType === "first-time") {

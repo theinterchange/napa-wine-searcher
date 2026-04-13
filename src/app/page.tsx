@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Wine, Route, Heart, Dog, DollarSign, Sparkles, BedDouble } from "lucide-react";
+import { ArrowRight, Wine, Route, Dog, DollarSign, Sparkles, BedDouble } from "lucide-react";
 import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
 import { wineries, subRegions, dayTripRoutes } from "@/db/schema";
@@ -146,19 +146,6 @@ async function getHomepageWineries() {
 
 // Get hero images for guides that don't have matching blog images
 async function getGuideHeroFallbacks() {
-  const [romantic] = await db
-    .select({ heroImageUrl: wineries.heroImageUrl })
-    .from(wineries)
-    .where(
-      and(
-        eq(wineries.curated, true),
-        eq(wineries.reservationRequired, true),
-        isNotNull(wineries.heroImageUrl)
-      )
-    )
-    .orderBy(wineryRankingDesc)
-    .limit(1);
-
   const [cabernet] = await db
     .select({ heroImageUrl: wineries.heroImageUrl })
     .from(wineries)
@@ -174,13 +161,12 @@ async function getGuideHeroFallbacks() {
     .limit(1);
 
   return {
-    romantic: romantic?.heroImageUrl ?? null,
     cabernet: cabernet?.heroImageUrl ?? null,
   };
 }
 
 // Build enriched guide data for homepage
-function getHomepageGuides(fallbackImages: { romantic: string | null; cabernet: string | null }) {
+function getHomepageGuides(fallbackImages: { cabernet: string | null }) {
   const guideConfigs = [
     {
       slug: "first-time-guide-napa-valley",
@@ -189,22 +175,17 @@ function getHomepageGuides(fallbackImages: { romantic: string | null; cabernet: 
       heroImage: "/images/blog/napa-first-time-hero.jpg",
     },
     {
-      slug: "dog-friendly-wineries-napa-valley",
+      slug: "dog-friendly-wineries",
       label: "Dog-Friendly Wineries",
       icon: Dog,
       heroImage: "/images/blog/dog-friendly-wineries-hero.jpg",
+      href: "/dog-friendly-wineries",
     },
     {
       slug: "cheap-wine-tastings-napa-valley",
       label: "Budget Tastings",
       icon: DollarSign,
       heroImage: "/images/blog/budget-wine-tasting-hero.jpg",
-    },
-    {
-      slug: "romantic-wineries-napa-valley",
-      label: "Romantic Wineries",
-      icon: Heart,
-      heroImage: fallbackImages.romantic,
     },
     {
       slug: "best-cabernet-sauvignon-napa-valley",
@@ -215,10 +196,12 @@ function getHomepageGuides(fallbackImages: { romantic: string | null; cabernet: 
   ];
 
   return guideConfigs.map((config) => {
+    // For guides that have been replaced by category cluster pages,
+    // getGuideBySlug returns null — provide a manual intro fallback.
     const guide = getGuideBySlug(config.slug);
     return {
       ...config,
-      intro: guide?.intro?.[0] ?? "",
+      intro: guide?.intro?.[0] ?? "Browse the full set on napasonomaguide.com.",
     };
   });
 }
@@ -503,6 +486,7 @@ export default async function HomePage() {
               intro={g.intro}
               icon={g.icon}
               heroImage={g.heroImage}
+              href={(g as { href?: string }).href}
             />
           ))}
         </div>

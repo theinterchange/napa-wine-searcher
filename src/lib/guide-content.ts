@@ -19,8 +19,8 @@ export interface GuideDefinition {
   wineMaxPrice?: number;
   valley?: "napa" | "sonoma";
   subRegionSlug?: string;
-  // Experience type (romantic, groups, first-time)
-  experienceType?: "romantic" | "groups" | "first-time";
+  // Experience type (groups, first-time)
+  experienceType?: "groups" | "first-time";
   // Comparison
   compare?: {
     region1: string; // valley or subregion slug
@@ -237,14 +237,10 @@ function getComparisonIntro(name1: string, name2: string): string[] {
 }
 
 // ============================================================
-// Experience-based content (romantic, groups, first-time)
+// Experience-based content (groups, first-time)
 // ============================================================
 
 const EXPERIENCE_INTROS: Record<string, (region: string) => string[]> = {
-  romantic: (region) => [
-    `Looking for a romantic wine tasting experience in ${region}? The best couples' wineries offer intimate settings, stunning vineyard views, and appointment-only tastings that feel like private tours. Think candlelit caves, hilltop patios, and personal attention from knowledgeable hosts.`,
-    `We've curated the highest-rated, reservation-required wineries in ${region} — the kind of places that turn a wine tasting into a memorable date. These intimate estates prioritize quality over quantity, making them ideal for a special occasion or a romantic getaway.`,
-  ],
   groups: (region) => [
     `Planning a group wine tasting in ${region}? Whether it's a bachelorette party, birthday celebration, or friends' trip, the best group-friendly wineries offer walk-in availability, spacious tasting rooms, and a lively atmosphere that welcomes larger parties.`,
     `The wineries below welcome walk-in visitors, which means they're naturally set up for groups — no coordinating reservations for 10+ people. Many have outdoor patios, lawn games, and casual vibes perfect for celebrations.`,
@@ -256,20 +252,6 @@ const EXPERIENCE_INTROS: Record<string, (region: string) => string[]> = {
 };
 
 const EXPERIENCE_FAQS: Record<string, (region: string) => { question: string; answer: string }[]> = {
-  romantic: (region) => [
-    {
-      question: `What are the most romantic wineries in ${region}?`,
-      answer: `The most romantic wineries in ${region} tend to be smaller, appointment-only estates with intimate tasting experiences. Look for wineries with cave tastings, private vineyard tours, hilltop views, and seated tastings with food pairings. The wineries on this page are our top picks, sorted by rating.`,
-    },
-    {
-      question: `Should we make reservations for a romantic wine tasting?`,
-      answer: `Yes — the best romantic wineries require reservations, which is actually a plus. It means fewer crowds, more personal attention, and a curated experience. Book at least a week in advance, especially for weekend visits during peak season (September-October).`,
-    },
-    {
-      question: `How many wineries should couples visit in a day?`,
-      answer: `For a relaxed, romantic experience, plan for 2-3 wineries per day. This allows you to savor each tasting without feeling rushed. Leave time for a leisurely lunch at a winery restaurant or local bistro between visits.`,
-    },
-  ],
   groups: (region) => [
     {
       question: `What are the best wineries for groups in ${region}?`,
@@ -309,10 +291,10 @@ const EXPERIENCE_FAQS: Record<string, (region: string) => { question: string; an
 // ============================================================
 
 const AMENITY_TYPES = [
-  { key: "dogFriendly" as const, slugPart: "dog-friendly-wineries", label: "Dog-Friendly Wineries" },
-  { key: "kidFriendly" as const, slugPart: "kid-friendly-wineries", label: "Kid-Friendly Wineries" },
-  { key: "picnicFriendly" as const, slugPart: "picnic-wineries", label: "Picnic-Friendly Wineries" },
-  { key: "walkIn" as const, slugPart: "walk-in-wineries", label: "Walk-In Wineries" },
+  { key: "dogFriendly" as const, slugPart: "dog-friendly-wineries", label: "Dog-Friendly Wineries", hasCluster: true },
+  { key: "kidFriendly" as const, slugPart: "kid-friendly-wineries", label: "Kid-Friendly Wineries", hasCluster: true },
+  { key: "picnicFriendly" as const, slugPart: "picnic-wineries", label: "Picnic-Friendly Wineries", hasCluster: false },
+  { key: "walkIn" as const, slugPart: "walk-in-wineries", label: "Walk-In Wineries", hasCluster: false },
 ];
 
 const VALLEYS = [
@@ -350,7 +332,9 @@ export function getAllGuides(): GuideDefinition[] {
   const guides: GuideDefinition[] = [];
 
   // ---- Type 1: Amenity + Region ----
-  for (const amenity of AMENITY_TYPES) {
+  // Skip amenity types that have dedicated category cluster pages
+  // (dog-friendly → /dog-friendly-wineries/*, kid-friendly → /kid-friendly-wineries/*)
+  for (const amenity of AMENITY_TYPES.filter((a) => !a.hasCluster)) {
     for (const valley of VALLEYS) {
       const region = regionName(valley.key);
       const slug = `${amenity.slugPart}-${valley.slugPart}`;
@@ -535,41 +519,11 @@ export function getAllGuides(): GuideDefinition[] {
     });
   }
 
-  // ---- Type 5: Experience-Based (romantic, groups, first-time) ----
-
-  // Romantic wineries — valleys + select sub-regions
-  const romanticSubRegions = ["yountville", "st-helena", "calistoga", "sonoma-valley", "russian-river-valley", "dry-creek-valley"];
-  for (const valley of VALLEYS) {
-    const region = regionName(valley.key);
-    guides.push({
-      slug: `romantic-wineries-${valley.slugPart}`,
-      type: "experience",
-      title: `Romantic Wineries in ${region} | Best Couples Wine Tasting`,
-      h1: `Romantic Wineries in ${region}`,
-      metaDescription: `Discover the most romantic wineries in ${region} for couples. Intimate tastings, vineyard views, and unforgettable date ideas.`,
-      intro: EXPERIENCE_INTROS.romantic(region),
-      faqs: EXPERIENCE_FAQS.romantic(region),
-      experienceType: "romantic",
-      valley: valley.key,
-    });
-  }
-  for (const srSlug of romanticSubRegions) {
-    const sr = SUBREGIONS_WITH_VALLEY.find((s) => s.slug === srSlug);
-    if (!sr) continue;
-    const region = regionName(srSlug);
-    guides.push({
-      slug: `romantic-wineries-${srSlug}`,
-      type: "experience",
-      title: `Romantic Wineries in ${region} | Best Couples Wine Tasting`,
-      h1: `Romantic Wineries in ${region}`,
-      metaDescription: `Discover the most romantic wineries in ${region} for couples. Intimate tastings, vineyard views, and unforgettable date ideas.`,
-      intro: EXPERIENCE_INTROS.romantic(region),
-      faqs: EXPERIENCE_FAQS.romantic(region),
-      experienceType: "romantic",
-      valley: sr.valley,
-      subRegionSlug: srSlug,
-    });
-  }
+  // ---- Type 5: Experience-Based (groups, first-time) ----
+  // Note: romantic guides were retired 2026-04-12 after an audit found
+  // thematically-mismatched wineries (e.g., a garage-themed and a robot-
+  // themed winery) surfacing at the top of small-pool subregion pages.
+  // 301 redirects are wired in next.config.ts.
 
   // Groups & Celebrations — valleys + select sub-regions
   const groupSubRegions = ["yountville", "st-helena", "sonoma-valley", "russian-river-valley"];

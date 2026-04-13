@@ -1,6 +1,103 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    // 301 redirects: old guide pages → new category cluster pages.
+    // Dog + kid amenity guides are superseded by dedicated category routes.
+    const redirects: { source: string; destination: string; permanent: true }[] = [];
+
+    const clusters: [string, string][] = [
+      ["dog-friendly-wineries", "/dog-friendly-wineries"],
+      ["kid-friendly-wineries", "/kid-friendly-wineries"],
+    ];
+
+    const valleys: [string, string][] = [
+      ["napa-valley", "napa-valley"],
+      ["sonoma-county", "sonoma-county"],
+    ];
+
+    // Subregions that have a category page equivalent (≥ threshold)
+    const categorySubregions: Record<string, string[]> = {
+      "/dog-friendly-wineries": [
+        "st-helena", "rutherford", "calistoga", "carneros-napa",
+        "stags-leap-district", "russian-river-valley", "sonoma-valley",
+        "dry-creek-valley", "carneros-sonoma",
+      ],
+      "/kid-friendly-wineries": [
+        "russian-river-valley", "sonoma-valley", "dry-creek-valley",
+        "st-helena", "carneros-sonoma", "rutherford", "calistoga",
+      ],
+    };
+
+    // Subregion → valley fallback for guide subregions that have no category page
+    const subregionValley: Record<string, string> = {
+      calistoga: "napa-valley",
+      "st-helena": "napa-valley",
+      rutherford: "napa-valley",
+      oakville: "napa-valley",
+      yountville: "napa-valley",
+      "stags-leap-district": "napa-valley",
+      "carneros-napa": "napa-valley",
+      "russian-river-valley": "sonoma-county",
+      "sonoma-valley": "sonoma-county",
+      "dry-creek-valley": "sonoma-county",
+      "alexander-valley": "sonoma-county",
+    };
+
+    for (const [guidePart, clusterRoot] of clusters) {
+      // Valley-level redirects
+      for (const [guideSuffix, categorySuffix] of valleys) {
+        redirects.push({
+          source: `/guides/${guidePart}-${guideSuffix}`,
+          destination: `${clusterRoot}/${categorySuffix}`,
+          permanent: true,
+        });
+      }
+
+      // Subregion redirects
+      const qualifyingSlugs = new Set(categorySubregions[clusterRoot] ?? []);
+      for (const slug of Object.keys(subregionValley)) {
+        if (qualifyingSlugs.has(slug)) {
+          // Subregion has its own category page
+          redirects.push({
+            source: `/guides/${guidePart}-${slug}`,
+            destination: `${clusterRoot}/${slug}`,
+            permanent: true,
+          });
+        } else {
+          // No category page — redirect to valley parent
+          redirects.push({
+            source: `/guides/${guidePart}-${slug}`,
+            destination: `${clusterRoot}/${subregionValley[slug]}`,
+            permanent: true,
+          });
+        }
+      }
+    }
+
+    // Romantic guides retired 2026-04-12 (the filter surfaced thematically-
+    // wrong wineries on small-pool subregion pages). Redirect each URL to
+    // the most-relevant region page.
+    const romanticRedirects: Record<string, string> = {
+      "napa-valley": "/napa-valley",
+      "sonoma-county": "/sonoma-county",
+      yountville: "/napa-valley/yountville",
+      "st-helena": "/napa-valley/st-helena",
+      calistoga: "/napa-valley/calistoga",
+      "sonoma-valley": "/sonoma-county/sonoma-valley",
+      "russian-river-valley": "/sonoma-county/russian-river-valley",
+      "dry-creek-valley": "/sonoma-county/dry-creek-valley",
+    };
+    for (const [slug, destination] of Object.entries(romanticRedirects)) {
+      redirects.push({
+        source: `/guides/romantic-wineries-${slug}`,
+        destination,
+        permanent: true,
+      });
+    }
+
+    return redirects;
+  },
   images: {
     qualities: [75, 85, 90],
     remotePatterns: [
