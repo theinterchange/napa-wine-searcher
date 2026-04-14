@@ -719,10 +719,10 @@ export default async function WineryDetailPage({
         const valleySlug = winery.valley === "napa" ? "napa-valley" : "sonoma-county";
         const guides: { label: string; href: string }[] = [];
 
-        if (winery.dogFriendly) guides.push({ label: "Dog-Friendly Wineries", href: `/guides/dog-friendly-wineries-${valleySlug}` });
-        if (winery.kidFriendly) guides.push({ label: "Kid-Friendly Wineries", href: `/guides/kid-friendly-wineries-${valleySlug}` });
-        if (winery.picnicFriendly) guides.push({ label: "Picnic-Friendly Wineries", href: `/guides/picnic-friendly-wineries-${valleySlug}` });
-        if (winery.sustainableFarming) guides.push({ label: "Sustainable Wineries", href: `/guides/sustainable-wineries-${valleySlug}` });
+        if (winery.dogFriendly) guides.push({ label: "Dog-Friendly Wineries", href: `/dog-friendly-wineries/${valleySlug}` });
+        if (winery.kidFriendly) guides.push({ label: "Kid-Friendly Wineries", href: `/kid-friendly-wineries/${valleySlug}` });
+        if (winery.picnicFriendly) guides.push({ label: "Picnic-Friendly Wineries", href: `/guides/picnic-wineries-${valleySlug}` });
+        if (winery.sustainableFarming) guides.push({ label: "Sustainable Wineries", href: `/sustainable-wineries/${valleySlug}` });
         if (winery.priceLevel && winery.priceLevel <= 2) guides.push({ label: "Budget-Friendly Tastings", href: `/guides/cheap-wine-tastings-${valleySlug}` });
         if (winery.priceLevel && winery.priceLevel >= 4) guides.push({ label: "Luxury Tastings", href: `/guides/luxury-wine-tastings-${valleySlug}` });
         if (!winery.reservationRequired) guides.push({ label: "Walk-In Wineries", href: `/guides/walk-in-wineries-${valleySlug}` });

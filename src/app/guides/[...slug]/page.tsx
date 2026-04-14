@@ -31,8 +31,6 @@ import { BASE_URL } from "@/lib/constants";
 const GUIDE_HERO_IMAGES: Record<string, string> = {
   "first-time-guide-napa-valley": "/images/blog/napa-first-time-hero.jpg",
   "first-time-guide-sonoma-county": "/images/blog/napa-first-time-hero.jpg",
-  "dog-friendly-wineries-napa-valley": "/images/blog/dog-friendly-wineries-hero.jpg",
-  "dog-friendly-wineries-sonoma-county": "/images/blog/dog-friendly-wineries-hero.jpg",
   "cheap-wine-tastings-napa-valley": "/images/blog/budget-wine-tasting-hero.jpg",
   "cheap-wine-tastings-sonoma-county": "/images/blog/budget-wine-tasting-hero.jpg",
   "best-cabernet-sauvignon-napa-valley": "/images/blog/napa-avas-hero.jpg",

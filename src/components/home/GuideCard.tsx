@@ -8,6 +8,7 @@ interface GuideCardProps {
   intro: string;
   icon: LucideIcon;
   heroImage: string | null;
+  href?: string;
 }
 
 export function GuideCard({
@@ -16,10 +17,11 @@ export function GuideCard({
   intro,
   icon: Icon,
   heroImage,
+  href,
 }: GuideCardProps) {
   return (
     <Link
-      href={`/guides/${slug}`}
+      href={href ?? `/guides/${slug}`}
       className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
     >
       {/* Image */}

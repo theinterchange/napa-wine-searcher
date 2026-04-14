@@ -6,7 +6,7 @@
   {"slug": "artesa-vineyards", "dogFriendly": true, "dogNote": "Dogs allowed on outside patio only", "kidFriendly": true, "kidNote": "Kids allowed on outside patio only", "source": "https://www.artesawinery.com/visit-us/"},
   {"slug": "bouchaine-vineyards", "dogFriendly": true, "dogNote": "Canine companions welcome in the Garden tasting", "kidFriendly": true, "kidNote": "Guests of all ages welcome in the Garden tasting", "source": "https://bouchaine.com/pages/tasting-room/"},
   {"slug": "cuvaison", "dogFriendly": true, "dogNote": "Dogs allowed on patio only", "kidFriendly": false, "source": "https://www.exploretock.com/cuvaison/faq"},
-  {"slug": "kunde-family", "dogFriendly": true, "dogNote": "Dogs welcome at Kennybrook tasting. Check winery for details", "source": "https://www.kunde.com/Visit/Tasting-Options"},
+  {"slug": "kunde-family", "dogFriendly": true, "dogNote": "Dogs welcome at Kinneybrook tasting. Check winery for details", "source": "https://www.kunde.com/Visit/Tasting-Options"},
   {"slug": "gary-farrell-vineyards", "dogFriendly": false, "kidFriendly": false, "source": "https://www.garyfarrellwinery.com/visit/"},
   {"slug": "korbel-champagne-cellars", "dogFriendly": true, "dogNote": "Dogs welcome on outdoor patio only", "source": "https://www.korbel.com/the-winery/"},
   {"slug": "hartford-family", "dogFriendly": true, "kidFriendly": true, "source": "https://www.exploretock.com/hartfordwines/faq"},

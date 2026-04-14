@@ -88,6 +88,21 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/kid-friendly-wineries" className="hover:text-[var(--foreground)] transition-colors">
+                  Kid-Friendly Wineries
+                </Link>
+              </li>
+              <li>
+                <Link href="/sustainable-wineries" className="hover:text-[var(--foreground)] transition-colors">
+                  Sustainable Wineries
+                </Link>
+              </li>
+              <li>
+                <Link href="/dog-friendly-hotels" className="hover:text-[var(--foreground)] transition-colors">
+                  Dog-Friendly Hotels
+                </Link>
+              </li>
+              <li>
                 <Link href="/guides/best-cabernet-sauvignon-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
                   Best Cabernet Sauvignon
                 </Link>

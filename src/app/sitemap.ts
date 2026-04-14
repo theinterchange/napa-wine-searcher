@@ -21,6 +21,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     dogHubVerified,
     dogNapaVerified,
     dogSonomaVerified,
+    kidQualifyingSubs,
+    kidHubVerified,
+    kidNapaVerified,
+    kidSonomaVerified,
+    sustainableQualifyingSubs,
+    sustainableHubVerified,
+    sustainableNapaVerified,
+    sustainableSonomaVerified,
   ] = await Promise.all([
     db.select({ slug: wineries.slug, updatedAt: wineries.updatedAt }).from(wineries),
     db.select({ slug: dayTripRoutes.slug }).from(dayTripRoutes),
@@ -30,6 +38,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getLastVerifiedDate("dog", { kind: "hub" }),
     getLastVerifiedDate("dog", { kind: "valley", valley: "napa" }),
     getLastVerifiedDate("dog", { kind: "valley", valley: "sonoma" }),
+    getQualifyingSubregions("kid"),
+    getLastVerifiedDate("kid", { kind: "hub" }),
+    getLastVerifiedDate("kid", { kind: "valley", valley: "napa" }),
+    getLastVerifiedDate("kid", { kind: "valley", valley: "sonoma" }),
+    getQualifyingSubregions("sustainable"),
+    getLastVerifiedDate("sustainable", { kind: "hub" }),
+    getLastVerifiedDate("sustainable", { kind: "valley", valley: "napa" }),
+    getLastVerifiedDate("sustainable", { kind: "valley", valley: "sonoma" }),
   ]);
 
   // Dog cluster: hub + valleys + qualifying subregions whose editorial
@@ -60,6 +76,68 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((sr) => dogDefinedKeys.has(`subregion:${sr.slug}`))
       .map((sr) => ({
         url: `${BASE_URL}/dog-friendly-wineries/${sr.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.85,
+      })),
+  ];
+
+  // Kid-friendly cluster
+  const kidDefinedKeys = new Set(getDefinedScopes("kid"));
+  const kidClusterEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/kid-friendly-wineries`,
+      lastModified: kidHubVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/kid-friendly-wineries/napa-valley`,
+      lastModified: kidNapaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/kid-friendly-wineries/sonoma-county`,
+      lastModified: kidSonomaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...kidQualifyingSubs
+      .filter((sr) => kidDefinedKeys.has(`subregion:${sr.slug}`))
+      .map((sr) => ({
+        url: `${BASE_URL}/kid-friendly-wineries/${sr.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.85,
+      })),
+  ];
+
+  // Sustainable cluster
+  const sustainableDefinedKeys = new Set(getDefinedScopes("sustainable"));
+  const sustainableClusterEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/sustainable-wineries`,
+      lastModified: sustainableHubVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/sustainable-wineries/napa-valley`,
+      lastModified: sustainableNapaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/sustainable-wineries/sonoma-county`,
+      lastModified: sustainableSonomaVerified ?? new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    ...sustainableQualifyingSubs
+      .filter((sr) => sustainableDefinedKeys.has(`subregion:${sr.slug}`))
+      .map((sr) => ({
+        url: `${BASE_URL}/sustainable-wineries/${sr.slug}`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.85,
@@ -130,6 +208,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     ...dogClusterEntries,
+    ...kidClusterEntries,
+    ...sustainableClusterEntries,
+    // Accommodation category pages (dog-friendly only — family-friendly
+    // was considered but removed: accommodations default to kid-welcoming
+    // unless adults_only, so a dedicated page would be misleading)
+    {
+      url: `${BASE_URL}/dog-friendly-hotels`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/dog-friendly-hotels/napa-valley`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/dog-friendly-hotels/sonoma-county`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
     ...subRegionEntries,
     ...wineryEntries,
     ...allRoutes.map((r) => ({

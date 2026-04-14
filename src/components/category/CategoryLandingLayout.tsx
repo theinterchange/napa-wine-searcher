@@ -245,7 +245,7 @@ export function CategoryLandingLayout({
                   </p>
                 </div>
                 <Link
-                  href="/where-to-stay"
+                  href={amenity === "dog" ? "/dog-friendly-hotels" : "/where-to-stay"}
                   className="hidden sm:inline-flex items-center gap-1 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
                 >
                   See all
@@ -306,26 +306,37 @@ export function CategoryLandingLayout({
           </h2>
           <ul className="space-y-2 text-sm">
             {amenity === "dog" && (
-              <>
-                <li>
-                  <Link
-                    href="/blog/dog-friendly-wineries-guide"
-                    className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    The complete dog-friendly wine country guide
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/guides/dog-friendly-wineries-napa-valley"
-                    className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    Editor's picks: dog-friendly wineries in Napa
-                  </Link>
-                </li>
-              </>
+              <li>
+                <Link
+                  href="/blog/dog-friendly-wineries-guide"
+                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  The complete dog-friendly wine country guide
+                </Link>
+              </li>
+            )}
+            {amenity === "kid" && (
+              <li>
+                <Link
+                  href="/blog/wine-country-with-kids"
+                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Wine country with kids — the complete guide
+                </Link>
+              </li>
+            )}
+            {amenity === "sustainable" && (
+              <li>
+                <Link
+                  href="/blog/beyond-the-tasting-room"
+                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Beyond the tasting room — vineyard experiences and farm tours
+                </Link>
+              </li>
             )}
           </ul>
         </section>
