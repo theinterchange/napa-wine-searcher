@@ -39,7 +39,9 @@ interface AccommodationMapData {
   heroImageUrl: string | null;
   shortDescription: string | null;
   dogFriendly: boolean | null;
+  dogFriendlyNote: string | null;
   kidFriendly: boolean | null;
+  kidFriendlyNote: string | null;
   adultsOnly: boolean | null;
 }
 

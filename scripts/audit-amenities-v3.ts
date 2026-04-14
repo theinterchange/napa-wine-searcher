@@ -731,7 +731,7 @@ async function main() {
   const context = await browser.newContext({
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
   });
-  const browserPage = await context.newPage();
+  let browserPage = await context.newPage();
 
   const entries: AuditEntry[] = [];
 
@@ -850,6 +850,8 @@ async function main() {
           adultsOnly: !!a.adultsOnly, picnicFriendly: false, sustainable: false,
         };
 
+        try {
+
         const pageData = await discoverAndFetchPages(browserPage, a.websiteUrl!, "accommodation", a.slug, a.name);
 
         if (pageData.length === 0) {
@@ -902,6 +904,26 @@ async function main() {
         });
 
         console.log(changes.length > 0 ? ` ${changes.length} change(s) (${pagesChecked.length} pages)` : ` OK (${pagesChecked.length} pages)`);
+
+        } catch (err) {
+          console.log(` ERROR: ${err instanceof Error ? err.message.slice(0, 100) : err}`);
+          entries.push({
+            type: "accommodation", id: a.id, slug: a.slug, name: a.name,
+            websiteUrl: a.websiteUrl!, pagesChecked: [], siteReachable: false,
+            flags: { dogFriendly: emptyResult(), kidFriendly: emptyResult(), picnicFriendly: emptyResult(), sustainable: emptyResult() },
+            currentDb,
+          });
+          // Try to recover browser page after a crash
+          try {
+            await browserPage.close();
+            browserPage = await context.newPage();
+          } catch { /* ignore */ }
+        }
+
+        // Save incremental progress every 10 entries so a crash later doesn't lose everything
+        if ((i + 1) % 10 === 0) {
+          writeFileSync("amenity-audit-v3-report.json", JSON.stringify(entries, null, 2));
+        }
       }
     }
   } finally {

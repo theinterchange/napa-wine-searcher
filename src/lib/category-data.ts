@@ -159,20 +159,28 @@ export async function getLastVerifiedDate(
 
 /**
  * Nearby accommodations for the "Where to stay" module on category pages.
- * Currently filters by valley and the matching amenity. Sustainable hotels
- * are skipped until the schema migration ships.
+ *
+ * Semantics differ by amenity:
+ * - "dog": opt-in filter — only accommodations with dog_friendly = true
+ * - "kid": default-inclusive — everything EXCEPT adults_only properties
+ *   (accommodations are assumed family-welcoming unless explicitly marked
+ *   adults-only; see Michael's guidance 2026-04-12)
+ * - "sustainable": column does not exist yet, returns empty array
  */
 export async function getCategoryAccommodations(
   amenity: WineryAmenity,
   valley: Valley | null,
   limit = 4
 ) {
-  if (amenity === "sustainable") return []; // No column yet — session 4.
+  if (amenity === "sustainable") return [];
 
-  const amenityCol =
-    amenity === "dog" ? accommodations.dogFriendly : accommodations.kidFriendly;
-
-  const conditions = [eq(amenityCol, true)];
+  const conditions = [];
+  if (amenity === "dog") {
+    conditions.push(eq(accommodations.dogFriendly, true));
+  } else {
+    // kid: exclude only adults_only properties
+    conditions.push(sql`${accommodations.adultsOnly} IS NOT TRUE`);
+  }
   if (valley) conditions.push(eq(accommodations.valley, valley));
 
   const rows = await db
@@ -209,6 +217,83 @@ export async function getCategoryAccommodations(
   return rows;
 }
 
+
+// ────────────────────────────────────────────────────────────────────────────
+// Accommodation category pages
+// ────────────────────────────────────────────────────────────────────────────
+
+// Accommodation category pages currently only exist for dog-friendly.
+// Family-friendly was removed 2026-04-12: accommodations default to
+// kid-welcoming unless flagged adults_only, so a dedicated page would be
+// misleading (~90% of hotels would qualify).
+export type AccommodationAmenity = "dog";
+
+/** Ranking: log10(reviews) × 30 + rating × 40 + priceTier × 15 */
+const accommodationRankingScore = sql`(
+  (CASE WHEN ${accommodations.googleReviewCount} > 0
+    THEN log(${accommodations.googleReviewCount} + 1) / log(10) * 30
+    ELSE 0 END)
+  + COALESCE(${accommodations.googleRating}, 0) * 40
+  + COALESCE(${accommodations.priceTier}, 2) * 15
+)`;
+
+/**
+ * All dog-friendly accommodations, optionally filtered by valley.
+ * Used by the dog-friendly hotel category landing pages.
+ */
+export async function getAccommodationCategoryListings(
+  _amenity: AccommodationAmenity,
+  valley: Valley | null
+) {
+  const conditions = [eq(accommodations.dogFriendly, true)];
+  if (valley) conditions.push(eq(accommodations.valley, valley));
+
+  const rows = await db
+    .select({
+      slug: accommodations.slug,
+      name: accommodations.name,
+      type: accommodations.type,
+      shortDescription: accommodations.shortDescription,
+      city: accommodations.city,
+      subRegion: subRegions.name,
+      subRegionSlug: subRegions.slug,
+      valley: accommodations.valley,
+      priceTier: accommodations.priceTier,
+      heroImageUrl: accommodations.heroImageUrl,
+      thumbnailUrl: accommodations.thumbnailUrl,
+      bestFor: accommodations.bestFor,
+      bestForTags: accommodations.bestForTags,
+      googleRating: accommodations.googleRating,
+      googleReviewCount: accommodations.googleReviewCount,
+      dogFriendly: accommodations.dogFriendly,
+      dogFriendlyNote: accommodations.dogFriendlyNote,
+      kidFriendly: accommodations.kidFriendly,
+      kidFriendlyNote: accommodations.kidFriendlyNote,
+      adultsOnly: accommodations.adultsOnly,
+      bookingUrl: accommodations.bookingUrl,
+      websiteUrl: accommodations.websiteUrl,
+      lat: accommodations.lat,
+      lng: accommodations.lng,
+    })
+    .from(accommodations)
+    .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))
+    .where(and(...conditions))
+    .orderBy(sql`${accommodationRankingScore} DESC`);
+
+  return rows;
+}
+
+/** Hero image auto-pick for accommodation category pages. */
+export function getAccommodationHeroImage(
+  accs: { heroImageUrl: string | null; name: string; slug: string }[]
+): { url: string; name: string; slug: string } | null {
+  for (const a of accs) {
+    if (a.heroImageUrl && a.heroImageUrl.trim() !== "") {
+      return { url: a.heroImageUrl, name: a.name, slug: a.slug };
+    }
+  }
+  return null;
+}
 
 // Re-exported from the pure helper module so existing callers of
 // `category-data` keep working without pulling DB imports into client code.

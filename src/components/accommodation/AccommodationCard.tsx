@@ -101,9 +101,30 @@ export function AccommodationCard({
         </p>
         {/* Amenity row — fixed height, single line, hides overflow so cards align */}
         <div className="mt-3 flex items-center gap-1.5 h-5 overflow-hidden">
-          {a.dogFriendly && (
+          {a.dogFriendly && !a.dogFriendlyNote && (
             <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 dark:bg-gold-900 dark:text-gold-300">
               Dog OK
+            </span>
+          )}
+          {a.dogFriendly && a.dogFriendlyNote && (
+            <span
+              className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+              title={a.dogFriendlyNote}
+            >
+              Dog OK*
+            </span>
+          )}
+          {a.kidFriendly && !a.kidFriendlyNote && !a.adultsOnly && (
+            <span className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+              Kid Friendly
+            </span>
+          )}
+          {a.kidFriendly && a.kidFriendlyNote && !a.adultsOnly && (
+            <span
+              className="shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+              title={a.kidFriendlyNote}
+            >
+              Kid Friendly*
             </span>
           )}
           {a.adultsOnly && (

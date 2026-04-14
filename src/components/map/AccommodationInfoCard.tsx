@@ -1,4 +1,4 @@
-import { Star, Dog, UserX } from "lucide-react";
+import { Star, Dog, UserX, Baby } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
@@ -17,7 +17,9 @@ interface AccommodationInfoCardProps {
   heroImageUrl: string | null;
   shortDescription: string | null;
   dogFriendly: boolean | null;
+  dogFriendlyNote: string | null;
   kidFriendly: boolean | null;
+  kidFriendlyNote: string | null;
   adultsOnly: boolean | null;
 }
 
@@ -110,11 +112,32 @@ export function AccommodationInfoCard({
         </div>
 
         {/* Amenity badges */}
-        {(accommodation.dogFriendly || accommodation.adultsOnly) && (
+        {(accommodation.dogFriendly || accommodation.kidFriendly || accommodation.adultsOnly) && (
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {accommodation.dogFriendly && (
+            {accommodation.dogFriendly && !accommodation.dogFriendlyNote && (
               <span className="inline-flex items-center gap-1 rounded-full bg-[var(--muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
                 <Dog className="h-3 w-3" /> Dog OK
+              </span>
+            )}
+            {accommodation.dogFriendly && accommodation.dogFriendlyNote && (
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+                title={accommodation.dogFriendlyNote}
+              >
+                <Dog className="h-3 w-3" /> Dog OK*
+              </span>
+            )}
+            {accommodation.kidFriendly && !accommodation.kidFriendlyNote && !accommodation.adultsOnly && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[var(--muted)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
+                <Baby className="h-3 w-3" /> Kid Friendly
+              </span>
+            )}
+            {accommodation.kidFriendly && accommodation.kidFriendlyNote && !accommodation.adultsOnly && (
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+                title={accommodation.kidFriendlyNote}
+              >
+                <Baby className="h-3 w-3" /> Kid Friendly*
               </span>
             )}
             {accommodation.adultsOnly && (

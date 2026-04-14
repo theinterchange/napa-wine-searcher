@@ -32,7 +32,9 @@ interface AccommodationData {
   heroImageUrl: string | null;
   shortDescription: string | null;
   dogFriendly: boolean | null;
+  dogFriendlyNote: string | null;
   kidFriendly: boolean | null;
+  kidFriendlyNote: string | null;
   adultsOnly: boolean | null;
 }
 
@@ -128,13 +130,19 @@ export function MapBottomCard({
               <span className="text-[11px] text-[var(--muted-foreground)]">{price}</span>
             )}
             {isHotel && accommodation!.dogFriendly && (
-              <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--muted-foreground)]">
-                <Dog className="h-2.5 w-2.5" /> Dog OK
+              <span
+                className="inline-flex items-center gap-0.5 text-[10px] text-[var(--muted-foreground)]"
+                title={accommodation!.dogFriendlyNote || undefined}
+              >
+                <Dog className="h-2.5 w-2.5" /> Dog OK{accommodation!.dogFriendlyNote ? "*" : ""}
               </span>
             )}
-            {isHotel && accommodation!.kidFriendly && (
-              <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--muted-foreground)]">
-                <Baby className="h-2.5 w-2.5" /> Kids
+            {isHotel && accommodation!.kidFriendly && !accommodation!.adultsOnly && (
+              <span
+                className="inline-flex items-center gap-0.5 text-[10px] text-[var(--muted-foreground)]"
+                title={accommodation!.kidFriendlyNote || undefined}
+              >
+                <Baby className="h-2.5 w-2.5" /> Kids{accommodation!.kidFriendlyNote ? "*" : ""}
               </span>
             )}
             {isHotel && accommodation!.adultsOnly && (

@@ -746,7 +746,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               </div>
 
               {/* Amenities & Policies — null = unknown (omit), true/false = stated fact */}
-              {(accommodation.dogFriendly != null || accommodation.adultsOnly === true || amenities.length > 0) && (
+              {(accommodation.dogFriendly != null || accommodation.adultsOnly === true || accommodation.kidFriendlyNote || amenities.length > 0) && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
                   <h3 className="font-heading text-lg font-semibold">
                     Amenities & Policies
@@ -783,18 +783,40 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                       );
                     })()}
 
-                    {/* Kids — only show "Adults Only" when explicitly true. Kid-friendly is implied by default for hotels */}
+                    {/* Kids — show "Adults Only" when explicit, or "Kid Friendly*" with note when age/supervision caveat exists */}
                     {accommodation.adultsOnly === true && (() => {
                       const addUtm = (url: string, campaign: string) => { try { const u = new URL(url); [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k)); u.searchParams.set("utm_source", "napasonomaguide"); u.searchParams.set("utm_medium", "referral"); u.searchParams.set("utm_campaign", campaign); return u.toString(); } catch { return url; } };
                       const kidHref = accommodation.kidFriendlySource ? addUtm(accommodation.kidFriendlySource, "adults-only") : null;
                       return (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Baby className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
-                          {kidHref ? (
-                            <a href={kidHref} target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-[var(--foreground)]">Adults Only</a>
-                          ) : (
-                            <span className="font-medium">Adults Only</span>
-                          )}
+                        <div className="flex items-start gap-2 text-sm">
+                          <Baby className="h-4 w-4 mt-0.5 shrink-0 text-[var(--muted-foreground)]" />
+                          <div>
+                            {kidHref ? (
+                              <a href={kidHref} target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-[var(--foreground)]">Adults Only</a>
+                            ) : (
+                              <span className="font-medium">Adults Only</span>
+                            )}
+                            {accommodation.kidFriendlyNote && (
+                              <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{accommodation.kidFriendlyNote}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {accommodation.adultsOnly !== true && accommodation.kidFriendly === true && accommodation.kidFriendlyNote && (() => {
+                      const addUtm = (url: string, campaign: string) => { try { const u = new URL(url); [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k)); u.searchParams.set("utm_source", "napasonomaguide"); u.searchParams.set("utm_medium", "referral"); u.searchParams.set("utm_campaign", campaign); return u.toString(); } catch { return url; } };
+                      const kidHref = accommodation.kidFriendlySource ? addUtm(accommodation.kidFriendlySource, "kid-policy") : null;
+                      return (
+                        <div className="flex items-start gap-2 text-sm">
+                          <Baby className="h-4 w-4 mt-0.5 shrink-0 text-[var(--muted-foreground)]" />
+                          <div>
+                            {kidHref ? (
+                              <a href={kidHref} target="_blank" rel="noopener noreferrer" className="font-medium underline hover:text-[var(--foreground)]">Kid Friendly*</a>
+                            ) : (
+                              <span className="font-medium">Kid Friendly*</span>
+                            )}
+                            <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{accommodation.kidFriendlyNote}</p>
+                          </div>
                         </div>
                       );
                     })()}
@@ -828,18 +850,6 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Disclaimer */}
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-4">
-        <p className="text-xs text-[var(--muted-foreground)] italic">
-          Information on this page is sourced from public data and the
-          property&apos;s website. Room types, dining options, and amenities may
-          change — contact {accommodation.name} directly to confirm current
-          offerings and availability. This page may contain affiliate links. If
-          you book through our links, we may earn a small commission at no
-          extra cost to you.
-        </p>
-      </div>
-
       {/* FAQ Section */}
       {faqs.length > 0 && (
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-10">
@@ -850,6 +860,15 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
           <FAQSchema faqs={faqs} />
         </div>
       )}
+
+      {/* Affiliate disclosure — placed after FAQ, away from the booking CTA.
+          Data-sourcing disclaimer lives in the global footer. */}
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-10">
+        <p className="text-xs text-[var(--muted-foreground)] italic">
+          This page may contain affiliate links. If you book through our links,
+          we may earn a small commission at no extra cost to you.
+        </p>
+      </div>
 
       {/* Structured data */}
       <script

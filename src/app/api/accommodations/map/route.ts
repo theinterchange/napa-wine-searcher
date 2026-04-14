@@ -31,7 +31,9 @@ export async function GET(request: NextRequest) {
         heroImageUrl: accommodations.heroImageUrl,
         shortDescription: accommodations.shortDescription,
         dogFriendly: accommodations.dogFriendly,
+        dogFriendlyNote: accommodations.dogFriendlyNote,
         kidFriendly: accommodations.kidFriendly,
+        kidFriendlyNote: accommodations.kidFriendlyNote,
         adultsOnly: accommodations.adultsOnly,
       })
       .from(accommodations)
