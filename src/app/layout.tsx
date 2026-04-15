@@ -63,6 +63,12 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       )}
+      <Script
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "97c024ab0f6248e5a53e4f3fb25e8286"}'
+        strategy="afterInteractive"
+      />
+
       <body className={`${playfair.variable} ${inter.variable} antialiased`}>
         <script
           type="application/ld+json"
