@@ -13,12 +13,12 @@ Michael Chen — PM at DoorDash, building passive income projects with Claude Co
   - Stay22 hotel booking widget: ❌ not applied yet
   - Google Adsense: ❌ not applied yet
   - Click tracking: ✅ live (outbound_clicks table)
-  - Email list: 1 subscriber (verified 2026-04-05 from local db; "128" was previously stated but unverifiable)
+  - Email list: 0 real subscribers (3 entries in db as of 2026-04-13, all Michael's test signups)
   - Affiliate link builders: ✅ coded in `/src/lib/affiliate.ts`
-- Analytics: ✅ Vercel Web Analytics + Cloudflare Web Analytics live as of 2026-04-05. GSC active. Speed Insights declined (paid).
+- Analytics: ✅ Vercel Web Analytics live since 2026-04-05. Cloudflare Web Analytics beacon installed 2026-04-14 (ships on next deploy). GSC active. Speed Insights declined (paid).
 
 ## Immediate Priorities (Week 1)
-1. ~~Enable analytics~~ ✅ done (Vercel Web Analytics + Cloudflare Web Analytics live 2026-04-05). Next: run the weekly stats review ritual starting 2026-04-12.
+1. ~~Enable analytics~~ ✅ Vercel live 2026-04-05; Cloudflare beacon installed 2026-04-14 (ships on next deploy). Weekly stats ritual running.
 2. **Submit sitemap to Google Search Console.** 15 min.
 3. **Michael applies for Wine.com affiliate** (manual, 15 min).
 
@@ -27,7 +27,7 @@ Michael Chen — PM at DoorDash, building passive income projects with Claude Co
 People are planning Napa trips RIGHT NOW. April is peak booking month for May-June travel. The 642 pages need to be indexed and seasonal content needs to be live before May.
 
 **Week 1 (now): Code fixes in Claude Code**
-- Fix H1 tag on homepage
+- ~~Fix H1 tag on homepage~~ ✅ done 2026-04-13 (live at `src/components/home/HeroFeatured.tsx:99`)
 - Verify SSR on all page types
 - Add Winery + Accommodation structured data (JSON-LD)
 - Improve internal linking (winery → guides → accommodations)
@@ -47,7 +47,7 @@ These target year-specific keywords with LOW competition. Each ~30 min with Clau
 - Cross-link accommodations from winery pages
 
 **Week 4: Email + backlinks**
-- "Peak Season Preview" email to subscriber list (currently ~1 — grow first)
+- "Peak Season Preview" email to subscriber list (currently 0 real — grow first)
 - Submit to wine/travel directories (5-10 backlinks)
 - **Outreach to 5-10 wineries: "Link to your listing on our site?"** ← highest-value backlinks
 - Apply for Adsense
@@ -63,25 +63,16 @@ These target year-specific keywords with LOW competition. Each ~30 min with Clau
 
 **Updated 2026-04-05 from GSC CSV export.** The earlier claim of "only 7 of 642 pages indexed" was wrong or stale. GSC Performance → Pages shows **55+ unique URLs with impressions** over 28 days, including individual winery pages, guides, blog posts, region pages, accommodations, and the map. Google has crawled far more than 7 pages.
 
-**The real problem is not indexing — it's click-through rate.** Multiple pages rank on page 1 of Google with 0% CTR:
-- `/blog/first-time-napa-valley-guide` — position 8.6, 143 impressions, **0 clicks** ← snippet fixed 2026-04-05
-- "napa valley top wineries 2026" — position 9.7, 121 impressions, 0 clicks
-- "best wineries napa valley reservations 2026" — position 7.6, 33 impressions, 0 clicks
-- Combined page-1 impressions for 2026-specific queries: ~285 with 0 clicks
+**The real problem is not indexing — it's click-through rate.** Multiple pages rank on page 1 of Google with ~0% CTR, while the biggest impression drivers sit at positions 30–50 where clicks are rare. Site-wide 28-day CTR hovers around 0.25%.
 
-**Top impression drivers (not what you'd expect):**
-- `/sonoma-county` — 1,343 impressions (but position 47 — too deep to click)
-- `/napa-valley` — 1,036 impressions (position 31 — still too deep)
-- `/blog/best-time-to-visit-wine-country` — 627 impressions (position 11.5 — just off page 1) ← snippet fixed 2026-04-05
-- `/guides/best-merlot-napa-valley` — 141 impressions, **6 clicks, 4.26% CTR** ← best performer, leave it alone
+**For current page-level and query-level numbers, see `weekly-stats-log.md`.** Don't duplicate metric data between CLAUDE.md and the log — the log is always current, CLAUDE.md goes stale within a week.
 
 **SEO actions still needed:**
-1. **Add H1 tag to homepage** — currently missing, uses h2 only. Critical SEO signal.
-2. **Verify SSR** — test with `curl -s https://www.napasonomaguide.com/wineries/silver-oak | grep -i "silver oak"`.
-3. **Add LocalBusiness/Winery structured data (JSON-LD)** to individual winery pages — enables rich search results.
-4. **Improve internal linking** from high-traffic pages (homepage, blog posts, /plan-trip) to individual winery pages — 185 of 186 wineries have never been clicked.
-5. **Build 5-10 backlinks** — wine directories, Napa tourism sites, winery outreach.
-6. **Monitor CTR on fixed snippets** — blog post metadata was improved on 2026-04-05 (see weekly stats ritual). Expect 2–4 weeks for Google to recrawl and reflect changes in GSC data.
+1. **Verify SSR** — test with `curl -s https://www.napasonomaguide.com/wineries/silver-oak | grep -i "silver oak"`.
+2. **Add LocalBusiness/Winery structured data (JSON-LD)** to individual winery pages — enables rich search results.
+3. **Improve internal linking** from high-traffic pages (homepage, blog posts, /plan-trip) to individual winery pages — 185 of 186 wineries have never been clicked.
+4. **Build 5-10 backlinks** — wine directories, Napa tourism sites, winery outreach.
+5. **Monitor CTR on fixed snippets** — blog post metadata was improved on 2026-04-05 (see weekly stats ritual). Expect 2–4 weeks for Google to recrawl and reflect changes in GSC data.
 
 ## Revenue Target (honest)
 - $30-100/month by September 2026 (Adsense + early affiliate clicks if approved)
@@ -92,7 +83,7 @@ These target year-specific keywords with LOW competition. Each ~30 min with Clau
 1. **Analytics only just turned on (2026-04-05).** No historical baseline yet. First meaningful traffic read isn't until ~2026-04-12 after one full week of Vercel + Cloudflare data. Until then, all strategy decisions are directional, not data-driven. If the first month shows <1K visits, the affiliate strategy needs rethinking.
 2. **Wine affiliate commissions are low.** 5-8% on $60-80 orders = $3-6/sale. Need 80+ sales/month for $500/month. That requires massive, sustained traffic.
 3. **Seasonal revenue.** Napa tourism peaks May-Oct. Plan for $0-low revenue Nov-March. Don't make commitments based on peak-season numbers.
-4. **Email list has ~1 subscriber (as of 2026-04-05).** Email is not a monetization channel yet — it's a growth target. Prioritize list building (better signup CTA, lead magnets) before investing in email campaigns.
+4. **Email list has 0 real subscribers (as of 2026-04-13).** The 3 entries in the db are all Michael's test signups. Email is not a monetization channel yet — it's a growth target. Prioritize list building (better signup CTA, lead magnets) before investing in email campaigns.
 5. **Adsense is realistic but small.** At $1-5 per 1,000 pageviews, expect $10-50/month if traffic is 10K pageviews/month. Supplemental, not transformative.
 6. **Don't spend money on paid traffic here.** Wine country keywords are expensive. Rely on organic SEO from the 225+ content pages. Focus ad budget on Encore instead.
 
@@ -108,7 +99,7 @@ Potential: 5-15 wineries at $75-150/month = $375-2,250/month. This is likely big
 3. Week 4 winery outreach for backlinks = relationship building. These become warm leads for sponsorship in September.
 
 **The pitch (September 2026):**
-"Hi [Winery], since we connected in April, your listing on Napa Sonoma Guide has received [X] views from wine country visitors. We're now offering Featured Listings — priority placement in search, enhanced photos, inclusion in our weekly email to [X] subscribers (as of 2026-04-05: ~1 subscriber — do not pitch email inclusion until list reaches 500+), and a 'Featured Winery' badge. $100/month, cancel anytime. Want to try it for the fall season?"
+"Hi [Winery], since we connected in April, your listing on Napa Sonoma Guide has received [X] views from wine country visitors. We're now offering Featured Listings — priority placement in search, enhanced photos, inclusion in our weekly email to [X] subscribers (as of 2026-04-13: 0 real subscribers — do not pitch email inclusion until list reaches 500+), and a 'Featured Winery' badge. $100/month, cancel anytime. Want to try it for the fall season?"
 
 **Pricing tiers to build:**
 - Free: current listing (name, hours, basic info, 1-2 photos)
