@@ -153,11 +153,6 @@ export function AccommodationHero({
               ? `${accommodation.starRating}-star ${(typeLabels[accommodation.type] || accommodation.type).toLowerCase()}`
               : typeLabels[accommodation.type] || accommodation.type}
           </span>
-          {accommodation.priceTier && (
-            <span className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium tracking-wider">
-              {"$".repeat(accommodation.priceTier)}
-            </span>
-          )}
           {tags.slice(0, 2).map((tag) => (
             <span
               key={tag}

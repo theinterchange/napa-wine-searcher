@@ -24,6 +24,7 @@ interface AccommodationData {
   city: string | null;
   type: string;
   priceTier: number | null;
+  starRating: number | null;
   googleRating: number | null;
   bookingUrl: string | null;
   websiteUrl: string | null;
@@ -64,10 +65,11 @@ export function MapBottomCard({
     : [winery!.subRegion, winery!.city].filter(Boolean).join(" · ");
   const rating = isHotel ? accommodation!.googleRating : winery!.aggregateRating;
   const price = isHotel
-    ? accommodation!.priceTier
-      ? "$".repeat(accommodation!.priceTier)
-      : null
+    ? null
     : "$".repeat(winery!.priceLevel || 2);
+  const starClass = isHotel && accommodation!.starRating
+    ? `${accommodation!.starRating}-star ${typeLabels[accommodation!.type]?.toLowerCase() || accommodation!.type}`
+    : null;
   const detailHref = isHotel
     ? `/where-to-stay/${accommodation!.slug}`
     : `/wineries/${winery!.slug}`;
@@ -128,6 +130,9 @@ export function MapBottomCard({
             )}
             {price && (
               <span className="text-[11px] text-[var(--muted-foreground)]">{price}</span>
+            )}
+            {starClass && (
+              <span className="text-[11px] text-[var(--muted-foreground)]">{starClass}</span>
             )}
             {isHotel && accommodation!.dogFriendly && (
               <span

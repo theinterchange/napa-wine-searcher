@@ -65,7 +65,7 @@ export function AccommodationModule({
                 </Link>
                 <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--muted-foreground)]">
                   {a.googleRating != null && <span>★ {a.googleRating.toFixed(1)}</span>}
-                  {a.priceTier != null && <span>{"$".repeat(a.priceTier)}</span>}
+                  {a.starRating != null && <span>{a.starRating}-star</span>}
                   {a.closestDistanceMiles != null && (
                     <span>{a.closestDistanceMiles.toFixed(1)} mi from stops</span>
                   )}

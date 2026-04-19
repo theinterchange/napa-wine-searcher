@@ -33,6 +33,7 @@ interface AccommodationMapData {
   city: string | null;
   type: string;
   priceTier: number | null;
+  starRating: number | null;
   googleRating: number | null;
   bookingUrl: string | null;
   websiteUrl: string | null;
@@ -316,7 +317,7 @@ export function WineryMap() {
                     className="flex h-7 w-7 items-center justify-center rounded-md border-2 border-white shadow-md text-white text-[10px] font-bold cursor-pointer hover:scale-110 transition-transform"
                     style={{ backgroundColor: HOTEL_PIN_COLOR }}
                   >
-                    {"$".repeat(a.priceTier || 2)}
+                    {a.starRating ? `${a.starRating}★` : "🛏"}
                   </div>
                 </AdvancedMarker>
               ))}

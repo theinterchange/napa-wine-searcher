@@ -9,6 +9,7 @@ interface AccommodationInfoCardProps {
   city: string | null;
   type: string;
   priceTier: number | null;
+  starRating: number | null;
   googleRating: number | null;
   bookingUrl: string | null;
   websiteUrl: string | null;
@@ -38,7 +39,9 @@ export function AccommodationInfoCard({
   accommodation: AccommodationInfoCardProps;
   onClose: () => void;
 }) {
-  const typeLabel = typeLabels[accommodation.type] || accommodation.type;
+  const typeLabel = accommodation.starRating
+    ? `${accommodation.starRating}-star ${(typeLabels[accommodation.type] || accommodation.type).toLowerCase()}`
+    : typeLabels[accommodation.type] || accommodation.type;
   const locationParts = [typeLabel, accommodation.city].filter(Boolean);
 
   return (
@@ -103,11 +106,6 @@ export function AccommodationInfoCard({
             </div>
           ) : (
             <div />
-          )}
-          {accommodation.priceTier && (
-            <span className="text-xs text-[var(--muted-foreground)]">
-              {"$".repeat(accommodation.priceTier)}
-            </span>
           )}
         </div>
 

@@ -153,11 +153,6 @@ export function AccommodationCard({
               · {a.starRating}-star {typeLabels[a.type]?.toLowerCase() || a.type}
             </span>
           )}
-          {a.priceTier && (
-            <span className="text-xs text-[var(--muted-foreground)] tracking-wider">
-              · {"$".repeat(a.priceTier)}
-            </span>
-          )}
           {a.distanceMiles != null && (
             <span className="text-xs text-[var(--muted-foreground)]">
               · {a.distanceMiles < 1

@@ -70,10 +70,6 @@ export async function getAccommodationsForTripStops(
 
   if (eligibleIds.length === 0) return [];
 
-  // Defensive SELECT: avoids columns from pending migrations (starRating from
-  // 0012, new itinerary cols from 0013) so the query runs even before those
-  // migrations are applied locally. Star rating can be re-added once local is
-  // caught up.
   const baseFields = {
     id: accommodations.id,
     slug: accommodations.slug,
@@ -106,7 +102,6 @@ export async function getAccommodationsForTripStops(
 
   const withDistance: TripNearbyAccommodation[] = accommodationRows.map((row) => ({
     ...row,
-    starRating: null,
     closestDistanceMiles: closestByAccommodation.get(row.id) ?? maxMiles,
   }));
 
