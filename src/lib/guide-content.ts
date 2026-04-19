@@ -67,12 +67,12 @@ const AMENITY_META: Record<string, (region: string) => string> = {
   dogFriendly: (r) => `Every confirmed dog-friendly winery in ${r} — outdoor patios, leash policies, and tips for tasting with your pup.`,
   kidFriendly: (r) => `Family-friendly wineries in ${r} with lawn games, grape juice, and outdoor spaces. Plan a wine country day the whole family enjoys.`,
   picnicFriendly: (r) => `The best picnic-friendly wineries in ${r}. Pack a lunch, spread a blanket, and sip wine with vineyard views.`,
-  walkIn: (r) => `No reservation needed. Walk-in friendly wineries in ${r} for spontaneous wine country stops — sorted by rating.`,
+  walkIn: (r) => `The best walk-in wineries in ${r} — no reservation required, with tasting fees, hours, and what to expect at each stop.`,
 };
 
 const PRICE_META: Record<string, (region: string) => string> = {
-  free: (r) => `Free wine tastings in ${r} — they exist. Complimentary pours, member perks, and fee-waiver tips.`,
-  budget: (r) => `Wine tasting under $40 in ${r}. Affordable wineries that don't compromise on quality — sorted by rating.`,
+  free: (r) => `The best free wine tastings in ${r} — complimentary pours, fee-waiver tricks, and wineries that comp tastings with a bottle purchase.`,
+  budget: (r) => `The best cheap wine tastings in ${r} — wineries under $40 with tasting fees, hours, and tips for waiving the fee with purchase.`,
   mid: (r) => `The best mid-range tastings ($40–80) in ${r}. Exceptional wines and intimate experiences at a sweet-spot price.`,
   luxury: (r) => `Worth-every-penny luxury tastings in ${r} — $100+ for private tours, rare wines, and unforgettable experiences.`,
 };
@@ -341,7 +341,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "amenity",
-        title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
+        title: `${amenity.label} in ${region}`,
         h1: `${amenity.label} in ${region}`,
         metaDescription: AMENITY_META[amenity.key]?.(region) || `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
@@ -358,7 +358,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "amenity",
-        title: `${amenity.label} in ${region} | Napa Sonoma Guide`,
+        title: `${amenity.label} in ${region}`,
         h1: `${amenity.label} in ${region}`,
         metaDescription: AMENITY_META[amenity.key]?.(region) || `Find ${amenity.label.toLowerCase()} in ${region}. Browse verified listings with ratings, prices, and amenities.`,
         intro: AMENITY_INTROS[amenity.key]?.(region) || [],
@@ -379,7 +379,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "varietal",
-        title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
+        title: `Best ${varietal} in ${region}`,
         h1: `Best ${varietal} in ${region}`,
         metaDescription: `The best ${varietal} in ${region} — top-rated producers with tasting fees, reservation info, and what makes each worth visiting.`,
         intro: getVarietalIntro(varietal, region),
@@ -410,7 +410,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "varietal",
-        title: `Best ${varietal} in ${region} | Napa Sonoma Guide`,
+        title: `Best ${varietal} in ${region}`,
         h1: `Best ${varietal} in ${region}`,
         metaDescription: `The best ${varietal} in ${region} — top-rated producers with tasting fees, reservation info, and what makes each worth visiting.`,
         intro: getVarietalIntro(varietal, region),
@@ -423,9 +423,9 @@ export function getAllGuides(): GuideDefinition[] {
   }
 
   // ---- Type 3: Price-Based ----
-  const priceTiers: { key: "free" | "budget" | "luxury"; slugPart: string; label: string }[] = [
+  const priceTiers: { key: "free" | "budget" | "luxury"; slugPart: string; label: string; seoLabel?: string }[] = [
     { key: "free", slugPart: "free-wine-tastings", label: "Free Wine Tastings" },
-    { key: "budget", slugPart: "cheap-wine-tastings", label: "Affordable Wine Tastings (Under $40)" },
+    { key: "budget", slugPart: "cheap-wine-tastings", label: "Affordable Wine Tastings (Under $40)", seoLabel: "Cheap Wine Tastings Under $40" },
     { key: "luxury", slugPart: "luxury-wine-tasting-experiences", label: "Luxury Wine Tasting Experiences" },
   ];
 
@@ -436,7 +436,7 @@ export function getAllGuides(): GuideDefinition[] {
       guides.push({
         slug,
         type: "price",
-        title: `${tier.label} in ${region} | Napa Sonoma Guide`,
+        title: `${tier.seoLabel ?? tier.label} in ${region}`,
         h1: `${tier.label} in ${region}`,
         metaDescription: PRICE_META[tier.key]?.(region) || `Find ${tier.label.toLowerCase()} in ${region}. Browse wineries with pricing, ratings, and tasting details.`,
         intro: PRICE_INTROS[tier.key]?.(region) || [],
@@ -458,7 +458,7 @@ export function getAllGuides(): GuideDefinition[] {
     guides.push({
       slug: `wines-under-50-${valley.slugPart}`,
       type: "price",
-      title: `Wines Under $50 in ${region} | Napa Sonoma Guide`,
+      title: `Wines Under $50 in ${region}`,
       h1: `Wines Under $50 in ${region}`,
       metaDescription: `Find great wines under $50 from ${region} wineries. Browse affordable bottles with ratings and tasting notes.`,
       intro: [
