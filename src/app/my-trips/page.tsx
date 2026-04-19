@@ -86,7 +86,7 @@ export default async function MyTripsPage() {
           </h2>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Use the{" "}
-            <Link href="/plan-trip" className="text-[var(--foreground)] underline">
+            <Link href="/itineraries" className="text-[var(--foreground)] underline">
               trip planner
             </Link>{" "}
             to create a route, then save it here.

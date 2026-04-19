@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, primaryKey, index } from "drizzle-orm/sqlite-core";
 import { users } from "./auth";
 import { wineries } from "./wineries";
 import { wines } from "./wines";
@@ -58,6 +58,10 @@ export const savedTrips = sqliteTable("saved_trips", {
   isPublic: integer("is_public", { mode: "boolean" }).default(false),
   theme: text("theme"),
   valley: text("valley"),
+  forkedFromRouteId: integer("forked_from_route_id"),
+  originLat: real("origin_lat"),
+  originLng: real("origin_lng"),
+  originLabel: text("origin_label"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

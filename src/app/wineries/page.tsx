@@ -295,11 +295,11 @@ export default async function WineriesPage({
 
       <div className="mt-12 text-center">
         <Link
-          href="/day-trips"
+          href="/itineraries"
           className="inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)] hover:underline"
         >
           <Route className="h-4 w-4" />
-          Explore Day Trip Routes
+          Explore Itineraries
         </Link>
       </div>
     </div>

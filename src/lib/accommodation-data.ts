@@ -18,6 +18,7 @@ export interface AccommodationCard {
   subRegionSlug: string | null;
   valley: string;
   priceTier: number | null;
+  starRating: number | null;
   heroImageUrl: string | null;
   thumbnailUrl: string | null;
   bestFor: string | null;
@@ -108,6 +109,7 @@ const cardFields = {
   subRegionSlug: subRegions.slug,
   valley: accommodations.valley,
   priceTier: accommodations.priceTier,
+  starRating: accommodations.starRating,
   heroImageUrl: accommodations.heroImageUrl,
   thumbnailUrl: accommodations.thumbnailUrl,
   bestFor: accommodations.bestFor,
@@ -174,6 +176,7 @@ export async function getAccommodationBySlug(
       bookingUrl: accommodations.bookingUrl,
       bookingProvider: accommodations.bookingProvider,
       priceTier: accommodations.priceTier,
+      starRating: accommodations.starRating,
       priceRangeMin: accommodations.priceRangeMin,
       priceRangeMax: accommodations.priceRangeMax,
       amenitiesJson: accommodations.amenitiesJson,
@@ -299,4 +302,64 @@ export async function getAccommodationsNearWinery(
     .where(eq(accommodationNearbyWineries.wineryId, wineryId))
     .orderBy(asc(accommodationNearbyWineries.distanceMiles))
     .limit(limit);
+}
+
+/**
+ * Rank candidate accommodations by similarity to a reference property.
+ * Pure function — operates on already-fetched cards, no DB hit.
+ *
+ * Scoring philosophy: price tier and amenities trump pure geography. A luxury
+ * shopper should see luxury peers elsewhere before mid-tier peers next door;
+ * a dog-friendly booking should surface other dog-welcome stays first.
+ *
+ * Signals:
+ *   +5  same subRegion (town-level geographic match)
+ *   +2  same type (hotel vs. B&B vs. inn)
+ *   +6  starRating exact match (quality tier — replaces priceTier)
+ *   +2  starRating within ±1
+ *   -3  starRating diff of 2 (penalty — different quality tier)
+ *   -5  starRating diff of 3+ (penalty — very different quality tier)
+ *   +4  both dogFriendly
+ *   +4  both kidFriendly
+ *   +5  both adultsOnly (strong product differentiator)
+ *
+ * Candidates are filtered to same valley only (cross-valley isn't "related").
+ * Ties broken by the order of the input array — pass already ranking-sorted.
+ */
+export function getRelatedAccommodations(
+  reference: Pick<
+    AccommodationCard,
+    | "slug"
+    | "valley"
+    | "subRegionSlug"
+    | "type"
+    | "starRating"
+    | "dogFriendly"
+    | "kidFriendly"
+    | "adultsOnly"
+  >,
+  candidates: AccommodationCard[],
+  limit = 6
+): AccommodationCard[] {
+  const scored = candidates
+    .filter((c) => c.slug !== reference.slug && c.valley === reference.valley)
+    .map((c, idx) => {
+      let score = 0;
+      if (c.subRegionSlug && c.subRegionSlug === reference.subRegionSlug) score += 5;
+      if (c.type === reference.type) score += 2;
+      if (c.starRating != null && reference.starRating != null) {
+        const diff = Math.abs(c.starRating - reference.starRating);
+        if (diff === 0) score += 6;
+        else if (diff === 1) score += 2;
+        else if (diff === 2) score -= 3;
+        else if (diff >= 3) score -= 5;
+      }
+      if (c.dogFriendly === true && reference.dogFriendly === true) score += 4;
+      if (c.kidFriendly === true && reference.kidFriendly === true) score += 4;
+      if (c.adultsOnly === true && reference.adultsOnly === true) score += 5;
+      return { c, score, idx };
+    })
+    .sort((a, b) => b.score - a.score || a.idx - b.idx);
+
+  return scored.slice(0, limit).map((s) => s.c);
 }

@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         heroImageUrl: accommodations.heroImageUrl,
         thumbnailUrl: accommodations.thumbnailUrl,
         priceTier: accommodations.priceTier,
+        starRating: accommodations.starRating,
         googleRating: accommodations.googleRating,
         city: accommodations.city,
         lat: accommodations.lat,

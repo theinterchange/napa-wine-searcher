@@ -23,7 +23,7 @@ import { getAllPosts } from "@/lib/blog";
 import { getGuideBySlug } from "@/lib/guide-content";
 import { SUBREGION_CONTENT } from "@/lib/region-content";
 
-export const revalidate = 3600; // ISR: regenerate every hour
+export const revalidate = 86400; // ISR: regenerate daily
 
 export const metadata: Metadata = {
   title: "Top Napa Valley & Sonoma County Wineries | Napa Sonoma Guide",
@@ -366,8 +366,8 @@ export default async function HomePage() {
               <Link href="/where-to-stay" className="text-[var(--foreground)] hover:underline">
                 All hotels &rarr;
               </Link>
-              <Link href="/day-trips" className="text-[var(--foreground)] hover:underline">
-                Day trips &rarr;
+              <Link href="/itineraries" className="text-[var(--foreground)] hover:underline">
+                Itineraries &rarr;
               </Link>
             </div>
           </div>
@@ -415,7 +415,7 @@ export default async function HomePage() {
               </div>
             </Link>
             <Link
-              href="/plan-trip"
+              href="/itineraries"
               className="group flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:shadow-md hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
             >
               <Route className="h-6 w-6 text-burgundy-600 shrink-0" />

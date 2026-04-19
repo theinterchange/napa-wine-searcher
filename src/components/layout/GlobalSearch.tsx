@@ -141,9 +141,9 @@ function flattenResults(data: SearchResults): ResultItem[] {
       id: `daytrip-${dt.slug}`,
       label: dt.title,
       sublabel: dt.theme ?? undefined,
-      href: `/day-trips/${dt.slug}`,
+      href: `/itineraries/${dt.slug}`,
       icon: Route,
-      category: "Day Trips",
+      category: "Itineraries",
     });
   }
 
@@ -180,9 +180,9 @@ const SUGGESTED_LINKS: ResultItem[] = [
   { id: "s-stay", label: "Where to Stay", href: "/where-to-stay", icon: BedDouble, category: "Suggestions" },
   { id: "s-napa", label: "Napa Valley", href: "/napa-valley", icon: Map, category: "Suggestions" },
   { id: "s-sonoma", label: "Sonoma County", href: "/sonoma-county", icon: Map, category: "Suggestions" },
-  { id: "s-plan", label: "Plan a Trip", href: "/plan-trip", icon: Route, category: "Suggestions" },
+  { id: "s-plan", label: "Plan a Trip", href: "/itineraries/build", icon: Route, category: "Suggestions" },
   { id: "s-toprated", label: "Top Rated Wineries", href: "/wineries?rating=4.5", icon: Wine, category: "Suggestions" },
-  { id: "s-daytrips", label: "Day Trip Routes", href: "/day-trips", icon: Route, category: "Suggestions" },
+  { id: "s-daytrips", label: "Curated Itineraries", href: "/itineraries", icon: Route, category: "Suggestions" },
 ];
 
 export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {

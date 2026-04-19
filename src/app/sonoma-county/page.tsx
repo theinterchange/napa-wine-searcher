@@ -291,13 +291,13 @@ export default async function SonomaCountyPage() {
           </div>
           <div className="mt-6 flex flex-wrap gap-4">
             <Link
-              href="/day-trips"
+              href="/itineraries"
               className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
             >
-              Browse Day Trips
+              Browse Itineraries
             </Link>
             <Link
-              href="/plan-trip?valley=sonoma"
+              href="/itineraries/build?valley=sonoma"
               className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
             >
               Build Custom Route

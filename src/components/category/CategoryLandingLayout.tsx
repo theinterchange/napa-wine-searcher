@@ -258,6 +258,7 @@ export function CategoryLandingLayout({
                     key={a.slug}
                     accommodation={a}
                     sourceComponent="CategoryLandingLayoutV2"
+                    showBookingCTA
                   />
                 ))}
               </div>

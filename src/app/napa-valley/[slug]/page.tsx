@@ -289,7 +289,7 @@ export default async function NapaSubRegionPage({
               {data.relatedTrips.map((trip) => (
                 <Link
                   key={trip.slug}
-                  href={`/day-trips/${trip.slug}`}
+                  href={`/itineraries/${trip.slug}`}
                   className="group flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
                 >
                   <Route className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />

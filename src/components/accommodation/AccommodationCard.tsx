@@ -60,17 +60,9 @@ export function AccommodationCard({
         </span>
       </div>
       <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
-            {a.name}
-          </h3>
-          <span
-            className="shrink-0 text-sm tracking-wider text-[var(--muted-foreground)]"
-            aria-label={`Price level ${a.priceTier || 2} of 4`}
-          >
-            {"$".repeat(a.priceTier || 2)}
-          </span>
-        </div>
+        <h3 className="font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
+          {a.name}
+        </h3>
         {(a.subRegion || a.city) && (
           <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
             <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -156,11 +148,21 @@ export function AccommodationCard({
               )}
             </div>
           )}
+          {a.starRating && (
+            <span className="text-xs text-[var(--muted-foreground)]">
+              · {a.starRating}-star {typeLabels[a.type]?.toLowerCase() || a.type}
+            </span>
+          )}
+          {a.priceTier && (
+            <span className="text-xs text-[var(--muted-foreground)] tracking-wider">
+              · {"$".repeat(a.priceTier)}
+            </span>
+          )}
           {a.distanceMiles != null && (
             <span className="text-xs text-[var(--muted-foreground)]">
-              {a.distanceMiles < 1
-                ? "< 1 mi away"
-                : `${a.distanceMiles.toFixed(1)} mi away`}
+              · {a.distanceMiles < 1
+                ? "< 1 mi"
+                : `${a.distanceMiles.toFixed(1)} mi`}
             </span>
           )}
         </div>

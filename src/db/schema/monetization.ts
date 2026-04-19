@@ -20,7 +20,17 @@ export const emailSubscribers = sqliteTable("email_subscribers", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
   source: text("source", {
-    enum: ["itinerary", "guide", "exit_intent"],
+    enum: [
+      "itinerary",
+      "guide",
+      "exit_intent",
+      "blog",
+      "winery",
+      "search",
+      "homepage",
+      "footer",
+      "signup_direct",
+    ],
   }).notNull(),
   subscribedAt: text("subscribed_at")
     .notNull()

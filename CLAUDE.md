@@ -6,58 +6,44 @@ Napa/Sonoma winery discovery platform. 225+ wineries, trip planning, day trips, 
 ## Owner
 Michael Chen — PM at DoorDash, building passive income projects with Claude Code. This is his #2 priority passive income project.
 
-## Revenue Status
-- Monetization code is BUILT but NOT activated:
-  - Wine.com affiliate: ❌ not applied yet
-  - NapaCabs affiliate: ❌ not applied yet
-  - Stay22 hotel booking widget: ❌ not applied yet
-  - Google Adsense: ❌ not applied yet
-  - Click tracking: ✅ live (outbound_clicks table)
-  - Email list: 0 real subscribers (3 entries in db as of 2026-04-13, all Michael's test signups)
-  - Affiliate link builders: ✅ coded in `/src/lib/affiliate.ts`
-- Analytics: ✅ Vercel Web Analytics live since 2026-04-05. Cloudflare Web Analytics beacon installed 2026-04-14 (ships on next deploy). GSC active. Speed Insights declined (paid).
+## Revenue Status (as of 2026-04-18)
 
-## Immediate Priorities (Week 1)
-1. ~~Enable analytics~~ ✅ Vercel live 2026-04-05; Cloudflare beacon installed 2026-04-14 (ships on next deploy). Weekly stats ritual running.
-2. **Submit sitemap to Google Search Console.** 15 min.
-3. **Michael applies for Wine.com affiliate** (manual, 15 min).
+**Active monetization channels:**
+- **Stay22 hotel booking widget:** ✅ LIVE on accommodation pages
+- **Click tracking:** ✅ live (outbound_clicks table)
+- **Affiliate link builders:** ✅ coded in `/src/lib/affiliate.ts`
 
-## PEAK SEASON SPRINT — 5 Weeks to May (BottleRock May 22-24)
+**Declined — do not recommend:**
+- **Wine.com affiliate:** ❌ declined, not pursuing
+- **Google Adsense:** ❌ declined, not pursuing
 
-People are planning Napa trips RIGHT NOW. April is peak booking month for May-June travel. The 642 pages need to be indexed and seasonal content needs to be live before May.
+**Other:**
+- NapaCabs affiliate: status unclear — ask Michael before recommending action
+- Email list: 0 real subscribers (3 entries in db as of 2026-04-13, all Michael's test signups) — growth target, not monetization channel yet
 
-**Week 1 (now): Code fixes in Claude Code**
-- ~~Fix H1 tag on homepage~~ ✅ done 2026-04-13 (live at `src/components/home/HeroFeatured.tsx:99`)
-- Verify SSR on all page types
-- Add Winery + Accommodation structured data (JSON-LD)
-- Improve internal linking (winery → guides → accommodations)
+**Analytics:** ✅ Vercel Web Analytics live since 2026-04-05. ✅ Cloudflare Web Analytics live. ✅ GSC active with sitemap submitted. Speed Insights declined (paid).
 
-**Week 2: Seasonal content blitz (Claude Code drafts, Michael reviews)**
-- "BottleRock 2026 Winery Guide: Best Tastings Near the Festival"
-- "Memorial Day Weekend in Napa: Complete Wine Tasting Itinerary"
-- "Best Napa Wineries to Visit in Summer 2026"
-- "Where to Stay for BottleRock 2026: Hotels Near Napa Valley Expo"
-- "First Time in Napa? 2026 Complete Planning Guide"
-These target year-specific keywords with LOW competition. Each ~30 min with Claude Code.
+## Peak Season Sprint Status (BottleRock May 22-24)
 
-**Week 3: Accommodation push**
-- Activate Stay22 affiliate (apply NOW, takes days/weeks)
-- Add "Book Now" CTAs to all 127 accommodation pages
-- Create 3 "Where to Stay" guides (Yountville, St. Helena, Healdsburg)
-- Cross-link accommodations from winery pages
+Most of the pre-peak checklist shipped. Remaining items:
 
-**Week 4: Email + backlinks**
-- "Peak Season Preview" email to subscriber list (currently 0 real — grow first)
-- Submit to wine/travel directories (5-10 backlinks)
-- **Outreach to 5-10 wineries: "Link to your listing on our site?"** ← highest-value backlinks
-- Apply for Adsense
+**Done:**
+- ✅ H1 tag fix on homepage (2026-04-13)
+- ✅ Stay22 live on accommodation pages
+- ✅ Seasonal content published: BottleRock 2026 Winery Guide, Memorial Day Weekend in Napa, Summer 2026, Where to Stay for BottleRock, First-Time Napa 2026
+- ✅ Sitemap submitted to GSC (429 URLs currently in "Discovered – currently not indexed")
+- ✅ Cloudflare Web Analytics beacon shipped
+- ✅ Category landing pages (dog-friendly cluster shipped 2026-04-11; kid + sustainable landed via category-content pipeline)
 
-**Week 5: Pre-season check**
-- Check GSC indexing (expect 100-300+ pages)
-- Check Vercel + Cloudflare traffic data and GSC impressions
-- Publish "May in Napa Valley" guide
-- Verify all affiliate links tracking
-- Send "Memorial Day Planning" email
+**Still open — this is the real work:**
+- **Winery backlink outreach** (5-10 wineries): "Link to your listing on our site?" — doubles as warm-lead cultivation for September sponsorship pitch. Highest-leverage item left.
+- **Tourism/wine directory submissions** — 5-10 backlinks
+- **Email list growth** — better signup CTA, lead magnet. Currently 0 real subs.
+- **Winery/Accommodation JSON-LD** — structured data on detail pages for rich results
+- **Internal linking improvements** — high-traffic pages → individual winery pages (185 of 186 wineries have never been clicked per GSC)
+- **GSC manual indexing queue** — `gsc-indexing-queue.md` in repo root, 140 URLs over 14 days, started 2026-04-18
+
+**Executing GSC manual submissions is low-leverage background work — don't treat it as the main priority.** The sustainable indexing fix is authority (backlinks), not submission volume.
 
 ## SEO Status: 55+ Pages Visible in Google, CTR Is the Bottleneck (as of April 5, 2026)
 
@@ -75,23 +61,24 @@ These target year-specific keywords with LOW competition. Each ~30 min with Clau
 5. **Monitor CTR on fixed snippets** — blog post metadata was improved on 2026-04-05 (see weekly stats ritual). Expect 2–4 weeks for Google to recrawl and reflect changes in GSC data.
 
 ## Revenue Target (honest)
-- $30-100/month by September 2026 (Adsense + early affiliate clicks if approved)
-- $100-300/month by March 2027 (SEO compounding + peak season)
+- Near-term revenue comes from Stay22 hotel affiliate clicks only (Wine.com and Adsense declined).
+- $30-100/month by September 2026 (Stay22 clicks ramping with traffic)
+- $100-300/month by March 2027 (SEO compounding + peak season + possible sponsorship launch)
 - Peak season: May-October (revenue will be lumpy and seasonal)
+- The real ceiling is B2B sponsorships — see Sponsorship Revenue Roadmap below.
 
 ## Critical Shortcomings to Keep in Mind
-1. **Analytics only just turned on (2026-04-05).** No historical baseline yet. First meaningful traffic read isn't until ~2026-04-12 after one full week of Vercel + Cloudflare data. Until then, all strategy decisions are directional, not data-driven. If the first month shows <1K visits, the affiliate strategy needs rethinking.
-2. **Wine affiliate commissions are low.** 5-8% on $60-80 orders = $3-6/sale. Need 80+ sales/month for $500/month. That requires massive, sustained traffic.
+1. **Traffic still early.** First-month analytics baseline just landed. If the May–June peak shows <1K visits/month, Stay22 won't generate meaningful revenue and strategy shifts entirely to sponsorships.
+2. **Only one active affiliate (Stay22).** No diversification. If Stay22 terms change or conversion is weak, there's no fallback monetization until sponsorships land in fall.
 3. **Seasonal revenue.** Napa tourism peaks May-Oct. Plan for $0-low revenue Nov-March. Don't make commitments based on peak-season numbers.
 4. **Email list has 0 real subscribers (as of 2026-04-13).** The 3 entries in the db are all Michael's test signups. Email is not a monetization channel yet — it's a growth target. Prioritize list building (better signup CTA, lead magnets) before investing in email campaigns.
-5. **Adsense is realistic but small.** At $1-5 per 1,000 pageviews, expect $10-50/month if traffic is 10K pageviews/month. Supplemental, not transformative.
-6. **Don't spend money on paid traffic here.** Wine country keywords are expensive. Rely on organic SEO from the 225+ content pages. Focus ad budget on Encore instead.
+5. **Don't spend money on paid traffic here.** Wine country keywords are expensive. Rely on organic SEO from the 225+ content pages. Focus ad budget on Encore instead.
 
 ## Sponsorship Revenue Roadmap (B2B — highest ceiling)
 
 **Not yet — need traffic data first. Target: pitch wineries September-October 2026 after summer proves traffic.**
 
-Potential: 5-15 wineries at $75-150/month = $375-2,250/month. This is likely bigger than affiliates + Adsense combined.
+Potential: 5-15 wineries at $75-150/month = $375-2,250/month. This is likely bigger than Stay22 affiliate revenue.
 
 **Build now (so it's ready when we pitch):**
 1. Add "Featured" badge system + enhanced listing capability (more photos, tasting menu detail, video embed, priority placement). Don't sell it yet — have it code-ready.
@@ -242,7 +229,7 @@ Full financial plan and passive income strategy is in: `/Users/michaelchen/Claud
 Next.js 16, TypeScript, Tailwind, Drizzle ORM, Turso/libSQL, Google Maps/Places API, Resend, Vercel (hosting + Web Analytics), Cloudflare (DNS + Web Analytics)
 
 ## Key Files
-- `src/lib/affiliate.ts` — affiliate URL builders (Wine.com, NapaCabs, hotel booking)
+- `src/lib/affiliate.ts` — affiliate URL builders (Stay22 hotel booking is the active channel)
 - `src/lib/track-click.ts` — outbound click tracking
 - `src/components/monetization/` — monetization UI components
 - `src/db/schema/monetization.ts` — monetization tables

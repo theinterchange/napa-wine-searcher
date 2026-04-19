@@ -141,7 +141,7 @@ export default async function JournalPage() {
               Browse Wineries
             </Link>
             <Link
-              href="/plan-trip"
+              href="/itineraries"
               className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
             >
               Plan a Trip

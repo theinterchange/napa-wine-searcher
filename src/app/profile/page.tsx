@@ -194,7 +194,7 @@ export default async function ProfilePage() {
               </div>
             </Link>
             <Link
-              href="/plan-trip"
+              href="/itineraries"
               className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
             >
               <Route className="h-5 w-5 text-burgundy-600 shrink-0" />
@@ -405,7 +405,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection icon={Route} message="No saved trips yet. Use the trip planner to create and save routes." actionLabel="Plan a Trip" actionHref="/plan-trip" />
+          <EmptySection icon={Route} message="No saved trips yet. Use the trip planner to create and save routes." actionLabel="Plan a Trip" actionHref="/itineraries" />
         )}
       </section>
     </div>

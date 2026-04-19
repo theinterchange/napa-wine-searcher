@@ -1,0 +1,1 @@
+ALTER TABLE `accommodations` ADD `star_rating` integer;

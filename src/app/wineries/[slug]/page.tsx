@@ -22,6 +22,7 @@ import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { getAccommodationsNearWinery } from "@/lib/accommodation-data";
 import { NearbyAccommodations } from "@/components/accommodation/NearbyAccommodations";
 import { wineryWinesUrl } from "@/lib/affiliate";
+import { TrackedLink } from "@/components/monetization/TrackedLink";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
@@ -530,14 +531,16 @@ export default async function WineryDetailPage({
                   Can&apos;t visit in person? Browse and buy wines from trusted
                   online retailers.
                 </p>
-                <a
+                <TrackedLink
                   href={affiliateUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  clickType="buy_wine"
+                  wineryId={winery.id}
+                  sourcePage={`/wineries/${winery.slug}`}
+                  sourceComponent="WineryDetail.ShopWines"
                   className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
                 >
                   Browse Wines Online
-                </a>
+                </TrackedLink>
               </div>
             )}
 
@@ -763,10 +766,10 @@ export default async function WineryDetailPage({
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Link
-              href="/day-trips"
+              href="/itineraries"
               className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
             >
-              Browse Day Trips
+              Browse Itineraries
             </Link>
             <Link
               href="/where-to-stay"
@@ -775,7 +778,7 @@ export default async function WineryDetailPage({
               Where to Stay
             </Link>
             <Link
-              href="/plan-trip"
+              href="/itineraries"
               className="rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
             >
               Plan Your Trip

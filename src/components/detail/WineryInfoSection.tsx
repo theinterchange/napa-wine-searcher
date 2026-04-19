@@ -328,7 +328,7 @@ export function WinerySidebar({
               {dayTrips.map((trip) => (
                 <Link
                   key={trip.slug}
-                  href={`/day-trips/${trip.slug}`}
+                  href={`/itineraries/${trip.slug}`}
                   className="inline-flex items-center gap-1 rounded-full bg-burgundy-50 dark:bg-burgundy-950 border border-burgundy-200 dark:border-burgundy-800 px-2.5 py-0.5 text-xs text-burgundy-700 dark:text-burgundy-300 hover:bg-burgundy-100 dark:hover:bg-burgundy-900 transition-colors"
                 >
                   <Route className="h-3 w-3" />

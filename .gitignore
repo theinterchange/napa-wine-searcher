@@ -44,3 +44,6 @@ next-env.d.ts
 *.db
 .env*
 .claude/
+
+# personal operational files (not committed)
+gsc-indexing-queue.md

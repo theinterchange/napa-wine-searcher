@@ -131,6 +131,7 @@ export async function GET(request: NextRequest) {
         valley: accommodations.valley,
         googleRating: accommodations.googleRating,
         priceTier: accommodations.priceTier,
+        starRating: accommodations.starRating,
       })
       .from(accommodations)
       .where(

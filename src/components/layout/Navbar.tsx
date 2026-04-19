@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/wineries", label: "Wineries" },
   { href: "/where-to-stay", label: "Where to Stay" },
-  { href: "/plan-trip", label: "Plan Trip" },
+  { href: "/itineraries", label: "Plan Trip" },
   { href: "/blog", label: "Blog" },
 ];
 

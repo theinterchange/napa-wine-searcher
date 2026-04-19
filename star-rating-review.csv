@@ -1,0 +1,128 @@
+slug,name,type,star_rating,status,source
+27-north,27 North,hotel,4,reviewed,Hotels.com: 4-star
+alila-napa-valley,Alila Napa Valley,hotel,5,reviewed,Forbes + Expedia: 5-star
+andaz-napa-by-hyatt,"Andaz Napa, by Hyatt",hotel,4,reviewed,Multiple: 4-star
+appellation-healdsburg,Appellation Healdsburg,hotel,5,corrected,User: 4.5 rounded to 5
+archer-hotel-napa,Archer Hotel Napa,hotel,4,reviewed,HRS: 4-star; AAA Four Diamond
+auberge-du-soleil,Auberge du Soleil,hotel,5,reviewed,Forbes Five-Star 10 years
+autocamp-sonoma,AutoCamp Sonoma,hotel,3,reviewed,AllHotels: 3-star
+bardessono-hotel-and-spa,Bardessono Hotel and Spa,hotel,5,reviewed,Forbes Five-Star; Michelin
+bella-luna-inn,Bella Luna Inn,inn,3,needs_review,Travel Weekly: First Class
+boho-manor,Boho Manor,inn,3,needs_review,Expedia: 3.5; AllHotels: 3
+brannan-cottage-inn,Brannan Cottage Inn,inn,3,needs_review,KAYAK/Expedia: 3-star
+calderwood-inn,Calderwood Inn,inn,4,needs_review,KAYAK: 4-star B&B
+calistoga-inn-restaurant-and-brewery-calistoga-ca,Calistoga Inn Restaurant & Brewery,inn,3,needs_review,AllHotels: 3-star
+calistoga-wayside-inn,Calistoga Wayside Inn,inn,3,needs_review,Small B&B; estimated 3
+calistoga-wine-way-inn,Calistoga Wine Way Inn,inn,4,needs_review,AllHotels: 4-star (****)
+camellia-inn,Camellia Inn,inn,3,needs_review,Orbitz: 3.5; KAYAK: 3
+candlelight-inn-napa-valley,Candlelight Inn Napa Valley,inn,3,needs_review,B&B; estimated 3
+carneros-resort-and-spa,Carneros Resort and Spa,resort,4,corrected,User: 4 (was 5)
+castello-victorian-inn,Castello Victorian Inn,inn,3,needs_review,Small inn; estimated 3
+chateau-de-vie,Chateau de Vie,hotel,3,needs_review,Hotels.com/Expedia: 3.0
+cottage-grove-inn,Cottage Grove Inn,inn,3,needs_review,Travel Weekly: First Class; consensus 3
+cottage-inn-and-spa,Cottage Inn & Spa,inn,4,needs_review,Orbitz: 3.5; Booking 9.4/10
+cottages-on-river-road,Cottages On River Road,inn,3,needs_review,Hotels.com: 2.5; other: 3
+craftsman-inn,Craftsman Inn,inn,4,needs_review,AllHotels: 4-star
+creekside-inn-and-resort,Creekside Inn & Resort,resort,3,needs_review,KAYAK/AllHotels: 3
+dawn-ranch,Dawn Ranch,resort,4,needs_review,AllHotels: 4-star (****)
+dr-wilkinsons-backyard-resort-and-mineral-springs,Dr. Wilkinson's Backyard Resort,resort,4,needs_review,Google Hotels: 4; Design Hotels
+duchamp-healdsburg,Duchamp Healdsburg,hotel,4,needs_review,Expedia: 3.5; luxury-positioned
+el-bonita-motel,El Bonita Motel,hotel,3,reviewed,HRS: 3-star; AllHotels: 3
+el-dorado-hotel,El Dorado Hotel Sonoma,hotel,4,corrected,User: 4 (was 3)
+fairfield-by-marriott-inn-and-suites-santa-rosa-sebastopol,Fairfield by Marriott Sebastopol,inn,2,corrected,User: 2 (was 3)
+fairmont-sonoma-mission-inn-and-spa,Fairmont Sonoma Mission Inn & Spa,inn,4,reviewed,Accor: 5 officially; consensus 4
+farmhouse-inn,Farmhouse Inn Sonoma,inn,5,corrected,User: 5 (was 4)
+four-seasons-resort-and-residences-napa-valley,Four Seasons Resort Napa Valley,resort,5,reviewed,Forbes Five-Star 4 years
+gaige-house,Gaige House,hotel,4,needs_review,HRS: 4-star
+geyserville-inn,Geyserville Inn,inn,3,needs_review,AAA Three Diamond
+golden-haven-spa-llc,Golden Haven Spa LLC,hotel,2,reviewed,Booking.com: 2-star
+grand-reserve-meritage-resort,Grand Reserve - Meritage Resort,resort,4,needs_review,Expedia: 4.5; Five Star Alliance
+grape-leaf-inn,Grape Leaf Inn,inn,4,needs_review,Hotels.com/KAYAK: 4-star
+guerneville-lodge,Guerneville Lodge,resort,3,needs_review,allhotelscalifornia: 3-star
+hampton-inn-petaluma,Hampton Inn Petaluma,inn,3,reviewed,Booking.com: 3; brand standard
+harmon-guest-house,Harmon Guest House,hotel,4,needs_review,HRS: 4-star
+harvest-inn,Harvest Inn,inn,4,reviewed,HRS: 4; AAA Four Diamond
+healdsburg-inn-a-four-sisters-inn,"Healdsburg Inn, A Four Sisters Inn",inn,3,needs_review,KAYAK/Expedia: 3-star
+highlands-resort,Highlands Resort,resort,2,reviewed,Hotels.com/KAYAK: 2-star
+hotel-healdsburg,Hotel Healdsburg,hotel,4,reviewed,KAYAK/Hotels.com: 4-star
+hotel-napa-valley-an-ascend-collection-hotel,"Hotel Napa Valley, Ascend Collection",hotel,3,needs_review,Orbitz: 3-star boutique
+hotel-petaluma,Hotel Petaluma,hotel,3,needs_review,Multiple: 3.5-star
+hotel-petaluma-tapestry-collection-by-hilton,"Hotel Petaluma, Tapestry Collection",hotel,3,needs_review,Multiple: 3.5-star (same property)
+hotel-trio-healdsburg,Hotel Trio Healdsburg,hotel,3,needs_review,HRS: 3-star
+hotel-villagio-at-the-estate-yountville,Hotel Villagio at The Estate Yountville,hotel,4,needs_review,AAA Four Diamond
+hotel-yountville,Hotel Yountville,hotel,4,needs_review,Expedia: 4; Michelin Guide
+indian-springs-calistoga,Indian Springs Calistoga,hotel,4,reviewed,HRS: 4-star
+inn-at-sonoma-a-four-sisters-inn,"Inn At Sonoma, A Four Sisters Inn",inn,3,needs_review,KAYAK: 3; sonomahotels: 3
+inn-st-helena,Inn St. Helena,inn,3,needs_review,Travel Weekly: First Class
+inn-at-salvestrin-winery,Inn at Salvestrin Winery,inn,,needs_review,3-room B&B; not classified
+inn-on-the-russian-river,Inn on the Russian River,inn,2,needs_review,Hotels.com: 2-star
+johnsons-beach-cabins-and-campground,Johnson's Beach Cabins & Campground,hotel,2,needs_review,Campground; estimated 2
+kenwood-inn-and-spa,Kenwood Inn & Spa,inn,4,reviewed,KAYAK: 4; Michelin Guide
+lavender-a-four-sisters-inn,"Lavender, A Four Sisters Inn",inn,3,needs_review,Hotels.com: 3; Four Sisters brand
+le-petit-pali-st-helena,Le Petit Pali St. Helena,hotel,4,needs_review,HRS: 4; Michelin Guide
+ledson-hotel,Ledson Hotel,hotel,4,needs_review,KAYAK: 4-star
+macarthur-place-hotel-and-spa,MacArthur Place Hotel & Spa,hotel,4,needs_review,Forbes Four Star
+maison-fleurie-a-four-sisters-inn,"Maison Fleurie, A Four Sisters Inn",inn,3,needs_review,KAYAK: 3-star
+meadowlark-country-house-and-resort,Meadowlark Country House & Resort,resort,3,needs_review,Hotels.com: 3.0 star
+meadowood-napa-valley,Meadowood Napa Valley,hotel,5,reviewed,Forbes Triple Five-Star
+metro-hotel-and-cafe,Metro Hotel & Cafe,hotel,3,needs_review,Expedia/Hotels.com: 3
+milliken-creek-inn,Milliken Creek Inn,inn,4,needs_review,KAYAK: 4; Five Star Alliance
+mine-farm-the-inn-at-guerneville-ca,Mine + Farm,inn,4,needs_review,KAYAK: 4-star (****)
+montage-healdsburg,Montage Healdsburg,resort,5,reviewed,Forbes Five-Star 4th year
+mount-view-hotel-and-spa,Mount View Hotel & Spa,hotel,3,needs_review,Hotels.com: 3.5-star
+napa-river-inn,Napa River Inn,inn,4,needs_review,Forbes Four-Star
+napa-valley-lodge,Napa Valley Lodge,resort,4,needs_review,HRS: 4-star
+north-block-hotel,North Block Hotel,hotel,4,needs_review,Hotels.com/Expedia: 4
+olea-hotel,Olea Hotel,hotel,4,needs_review,KAYAK/allhotelscalifornia: 4
+r-inn-napa,R INN NAPA,inn,3,needs_review,HotelsCombined: 3-star
+r3-hotel,R3 Hotel,hotel,3,needs_review,Search results: 3-star
+rancho-caymus-inn,Rancho Caymus Inn,inn,4,needs_review,san-francisco-bay: 4; Michelin
+resort-at-sonoma-county,Resort at Sonoma County,resort,3,needs_review,Search results: 3
+river-bend-resort,River Bend Resort,resort,2,needs_review,RV resort; estimated 2
+river-terrace-inn,River Terrace Inn,inn,4,needs_review,HRS: 4-star
+roman-spa-hot-springs-resort,Roman Spa Hot Springs Resort,resort,3,needs_review,HRS: 3-star
+senza-hotel,SENZA Hotel,hotel,4,needs_review,Multiple: 4-star
+silverado-resort,Silverado Resort,resort,4,needs_review,HRS: 4; Five Star Alliance
+singlethread-farm-restaurant-inn,SingleThread Farm - Restaurant - Inn,inn,5,reviewed,Forbes Five-Star; Michelin 3 Keys
+solage-auberge-collection,"Solage, Auberge Collection",hotel,5,reviewed,allhotelscalifornia: 5-star
+sonoma-bungalows,Sonoma Bungalows,hotel,4,needs_review,Luxury boutique; estimated 4
+sonoma-creek-inn,Sonoma Creek Inn,inn,2,reviewed,Booking.com: 2-star
+sonoma-hotel,Sonoma Hotel,hotel,3,needs_review,HRS: 3-star
+sonoma-valley-inn-tapestry-collection-by-hilton,"Sonoma Valley Inn, Tapestry Collection",inn,3,needs_review,Hotels.com/HRS: 3-star
+southbridge-napa-valley,Southbridge Napa Valley,hotel,4,needs_review,HRS: 4; Small Luxury Hotels
+stanly-ranch-auberge-collection,"Stanly Ranch, Auberge Collection",resort,5,reviewed,Hotels.com/Booking: 5-star
+sttupa-estate-napa-valley,Sttupa Estate Napa Valley,hotel,5,reviewed,Official site: 5-star
+surrey-resort,Surrey Resort,resort,3,needs_review,Hotels.com: 2.5 glamping; rounded 3
+the-bergson,THE BERGSON,hotel,3,needs_review,allhotelscalifornia: 3; BW Signature
+the-bungalows-at-calistoga,The Bungalows at Calistoga,hotel,4,needs_review,Search results: 4-star
+the-cottages-of-napa-valley,The Cottages of Napa Valley,inn,4,corrected,User: 4 (was 5)
+the-estate-yountville,The Estate Yountville,hotel,4,needs_review,AAA Four Diamond
+the-francis-house,The Francis House,hotel,4,needs_review,Expedia: 4; Michelin Key
+the-george,The George,hotel,4,needs_review,allhotelscalifornia: 4
+the-inn-on-pine,The Inn on Pine,inn,3,needs_review,HRS: 3; momondo: 3
+the-lodge-at-bodega-bay,The Lodge at Bodega Bay,resort,4,needs_review,Expedia: 4.0 star
+the-lodge-at-sonoma-resort-autograph-collection,The Lodge at Sonoma Resort,resort,4,needs_review,Multiple: 4; Marriott Autograph
+the-madrona,The Madrona,hotel,4,needs_review,Expedia: 4.0 star
+the-meritage-resort-and-spa,The Meritage Resort and Spa,resort,4,needs_review,Five Star Alliance: 4-star
+the-ranch-at-lake-sonoma,The Ranch At Lake Sonoma,resort,2,needs_review,Glamping/campground; est. 2
+the-setting-inn-napa-valley,The Setting Inn Napa Valley,inn,4,needs_review,Expedia: 4-star
+the-spa-at-the-lodge-at-sonoma,The Spa at The Lodge at Sonoma,resort,4,needs_review,Same as Lodge at Sonoma: 4
+the-stavrand-russian-river-valley,The Stavrand Russian River Valley,hotel,4,needs_review,AAA Four Diamond; SLH
+the-swiss-hotel,The Swiss Hotel Sonoma,hotel,3,corrected,User: 3 (was 2)
+the-westin-verasa-napa,The Westin Verasa Napa,hotel,4,reviewed,HRS: 4-star
+the-woods-cottages-and-cabins-russian-river,The Woods Cottages & Cabins,inn,3,corrected,User: 3 (was 2)
+timber-cove-resort,Timber Cove Resort,resort,4,reviewed,HRS: 4; Design Hotels
+two-thirty-five-luxury-suites,Two Thirty-Five Luxury Suites,hotel,4,needs_review,Luxury suites; estimated 4
+upvalley-inn-and-hot-springs-napa-valley-ascend-hotel-collection,UpValley Inn & Hot Springs,inn,3,needs_review,Hotels.com: 3.0; Choice Ascend
+vignoble,Vignoble,hotel,,needs_review,Small guesthouse; not classified
+vinarosa-resort-and-spa,Vinarosa Resort & Spa,resort,4,needs_review,HRS: 4-star
+vineyard-country-inn,Vineyard Country Inn,inn,3,needs_review,HRS: 3-star
+vino-bello-resort,Vino Bello Resort,resort,4,corrected,User: 4 (was 3)
+vintage-house-at-the-estate-yountville,Vintage House at The Estate Yountville,hotel,5,reviewed,HRS: 5; Five Star Alliance
+vista-collina-resort,Vista Collina Resort,resort,4,needs_review,HRS: 4-star
+west-sonoma-inn-and-spa,West Sonoma Inn & Spa,inn,3,needs_review,allhotelscalifornia: 3
+white-house-napa,White House Napa,hotel,4,needs_review,HRS: 4-star
+wildhaven-sonoma-glamping,Wildhaven Sonoma Glamping,hotel,2,reviewed,HRS: 2-star
+wydown-hotel,Wydown Hotel,hotel,3,needs_review,HRS: 3-star
+boon-hotel-spa,boon hotel + spa,hotel,3,reviewed,Google Hotels: 3-star
+h2hotel,h2hotel,hotel,4,corrected,User: 4 (was 3)

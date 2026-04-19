@@ -24,6 +24,7 @@
     "verify:data": "tsx scripts/verify-data.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "@auth/drizzle-adapter": "^1.11.1",
     "@googlemaps/markerclusterer": "^2.6.2",
     "@libsql/client": "^0.17.0",

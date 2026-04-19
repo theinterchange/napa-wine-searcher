@@ -96,6 +96,13 @@ const nextConfig: NextConfig = {
       });
     }
 
+    // Itinerary consolidation: /plan-trip and /day-trips → /itineraries
+    redirects.push(
+      { source: "/plan-trip", destination: "/itineraries", permanent: true },
+      { source: "/day-trips", destination: "/itineraries", permanent: true },
+      { source: "/day-trips/:slug", destination: "/itineraries/:slug", permanent: true }
+    );
+
     return redirects;
   },
   images: {

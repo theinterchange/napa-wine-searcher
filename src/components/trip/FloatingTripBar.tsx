@@ -9,11 +9,17 @@ export function FloatingTripBar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname === "/plan-trip" || count === 0) return null;
+  if (
+    pathname === "/itineraries" ||
+    pathname.startsWith("/itineraries/") ||
+    pathname.startsWith("/trips/") ||
+    count === 0
+  )
+    return null;
 
   const handlePlanTrip = () => {
     const ids = selectedWineries.map((w) => w.id).join(",");
-    router.push(`/plan-trip?stops=${ids}`);
+    router.push(`/itineraries/build?stops=${ids}`);
   };
 
   return (

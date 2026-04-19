@@ -11,6 +11,8 @@ import {
 } from "@/lib/category-data";
 import { getDefinedScopes } from "@/lib/category-content";
 
+export const revalidate = 86400; // 24h — winery data changes infrequently
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [
     allWineries,
@@ -202,10 +204,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/day-trips`,
+      url: `${BASE_URL}/itineraries`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/itineraries/build`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: `${BASE_URL}/itineraries/describe`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.75,
     },
     ...dogClusterEntries,
     ...kidClusterEntries,
@@ -234,10 +248,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...subRegionEntries,
     ...wineryEntries,
     ...allRoutes.map((r) => ({
-      url: `${BASE_URL}/day-trips/${r.slug}`,
+      url: `${BASE_URL}/itineraries/${r.slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      priority: 0.7,
+      priority: 0.85,
     })),
     {
       url: `${BASE_URL}/guides`,
@@ -246,12 +260,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     ...guideEntries,
-    {
-      url: `${BASE_URL}/plan-trip`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
     {
       url: `${BASE_URL}/map`,
       lastModified: new Date(),

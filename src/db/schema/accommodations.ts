@@ -33,6 +33,7 @@ export const accommodations = sqliteTable(
     bookingUrl: text("booking_url"),
     bookingProvider: text("booking_provider").default("booking_com"),
     priceTier: integer("price_tier"),
+    starRating: integer("star_rating"),
     priceRangeMin: integer("price_range_min"),
     priceRangeMax: integer("price_range_max"),
     amenitiesJson: text("amenities_json"),

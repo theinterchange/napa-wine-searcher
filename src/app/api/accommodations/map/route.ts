@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         city: accommodations.city,
         type: accommodations.type,
         priceTier: accommodations.priceTier,
+        starRating: accommodations.starRating,
         googleRating: accommodations.googleRating,
         bookingUrl: accommodations.bookingUrl,
         websiteUrl: accommodations.websiteUrl,

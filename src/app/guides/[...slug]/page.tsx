@@ -469,7 +469,7 @@ export default async function GuidePage({
               Build a custom itinerary with these wineries — add tastings, lunch, and travel time to create your perfect day.
             </p>
             <Link
-              href={guideValley === "napa" ? "/plan-trip?valley=napa" : guideValley === "sonoma" ? "/plan-trip?valley=sonoma" : "/plan-trip"}
+              href={guideValley === "napa" ? "/itineraries/build?valley=napa" : guideValley === "sonoma" ? "/itineraries/build?valley=sonoma" : "/itineraries"}
               className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
             >
               Plan Your Trip

@@ -19,6 +19,13 @@ const TYPE_OPTIONS: DropdownOption[] = [
   { value: "vacation_rental", label: "Vacation Rental" },
 ];
 
+const STAR_OPTIONS: DropdownOption[] = [
+  { value: "5", label: "5-Star" },
+  { value: "4", label: "4-Star" },
+  { value: "3", label: "3-Star" },
+  { value: "2", label: "2-Star" },
+];
+
 const FEATURE_OPTIONS: DropdownOption[] = [
   { value: "dog", label: "Pet Friendly" },
   { value: "adultsOnly", label: "Adults Only" },
@@ -37,11 +44,13 @@ export function AccommodationFilters() {
 
   const valley = searchParams.get("valley") || "";
   const type = searchParams.get("type") || "";
+  const stars = searchParams.get("stars") || "";
   const features = searchParams.get("features") || "";
   const sort = searchParams.get("sort") || "";
 
   const selectedValleys = valley ? valley.split(",") : [];
   const selectedTypes = type ? type.split(",") : [];
+  const selectedStars = stars ? stars.split(",") : [];
   const selectedFeatures = features ? features.split(",") : [];
   const selectedSort = sort ? [sort] : [];
 
@@ -63,7 +72,7 @@ export function AccommodationFilters() {
     router.push("/where-to-stay");
   };
 
-  const hasFilters = valley || type || features;
+  const hasFilters = valley || type || stars || features;
 
   // Active filter tags
   const activeFilters: { key: string; label: string; paramValue?: string }[] = [];
@@ -75,6 +84,10 @@ export function AccommodationFilters() {
   for (const t of selectedTypes) {
     const opt = TYPE_OPTIONS.find((o) => o.value === t);
     activeFilters.push({ key: "type", label: opt?.label || t, paramValue: t });
+  }
+  for (const s of selectedStars) {
+    const opt = STAR_OPTIONS.find((o) => o.value === s);
+    activeFilters.push({ key: "stars", label: opt?.label || `${s}-Star`, paramValue: s });
   }
   for (const f of selectedFeatures) {
     const opt = FEATURE_OPTIONS.find((o) => o.value === f);
@@ -111,6 +124,12 @@ export function AccommodationFilters() {
         options={TYPE_OPTIONS}
         selected={selectedTypes}
         onChange={(v) => updateParam("type", v)}
+      />
+      <MultiSelectDropdown
+        label="Star Rating"
+        options={STAR_OPTIONS}
+        selected={selectedStars}
+        onChange={(v) => updateParam("stars", v)}
       />
       <MultiSelectDropdown
         label="Features"

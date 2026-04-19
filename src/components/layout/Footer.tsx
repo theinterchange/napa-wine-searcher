@@ -38,12 +38,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/day-trips" className="hover:text-[var(--foreground)] transition-colors">
-                  Day Trips
+                <Link href="/itineraries" className="hover:text-[var(--foreground)] transition-colors">
+                  Itineraries
                 </Link>
               </li>
               <li>
-                <Link href="/plan-trip" className="hover:text-[var(--foreground)] transition-colors">
+                <Link href="/itineraries/build" className="hover:text-[var(--foreground)] transition-colors">
                   Plan a Trip
                 </Link>
               </li>

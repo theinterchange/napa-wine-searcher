@@ -83,6 +83,7 @@ export async function GET(request: NextRequest) {
   const theme = sp.get("theme") || "";
   const valley = sp.get("valley") || "";
   const amenities = sp.get("amenities") || "";
+  const strictSources = sp.get("strictSources") === "1";
   const excludeIdsStr = sp.get("excludeIds") || "";
   const excludeIds = excludeIdsStr
     ? excludeIdsStr.split(",").map(Number).filter(Boolean)
@@ -169,6 +170,34 @@ export async function GET(request: NextRequest) {
       case "walkin":
         conditions.push(eq(wineries.reservationRequired, false));
         break;
+    }
+  }
+
+  // Strict-source quality gate (AI-generated path uses this; preference builder
+  // can opt in). Excludes wineries whose amenity claims aren't source-backed or
+  // whose general quality signals are weak.
+  if (strictSources) {
+    conditions.push(
+      sql`(${wineries.curated} = 1 OR (COALESCE(${wineries.googleReviewCount}, 0) >= 50 AND COALESCE(${wineries.googleRating}, ${wineries.aggregateRating}, 0) >= 4.0))`
+    );
+    for (const a of allAmenities) {
+      switch (a) {
+        case "dog":
+          conditions.push(
+            sql`(${wineries.curated} = 1 OR ${wineries.dogFriendlySource} IS NOT NULL)`
+          );
+          break;
+        case "kid":
+          conditions.push(
+            sql`(${wineries.curated} = 1 OR ${wineries.kidFriendlySource} IS NOT NULL)`
+          );
+          break;
+        case "picnic":
+          conditions.push(
+            sql`(${wineries.curated} = 1 OR ${wineries.picnicFriendlySource} IS NOT NULL)`
+          );
+          break;
+      }
     }
   }
 

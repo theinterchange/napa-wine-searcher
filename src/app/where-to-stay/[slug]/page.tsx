@@ -18,6 +18,7 @@ import {
   getAccommodationPhotos,
   getNearbyWineries,
   getAllAccommodations,
+  getRelatedAccommodations,
 } from "@/lib/accommodation-data";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
@@ -26,6 +27,7 @@ import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
 import { FAQSection } from "@/components/region/FAQSection";
 import { FAQSchema } from "@/components/seo/FAQSchema";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { BASE_URL } from "@/lib/constants";
 
 const typeLabels: Record<string, string> = {
@@ -103,16 +105,29 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
   const accommodation = await getAccommodationBySlug(slug);
   if (!accommodation) notFound();
 
-  const [photos, nearbyWineries, allAccommodations] = await Promise.all([
+  const [photos, nearbyWineries, valleyAccommodations] = await Promise.all([
     getAccommodationPhotos(accommodation.id),
     getNearbyWineries(accommodation.id),
-    getAllAccommodations(),
+    getAllAccommodations(accommodation.valley as "napa" | "sonoma"),
   ]);
 
-  // Related accommodations in same valley
-  const relatedAccommodations = allAccommodations
-    .filter((a) => a.valley === accommodation.valley && a.slug !== slug)
-    .slice(0, 3);
+  // Related accommodations — relevance-scored (same subRegion, type, price,
+  // amenity overlap) with rankingScore as tiebreaker. See
+  // getRelatedAccommodations() in accommodation-data.ts for weights.
+  const relatedAccommodations = getRelatedAccommodations(
+    {
+      slug,
+      valley: accommodation.valley,
+      subRegionSlug: accommodation.subRegionSlug,
+      type: accommodation.type,
+      starRating: accommodation.starRating,
+      dogFriendly: accommodation.dogFriendly,
+      kidFriendly: accommodation.kidFriendly,
+      adultsOnly: accommodation.adultsOnly,
+    },
+    valleyAccommodations,
+    6
+  );
 
   // Guides for this valley
   const valleyGuides = getAllGuides()
@@ -251,8 +266,17 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
     });
   }
 
+  const breadcrumbItems = [
+    { name: "Home", href: "/" },
+    { name: "Where to Stay", href: "/where-to-stay" },
+    { name: valleyLabel, href: valleyHref },
+    { name: accommodation.name, href: `/where-to-stay/${slug}` },
+  ];
+
   return (
     <div>
+      <BreadcrumbSchema items={breadcrumbItems} />
+
       {/* Breadcrumb */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
         <nav
@@ -605,6 +629,28 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               </section>
             )}
 
+            {/* More Places to Stay */}
+            {relatedAccommodations.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-heading text-2xl font-bold">
+                    More Places to Stay
+                  </h2>
+                  <Link
+                    href={accommodation.valley === "napa" ? "/where-to-stay/napa-valley" : "/where-to-stay/sonoma-county"}
+                    className="text-sm font-medium text-[var(--foreground)] hover:underline"
+                  >
+                    All hotels &rarr;
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {relatedAccommodations.map((a) => (
+                    <AccommodationCard key={a.slug} accommodation={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Nearby wineries */}
             {nearbyWineries.length > 0 && (
               <section>
@@ -628,47 +674,51 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* More Places to Stay */}
-            {relatedAccommodations.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-heading text-2xl font-bold">
-                    More Places to Stay
-                  </h2>
-                  <Link
-                    href={accommodation.valley === "napa" ? "/where-to-stay/napa-valley" : "/where-to-stay/sonoma-county"}
-                    className="text-sm font-medium text-[var(--foreground)] hover:underline"
-                  >
-                    All hotels &rarr;
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {relatedAccommodations.map((a) => (
-                    <AccommodationCard key={a.slug} accommodation={a} />
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* Related Guides */}
+            {(() => {
+              const valleySlug = accommodation.valley === "napa" ? "napa-valley" : "sonoma-county";
+              const related: { key: string; label: string; href: string }[] = [];
 
-            {/* Wine Country Guides */}
-            {valleyGuides.length > 0 && (
-              <section>
-                <h2 className="font-heading text-xl font-semibold mb-4">
-                  Wine Country Guides
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {valleyGuides.map((g) => (
-                    <Link
-                      key={g.slug}
-                      href={`/guides/${g.slug}`}
-                      className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
-                    >
-                      {g.h1}
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
+              if (accommodation.dogFriendly) {
+                related.push({
+                  key: `dog-friendly-hotels-${valleySlug}`,
+                  label: `Dog-Friendly Hotels in ${valleyLabel}`,
+                  href: `/dog-friendly-hotels/${valleySlug}`,
+                });
+              }
+              for (const g of valleyGuides) {
+                related.push({
+                  key: `guide-${g.slug}`,
+                  label: g.h1,
+                  href: `/guides/${g.slug}`,
+                });
+              }
+              related.push({
+                key: `valley-${valleySlug}`,
+                label: `${valleyLabel} Guide`,
+                href: `/${valleySlug}`,
+              });
+
+              if (related.length === 0) return null;
+              return (
+                <section>
+                  <h2 className="font-heading text-xl font-semibold mb-4">
+                    Related Guides
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {related.map((g) => (
+                      <Link
+                        key={g.key}
+                        href={g.href}
+                        className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                      >
+                        {g.label}
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              );
+            })()}
           </div>
 
           {/* Right column — sticky sidebar */}

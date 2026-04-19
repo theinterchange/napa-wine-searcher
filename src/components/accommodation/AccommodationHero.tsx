@@ -23,6 +23,7 @@ interface AccommodationHeroProps {
   valley: string;
   city: string | null;
   priceTier: number | null;
+  starRating: number | null;
   googleRating: number | null;
   googleReviewCount: number | null;
   heroImageUrl: string | null;
@@ -148,10 +149,12 @@ export function AccommodationHero({
       <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-10 sm:pb-14 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-2 mb-4">
           <span className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium">
-            {typeLabels[accommodation.type] || accommodation.type}
+            {accommodation.starRating
+              ? `${accommodation.starRating}-star ${(typeLabels[accommodation.type] || accommodation.type).toLowerCase()}`
+              : typeLabels[accommodation.type] || accommodation.type}
           </span>
           {accommodation.priceTier && (
-            <span className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium">
+            <span className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium tracking-wider">
               {"$".repeat(accommodation.priceTier)}
             </span>
           )}
