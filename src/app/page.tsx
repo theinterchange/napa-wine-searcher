@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Wine, Route, Dog, DollarSign, Sparkles, BedDouble } from "lucide-react";
 import { db } from "@/db";
 import { BASE_URL } from "@/lib/constants";
@@ -17,7 +16,6 @@ import { wineryRankingDesc } from "@/lib/winery-ranking";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { BlogCard } from "@/components/blog/BlogCard";
-import { EmailCapture } from "@/components/monetization/EmailCapture";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import { getAllPosts } from "@/lib/blog";
 import { getGuideBySlug } from "@/lib/guide-content";
@@ -446,35 +444,6 @@ export default async function HomePage() {
         <p className="text-sm text-[var(--muted-foreground)] mb-8">
           Whether it&apos;s a first sip or a fiftieth visit — the right guide makes all the difference.
         </p>
-
-        {/* Featured: Free Planning Guide with inline email capture */}
-        <div className="flex flex-col sm:flex-row rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden mb-8">
-          <div className="relative sm:w-2/5 aspect-[16/9] sm:aspect-auto bg-burgundy-100 dark:bg-burgundy-900 overflow-hidden">
-            <Image
-              src="/images/blog/napa-spring-hero.jpg"
-              alt="Napa Valley vineyards with mustard flowers in spring"
-              fill
-              sizes="(max-width: 640px) 100vw, 40vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="flex flex-col justify-center flex-1 p-5 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
-              Free Download
-            </span>
-            <h3 className="mt-2 font-heading text-xl sm:text-2xl font-bold">
-              Wine Country Planning Guide
-            </h3>
-            <p className="mt-3 text-sm text-[var(--muted-foreground)] leading-relaxed line-clamp-3">
-              Everything needed for an unforgettable visit — the best wineries
-              by region, insider tasting tips, seasonal advice, and how to make
-              the most of every stop. Delivered to your inbox instantly.
-            </p>
-            <div className="mt-4">
-              <EmailCapture source="guide" compact />
-            </div>
-          </div>
-        </div>
 
         {/* 5 guide cards in a grid */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">

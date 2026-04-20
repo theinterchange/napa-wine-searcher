@@ -7,6 +7,8 @@ import {
   TrendingDown,
   Star,
   ArrowLeft,
+  Eye,
+  Search as SearchIcon,
 } from "lucide-react";
 import {
   getWineryInfo,
@@ -16,6 +18,9 @@ import {
   getWinerySourcePages,
   getWineryPeriodComparison,
   getWineryPitchHistory,
+  getWineryImpressionStats,
+  getWineryGscStats,
+  getWineryTopQueries,
 } from "@/lib/analytics-queries";
 import { StatCard } from "../../components/StatCard";
 import { BarChart, formatClickType } from "../../components/BarChart";
@@ -66,22 +71,39 @@ export default async function WineryAnalyticsPage({
       ? new Date(Date.now() - days * 2 * 86400000).toISOString()
       : null;
 
-  const [totalClicks, clicksByType, clickTrend, sourcePages, comparison, pitchHistory] =
-    await Promise.all([
-      getWineryClickTotal(wineryId, startDate),
-      getWineryClicksByType(wineryId, startDate),
-      getWineryClickTrend(wineryId, startDate),
-      getWinerySourcePages(wineryId, startDate),
-      previousStart
-        ? getWineryPeriodComparison(
-            wineryId,
-            currentStart,
-            previousStart,
-            currentStart
-          )
-        : Promise.resolve(null),
-      getWineryPitchHistory(wineryId),
-    ]);
+  const [
+    totalClicks,
+    clicksByType,
+    clickTrend,
+    sourcePages,
+    comparison,
+    pitchHistory,
+    impressions,
+    gsc,
+    topQueries,
+  ] = await Promise.all([
+    getWineryClickTotal(wineryId, startDate),
+    getWineryClicksByType(wineryId, startDate),
+    getWineryClickTrend(wineryId, startDate),
+    getWinerySourcePages(wineryId, startDate),
+    previousStart
+      ? getWineryPeriodComparison(
+          wineryId,
+          currentStart,
+          previousStart,
+          currentStart
+        )
+      : Promise.resolve(null),
+    getWineryPitchHistory(wineryId),
+    getWineryImpressionStats(wineryId, startDate),
+    getWineryGscStats(winery.slug, startDate),
+    getWineryTopQueries(winery.slug, startDate, 10),
+  ]);
+
+  const onSiteCtr =
+    impressions.totalViews > 0 && totalClicks > 0
+      ? totalClicks / impressions.totalViews
+      : 0;
 
   return (
     <div>
@@ -117,27 +139,55 @@ export default async function WineryAnalyticsPage({
         </Suspense>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard
-          label="Total Clicks"
+          label="On-site Page Views"
+          value={impressions.totalViews}
+          icon={<Eye className="h-4 w-4" />}
+          subtitle={`${impressions.uniqueSessions} unique sessions · ${rangeLabel}`}
+        />
+        <StatCard
+          label="Outbound Clicks"
           value={totalClicks}
           icon={<MousePointerClick className="h-4 w-4" />}
-          subtitle={rangeLabel}
+          subtitle={
+            impressions.totalViews > 0
+              ? `${(onSiteCtr * 100).toFixed(1)}% on-site CTR`
+              : rangeLabel
+          }
           trend={comparison?.changePercent ?? null}
         />
         <StatCard
-          label="Most Popular Action"
-          value={
-            clicksByType[0]
-              ? formatClickType(clicksByType[0].clickType)
-              : "N/A"
+          label="Google Impressions"
+          value={gsc.impressions}
+          icon={<SearchIcon className="h-4 w-4" />}
+          subtitle={
+            gsc.impressions > 0
+              ? `${gsc.clicks} clicks · ${(gsc.ctr * 100).toFixed(2)}% SERP CTR`
+              : "No GSC data yet"
           }
+        />
+        <StatCard
+          label="Avg Search Position"
+          value={gsc.avgPosition > 0 ? gsc.avgPosition.toFixed(1) : "—"}
           icon={
             comparison && comparison.changePercent >= 0 ? (
               <TrendingUp className="h-4 w-4" />
             ) : (
               <TrendingDown className="h-4 w-4" />
             )
+          }
+          subtitle={gsc.avgPosition > 0 ? "Lower is better" : "No GSC data"}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+        <StatCard
+          label="Most Popular Action"
+          value={
+            clicksByType[0]
+              ? formatClickType(clicksByType[0].clickType)
+              : "N/A"
           }
           subtitle={
             clicksByType[0]
@@ -173,6 +223,45 @@ export default async function WineryAnalyticsPage({
           />
         </div>
       </div>
+
+      {topQueries.length > 0 && (
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
+          <h2 className="font-heading text-lg font-bold mb-4">
+            Top Search Queries (Google)
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] text-left text-[var(--muted-foreground)]">
+                  <th className="pb-2 pr-3 font-medium">Query</th>
+                  <th className="pb-2 pr-3 text-right font-medium">Impressions</th>
+                  <th className="pb-2 pr-3 text-right font-medium">Clicks</th>
+                  <th className="pb-2 text-right font-medium">Avg Position</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topQueries.map((q) => {
+                  const imp = Number(q.impressions ?? 0);
+                  const clk = Number(q.clicks ?? 0);
+                  return (
+                    <tr
+                      key={q.query}
+                      className="border-b border-[var(--border)] last:border-0"
+                    >
+                      <td className="py-2 pr-3">{q.query || "(empty)"}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{imp}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{clk}</td>
+                      <td className="py-2 text-right tabular-nums">
+                        {q.avgPosition ? Number(q.avgPosition).toFixed(1) : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {sourcePages.length > 0 && (
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">

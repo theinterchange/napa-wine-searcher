@@ -14,6 +14,8 @@ import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { ShareButton } from "@/components/social/ShareButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
 import { AddToTripDetailButton } from "@/components/detail/AddToTripDetailButton";
+import { UserWineryRating } from "@/components/detail/UserWineryRating";
+import { ImpressionBeacon } from "@/components/analytics/ImpressionBeacon";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { FAQSchema } from "@/components/seo/FAQSchema";
@@ -44,14 +46,28 @@ export async function generateMetadata({
       whyVisit: wineries.whyVisit,
       heroImageUrl: wineries.heroImageUrl,
       city: wineries.city,
+      subRegion: subRegions.name,
+      valley: subRegions.valley,
     })
     .from(wineries)
+    .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
     .where(eq(wineries.slug, slug))
     .limit(1);
 
   if (!winery) return { title: "Winery Not Found" };
 
-  const title = `${winery.name} | Napa Sonoma Guide`;
+  const valleyLabel =
+    winery.valley === "napa"
+      ? "Napa Valley"
+      : winery.valley === "sonoma"
+        ? "Sonoma County"
+        : null;
+  const locationSuffix =
+    winery.subRegion && valleyLabel
+      ? `${winery.subRegion}, ${valleyLabel}`
+      : valleyLabel || winery.city || "Wine Country";
+
+  const title = `${winery.name} — ${locationSuffix} | Napa Sonoma Guide`;
   const ogTitle = winery.name;
   const description =
     winery.whyVisit || winery.shortDescription || `Visit ${winery.name} in wine country`;
@@ -320,6 +336,13 @@ export default async function WineryDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BreadcrumbSchema items={breadcrumbItems} />
+      <ImpressionBeacon
+        path={`/wineries/${winery.slug}`}
+        pageType="winery"
+        entityType="winery"
+        entityId={winery.id}
+        wineryId={winery.id}
+      />
 
       {/* Breadcrumbs */}
       <div className="mx-auto max-w-5xl px-4 pt-2 pb-2 sm:px-6 lg:px-8">
@@ -389,6 +412,9 @@ export default async function WineryDetailPage({
                   <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
                 </div>
               </div>
+
+              {/* User rating */}
+              <UserWineryRating wineryId={winery.id} wineryName={winery.name} />
 
               {/* Highlight tags */}
               {(() => {
@@ -678,6 +704,21 @@ export default async function WineryDetailPage({
         ) : null;
       })()}
 
+      {/* Stay Nearby — placed before "More Wineries" so hotel options appear
+          before the winery exit ramp (the only active monetization is the
+          hotel affiliate, so it needs to come first in the after-content stack). */}
+      {nearbyAccommodations.length > 0 && (
+        <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+            <NearbyAccommodations
+              accommodations={nearbyAccommodations}
+              title="Where to Stay Nearby"
+              valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
+            />
+          </div>
+        </section>
+      )}
+
       {/* More Wineries in Sub-Region */}
       {moreInRegion.length > 0 && (
         <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
@@ -700,19 +741,6 @@ export default async function WineryDetailPage({
                 <WineryCard key={w.slug} winery={w} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Stay Nearby */}
-      {nearbyAccommodations.length > 0 && (
-        <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
-          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-            <NearbyAccommodations
-              accommodations={nearbyAccommodations}
-              title="Where to Stay Nearby"
-              valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
-            />
           </div>
         </section>
       )}

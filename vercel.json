@@ -11,5 +11,11 @@
       "destination": "https://www.napasonomaguide.com/:path",
       "permanent": true
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/gsc-import",
+      "schedule": "0 6 * * *"
+    }
   ]
 }

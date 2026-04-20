@@ -25,6 +25,8 @@ import { AccommodationCard } from "@/components/accommodation/AccommodationCard"
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
 import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
+import { UserAccommodationRating } from "@/components/detail/UserAccommodationRating";
+import { ImpressionBeacon } from "@/components/analytics/ImpressionBeacon";
 import { FAQSection } from "@/components/region/FAQSection";
 import { FAQSchema } from "@/components/seo/FAQSchema";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -276,6 +278,13 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
   return (
     <div>
       <BreadcrumbSchema items={breadcrumbItems} />
+      <ImpressionBeacon
+        path={`/where-to-stay/${accommodation.slug}`}
+        pageType="accommodation"
+        entityType="accommodation"
+        entityId={accommodation.id}
+        accommodationId={accommodation.id}
+      />
 
       {/* Breadcrumb */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
@@ -314,6 +323,12 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
           {/* Left column — narrative content */}
           <div className="lg:col-span-2 space-y-10">
+            {/* User rating */}
+            <UserAccommodationRating
+              accommodationId={accommodation.id}
+              accommodationName={accommodation.name}
+            />
+
             {/* Highlight tags */}
             {(() => {
               const tags: string[] = accommodation.highlightTags
@@ -960,6 +975,21 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   bestRating: 5,
                 }
               : undefined,
+            starRating: accommodation.starRating
+              ? {
+                  "@type": "Rating",
+                  ratingValue: accommodation.starRating,
+                  bestRating: 5,
+                }
+              : undefined,
+            amenityFeature:
+              amenities.length > 0
+                ? amenities.map((a) => ({
+                    "@type": "LocationFeatureSpecification",
+                    name: amenityLabels[a] || a,
+                    value: true,
+                  }))
+                : undefined,
           }),
         }}
       />

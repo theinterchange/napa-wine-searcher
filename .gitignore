@@ -47,3 +47,8 @@ next-env.d.ts
 
 # personal operational files (not committed)
 gsc-indexing-queue.md
+
+# GSC service account keys + local analytics exports (secrets + bulky CSVs)
+/analytics/gsc/*.json
+/analytics/gsc/041226/
+/analytics/gsc/041926/

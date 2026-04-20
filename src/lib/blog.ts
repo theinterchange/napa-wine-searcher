@@ -2,6 +2,20 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
+export interface BlogPostEvent {
+  name: string;
+  eventType?: string;
+  startDate: string;
+  endDate: string;
+  locationName: string;
+  locationAddress: string;
+  locationCity: string;
+  locationRegion?: string;
+  locationPostal?: string;
+  url?: string;
+  image?: string;
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -11,6 +25,7 @@ export interface BlogPost {
   tags: string[];
   heroImage: string;
   content: string;
+  event?: BlogPostEvent;
 }
 
 const BLOG_DIR = path.join(process.cwd(), "content/blog");
@@ -33,6 +48,7 @@ function readAllPosts(): BlogPost[] {
         tags: data.tags ?? [],
         heroImage: data.heroImage ?? "",
         content,
+        event: data.event as BlogPostEvent | undefined,
       } satisfies BlogPost;
     })
     .filter((post) => process.env.NODE_ENV === "development" || new Date(post.date) <= new Date())

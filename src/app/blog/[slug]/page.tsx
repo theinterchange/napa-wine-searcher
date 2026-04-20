@@ -150,6 +150,34 @@ export default async function BlogPostPage({
     inLanguage: "en-US",
   };
 
+  const eventJsonLd = post.event
+    ? {
+        "@context": "https://schema.org",
+        "@type": post.event.eventType || "Event",
+        name: post.event.name,
+        startDate: post.event.startDate,
+        endDate: post.event.endDate,
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        location: {
+          "@type": "Place",
+          name: post.event.locationName,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: post.event.locationAddress,
+            addressLocality: post.event.locationCity,
+            addressRegion: post.event.locationRegion || "CA",
+            ...(post.event.locationPostal && {
+              postalCode: post.event.locationPostal,
+            }),
+            addressCountry: "US",
+          },
+        },
+        ...(post.event.url && { url: post.event.url }),
+        ...(post.event.image && { image: post.event.image }),
+      }
+    : null;
+
   return (
     <>
       <BreadcrumbSchema
@@ -163,6 +191,12 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {eventJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+        />
+      )}
 
       <BlogArticle post={post}>
         <MDXRemote source={post.content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />

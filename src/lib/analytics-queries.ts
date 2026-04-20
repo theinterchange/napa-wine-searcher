@@ -8,8 +8,10 @@ import {
   subRegions,
   tastingExperiences,
   wineryPhotos,
+  pageImpressions,
+  gscDailyQueries,
 } from "@/db/schema";
-import { count, eq, gte, and, isNotNull, desc, sql, countDistinct } from "drizzle-orm";
+import { count, eq, gte, lte, and, isNotNull, desc, sql, countDistinct, sum, inArray } from "drizzle-orm";
 
 type DateFilter = string | null;
 
@@ -609,4 +611,119 @@ export async function getZeroClickWineryCount() {
     .where(isNotNull(outboundClicks.wineryId))
     .groupBy(outboundClicks.wineryId);
   return totalResult.total - clicked.length;
+}
+
+// ===== On-site impressions (client-side beacon) =====
+
+export async function getWineryImpressionStats(
+  wineryId: number,
+  startDate: DateFilter
+) {
+  const conditions = [eq(pageImpressions.wineryId, wineryId)];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  const [totals] = await db
+    .select({
+      total: count(),
+      uniqueSessions: countDistinct(pageImpressions.sessionId),
+    })
+    .from(pageImpressions)
+    .where(and(...conditions));
+
+  return {
+    totalViews: totals.total,
+    uniqueSessions: totals.uniqueSessions,
+  };
+}
+
+export async function getWineryImpressionTrend(
+  wineryId: number,
+  startDate: DateFilter
+) {
+  const conditions = [eq(pageImpressions.wineryId, wineryId)];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  return db
+    .select({
+      date: sql<string>`strftime('%Y-%m-%d', ${pageImpressions.viewedAt})`.as(
+        "date"
+      ),
+      total: count(),
+    })
+    .from(pageImpressions)
+    .where(and(...conditions))
+    .groupBy(sql`strftime('%Y-%m-%d', ${pageImpressions.viewedAt})`)
+    .orderBy(sql`strftime('%Y-%m-%d', ${pageImpressions.viewedAt})`);
+}
+
+// ===== GSC data (imported daily) =====
+
+function buildGscPagePatterns(slug: string): string[] {
+  // GSC reports page as full URL. Cover the redirected canonical www host.
+  return [
+    `https://www.napasonomaguide.com/wineries/${slug}`,
+    `https://www.napasonomaguide.com/wineries/${slug}/`,
+    `https://napasonomaguide.com/wineries/${slug}`,
+    `https://napasonomaguide.com/wineries/${slug}/`,
+  ];
+}
+
+export async function getWineryGscStats(
+  slug: string,
+  startDate: DateFilter,
+  endDate?: string
+) {
+  const patterns = buildGscPagePatterns(slug);
+  const conditions = [inArray(gscDailyQueries.page, patterns)];
+  if (startDate) {
+    conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+  }
+  if (endDate) {
+    conditions.push(lte(gscDailyQueries.date, endDate.slice(0, 10)));
+  }
+
+  const [row] = await db
+    .select({
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+      avgPosition: sql<number>`AVG(${gscDailyQueries.position})`,
+    })
+    .from(gscDailyQueries)
+    .where(and(...conditions));
+
+  const impressions = Number(row?.impressions ?? 0);
+  const clicks = Number(row?.clicks ?? 0);
+  const ctr = impressions > 0 ? clicks / impressions : 0;
+
+  return {
+    impressions,
+    clicks,
+    ctr,
+    avgPosition: Number(row?.avgPosition ?? 0),
+  };
+}
+
+export async function getWineryTopQueries(
+  slug: string,
+  startDate: DateFilter,
+  limit = 10
+) {
+  const patterns = buildGscPagePatterns(slug);
+  const conditions = [inArray(gscDailyQueries.page, patterns)];
+  if (startDate) {
+    conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+  }
+
+  return db
+    .select({
+      query: gscDailyQueries.query,
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+      avgPosition: sql<number>`AVG(${gscDailyQueries.position})`,
+    })
+    .from(gscDailyQueries)
+    .where(and(...conditions))
+    .groupBy(gscDailyQueries.query)
+    .orderBy(desc(sum(gscDailyQueries.impressions)))
+    .limit(limit);
 }
