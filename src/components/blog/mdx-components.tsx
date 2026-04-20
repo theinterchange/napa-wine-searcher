@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { MDXComponents } from "mdx/types";
+import { BookHotelInline } from "./BookHotelInline";
 
 function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href ?? "";
@@ -29,4 +30,5 @@ function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
 export const mdxComponents: MDXComponents = {
   a: MdxLink,
   img: MdxImage,
+  BookHotel: BookHotelInline as unknown as React.ComponentType<{ slug: string; sourcePage?: string }>,
 };
