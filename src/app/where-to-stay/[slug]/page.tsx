@@ -25,7 +25,6 @@ import { AccommodationCard } from "@/components/accommodation/AccommodationCard"
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
 import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
-import { UserAccommodationRating } from "@/components/detail/UserAccommodationRating";
 import { ImpressionBeacon } from "@/components/analytics/ImpressionBeacon";
 import { FAQSection } from "@/components/region/FAQSection";
 import { FAQSchema } from "@/components/seo/FAQSchema";
@@ -323,12 +322,6 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:items-start">
           {/* Left column — narrative content */}
           <div className="lg:col-span-2 space-y-10">
-            {/* User rating */}
-            <UserAccommodationRating
-              accommodationId={accommodation.id}
-              accommodationName={accommodation.name}
-            />
-
             {/* Highlight tags */}
             {(() => {
               const tags: string[] = accommodation.highlightTags

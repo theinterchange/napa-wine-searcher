@@ -127,53 +127,6 @@ export const collectionItems = sqliteTable(
   ]
 );
 
-// --- User Ratings (1-5 stars per user per entity) ---
-export const userWineryRatings = sqliteTable(
-  "user_winery_ratings",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    wineryId: integer("winery_id")
-      .notNull()
-      .references(() => wineries.id, { onDelete: "cascade" }),
-    rating: integer("rating").notNull(),
-    createdAt: text("created_at")
-      .notNull()
-      .$defaultFn(() => new Date().toISOString()),
-    updatedAt: text("updated_at")
-      .notNull()
-      .$defaultFn(() => new Date().toISOString()),
-  },
-  (t) => [
-    primaryKey({ columns: [t.userId, t.wineryId] }),
-    index("idx_user_winery_ratings_winery_id").on(t.wineryId),
-  ]
-);
-
-export const userAccommodationRatings = sqliteTable(
-  "user_accommodation_ratings",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    accommodationId: integer("accommodation_id")
-      .notNull()
-      .references(() => accommodations.id, { onDelete: "cascade" }),
-    rating: integer("rating").notNull(),
-    createdAt: text("created_at")
-      .notNull()
-      .$defaultFn(() => new Date().toISOString()),
-    updatedAt: text("updated_at")
-      .notNull()
-      .$defaultFn(() => new Date().toISOString()),
-  },
-  (t) => [
-    primaryKey({ columns: [t.userId, t.accommodationId] }),
-    index("idx_user_accom_ratings_accom_id").on(t.accommodationId),
-  ]
-);
-
 // --- Friendships (schema only, UI deferred) ---
 export const friendships = sqliteTable(
   "friendships",

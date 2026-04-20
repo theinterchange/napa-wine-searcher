@@ -14,7 +14,6 @@ import { FavoriteButton } from "@/components/detail/FavoriteButton";
 import { ShareButton } from "@/components/social/ShareButton";
 import { VisitedButton } from "@/components/detail/VisitedButton";
 import { AddToTripDetailButton } from "@/components/detail/AddToTripDetailButton";
-import { UserWineryRating } from "@/components/detail/UserWineryRating";
 import { ImpressionBeacon } from "@/components/analytics/ImpressionBeacon";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -412,9 +411,6 @@ export default async function WineryDetailPage({
                   <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
                 </div>
               </div>
-
-              {/* User rating */}
-              <UserWineryRating wineryId={winery.id} wineryName={winery.name} />
 
               {/* Highlight tags */}
               {(() => {
