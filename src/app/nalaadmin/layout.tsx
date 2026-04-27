@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Wine, BedDouble, LayoutDashboard, BarChart3, Mail, ExternalLink, Share2, Route } from "lucide-react";
+import { Wine, BedDouble, LayoutDashboard, BarChart3, Mail, ExternalLink, Share2, Route, Sparkles } from "lucide-react";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -63,6 +63,13 @@ export default async function AdminLayout({
               >
                 <BarChart3 className="h-4 w-4" />
                 Analytics
+              </Link>
+              <Link
+                href="/nalaadmin/planner-impact"
+                className="flex items-center gap-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <Sparkles className="h-4 w-4" />
+                Planner Impact
               </Link>
               <Link
                 href="/nalaadmin/analytics/subscribers"
