@@ -22,6 +22,7 @@ import { FAQSection } from "@/components/region/FAQSection";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { getAccommodationsNearWinery } from "@/lib/accommodation-data";
 import { NearbyAccommodations } from "@/components/accommodation/NearbyAccommodations";
+import { HotelDriveTimes } from "@/components/detail/HotelDriveTimes";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import type { Metadata } from "next";
@@ -710,6 +711,18 @@ export default async function WineryDetailPage({
               accommodations={nearbyAccommodations}
               title="Where to Stay Nearby"
               valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
+            />
+          </div>
+        </section>
+      )}
+
+      {winery.valley === "napa" && winery.lat != null && winery.lng != null && (
+        <section className="border-t border-[var(--border)]">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+            <HotelDriveTimes
+              wineryLat={winery.lat}
+              wineryLng={winery.lng}
+              wineryName={winery.name}
             />
           </div>
         </section>
