@@ -82,6 +82,7 @@ export async function GET(request: NextRequest) {
 
   const theme = sp.get("theme") || "";
   const valley = sp.get("valley") || "";
+  const subRegion = sp.get("subRegion") || "";
   const amenities = sp.get("amenities") || "";
   const strictSources = sp.get("strictSources") === "1";
   const excludeIdsStr = sp.get("excludeIds") || "";
@@ -136,6 +137,15 @@ export async function GET(request: NextRequest) {
 
   if (valley) {
     conditions.push(eq(subRegions.valley, valley as "napa" | "sonoma"));
+  }
+
+  if (subRegion) {
+    const subSlugs = subRegion.split(",").map((s) => s.trim()).filter(Boolean);
+    if (subSlugs.length === 1) {
+      conditions.push(eq(subRegions.slug, subSlugs[0]));
+    } else if (subSlugs.length > 1) {
+      conditions.push(inArray(subRegions.slug, subSlugs));
+    }
   }
 
   // Price filtering — exact match with multi-select

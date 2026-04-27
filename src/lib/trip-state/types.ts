@@ -44,6 +44,21 @@ export type TripOrigin = {
   label: string | null;
 } | null;
 
+export type TripHomeBase = {
+  id: number;
+  slug: string;
+  name: string;
+  city: string | null;
+  lat: number;
+  lng: number;
+  heroImageUrl: string | null;
+  googleRating: number | null;
+  priceTier: number | null;
+  starRating: number | null;
+  bookingUrl: string | null;
+  websiteUrl: string | null;
+};
+
 export type Trip = {
   id: number | null;
   shareCode: string | null;
@@ -69,6 +84,10 @@ export type Trip = {
   source: TripSource;
   isEditable: boolean;
   lastScrapedAt: string | null;
+  /** Phase 5.5: the hotel the user's day starts and ends from. Renders as Stop 0. */
+  homeBase: TripHomeBase | null;
+  /** Phase 5.5: number of nights for overnight trips (1–3). */
+  nights: number | null;
 };
 
 export type TripMutation =

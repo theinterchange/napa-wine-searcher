@@ -9,12 +9,12 @@ export async function GET(request: NextRequest) {
       .map(Number)
       .filter((n) => Number.isFinite(n) && n > 0);
     const limit = Math.min(
-      6,
+      15,
       Math.max(1, Number(request.nextUrl.searchParams.get("limit") ?? 3))
     );
     const maxMiles = Math.min(
-      50,
-      Math.max(1, Number(request.nextUrl.searchParams.get("maxMiles") ?? 20))
+      30,
+      Math.max(1, Number(request.nextUrl.searchParams.get("maxMiles") ?? 15))
     );
 
     if (ids.length === 0) return NextResponse.json([]);

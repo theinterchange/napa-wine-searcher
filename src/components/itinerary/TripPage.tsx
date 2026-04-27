@@ -4,32 +4,46 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Share2, RotateCcw, Map as MapIcon, Undo2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { TripStopCard } from "./TripStopCard";
 import { AddStopSlot } from "./AddStopSlot";
 import { StopDrawer } from "./StopDrawer";
 import { DriveTimeInset } from "./DriveTimeInset";
-import { AccommodationModule } from "./AccommodationModule";
 import { TripMap } from "./TripMap";
 import { TripOriginInput, type TripOriginValue } from "./TripOriginInput";
 import { ShuffleButton } from "./ShuffleButton";
-import { MoreLikeThisPool } from "./MoreLikeThisPool";
-import { WineryPreviewDrawer } from "./WineryPreviewDrawer";
 import { ValleyVariantToggle } from "./ValleyVariantToggle";
+import { StayPicker, type StayContext } from "./StayPicker";
+import { HomeBaseCard } from "./HomeBaseCard";
+import { TripReadySummary } from "./TripReadySummary";
 import { useTrip } from "@/lib/trip-state/use-trip";
-import type { Trip, TripStop } from "@/lib/trip-state/types";
+import type { Trip, TripHomeBase, TripStop } from "@/lib/trip-state/types";
 import { getDriveTimeProvider } from "@/lib/drive-time";
 import type { DriveTimeResult } from "@/lib/drive-time";
 import { buildGoogleMapsUrl, optimizeStopOrder } from "@/lib/geo";
 import type { TripNearbyAccommodation } from "@/lib/itinerary/nearby-accommodations";
+import { trackTripEvent } from "@/lib/analytics-events";
 
 interface TripPageProps {
   initialTrip: Trip;
   initialAccommodations: TripNearbyAccommodation[];
+  /** Set by the edit route when ?stay=1 is in the URL (the user said in the
+   *  builder that they need a place to stay). Triggers the StayPicker banner. */
+  initialNeedsStay?: boolean;
+  /** Builder context (dogs/kids/vibe) encoded in the edit-page URL — lets
+   *  StayPicker score and pre-filter matches without re-fetching state. */
+  initialContext?: StayContext;
 }
 
-export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) {
+export function TripPage({
+  initialTrip,
+  initialAccommodations,
+  initialNeedsStay = false,
+  initialContext = { dogs: false, kids: false, vibe: null },
+}: TripPageProps) {
   const router = useRouter();
+  const { data: session } = useSession();
   const {
     trip,
     canUndo,
@@ -39,17 +53,28 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
   } = useTrip(initialTrip);
 
   const [accommodations, setAccommodations] = useState(initialAccommodations);
+  // Picker is shown when the user said "need a place to stay" in the builder
+  // AND they haven't picked a home-base yet. Once they pick (trip.homeBase set),
+  // the Stop 0 card replaces the picker. Clicking "Change" on the Stop 0 card
+  // flips this back to true.
+  const [showStayPicker, setShowStayPicker] = useState(
+    initialNeedsStay && !initialTrip.homeBase
+  );
   const [isForking, setIsForking] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [drawer, setDrawer] = useState<
     | { open: false }
     | { open: true; mode: "add"; atIndex: number }
     | { open: true; mode: "swap"; wineryId: number }
   >({ open: false });
   const [driveTimes, setDriveTimes] = useState<DriveTimeResult[]>([]);
+  /** Home-base → stop 1 drive time. Kept separate from `driveTimes` so the
+   *  between-stop indexing downstream doesn't have to change. */
+  const [homeBaseDriveTime, setHomeBaseDriveTime] =
+    useState<DriveTimeResult | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [showToast, setShowToast] = useState<string | null>(null);
-  const [previewStop, setPreviewStop] = useState<TripStop | null>(null);
-  const [previewAdding, setPreviewAdding] = useState(false);
+  const [pool, setPool] = useState<TripStop[]>([]);
   const [activeVariant, setActiveVariant] = useState<"napa" | "sonoma" | "both">(
     initialTrip.activeVariant ?? "both"
   );
@@ -99,12 +124,38 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
     [trip, activeVariant, setTrip]
   );
   const originalCuratedStopsRef = useRef(initialTrip.stops);
+  const summaryRef = useRef<HTMLElement | null>(null);
+  const scrollToSummary = useCallback(() => {
+    summaryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   // Resync when the server-provided trip changes (shouldn't happen mid-session).
   useEffect(() => {
     setTrip(initialTrip);
     originalCuratedStopsRef.current = initialTrip.stops;
   }, [initialTrip, setTrip]);
+
+  // Fire a single trip_generated event per share code, the first time the
+  // user lands on this trip in a session. sessionStorage gates duplicates
+  // across hot reloads, route remounts, and back/forward navigations.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const key = `seen_trip:${initialTrip.shareCode ?? initialTrip.slug ?? "anon"}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+    trackTripEvent({
+      eventName: "trip_generated",
+      tripId: initialTrip.id ?? undefined,
+      shareCode: initialTrip.shareCode ?? undefined,
+      mode: initialTrip.source ?? undefined,
+      payload: {
+        stopCount: initialTrip.stops.length,
+        valley: initialTrip.valley ?? null,
+        hasOrigin: !!initialTrip.origin,
+        hasHomeBase: !!initialTrip.homeBase,
+      },
+    });
+  }, [initialTrip]);
 
   // Recompute drive times whenever stops change.
   useEffect(() => {
@@ -135,6 +186,32 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       cancelled = true;
     };
   }, [trip.stops]);
+
+  // Home-base → stop 1 drive time. Computed separately from the between-stop
+  // legs so the existing driveTimes[i] indexing doesn't have to shift.
+  useEffect(() => {
+    const hb = trip.homeBase;
+    const first = trip.stops[0];
+    if (!hb || !first || first.lat == null || first.lng == null) {
+      setHomeBaseDriveTime(null);
+      return;
+    }
+    const provider = getDriveTimeProvider();
+    let cancelled = false;
+    provider
+      .computeMany([
+        {
+          from: { lat: hb.lat, lng: hb.lng },
+          to: { lat: first.lat, lng: first.lng },
+        },
+      ])
+      .then((results) => {
+        if (!cancelled) setHomeBaseDriveTime(results[0] ?? null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [trip.homeBase, trip.stops]);
 
   // Refresh accommodations when stops change after a swap/remove/add.
   useEffect(() => {
@@ -173,6 +250,30 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
     () => new Set(trip.stops.map((s) => s.wineryId)),
     [trip.stops]
   );
+
+  // Pool of theme-matched wineries for the swap/add drawer. Fetched lazily —
+  // only populates when the drawer opens so page load isn't blocked by a
+  // second DB roundtrip users may never look at.
+  useEffect(() => {
+    if (!drawer.open || !trip.theme) return;
+    const currentValley = trip.source === "curated" ? poolValley : trip.valley;
+    const params = new URLSearchParams({ theme: trip.theme, limit: "18" });
+    if (currentValley) params.set("valley", currentValley);
+    const excludeIds = trip.stops.map((s) => s.wineryId);
+    if (excludeIds.length > 0) params.set("excludeIds", excludeIds.join(","));
+    let cancelled = false;
+    fetch(`/api/itineraries/pool?${params.toString()}`)
+      .then((r) => (r.ok ? r.json() : { pool: [] }))
+      .then((data) => {
+        if (!cancelled) setPool(data.pool ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setPool([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [drawer.open, trip.theme, trip.source, trip.valley, poolValley, trip.stops]);
 
   const summary = useMemo(() => {
     const totalDriveMin = driveTimes.reduce((sum, r) => sum + r.minutes, 0);
@@ -258,6 +359,12 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       const nextStops = trip.stops.map((s) =>
         s.wineryId === oldWineryId ? newStop : s
       );
+      trackTripEvent({
+        eventName: "stop_swapped",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { fromWineryId: oldWineryId, toWineryId: newStop.wineryId },
+      });
       if (trip.source === "curated") {
         await forkIfNeeded(nextStops);
       } else {
@@ -273,6 +380,12 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       apply({ type: "add_stop", stop: newStop, atIndex });
       const nextStops = [...trip.stops];
       nextStops.splice(atIndex, 0, newStop);
+      trackTripEvent({
+        eventName: "stop_added",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { wineryId: newStop.wineryId, atIndex },
+      });
       if (trip.source === "curated") {
         await forkIfNeeded(nextStops);
       } else {
@@ -289,6 +402,12 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       const nextStops = trip.stops.filter(
         (s) => s.wineryId !== stop.wineryId
       );
+      trackTripEvent({
+        eventName: "stop_removed",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { wineryId: stop.wineryId },
+      });
       setShowToast(`Removed ${stop.name} — undo available`);
       window.setTimeout(() => setShowToast(null), 4000);
       if (trip.source === "curated") {
@@ -307,6 +426,12 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       const nextStops = [...trip.stops];
       const [m] = nextStops.splice(fromIndex, 1);
       nextStops.splice(toIndex, 0, m);
+      trackTripEvent({
+        eventName: "stop_reordered",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { fromIndex, toIndex, wineryId: m.wineryId },
+      });
       if (trip.source === "curated") {
         await forkIfNeeded(nextStops);
       } else {
@@ -342,10 +467,19 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       }
 
       apply({ type: "set_origin", origin });
+      trackTripEvent({
+        eventName: "origin_set",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { hasOrigin: !!origin, label: origin?.label ?? null },
+      });
       // Optimistically reorder client-side so the map and stops update now.
       if (nextStops !== trip.stops) {
         // Reorder via a sequence of swaps would be clunky; just set trip directly.
         setTrip({ ...trip, origin, stops: nextStops });
+        if (origin) {
+          setShowToast("Stops re-ordered from your starting point.");
+        }
       }
 
       let shareCode = trip.shareCode;
@@ -370,6 +504,86 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
   );
 
   /**
+   * User picked a home-base hotel in the StayPicker. Sets the trip's
+   * origin to the hotel's coords (re-optimizing stops around it),
+   * persists `home_base_accommodation_id` to the trip row, and collapses
+   * the picker so the Stop 0 card renders.
+   */
+  const handlePickHomeBase = useCallback(
+    async (hotel: TripNearbyAccommodation) => {
+      if (hotel.lat == null || hotel.lng == null) return;
+      const origin = { lat: hotel.lat, lng: hotel.lng, label: hotel.name };
+
+      // Re-optimize the stops around the hotel.
+      let nextStops = trip.stops;
+      const withCoords = trip.stops.filter(
+        (s): s is TripStop & { lat: number; lng: number } =>
+          s.lat != null && s.lng != null
+      );
+      if (withCoords.length >= 2) {
+        const coords = withCoords.map((s) => ({ lat: s.lat, lng: s.lng }));
+        const order = optimizeStopOrder(coords, origin, origin);
+        const ordered = order.map((i) => withCoords[i]);
+        const coordless = trip.stops.filter(
+          (s) => s.lat == null || s.lng == null
+        );
+        nextStops = [...ordered, ...coordless];
+      }
+
+      const nextHomeBase: TripHomeBase = {
+        id: hotel.id,
+        slug: hotel.slug,
+        name: hotel.name,
+        city: hotel.city,
+        lat: hotel.lat,
+        lng: hotel.lng,
+        heroImageUrl: hotel.heroImageUrl,
+        googleRating: hotel.googleRating,
+        priceTier: hotel.priceTier,
+        starRating: hotel.starRating,
+        bookingUrl: hotel.bookingUrl,
+        websiteUrl: hotel.websiteUrl,
+      };
+
+      const isReplacement = !!trip.homeBase;
+      setTrip({
+        ...trip,
+        origin,
+        stops: nextStops,
+        homeBase: nextHomeBase,
+      });
+      setShowStayPicker(false);
+      trackTripEvent({
+        eventName: isReplacement ? "home_base_changed" : "home_base_picked",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { accommodationId: hotel.id, slug: hotel.slug },
+      });
+      setShowToast(`${hotel.name} is your home base.`);
+      window.setTimeout(() => setShowToast(null), 3500);
+
+      // Fork the trip if it's still a curated copy, then persist everything.
+      let shareCode = trip.shareCode;
+      if (trip.source === "curated") {
+        shareCode = await forkIfNeeded(nextStops);
+      } else {
+        await persistStops(trip.shareCode, nextStops);
+      }
+      if (!shareCode) return;
+      try {
+        await fetch(`/api/trips/${shareCode}/home-base`, {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ accommodationId: hotel.id, nights: null }),
+        });
+      } catch (err) {
+        console.error("Failed to persist home base:", err);
+      }
+    },
+    [trip, setTrip, forkIfNeeded, persistStops]
+  );
+
+  /**
    * "Try a different set" — swap out the current stops for a new pool of
    * theme-matching wineries. First edit of a curated trip silently forks.
    */
@@ -391,6 +605,12 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
         ordered = [...order.map((i) => withCoords[i]), ...rest];
       }
       setTrip({ ...trip, stops: ordered });
+      trackTripEvent({
+        eventName: "shuffle_clicked",
+        shareCode: trip.shareCode ?? undefined,
+        tripId: trip.id ?? undefined,
+        payload: { newStopIds: ordered.map((s) => s.wineryId) },
+      });
       if (trip.source === "curated") {
         await forkIfNeeded(ordered);
       } else {
@@ -433,15 +653,6 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
     }
   }, [trip, setTrip, persistStops]);
 
-  const handleAddFromPool = useCallback(
-    async (stop: TripStop) => {
-      await handleAdd(trip.stops.length, stop);
-      setShowToast(`Added ${stop.name} to your trip`);
-      window.setTimeout(() => setShowToast(null), 3000);
-    },
-    [handleAdd, trip.stops.length]
-  );
-
   const handleShare = useCallback(async () => {
     if (trip.source === "curated") {
       const shareCode = await forkIfNeeded(trip.stops);
@@ -449,6 +660,11 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
         await navigator.clipboard
           .writeText(`${window.location.origin}/trips/${shareCode}`)
           .catch(() => {});
+        trackTripEvent({
+          eventName: "trip_shared",
+          shareCode,
+          payload: { source: "curated_fork" },
+        });
         setShowToast("Share link copied");
         window.setTimeout(() => setShowToast(null), 3000);
       }
@@ -458,10 +674,68 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       await navigator.clipboard
         .writeText(`${window.location.origin}/trips/${trip.shareCode}`)
         .catch(() => {});
+      trackTripEvent({
+        eventName: "trip_shared",
+        shareCode: trip.shareCode,
+        tripId: trip.id ?? undefined,
+        payload: { source: trip.source ?? "unknown" },
+      });
       setShowToast("Share link copied");
       window.setTimeout(() => setShowToast(null), 3000);
     }
   }, [trip, forkIfNeeded]);
+
+  /**
+   * Save states:
+   *  - curated: fork into user's account (requires auth) or prompt sign-in.
+   *  - anonymous: prompt sign-in to claim this trip as a savedTrip.
+   *  - saved: already in the user's account → disabled "Saved" check.
+   */
+  const handleSave = useCallback(async () => {
+    // Authenticated users saving a curated trip: fork creates a savedTrip row.
+    if (trip.source === "curated") {
+      if (!session) {
+        router.push(
+          `/login?callbackUrl=${encodeURIComponent(
+            window.location.pathname
+          )}`
+        );
+        return;
+      }
+      setIsSaving(true);
+      try {
+        const shareCode = await forkIfNeeded(trip.stops);
+        if (shareCode) {
+          trackTripEvent({
+            eventName: "trip_saved",
+            shareCode,
+            payload: { source: "curated_fork", authenticated: true },
+          });
+          setShowToast("Saved to your trips");
+          window.setTimeout(() => setShowToast(null), 3000);
+        }
+      } finally {
+        setIsSaving(false);
+      }
+      return;
+    }
+    // Anonymous trip: route through sign-in; promotion to savedTrips happens
+    // downstream when the user completes auth with a claim=<shareCode> hint.
+    if (trip.source === "anonymous" && trip.shareCode) {
+      router.push(
+        `/login?callbackUrl=${encodeURIComponent(
+          `/trips/${trip.shareCode}/edit`
+        )}&claim=${trip.shareCode}`
+      );
+    }
+  }, [trip, session, forkIfNeeded, router]);
+
+  const saveState: "save" | "saved" | "signin" =
+    trip.source === "saved"
+      ? "saved"
+      : trip.source === "anonymous" || !session
+      ? "signin"
+      : "save";
 
   const isEditable = trip.isEditable || trip.source === "curated";
 
@@ -502,9 +776,14 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
         </div>
       </header>
 
-      {/* Toolbar — actions moved out of the hero so they're legible */}
+      {/* Editor bar — trip-shaping controls. Save / Share / Book live in
+          the TripReadySummary at the bottom of the page. */}
       <div className="border-b border-[var(--border)] bg-[var(--background)]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            Customize
+          </div>
           {trip.source === "curated" && trip.availableVariants && trip.availableVariants.length > 1 && (
             <ValleyVariantToggle
               value={activeVariant}
@@ -516,24 +795,6 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
             value={trip.origin}
             onChange={(next) => void handleSetOrigin(next)}
           />
-          <button
-            type="button"
-            onClick={handleShare}
-            disabled={isForking}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-900 disabled:opacity-50"
-          >
-            <Share2 className="h-4 w-4" /> Share
-          </button>
-          {summary.googleMapsUrl && (
-            <a
-              href={summary.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-900"
-            >
-              <MapIcon className="h-4 w-4" /> Open in Google Maps
-            </a>
-          )}
           {trip.theme && (
             <ShuffleButton
               theme={trip.theme}
@@ -549,16 +810,7 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
               onClick={() => void handleResetToEditorial()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-900"
             >
-              <RotateCcw className="h-4 w-4" /> Reset to editorial
-            </button>
-          )}
-          {canUndo && (
-            <button
-              type="button"
-              onClick={undo}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-900"
-            >
-              <Undo2 className="h-4 w-4" /> Undo
+              <RotateCcw className="h-4 w-4" /> Reset
             </button>
           )}
         </div>
@@ -567,13 +819,35 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
       {/* Grid */}
       <main className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div>
+          {/* Stop 0 — chosen home-base, rendered as a first-class card
+              above the wineries. Drive-time inset to stop 1 appears below. */}
+          {trip.homeBase && (
+            <div className="mb-3 space-y-3">
+              <HomeBaseCard
+                homeBase={trip.homeBase}
+                onOpenPicker={() => setShowStayPicker(true)}
+                onScrollToSummary={scrollToSummary}
+              />
+              {homeBaseDriveTime && trip.stops.length > 0 && (
+                <DriveTimeInset result={homeBaseDriveTime} />
+              )}
+            </div>
+          )}
+          {showStayPicker && !trip.homeBase && (
+            <StayPicker
+              accommodations={accommodations}
+              context={initialContext}
+              onPick={(hotel) => void handlePickHomeBase(hotel)}
+              onDismiss={() => setShowStayPicker(false)}
+            />
+          )}
           {trip.stops.length === 0 && (
             <p className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--muted-foreground)]">
               No stops yet. Add a winery to start your trip.
             </p>
           )}
           <div className="space-y-3">
-          {isEditable && trip.stops.length > 0 && (
+          {isEditable && trip.stops.length > 0 && !trip.homeBase && (
             <AddStopSlot
               label="Add a stop at the start"
               onClick={() => setDrawer({ open: true, mode: "add", atIndex: 0 })}
@@ -613,15 +887,6 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
           ))}
           </div>
 
-          {trip.theme && (
-            <MoreLikeThisPool
-              theme={trip.theme}
-              valley={trip.source === "curated" ? poolValley : trip.valley}
-              excludeIds={trip.stops.map((s) => s.wineryId)}
-              onPreview={(stop) => setPreviewStop(stop)}
-            />
-          )}
-
           {trip.lastScrapedAt && (
             <p className="mt-6 text-xs text-[var(--muted-foreground)]">
               Hours and reservation info last verified{" "}
@@ -636,15 +901,6 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-          <TripMap
-            stops={trip.stops}
-            origin={trip.origin}
-            className="h-[320px] w-full overflow-hidden rounded-2xl border border-[var(--border)]"
-          />
-          <AccommodationModule
-            accommodations={accommodations}
-            emphasized={trip.duration === "weekend"}
-          />
           <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
               Trip summary
@@ -679,9 +935,43 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
                 </dd>
               </div>
             </dl>
+            <button
+              type="button"
+              onClick={scrollToSummary}
+              className="mt-4 w-full rounded-lg border border-burgundy-900 bg-[var(--card)] px-3 py-2 text-sm font-semibold text-burgundy-900 hover:bg-burgundy-900 hover:text-white"
+            >
+              Review & book
+            </button>
           </section>
+          <TripMap
+            stops={trip.stops}
+            origin={trip.origin}
+            className="h-[320px] w-full overflow-hidden rounded-2xl border border-[var(--border)]"
+          />
         </aside>
       </main>
+
+      {/* Bottom-of-page "Your trip is ready" section — the conversion moment
+          where the gold hotel Book CTA lives. */}
+      <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+        <TripReadySummary
+          ref={summaryRef}
+          homeBase={trip.homeBase}
+          stopCount={trip.stops.length}
+          totalDriveMin={summary.totalDriveMin}
+          totalMiles={summary.totalMiles}
+          totalTasteMin={summary.totalTasteMin}
+          minCost={summary.minCost}
+          maxCost={summary.maxCost}
+          googleMapsUrl={summary.googleMapsUrl}
+          saveState={saveState}
+          onSave={handleSave}
+          onShare={handleShare}
+          saving={isSaving || isForking}
+          shareCode={trip.shareCode}
+          tripId={trip.id}
+        />
+      </div>
 
       <StopDrawer
         open={drawer.open}
@@ -690,7 +980,13 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
             ? "Swap this stop"
             : "Add a stop"
         }
+        suggestionsLabel={
+          drawer.open && drawer.mode === "swap"
+            ? "Suggested alternatives"
+            : "More wineries that fit this trip"
+        }
         existingIds={existingIds}
+        suggested={pool}
         onClose={() => setDrawer({ open: false })}
         onSelect={(selected) => {
           if (!drawer.open) return;
@@ -702,28 +998,24 @@ export function TripPage({ initialTrip, initialAccommodations }: TripPageProps) 
         }}
       />
 
-      <WineryPreviewDrawer
-        slug={previewStop?.slug ?? null}
-        adding={previewAdding}
-        onClose={() => setPreviewStop(null)}
-        onAdd={async () => {
-          if (!previewStop) return;
-          setPreviewAdding(true);
-          try {
-            await handleAddFromPool(previewStop);
-          } finally {
-            setPreviewAdding(false);
-            setPreviewStop(null);
-          }
-        }}
-      />
-
       {showToast && (
         <div
           role="status"
-          className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-lg bg-[var(--foreground)] px-4 py-2 text-sm text-[var(--background)] shadow-lg"
+          className="fixed bottom-6 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded-lg bg-[var(--foreground)] px-4 py-2 text-sm text-[var(--background)] shadow-lg"
         >
-          {showToast}
+          <span>{showToast}</span>
+          {canUndo && (
+            <button
+              type="button"
+              onClick={() => {
+                undo();
+                setShowToast(null);
+              }}
+              className="rounded-md border border-white/20 px-2 py-0.5 text-xs font-semibold text-[var(--background)] hover:border-white/60"
+            >
+              Undo
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { X, Search } from "lucide-react";
 import type { TripStop } from "@/lib/trip-state/types";
 
 interface StopDrawerProps {
   open: boolean;
   title: string;
+  /** Label above the suggestion grid — lets callers distinguish "alternatives" vs. "more wineries". */
+  suggestionsLabel?: string;
   existingIds: Set<number>;
   suggested?: TripStop[];
+  /** Optional: when provided, clicking a suggestion opens the preview drawer instead of adding directly. */
+  onPreview?: (stop: TripStop) => void;
   onClose: () => void;
   onSelect: (stop: TripStop) => void;
 }
@@ -84,8 +89,10 @@ function rowToStop(row: SearchRow): TripStop {
 export function StopDrawer({
   open,
   title,
+  suggestionsLabel = "Suggested alternatives",
   existingIds,
   suggested,
+  onPreview,
   onClose,
   onSelect,
 }: StopDrawerProps) {
@@ -127,7 +134,7 @@ export function StopDrawer({
 
   const filteredSuggestions = useMemo(
     () =>
-      (suggested ?? []).filter((s) => !existingIds.has(s.wineryId)).slice(0, 6),
+      (suggested ?? []).filter((s) => !existingIds.has(s.wineryId)).slice(0, 12),
     [suggested, existingIds]
   );
 
@@ -160,31 +167,50 @@ export function StopDrawer({
         <div className="p-4">
           {filteredSuggestions.length > 0 && (
             <section className="mb-6">
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-                Suggested alternatives
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                {suggestionsLabel}
               </h3>
               <ul className="space-y-2">
-                {filteredSuggestions.map((s) => (
-                  <li key={s.wineryId}>
-                    <button
-                      type="button"
-                      onClick={() => onSelect(s)}
-                      className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-2 text-left hover:border-burgundy-900"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="truncate text-sm font-semibold">
-                          {s.name}
+                {filteredSuggestions.map((s) => {
+                  const price = s.priceLevel
+                    ? "$".repeat(Math.max(1, Math.min(4, s.priceLevel)))
+                    : null;
+                  return (
+                    <li key={s.wineryId}>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onPreview ? onPreview(s) : onSelect(s)
+                        }
+                        className="flex w-full items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-2 text-left transition-colors hover:border-burgundy-900"
+                      >
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-[var(--muted)]">
+                          {s.heroImageUrl && (
+                            <Image
+                              src={s.heroImageUrl}
+                              alt=""
+                              fill
+                              sizes="56px"
+                              className="object-cover"
+                            />
+                          )}
                         </div>
-                        <div className="truncate text-xs text-[var(--muted-foreground)]">
-                          {s.subRegion ?? s.city}
-                          {s.googleRating != null
-                            ? ` · ★ ${s.googleRating.toFixed(1)}`
-                            : ""}
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-semibold">
+                            {s.name}
+                          </div>
+                          <div className="truncate text-xs text-[var(--muted-foreground)]">
+                            {s.subRegion ?? s.city}
+                            {s.googleRating != null
+                              ? ` · ★ ${s.googleRating.toFixed(1)}`
+                              : ""}
+                            {price ? ` · ${price}` : ""}
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  </li>
-                ))}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           )}

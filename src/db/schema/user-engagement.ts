@@ -63,6 +63,10 @@ export const savedTrips = sqliteTable("saved_trips", {
   originLat: real("origin_lat"),
   originLng: real("origin_lng"),
   originLabel: text("origin_label"),
+  /** Phase 5.5: chosen home-base accommodation; renders as Stop 0. */
+  homeBaseAccommodationId: integer("home_base_accommodation_id"),
+  /** Phase 5.5: number of nights for overnight trips (1–3). */
+  nights: integer("nights"),
   createdAt: text("created_at")
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

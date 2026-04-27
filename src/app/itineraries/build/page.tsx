@@ -16,16 +16,7 @@ interface PageProps {
 export default async function BuildItineraryPage({ searchParams }: PageProps) {
   const { valley } = await searchParams;
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <header className="mb-8 max-w-2xl">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-          Build your trip
-        </h1>
-        <p className="mt-3 text-[var(--muted-foreground)]">
-          Three questions, then a full itinerary you can edit — swap stops, add
-          more, or save the result.
-        </p>
-      </header>
+    <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <PreferenceBuilder
         defaultValley={
           valley === "napa" || valley === "sonoma" ? valley : ""

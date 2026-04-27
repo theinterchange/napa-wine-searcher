@@ -10,10 +10,54 @@ import {
   savedTripStops,
   anonymousTrips,
   anonymousTripStops,
+  accommodations,
 } from "@/db/schema";
 import { eq, inArray, asc, min, max, sql } from "drizzle-orm";
-import type { Trip, TripStop } from "@/lib/trip-state/types";
+import type { Trip, TripHomeBase, TripStop } from "@/lib/trip-state/types";
 import { optimizeStopOrder } from "@/lib/geo";
+
+/**
+ * Look up the accommodation record for a chosen home-base and return the
+ * fields needed to render Stop 0 (name, image, coords, book URLs). If the
+ * hotel is missing or has no coords it's treated as unset — we never
+ * render a Stop 0 we can't route from.
+ */
+async function fetchHomeBase(id: number | null): Promise<TripHomeBase | null> {
+  if (!id) return null;
+  const [row] = await db
+    .select({
+      id: accommodations.id,
+      slug: accommodations.slug,
+      name: accommodations.name,
+      city: accommodations.city,
+      lat: accommodations.lat,
+      lng: accommodations.lng,
+      heroImageUrl: accommodations.heroImageUrl,
+      googleRating: accommodations.googleRating,
+      priceTier: accommodations.priceTier,
+      starRating: accommodations.starRating,
+      bookingUrl: accommodations.bookingUrl,
+      websiteUrl: accommodations.websiteUrl,
+    })
+    .from(accommodations)
+    .where(eq(accommodations.id, id))
+    .limit(1);
+  if (!row || row.lat == null || row.lng == null) return null;
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    city: row.city,
+    lat: row.lat,
+    lng: row.lng,
+    heroImageUrl: row.heroImageUrl,
+    googleRating: row.googleRating,
+    priceTier: row.priceTier,
+    starRating: row.starRating,
+    bookingUrl: row.bookingUrl,
+    websiteUrl: row.websiteUrl,
+  };
+}
 
 function regionToVariant(region: string | null): "napa" | "sonoma" | "both" {
   if (!region) return "both";
@@ -377,6 +421,8 @@ export async function loadCuratedTrip(slug: string): Promise<Trip | null> {
     source: "curated",
     isEditable: false,
     lastScrapedAt,
+    homeBase: null,
+    nights: null,
   };
 }
 
@@ -444,6 +490,8 @@ export async function loadTripByShareCode(
       return latest;
     }, null);
 
+    const homeBase = await fetchHomeBase(saved.homeBaseAccommodationId ?? null);
+
     return {
       id: saved.id,
       shareCode: saved.shareCode ?? null,
@@ -472,6 +520,8 @@ export async function loadTripByShareCode(
       source: "saved",
       isEditable: true,
       lastScrapedAt,
+      homeBase,
+      nights: saved.nights ?? null,
     };
   }
 
@@ -502,6 +552,8 @@ export async function loadTripByShareCode(
     return latest;
   }, null);
 
+  const homeBase = await fetchHomeBase(anon.homeBaseAccommodationId ?? null);
+
   return {
     id: anon.id,
     shareCode: anon.shareCode,
@@ -530,6 +582,8 @@ export async function loadTripByShareCode(
     source: "anonymous",
     isEditable: true,
     lastScrapedAt,
+    homeBase,
+    nights: anon.nights ?? null,
   };
 }
 

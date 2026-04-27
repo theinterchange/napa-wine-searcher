@@ -7,6 +7,7 @@ import {
   savedTripStops,
   anonymousTrips,
   anonymousTripStops,
+  users,
 } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { generateShareCode } from "@/lib/share-codes";
@@ -76,7 +77,39 @@ export async function POST(request: NextRequest) {
     }
 
     const session = await auth().catch(() => null);
-    const userId = session?.user?.id ?? null;
+    const sessionUserId = session?.user?.id ?? null;
+    const userEmail = session?.user?.email ?? null;
+
+    // Verify the session's userId actually exists in the DB before attempting
+    // a savedTrips insert. A stale JWT (session created against a different
+    // DB — e.g. local dev then switched to Turso) carries a user_id that
+    // doesn't exist here, and the FK insert would 500. When that happens
+    // we gracefully fall back to the anonymous_trips path so the user still
+    // gets their trip; they can claim it on next clean sign-in.
+    let userId: string | null = null;
+    if (sessionUserId) {
+      const [u] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, sessionUserId))
+        .limit(1);
+      if (u) userId = sessionUserId;
+      else
+        console.warn(
+          "[fork] session userId not found in users table — treating as anonymous:",
+          sessionUserId
+        );
+    }
+    console.log(
+      "[fork] userId:",
+      userId,
+      "sessionUserId:",
+      sessionUserId,
+      "email:",
+      userEmail,
+      "stops:",
+      sourceStopIds.length
+    );
 
     const shareCode = generateShareCode();
 
@@ -143,8 +176,18 @@ export async function POST(request: NextRequest) {
       );
     }
     console.error("POST /api/itineraries/fork error:", err);
+    const errAny = err as { name?: string; message?: string; cause?: unknown };
+    const detail =
+      err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    const causeDetail = errAny?.cause
+      ? typeof errAny.cause === "object" && errAny.cause !== null
+        ? `${(errAny.cause as { name?: string; message?: string }).name ?? ""}: ${
+            (errAny.cause as { name?: string; message?: string }).message ?? ""
+          }`
+        : String(errAny.cause)
+      : null;
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", detail, cause: causeDetail },
       { status: 500 }
     );
   }
