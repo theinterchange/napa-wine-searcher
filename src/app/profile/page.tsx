@@ -48,6 +48,7 @@ const winerySelect = {
   picnicFriendly: wineries.picnicFriendly,
   kidFriendly: wineries.kidFriendly,
   kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+  tastingPriceMin: wineries.tastingPriceMin,
   heroImageUrl: wineries.heroImageUrl,
   subRegion: subRegions.name,
   valley: subRegions.valley,
@@ -130,9 +131,10 @@ export default async function ProfilePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 pb-6 border-b border-[var(--rule)]">
         <div className="flex items-center gap-4">
           {session.user.image && (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={session.user.image}
               alt=""
@@ -140,25 +142,26 @@ export default async function ProfilePage() {
             />
           )}
           <div>
-            <h1 className="font-heading text-2xl font-bold">
+            <span className="kicker">Account</span>
+            <h1 className="editorial-h2 text-[28px] sm:text-[34px] mt-1">
               {session.user.name}
             </h1>
             {session.user.email && (
-              <p className="text-sm text-[var(--muted-foreground)]">
+              <p className="font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] mt-1">
                 {session.user.email}
               </p>
             )}
-            <div className="flex items-center gap-4 mt-1 text-sm text-[var(--muted-foreground)] flex-wrap">
-              <span className="flex items-center gap-1">
-                <Heart className="h-3.5 w-3.5" />
+            <div className="flex items-center gap-4 mt-3 font-mono text-[11px] tracking-[0.12em] uppercase text-[var(--ink-3)] flex-wrap">
+              <span className="flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-[var(--brass)]" />
                 {favCount} {favCount === 1 ? "favorite" : "favorites"}
               </span>
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-[var(--brass)]" />
                 {visitCount} {visitCount === 1 ? "visit" : "visits"}
               </span>
-              <span className="flex items-center gap-1">
-                <BookOpen className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5">
+                <BookOpen className="h-3.5 w-3.5 text-[var(--brass)]" />
                 {journalCount} {journalCount === 1 ? "wine" : "wines"} logged
               </span>
             </div>
@@ -172,47 +175,50 @@ export default async function ProfilePage() {
 
       {/* Getting Started — shown for new users with no activity */}
       {favCount === 0 && visitCount === 0 && journalCount === 0 && (
-        <section className="mb-10 rounded-xl border border-burgundy-200 dark:border-burgundy-800 bg-burgundy-50 dark:bg-burgundy-950/50 p-6">
-          <h2 className="font-heading text-lg font-bold flex items-center gap-2 mb-3">
-            <Sparkles className="h-5 w-5 text-gold-500" />
-            Getting Started
+        <section className="card-flat mb-10 p-6">
+          <span className="kicker flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-[var(--brass)]" />
+            Getting started
+          </span>
+          <h2 className="editorial-h2 text-[22px] sm:text-[26px] mt-2 mb-3">
+            Welcome to Napa Sonoma <em>Guide.</em>
           </h2>
-          <p className="text-sm text-[var(--muted-foreground)] mb-4">
-            Welcome to Napa Sonoma Guide! Here are a few things to try:
+          <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] mb-5">
+            A few things to try first:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Link
               href="/wineries"
-              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+              className="flex items-center gap-3 bg-[var(--paper)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-3 transition-colors"
             >
-              <Heart className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <Heart className="h-5 w-5 text-[var(--brass)] shrink-0" />
               <div>
-                <p className="text-sm font-medium">Browse wineries</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-heading)] text-[15px] text-[var(--ink)]">Browse wineries</p>
+                <p className="text-xs text-[var(--ink-3)]">
                   Add your favorites
                 </p>
               </div>
             </Link>
             <Link
               href="/itineraries"
-              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+              className="flex items-center gap-3 bg-[var(--paper)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-3 transition-colors"
             >
-              <Route className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <Route className="h-5 w-5 text-[var(--brass)] shrink-0" />
               <div>
-                <p className="text-sm font-medium">Plan your first trip</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-heading)] text-[15px] text-[var(--ink)]">Plan your first trip</p>
+                <p className="text-xs text-[var(--ink-3)]">
                   Build a winery route
                 </p>
               </div>
             </Link>
             <Link
               href="/journal"
-              className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+              className="flex items-center gap-3 bg-[var(--paper)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-3 transition-colors"
             >
-              <BookOpen className="h-5 w-5 text-burgundy-600 shrink-0" />
+              <BookOpen className="h-5 w-5 text-[var(--brass)] shrink-0" />
               <div>
-                <p className="text-sm font-medium">Start a journal entry</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-heading)] text-[15px] text-[var(--ink)]">Start a journal entry</p>
+                <p className="text-xs text-[var(--ink-3)]">
                   Log wines you&apos;ve tasted
                 </p>
               </div>
@@ -223,8 +229,8 @@ export default async function ProfilePage() {
 
       {/* Favorites */}
       <section className="mb-12">
-        <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
-          <Heart className="h-5 w-5 text-burgundy-600" />
+        <h2 className="editorial-h2 text-[22px] sm:text-[26px] mb-5 flex items-center gap-2">
+          <Heart className="h-5 w-5 text-[var(--brass)]" />
           Favorites
         </h2>
         {favoriteWineries.length > 0 ? (
@@ -234,14 +240,14 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection icon={Heart} message="No favorites yet. Browse wineries and tap the heart to save your favorites!" actionLabel="Browse Wineries" actionHref="/wineries" />
+          <EmptySection icon={Heart} message="No favorites yet. Browse wineries and tap the heart to save your favorites." actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
       {/* Visited */}
       <section className="mb-12">
-        <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-emerald-600" />
+        <h2 className="editorial-h2 text-[22px] sm:text-[26px] mb-5 flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-[var(--brass)]" />
           Visited
         </h2>
         {visitedWineries.length > 0 ? (
@@ -250,7 +256,7 @@ export default async function ProfilePage() {
               <div key={w.id} className="relative">
                 <WineryCard winery={w} />
                 {w.visitedDate && (
-                  <span className="absolute top-2 left-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                  <span className="absolute top-3 left-3 z-20 bg-[var(--ink)] px-2 py-1 font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--paper)]">
                     Visited{" "}
                     {new Date(w.visitedDate).toLocaleDateString("en-US", {
                       month: "short",
@@ -263,21 +269,21 @@ export default async function ProfilePage() {
             ))}
           </div>
         ) : (
-          <EmptySection icon={MapPin} message="No visits recorded yet. Mark wineries as visited to track your wine country journey!" actionLabel="Browse Wineries" actionHref="/wineries" />
+          <EmptySection icon={MapPin} message="No visits recorded yet. Mark wineries as visited to track your wine country journey." actionLabel="Browse Wineries" actionHref="/wineries" />
         )}
       </section>
 
       {/* Recent Journal Entries */}
       <section className="mb-12">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-heading text-xl font-bold flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-burgundy-600" />
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="editorial-h2 text-[22px] sm:text-[26px] flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-[var(--brass)]" />
             Wine Journal
           </h2>
           {recentJournal.length > 0 && (
             <Link
               href="/journal"
-              className="text-sm text-[var(--foreground)] hover:underline"
+              className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
             >
               View All
             </Link>
@@ -288,18 +294,18 @@ export default async function ProfilePage() {
             {recentJournal.map((entry) => (
               <div
                 key={entry.id}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4"
+                className="bg-[var(--paper-2)] border-t-2 border-[var(--rule)] p-4"
               >
-                <h3 className="font-medium truncate">
+                <h3 className="font-[var(--font-heading)] text-[16px] leading-tight text-[var(--ink)] truncate">
                   {entry.wineName}
                   {entry.vintage && (
-                    <span className="text-[var(--muted-foreground)] ml-1">
+                    <span className="text-[var(--ink-3)] ml-1">
                       ({entry.vintage})
                     </span>
                   )}
                 </h3>
                 {entry.wineryName && (
-                  <p className="text-sm text-[var(--muted-foreground)] mt-0.5">
+                  <p className="text-sm text-[var(--ink-2)] mt-0.5 truncate">
                     {entry.wineryName}
                   </p>
                 )}
@@ -311,14 +317,14 @@ export default async function ProfilePage() {
                           key={s}
                           className={`h-3 w-3 ${
                             s <= entry.rating!
-                              ? "fill-gold-500 text-gold-500"
-                              : "text-gray-300 dark:text-gray-600"
+                              ? "fill-[var(--brass)] text-[var(--brass)]"
+                              : "text-[var(--rule)]"
                           }`}
                         />
                       ))}
                     </div>
                   )}
-                  <span className="text-xs text-[var(--muted-foreground)]">
+                  <span className="font-mono text-[10.5px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
                     {new Date(entry.dateTried).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -335,15 +341,15 @@ export default async function ProfilePage() {
 
       {/* Collections */}
       <section className="mb-12">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-heading text-xl font-bold flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 text-burgundy-600" />
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="editorial-h2 text-[22px] sm:text-[26px] flex items-center gap-2">
+            <FolderOpen className="h-5 w-5 text-[var(--brass)]" />
             Collections
           </h2>
           {userCollections.length > 0 && (
             <Link
               href="/collections"
-              className="text-sm text-[var(--foreground)] hover:underline"
+              className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
             >
               View All
             </Link>
@@ -355,10 +361,10 @@ export default async function ProfilePage() {
               <Link
                 key={col.id}
                 href={`/collections/${col.id}`}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                className="bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-4 transition-colors"
               >
-                <h3 className="font-medium">{col.name}</h3>
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                <h3 className="font-[var(--font-heading)] text-[17px] leading-tight text-[var(--ink)]">{col.name}</h3>
+                <p className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)] mt-2">
                   {col.itemCount}{" "}
                   {col.itemCount === 1 ? "winery" : "wineries"}
                 </p>
@@ -372,15 +378,15 @@ export default async function ProfilePage() {
 
       {/* Saved Trips */}
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-heading text-xl font-bold flex items-center gap-2">
-            <Route className="h-5 w-5 text-burgundy-600" />
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="editorial-h2 text-[22px] sm:text-[26px] flex items-center gap-2">
+            <Route className="h-5 w-5 text-[var(--brass)]" />
             Saved Trips
           </h2>
           {userTrips.length > 0 && (
             <Link
               href="/my-trips"
-              className="text-sm text-[var(--foreground)] hover:underline"
+              className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
             >
               View All
             </Link>
@@ -392,10 +398,10 @@ export default async function ProfilePage() {
               <Link
                 key={trip.id}
                 href="/my-trips"
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                className="bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-4 transition-colors"
               >
-                <h3 className="font-medium">{trip.name}</h3>
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                <h3 className="font-[var(--font-heading)] text-[17px] leading-tight text-[var(--ink)]">{trip.name}</h3>
+                <p className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)] mt-2">
                   {new Date(trip.createdAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -419,14 +425,11 @@ function EmptySection({ icon: Icon, message, actionLabel, actionHref }: {
   actionHref?: string;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-      {Icon && <Icon className="mx-auto h-8 w-8 text-[var(--muted-foreground)] opacity-50 mb-3" />}
-      <p className="text-[var(--muted-foreground)]">{message}</p>
+    <div className="card-flat p-8 text-center">
+      {Icon && <Icon className="mx-auto h-7 w-7 text-[var(--brass)] opacity-70 mb-3" />}
+      <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">{message}</p>
       {actionLabel && actionHref && (
-        <Link
-          href={actionHref}
-          className="mt-3 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-        >
+        <Link href={actionHref} className="btn-ink mt-5 inline-flex">
           {actionLabel}
         </Link>
       )}

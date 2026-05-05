@@ -5,14 +5,11 @@ import {
   visited,
   collections,
   collectionItems,
-  wineries,
-  subRegions,
 } from "@/db/schema";
 import { eq, count, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Wine, Heart, MapPin, FolderOpen } from "lucide-react";
 import Link from "next/link";
-import { WineryCard } from "@/components/directory/WineryCard";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -96,8 +93,9 @@ export default async function PublicProfilePage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-4 mb-10 pb-6 border-b border-[var(--rule)]">
         {user.image && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={user.image}
             alt=""
@@ -105,14 +103,15 @@ export default async function PublicProfilePage({
           />
         )}
         <div>
-          <h1 className="font-heading text-2xl font-bold">{user.name}</h1>
-          <div className="flex items-center gap-4 mt-1 text-sm text-[var(--muted-foreground)]">
-            <span className="flex items-center gap-1">
-              <Heart className="h-3.5 w-3.5" />
+          <span className="kicker">Public profile</span>
+          <h1 className="editorial-h2 text-[28px] sm:text-[34px] mt-1">{user.name}</h1>
+          <div className="flex items-center gap-4 mt-2 font-mono text-[11px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+            <span className="flex items-center gap-1.5">
+              <Heart className="h-3.5 w-3.5 text-[var(--brass)]" />
               {favCount} {favCount === 1 ? "favorite" : "favorites"}
             </span>
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-[var(--brass)]" />
               {visitCount} {visitCount === 1 ? "visit" : "visits"}
             </span>
           </div>
@@ -122,8 +121,8 @@ export default async function PublicProfilePage({
       {/* Public Collections */}
       {publicCollections.length > 0 && (
         <section>
-          <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 text-burgundy-600" />
+          <h2 className="editorial-h2 text-[22px] sm:text-[26px] mb-5 flex items-center gap-2">
+            <FolderOpen className="h-5 w-5 text-[var(--brass)]" />
             Collections
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,15 +130,15 @@ export default async function PublicProfilePage({
               <Link
                 key={col.id}
                 href={`/shared/collection/${col.shareCode}`}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                className="bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-5 transition-colors"
               >
-                <h3 className="font-heading font-semibold">{col.name}</h3>
+                <h3 className="font-[var(--font-heading)] text-[17px] leading-tight text-[var(--ink)]">{col.name}</h3>
                 {col.description && (
-                  <p className="mt-1 text-sm text-[var(--muted-foreground)] line-clamp-2">
+                  <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] line-clamp-2">
                     {col.description}
                   </p>
                 )}
-                <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                <p className="mt-2 font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
                   {col.itemCount}{" "}
                   {col.itemCount === 1 ? "winery" : "wineries"}
                 </p>
@@ -150,9 +149,9 @@ export default async function PublicProfilePage({
       )}
 
       {publicCollections.length === 0 && (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <Wine className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
-          <p className="mt-4 text-[var(--muted-foreground)]">
+        <div className="card-flat p-12 text-center">
+          <Wine className="mx-auto h-9 w-9 text-[var(--brass)] opacity-70" />
+          <p className="mt-4 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
             {user.name} hasn&apos;t shared any collections yet.
           </p>
         </div>

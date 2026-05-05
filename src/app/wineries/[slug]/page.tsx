@@ -25,8 +25,10 @@ import { NearbyAccommodations } from "@/components/accommodation/NearbyAccommoda
 import { HotelDriveTimes } from "@/components/detail/HotelDriveTimes";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
+import { MobileBookingBar } from "@/components/monetization/MobileBookingBar";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
+import { hoursToSchema } from "@/lib/hours";
 
 export async function generateStaticParams() {
   const all = await db.select({ slug: wineries.slug }).from(wineries);
@@ -128,6 +130,7 @@ export default async function WineryDetailPage({
       kidFriendlyNote: wineries.kidFriendlyNote,
       kidFriendlySource: wineries.kidFriendlySource,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       sustainableFarming: wineries.sustainableFarming,
       sustainableNote: wineries.sustainableNote,
       sustainableSource: wineries.sustainableSource,
@@ -304,6 +307,15 @@ export default async function WineryDetailPage({
     ...(winery.priceLevel && {
       priceRange: "$".repeat(winery.priceLevel),
     }),
+    // Reservation policy — extractable signal for AI engines + Google "knowledge"
+    ...(winery.reservationRequired != null && {
+      acceptsReservations: !!winery.reservationRequired,
+    }),
+    // Visit hours — drives Google business panel + AI Overviews "is it open?"
+    ...((() => {
+      const spec = hoursToSchema(winery.hoursJson);
+      return spec ? { openingHoursSpecification: spec } : {};
+    })()),
     ...((winery.dogFriendly || winery.kidFriendly || winery.picnicFriendly || winery.sustainableFarming) && {
       amenityFeature: [
         ...(winery.dogFriendly ? [{ "@type": "LocationFeatureSpecification", name: "Dog Friendly", value: true }] : []),
@@ -345,42 +357,42 @@ export default async function WineryDetailPage({
       />
 
       {/* Breadcrumbs */}
-      <div className="mx-auto max-w-5xl px-4 pt-2 pb-2 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-3.5 pb-4 sm:px-6 lg:px-8">
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+          className="flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.16em] uppercase text-[var(--ink-3)] min-w-0"
         >
           <Link
             href="/"
-            className="hover:text-[var(--foreground)] transition-colors"
+            className="hover:text-[var(--ink)] transition-colors shrink-0"
           >
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
           {valleyPrefix && (
-            <>
+            <span className="hidden sm:contents">
               <Link
                 href={valleyPrefix}
-                className="hover:text-[var(--foreground)] transition-colors"
+                className="hover:text-[var(--ink)] transition-colors shrink-0"
               >
                 {winery.valley === "napa" ? "Napa Valley" : "Sonoma County"}
               </Link>
-              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </>
+              <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+            </span>
           )}
           {valleyPrefix && subRegionSlug && (
-            <>
+            <span className="hidden sm:contents">
               <Link
                 href={`${valleyPrefix}/${subRegionSlug}`}
-                className="hover:text-[var(--foreground)] transition-colors"
+                className="hover:text-[var(--ink)] transition-colors shrink-0"
               >
                 {winery.subRegion}
               </Link>
-              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </>
+              <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+            </span>
           )}
           <span
-            className="text-[var(--foreground)] font-medium truncate"
+            className="text-[var(--ink)] font-semibold truncate min-w-0"
             aria-current="page"
           >
             {winery.name}
@@ -390,6 +402,17 @@ export default async function WineryDetailPage({
 
       {/* Hero with photo carousel */}
       <WineryHero winery={winery} photos={galleryPhotos} />
+
+      {/* Mobile-only sticky booking bar — desktop has sidebar CTA */}
+      {bookingUrl && (
+        <MobileBookingBar
+          kind="winery"
+          websiteUrl={bookingUrl}
+          wineryId={winery.id}
+          winerySlug={winery.slug}
+          label={winery.reservationRequired ? "Reserve a Tasting" : "Book a Tasting"}
+        />
+      )}
 
       {/* Two-column content */}
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -418,11 +441,11 @@ export default async function WineryDetailPage({
                 const tags: string[] = winery.highlightTags ? JSON.parse(winery.highlightTags) : [];
                 return tags.length > 0 ? (
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-medium text-[var(--muted-foreground)] shrink-0">Known for</span>
+                    <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-[var(--brass-2)] shrink-0">Known for</span>
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
+                        className="border border-[var(--rule)] bg-[var(--paper)] px-3 py-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)]"
                       >
                         {tag}
                       </span>
@@ -435,10 +458,10 @@ export default async function WineryDetailPage({
             {/* About — full description */}
             {winery.description && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   About {winery.name}
                 </h2>
-                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-serif-text)] text-[16.5px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {winery.description}
                 </p>
               </section>
@@ -449,10 +472,10 @@ export default async function WineryDetailPage({
               <section className="space-y-4">
                 {winery.whyVisit && (
                   <>
-                    <h2 className="font-heading text-2xl font-bold">
+                    <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                       Why Visit {winery.name}
                     </h2>
-                    <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                    <p className="font-[var(--font-serif-text)] text-[16.5px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                       {winery.whyVisit}
                     </p>
                   </>
@@ -460,11 +483,11 @@ export default async function WineryDetailPage({
                 {(() => {
                   const reasons: string[] = winery.whyThisWinery ? JSON.parse(winery.whyThisWinery) : [];
                   return reasons.length > 0 ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-2.5">
                       {reasons.map((reason, i) => (
                         <li key={i} className="flex items-start gap-3">
-                          <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                          <span className="text-[var(--muted-foreground)]">
+                          <Check className="h-4 w-4 mt-1 text-[var(--brass-2)] shrink-0" />
+                          <span className="font-[var(--font-serif-text)] text-[15.5px] leading-[1.6] text-[var(--ink-2)]">
                             {reason}
                           </span>
                         </li>
@@ -478,7 +501,7 @@ export default async function WineryDetailPage({
             {/* The Setting */}
             {winery.theSetting && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   The Setting
                 </h2>
                 {settingPhoto && (
@@ -492,7 +515,7 @@ export default async function WineryDetailPage({
                     />
                   </div>
                 )}
-                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-serif-text)] text-[16.5px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {winery.theSetting}
                 </p>
               </section>
@@ -501,7 +524,7 @@ export default async function WineryDetailPage({
             {/* The Tasting Experience */}
             {winery.tastingRoomVibe && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   The Tasting Experience
                 </h2>
                 {tastingRoomPhoto && (
@@ -515,7 +538,7 @@ export default async function WineryDetailPage({
                     />
                   </div>
                 )}
-                <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+                <p className="font-[var(--font-serif-text)] text-[16.5px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {winery.tastingRoomVibe}
                 </p>
               </section>
@@ -547,7 +570,7 @@ export default async function WineryDetailPage({
             {/* Shop Wines affiliate */}
             {affiliateUrl && wineryWines.length > 0 && (
               <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
-                <h3 className="font-heading text-lg font-semibold mb-2">
+                <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-2">
                   Shop {winery.name} Wines Online
                 </h3>
                 <p className="text-sm text-[var(--muted-foreground)] mb-4">
@@ -692,7 +715,7 @@ export default async function WineryDetailPage({
 
         return faqs.length > 0 ? (
           <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-semibold mb-6">
+            <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
               Frequently Asked Questions
             </h2>
             <FAQSection faqs={faqs} />
@@ -716,13 +739,15 @@ export default async function WineryDetailPage({
         </section>
       )}
 
-      {winery.valley === "napa" && winery.lat != null && winery.lng != null && (
+      {(winery.valley === "napa" || winery.valley === "sonoma") && winery.lat != null && winery.lng != null && (
         <section className="border-t border-[var(--border)]">
           <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
             <HotelDriveTimes
               wineryLat={winery.lat}
               wineryLng={winery.lng}
               wineryName={winery.name}
+              valley={winery.valley}
+              winerySlug={winery.slug}
             />
           </div>
         </section>
@@ -733,7 +758,7 @@ export default async function WineryDetailPage({
         <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
           <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-xl font-bold">
+              <h2 className="font-[var(--font-heading)] text-[22px] sm:text-[24px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                 More Wineries in {winery.subRegion}
               </h2>
               {valleyPrefix && subRegionSlug && (
@@ -773,7 +798,7 @@ export default async function WineryDetailPage({
         return (
           <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
             <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-              <h3 className="font-heading text-lg font-semibold mb-4">
+              <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                 Related Guides
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -781,7 +806,7 @@ export default async function WineryDetailPage({
                   <Link
                     key={g.href}
                     href={g.href}
-                    className="rounded-full border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+                    className="font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold border border-[var(--ink)] bg-transparent text-[var(--ink)] px-3 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
                   >
                     {g.label}
                   </Link>
@@ -795,7 +820,7 @@ export default async function WineryDetailPage({
       {/* Explore More */}
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 text-center">
-          <h3 className="font-heading text-lg font-semibold mb-2">
+          <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-2">
             Planning a wine country trip?
           </h3>
           <p className="text-sm text-[var(--muted-foreground)] mb-5">

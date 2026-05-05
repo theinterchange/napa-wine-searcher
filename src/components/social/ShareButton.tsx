@@ -30,18 +30,18 @@ export function ShareButton({ title, text, compact }: { title: string; text?: st
         onClick={handleShare}
         title={compact ? (copied ? "Link Copied" : "Share") : undefined}
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors",
-          compact ? "px-2.5 py-2" : "px-3 py-2"
+          "inline-flex items-center gap-2 border border-[var(--rule)] bg-[var(--paper)] font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)] transition-colors",
+          compact ? "px-3 py-2.5" : "px-4 py-2.5"
         )}
       >
         {copied ? (
           <>
-            <Check className="h-4 w-4 text-emerald-600" />
-            {!compact && "Link Copied"}
+            <Check className="h-3.5 w-3.5 text-emerald-700" />
+            {!compact && "Copied"}
           </>
         ) : (
           <>
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-3.5 w-3.5 text-[var(--brass)]" />
             {!compact && "Share"}
           </>
         )}

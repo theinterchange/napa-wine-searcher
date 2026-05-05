@@ -149,9 +149,9 @@ export function AccommodationFilters() {
       {hasFilters && (
         <button
           onClick={clearFilters}
-          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+          className="inline-flex items-center gap-1.5 px-2 py-2 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-3 w-3" />
           Clear all
         </button>
       )}
@@ -167,19 +167,19 @@ export function AccommodationFilters() {
       <div className="md:hidden">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm font-medium"
+          className="flex w-full items-center justify-between border border-[var(--ink)] bg-transparent px-4 py-3 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]"
         >
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-[var(--muted-foreground)]" />
+            <Filter className="h-3.5 w-3.5" />
             <span>Filters</span>
             {activeFilters.length > 0 && (
-              <span className="inline-flex items-center justify-center rounded-full bg-burgundy-700 px-2 py-0.5 text-xs font-medium text-white">
+              <span className="inline-flex items-center justify-center bg-[var(--ink)] text-[var(--paper)] px-1.5 text-[10px] tracking-normal min-w-[1.1rem] h-[1.1rem]">
                 {activeFilters.length}
               </span>
             )}
           </div>
           <ChevronDown
-            className={`h-4 w-4 transition-transform ${mobileOpen ? "rotate-180" : ""}`}
+            className={`h-3.5 w-3.5 transition-transform ${mobileOpen ? "rotate-180" : ""}`}
           />
         </button>
         {mobileOpen && <div className="mt-3">{filterControls}</div>}
@@ -192,7 +192,7 @@ export function AccommodationFilters() {
             <button
               key={`${key}-${paramValue || i}`}
               onClick={() => removeFilter(key, paramValue)}
-              className="inline-flex items-center gap-1 rounded-full bg-burgundy-100 dark:bg-burgundy-900 px-3 py-1 text-xs font-medium text-burgundy-800 dark:text-burgundy-200 hover:bg-burgundy-200 dark:hover:bg-burgundy-800 transition-colors"
+              className="inline-flex items-center gap-1.5 border border-[var(--color-burgundy-900)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[10px] tracking-[0.18em] uppercase font-semibold text-[var(--color-burgundy-900)] hover:bg-[var(--color-burgundy-900)] hover:text-[var(--paper)] transition-colors"
             >
               {label}
               <X className="h-3 w-3" />

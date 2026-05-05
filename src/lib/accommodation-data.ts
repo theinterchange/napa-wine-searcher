@@ -259,6 +259,7 @@ export async function getNearbyWineries(
       picnicFriendly: wineries.picnicFriendly,
       kidFriendly: wineries.kidFriendly,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       curated: wineries.curated,
       heroImageUrl: wineries.heroImageUrl,
       distanceMiles: accommodationNearbyWineries.distanceMiles,

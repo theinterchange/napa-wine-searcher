@@ -44,7 +44,7 @@ export function GuideFeatureCard({
         <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
           Guide
         </span>
-        <h3 className="mt-2 font-heading text-xl sm:text-2xl font-bold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+        <h3 className="mt-2 font-[var(--font-heading)] text-[22px] sm:text-[26px] font-normal tracking-[-0.01em] text-[var(--ink)] group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
           {label}
         </h3>
         <p className="mt-3 text-sm text-[var(--muted-foreground)] leading-relaxed line-clamp-3">

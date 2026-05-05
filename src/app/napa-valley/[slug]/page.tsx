@@ -140,13 +140,13 @@ export default async function NapaSubRegionPage({
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+          className="flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.16em] uppercase text-[var(--ink-3)] min-w-0"
         >
-          <Link href="/" className="hover:text-[var(--foreground)] transition-colors">Home</Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <Link href="/napa-valley" className="hover:text-[var(--foreground)] transition-colors">Napa Valley</Link>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">
+          <Link href="/" className="hover:text-[var(--ink)] transition-colors shrink-0">Home</Link>
+          <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+          <Link href="/napa-valley" className="hover:text-[var(--ink)] transition-colors shrink-0">Napa Valley</Link>
+          <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+          <span className="text-[var(--ink)] font-semibold truncate min-w-0" aria-current="page">
             {data.region.name}
           </span>
         </nav>
@@ -165,7 +165,7 @@ export default async function NapaSubRegionPage({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
           <div className="relative mx-auto max-w-7xl px-4 pt-32 sm:pt-40 pb-8 sm:px-6 lg:px-8">
-            <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+            <h1 className="font-[var(--font-heading)] text-[32px] sm:text-[40px] font-normal tracking-[-0.015em] text-[var(--ink)]">
               {data.region.name} Wineries
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-white/70">
@@ -184,7 +184,7 @@ export default async function NapaSubRegionPage({
         </div>
       ) : (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+          <h1 className="font-[var(--font-heading)] text-[32px] sm:text-[40px] font-normal tracking-[-0.015em] text-[var(--ink)]">
             {data.region.name} Wineries
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
@@ -205,12 +205,12 @@ export default async function NapaSubRegionPage({
       {/* About Sub-Region */}
       {content && (
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-4">
+          <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
             About {data.region.name}
           </h2>
 
           {content.whyVisit && (
-            <p className="text-base leading-relaxed text-[var(--muted-foreground)] mb-6 max-w-3xl">
+            <p className="font-[var(--font-serif-text)] text-[16.5px] leading-[1.7] text-[var(--ink-2)] mb-6 max-w-3xl" style={{ textWrap: "pretty" }}>
               {content.whyVisit}
             </p>
           )}
@@ -223,7 +223,7 @@ export default async function NapaSubRegionPage({
 
           {content.topExperiences && content.topExperiences.length > 0 && (
             <div className="mt-8 max-w-3xl">
-              <h3 className="font-heading text-xl font-semibold mb-4">
+              <h3 className="font-[var(--font-heading)] text-[22px] sm:text-[24px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                 Top Experiences in {data.region.name}
               </h3>
               <ul className="space-y-3">
@@ -265,7 +265,7 @@ export default async function NapaSubRegionPage({
 
       {/* Wineries — with heading */}
       <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-        <h2 className="font-heading text-2xl font-bold mb-2">
+        <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-2">
           Wineries in {data.region.name}
         </h2>
         <p className="text-sm text-[var(--muted-foreground)] mb-6">
@@ -282,7 +282,7 @@ export default async function NapaSubRegionPage({
       {data.relatedTrips.length > 0 && (
         <section className="border-t border-[var(--border)]">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-bold mb-6">
+            <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
               Day Trips in {data.region.name}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -294,7 +294,7 @@ export default async function NapaSubRegionPage({
                 >
                   <Route className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 shrink-0" />
                   <div className="min-w-0">
-                    <h3 className="font-heading text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
+                    <h3 className="font-[var(--font-heading)] text-[14px] font-normal group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-1">
                       {trip.title}
                     </h3>
                     <div className="mt-1 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
@@ -323,7 +323,7 @@ export default async function NapaSubRegionPage({
         <section className="border-t border-[var(--border)]">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-bold">
+              <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                 Where to Stay Near {data.region.name}
               </h2>
               <Link
@@ -346,7 +346,7 @@ export default async function NapaSubRegionPage({
       {enrichedSiblings.length > 0 && (
         <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-bold mb-2">
+            <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-2">
               Explore More of Napa Valley
             </h2>
             <p className="text-sm text-[var(--muted-foreground)] mb-8">

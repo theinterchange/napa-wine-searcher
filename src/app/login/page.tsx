@@ -40,26 +40,27 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+    <div className="w-full max-w-sm card-flat px-8 py-9">
       <div className="text-center">
-        <Wine className="mx-auto h-10 w-10 text-[var(--foreground)]" />
-        <h1 className="mt-4 font-heading text-2xl font-bold">
-          Welcome Back
+        <Wine className="mx-auto h-9 w-9 text-[var(--brass)]" />
+        <span className="block kicker mt-4">Members</span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[32px] mt-2">
+          Welcome <em>back.</em>
         </h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+        <p className="font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] mt-3 leading-relaxed">
           Sign in to save favorites, add notes, and track your visits.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {error && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+          <div className="border border-red-700 bg-red-50 px-4 py-3 text-sm text-red-800">
             {error}
           </div>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
+          <label htmlFor="email" className="label-kicker">
             Email
           </label>
           <input
@@ -68,15 +69,12 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+            className="input-editorial"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium mb-1"
-          >
+          <label htmlFor="password" className="label-kicker">
             Password
           </label>
           <input
@@ -85,32 +83,28 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+            className="input-editorial"
           />
-          <div className="mt-1 text-right">
+          <div className="mt-1.5 text-right">
             <Link
               href="/forgot-password"
-              className="text-xs text-burgundy-700 hover:text-burgundy-800 dark:text-burgundy-400"
+              className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--brass-2)] hover:text-[var(--ink)] transition-colors"
             >
               Forgot password?
             </Link>
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-burgundy-700 px-4 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
-        >
+        <button type="submit" disabled={loading} className="btn-ink w-full">
           {loading ? "Signing in..." : "Sign In"}
         </button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+      <div className="mt-7 pt-5 border-t border-[var(--rule-soft)] text-center font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="text-burgundy-700 hover:text-burgundy-800 dark:text-burgundy-400 font-medium"
+          className="not-italic font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink)] hover:text-[var(--brass-2)] transition-colors"
         >
           Create account
         </Link>
@@ -121,7 +115,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
+    <div className="flex min-h-[60vh] items-center justify-center px-4 py-10">
       <Suspense>
         <LoginForm />
       </Suspense>

@@ -89,7 +89,7 @@ export function WineryDescription({
   if (!description) return null;
 
   return (
-    <p className="text-base leading-relaxed text-[var(--muted-foreground)]">
+    <p className="drop-cap-editorial font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
       {description}
     </p>
   );
@@ -148,7 +148,7 @@ export function WinerySidebar({
 
   return (
     <div className="sticky top-24 space-y-6">
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+      <div className="border border-[var(--rule-soft)] bg-[var(--paper-2)]/60 p-6">
         {/* Book CTA */}
         {(winery.visitUrl || winery.websiteUrl) && (
           <div className="mb-5">
@@ -163,56 +163,61 @@ export function WinerySidebar({
         )}
 
         {/* Contact */}
-        <div className="space-y-3 text-sm">
-          {winery.address && (
-            <div className="flex items-start gap-3">
-              <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-[var(--muted-foreground)]" />
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([winery.address, winery.city, winery.state, winery.zip].filter(Boolean).join(", "))}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[var(--foreground)] transition-colors"
-              >
-                {[
-                  winery.address,
-                  winery.city,
-                  [winery.state, winery.zip].filter(Boolean).join(" "),
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
-              </a>
-            </div>
-          )}
-          {winery.phone && winery.phone !== "null" && (
-            <div className="flex items-center gap-3">
-              <Phone className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
-              <a
-                href={`tel:${winery.phone}`}
-                className="hover:text-[var(--foreground)] transition-colors"
-              >
-                {winery.phone}
-              </a>
-            </div>
-          )}
-          {winery.websiteUrl && (
-            <div className="flex items-center gap-3">
-              <Globe className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
-              <TrackedLink
-                href={winery.websiteUrl}
-                clickType="website"
-                wineryId={winery.id}
-                sourcePage={`/wineries/${winery.slug}`}
-                sourceComponent="WinerySidebar"
-                className="hover:text-[var(--foreground)] truncate transition-colors"
-              >
-                Website
-              </TrackedLink>
-            </div>
-          )}
+        <div>
+          <span className="kicker">Contact</span>
+          <div className="mt-3 space-y-3 font-[var(--font-serif-text)] text-[14.5px] text-[var(--ink-2)]">
+            {winery.address && (
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-[var(--brass)]" />
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([winery.address, winery.city, winery.state, winery.zip].filter(Boolean).join(", "))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[var(--ink)] transition-colors"
+                >
+                  {[
+                    winery.address,
+                    winery.city,
+                    [winery.state, winery.zip].filter(Boolean).join(" "),
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                </a>
+              </div>
+            )}
+            {winery.phone && winery.phone !== "null" && (
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 shrink-0 text-[var(--brass)]" />
+                <a
+                  href={`tel:${winery.phone}`}
+                  className="hover:text-[var(--ink)] transition-colors"
+                >
+                  {winery.phone}
+                </a>
+              </div>
+            )}
+            {winery.websiteUrl && (
+              <div className="flex items-center gap-3">
+                <Globe className="h-4 w-4 shrink-0 text-[var(--brass)]" />
+                <TrackedLink
+                  href={winery.websiteUrl}
+                  clickType="website"
+                  wineryId={winery.id}
+                  sourcePage={`/wineries/${winery.slug}`}
+                  sourceComponent="WinerySidebar"
+                  className="hover:text-[var(--ink)] truncate transition-colors underline decoration-[var(--brass)] underline-offset-4"
+                >
+                  Website
+                </TrackedLink>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Amenities — always show dog and kid labels */}
-        <div className="mt-5 pt-5 border-t border-[var(--border)] space-y-2.5 text-sm">
+        <div className="mt-5 pt-5 border-t border-[var(--rule-soft)]">
+          <span className="kicker">Amenities</span>
+          <div className="mt-3 space-y-2.5 font-[var(--font-serif-text)] text-[14.5px] text-[var(--ink-2)]">
           {winery.reservationRequired && (
             <div className="flex items-center gap-2 text-[var(--foreground)]">
               <CalendarCheck className="h-4 w-4" />
@@ -289,27 +294,28 @@ export function WinerySidebar({
                   <span>Sustainable</span>
                 )}
                 {winery.sustainableNote && (
-                  <span className="text-xs text-[var(--muted-foreground)]"> · {winery.sustainableNote}</span>
+                  <span className="text-xs text-[var(--ink-3)]"> · {winery.sustainableNote}</span>
                 )}
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Hours */}
         {hours && (
-          <div className="mt-5 pt-5 border-t border-[var(--border)]">
-            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[var(--muted-foreground)]" />
+          <div className="mt-5 pt-5 border-t border-[var(--rule-soft)]">
+            <span className="kicker inline-flex items-center gap-1.5">
+              <Clock className="h-3 w-3 text-[var(--brass)]" />
               Hours
-            </h3>
-            <div className="space-y-1 text-xs">
+            </span>
+            <div className="mt-3 space-y-1 font-[var(--font-serif-text)] text-[13px]">
               {Object.entries(dayNames).map(([key, label]) => {
                 const isToday = key === today;
                 return (
                   <div
                     key={key}
-                    className={`flex justify-between ${isToday ? "font-semibold text-[var(--foreground)]" : "text-[var(--muted-foreground)]"}`}
+                    className={`flex justify-between ${isToday ? "font-semibold text-[var(--ink)]" : "text-[var(--ink-3)]"}`}
                   >
                     <span>{label}</span>
                     <span>{hours![key as keyof Hours] || "Closed"}</span>
@@ -322,37 +328,41 @@ export function WinerySidebar({
 
         {/* Day trips */}
         {dayTrips.length > 0 && (
-          <div className="mt-5 pt-5 border-t border-[var(--border)]">
-            <h3 className="text-sm font-semibold mb-2">Featured In</h3>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="mt-5 pt-5 border-t border-[var(--rule-soft)]">
+            <span className="kicker">Featured In</span>
+            <ul className="mt-3 space-y-1.5">
               {dayTrips.map((trip) => (
-                <Link
-                  key={trip.slug}
-                  href={`/itineraries/${trip.slug}`}
-                  className="inline-flex items-center gap-1 rounded-full bg-burgundy-50 dark:bg-burgundy-950 border border-burgundy-200 dark:border-burgundy-800 px-2.5 py-0.5 text-xs text-burgundy-700 dark:text-burgundy-300 hover:bg-burgundy-100 dark:hover:bg-burgundy-900 transition-colors"
-                >
-                  <Route className="h-3 w-3" />
-                  {trip.title}
-                </Link>
+                <li key={trip.slug}>
+                  <Link
+                    href={`/itineraries/${trip.slug}`}
+                    className="group inline-flex items-baseline gap-2 text-[14px] leading-[1.5] text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
+                    style={{ fontFamily: "var(--font-serif-text)" }}
+                  >
+                    <Route className="h-3 w-3 self-center text-[var(--brass)] shrink-0" />
+                    <span className="border-b border-transparent group-hover:border-[var(--brass)] transition-colors">
+                      {trip.title}
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
 
         {/* Visitor Tips */}
         {winery.visitorTips && (
-          <div className="mt-5 pt-5 border-t border-[var(--border)]">
-            <h3 className="text-sm font-semibold mb-2">Before You Go</h3>
-            <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+          <div className="mt-5 pt-5 border-t border-[var(--rule-soft)]">
+            <span className="kicker">Before You Go</span>
+            <p className="mt-3 font-[var(--font-serif-text)] text-[13.5px] leading-[1.6] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
               {winery.visitorTips}
             </p>
           </div>
         )}
 
         {/* Verification / last updated */}
-        <div className="mt-5 pt-4 border-t border-[var(--border)]">
+        <div className="mt-5 pt-4 border-t border-[var(--rule-soft)]">
           {winery.curated && winery.curatedAt ? (
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)]">
               Verified{" "}
               {new Date(winery.curatedAt).toLocaleDateString("en-US", {
                 month: "long",
@@ -360,7 +370,7 @@ export function WinerySidebar({
               })}
             </p>
           ) : (
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--ink-3)]">
               Last updated{" "}
               {new Date(
                 winery.lastScrapedAt || winery.updatedAt || "2025-01-01"

@@ -73,7 +73,7 @@ export function JournalEditForm({ entry, onClose, onSaved }: JournalEditFormProp
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-heading text-lg font-bold">{isVisit ? "Edit Visit" : "Edit Journal Entry"}</h3>
+          <h3 className="font-[var(--font-heading)] text-[18px] font-normal tracking-[-0.005em] text-[var(--ink)]">{isVisit ? "Edit Visit" : "Edit Journal Entry"}</h3>
           <button onClick={onClose} className="p-1 hover:bg-[var(--muted)] rounded">
             <X className="h-5 w-5" />
           </button>

@@ -28,10 +28,11 @@ export function NearbyMap({ center, name, nearby }: NearbyMapProps) {
 
   return (
     <div>
-      <h3 className="font-heading text-xl font-semibold mb-4">
-        Explore the Area
+      <span className="kicker">Cartography</span>
+      <h3 className="editorial-h2 text-[24px] sm:text-[28px] mt-2 mb-4">
+        Explore the <em>area.</em>
       </h3>
-      <div className="rounded-xl overflow-hidden border border-[var(--border)]">
+      <div className="overflow-hidden border border-[var(--rule)]">
         <APIProvider apiKey={apiKey}>
           <Map
             defaultCenter={center}
@@ -88,12 +89,12 @@ export function NearbyMap({ center, name, nearby }: NearbyMapProps) {
 
       {/* Nearby winery names below map */}
       {validNearby.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 font-[var(--font-serif-text)] text-[13px]">
           {validNearby.map((w) => (
             <Link
               key={w.slug}
               href={`/wineries/${w.slug}`}
-              className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              className="text-[var(--ink-2)] hover:text-[var(--brass-2)] hover:underline decoration-[var(--brass)] underline-offset-4 transition-colors"
             >
               {w.name} &rarr;
             </Link>

@@ -117,7 +117,7 @@ function SignupForm() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[var(--background)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/30 via-transparent to-[var(--paper)]" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
@@ -125,7 +125,7 @@ function SignupForm() {
           {/* Left: Editorial pitch — guide + site value */}
           <div>
             {/* Desktop hero image */}
-            <div className="relative hidden lg:block aspect-[16/10] w-full rounded-xl overflow-hidden">
+            <div className="photo-zoom relative hidden lg:block aspect-[16/10] w-full overflow-hidden">
               <Image
                 src="/images/blog/napa-spring-hero.jpg"
                 alt="Napa Valley vineyards with mustard flowers in spring"
@@ -137,24 +137,24 @@ function SignupForm() {
             </div>
 
             <div className="mt-6 lg:mt-8">
-              <h1 className="font-heading text-3xl sm:text-4xl font-bold leading-tight">
-                Your wine country
-                <br className="hidden sm:block" /> companion
+              <span className="kicker">Members</span>
+              <h1 className="editorial-h2 text-[36px] sm:text-[44px] mt-2">
+                Your wine country <em>companion.</em>
               </h1>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+              <p className="font-[var(--font-serif-text)] text-[17px] leading-relaxed text-[var(--ink-2)] mt-4 max-w-[55ch]">
                 Discover the best of Napa and Sonoma — from iconic estates to
-                hidden gems. A free account unlocks everything needed to plan,
+                tucked-away gems. A free account unlocks everything needed to plan,
                 save, and remember every visit.
               </p>
 
               {/* Quick stats */}
-              <div className="mt-6 flex flex-wrap gap-5">
+              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3">
                 {QUICK_STATS.map((s) => (
                   <div key={s.label} className="flex items-center gap-2">
-                    <s.icon className="h-4 w-4 text-[var(--muted-foreground)]" />
-                    <p className="text-sm">
-                      <span className="font-semibold">{s.value}</span>{" "}
-                      <span className="text-[var(--muted-foreground)]">
+                    <s.icon className="h-4 w-4 text-[var(--brass)]" />
+                    <p className="font-mono text-[12px] tracking-[0.08em] tabular-nums">
+                      <span className="font-semibold text-[var(--ink)]">{s.value}</span>{" "}
+                      <span className="text-[var(--ink-3)] uppercase tracking-[0.18em] text-[10.5px]">
                         {s.label}
                       </span>
                     </p>
@@ -163,14 +163,14 @@ function SignupForm() {
               </div>
 
               {/* Guide bonus */}
-              <div className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
+              <div className="card-flat mt-8 p-5">
                 <div className="flex items-start gap-3">
-                  <Download className="mt-0.5 h-5 w-5 shrink-0 text-burgundy-600 dark:text-burgundy-400" />
+                  <Download className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brass)]" />
                   <div>
-                    <p className="font-semibold">
+                    <p className="font-[var(--font-heading)] text-[18px] leading-tight text-[var(--ink)]">
                       Free Wine Country Planning Guide
                     </p>
-                    <p className="mt-1 text-sm text-[var(--muted-foreground)] leading-relaxed">
+                    <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] leading-relaxed">
                       A downloadable PDF with the best wineries for every style,
                       insider tasting tips, day trip itineraries by region, and
                       where to eat and stay. Delivered to your inbox when you
@@ -184,26 +184,24 @@ function SignupForm() {
 
           {/* Right: Form card + value props */}
           <div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8">
-              <h2 className="font-heading text-2xl font-bold">
-                Create your free account
+            <div className="card-flat p-6 sm:p-8">
+              <span className="kicker">Sign up</span>
+              <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+                Create your free <em>account.</em>
               </h2>
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              <p className="font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] mt-3">
                 Unlock saved wineries, trip planning, and a tasting journal.
               </p>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 {error && (
-                  <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                  <div className="border border-red-700 bg-red-50 px-4 py-3 text-sm text-red-800">
                     {error}
                   </div>
                 )}
 
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium mb-1"
-                  >
+                  <label htmlFor="email" className="label-kicker">
                     Email
                   </label>
                   <input
@@ -212,17 +210,14 @@ function SignupForm() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                    className="input-editorial"
                     placeholder="you@example.com"
                     autoFocus={!prefilledEmail}
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium mb-1"
-                  >
+                  <label htmlFor="name" className="label-kicker">
                     Name
                   </label>
                   <input
@@ -231,17 +226,14 @@ function SignupForm() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                    className="input-editorial"
                     placeholder="Your name"
                     autoFocus={!!prefilledEmail}
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium mb-1"
-                  >
+                  <label htmlFor="password" className="label-kicker">
                     Password
                   </label>
                   <div className="relative">
@@ -252,13 +244,13 @@ function SignupForm() {
                       minLength={8}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                      className="input-editorial pr-10"
                       placeholder="At least 8 characters"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? (
@@ -276,11 +268,11 @@ function SignupForm() {
                     type="checkbox"
                     checked={ageConfirmed}
                     onChange={(e) => setAgeConfirmed(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-burgundy-900 focus:ring-burgundy-500"
+                    className="mt-0.5 h-4 w-4 border-[var(--ink)] text-[var(--ink)] focus:ring-[var(--brass)]"
                   />
                   <label
                     htmlFor="age-confirm"
-                    className="text-xs text-[var(--muted-foreground)]"
+                    className="text-xs text-[var(--ink-2)]"
                   >
                     I confirm that I am 21 years of age or older
                   </label>
@@ -289,7 +281,7 @@ function SignupForm() {
                 <button
                   type="submit"
                   disabled={loading || !ageConfirmed}
-                  className="w-full rounded-lg bg-burgundy-900 px-4 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="btn-ink w-full"
                 >
                   {loading ? (
                     <>
@@ -299,22 +291,22 @@ function SignupForm() {
                   ) : (
                     <>
                       Create Free Account
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </>
                   )}
                 </button>
               </form>
 
               {/* Value props */}
-              <div className="mt-6 border-t border-[var(--border)] pt-5 space-y-3">
+              <div className="mt-7 border-t border-[var(--rule-soft)] pt-5 space-y-3">
                 {ACCOUNT_FEATURES.map((f) => (
                   <div key={f.label} className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-burgundy-200 dark:border-burgundy-800 bg-burgundy-50 dark:bg-burgundy-950">
-                      <f.icon className="h-3.5 w-3.5 text-burgundy-700 dark:text-burgundy-300" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-[var(--brass)] bg-[var(--paper)]">
+                      <f.icon className="h-3.5 w-3.5 text-[var(--brass-2)]" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">{f.label}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">
+                      <p className="font-[var(--font-heading)] text-[15px] text-[var(--ink)] leading-tight">{f.label}</p>
+                      <p className="text-xs text-[var(--ink-3)] mt-0.5">
                         {f.desc}
                       </p>
                     </div>
@@ -322,11 +314,11 @@ function SignupForm() {
                 ))}
               </div>
 
-              <div className="mt-5 border-t border-[var(--border)] pt-4 text-center text-sm text-[var(--muted-foreground)]">
+              <div className="mt-6 border-t border-[var(--rule-soft)] pt-4 text-center font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
                 Already have an account?{" "}
                 <Link
                   href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="text-[var(--foreground)] hover:underline font-medium"
+                  className="not-italic font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink)] hover:text-[var(--brass-2)] transition-colors"
                 >
                   Sign in
                 </Link>

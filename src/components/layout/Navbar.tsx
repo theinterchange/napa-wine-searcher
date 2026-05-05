@@ -53,38 +53,53 @@ export function Navbar() {
   }, [userMenuOpen]);
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-[var(--card)] border-[var(--border)]">
+    <nav className="sticky top-0 z-50 border-b bg-[var(--paper)]/95 backdrop-blur-sm border-[var(--rule-soft)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 shrink-0" aria-hidden="true">
-              <rect width="32" height="32" rx="6" className="fill-burgundy-900 dark:fill-burgundy-800" />
-              <path d="M16 6c-3 0-6 4-6 8 0 3.3 2.2 5.5 5 6v5h-3a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-5c2.8-.5 5-2.7 5-6 0-4-3-8-6-8z" fill="#d4a843" />
+            <svg
+              viewBox="0 0 32 32"
+              className="h-7 w-7 shrink-0"
+              aria-hidden="true"
+            >
+              <rect width="32" height="32" rx="4" fill="var(--color-burgundy-900)" />
+              <path
+                d="M 8 6 L 24 6 C 24 13.5, 21 17.5, 16.8 18 L 16.8 25.8 L 22 25.8 L 22 27.3 L 10 27.3 L 10 25.8 L 15.2 25.8 L 15.2 18 C 11 17.5, 8 13.5, 8 6 Z"
+                fill="var(--paper)"
+              />
+              <path
+                d="M 10 11.8 Q 16 13.4, 22 11.8 Q 21 17, 16 17.7 Q 11 17, 10 11.8 Z"
+                fill="var(--brass)"
+              />
             </svg>
-            <span className="font-heading text-lg font-bold text-burgundy-900 dark:text-gold-500 whitespace-nowrap">
+            <span
+              className="font-mono text-[12.5px] tracking-[0.22em] uppercase font-semibold whitespace-nowrap text-[var(--ink)]"
+            >
               Napa Sonoma Guide
             </span>
           </Link>
 
-          <div className="hidden lg:block flex-1">
-            <GlobalSearch hideButton={pathname === "/"} />
+          <div className="hidden lg:flex flex-1 justify-center">
+            <div className="w-full max-w-md">
+              <GlobalSearch hideButton={pathname === "/"} />
+            </div>
           </div>
 
-          <div className="hidden lg:flex items-center h-full gap-1 shrink-0">
+          <div className="hidden lg:flex items-center h-full gap-0 shrink-0">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "relative flex items-center h-full px-3 text-sm transition-colors",
+                  "relative flex items-center h-full px-3.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-colors",
                   isActive(href)
-                    ? "text-[var(--foreground)] font-semibold"
-                    : "text-[var(--foreground)] hover:text-[var(--foreground)] font-medium opacity-60 hover:opacity-100"
+                    ? "text-[var(--ink)] font-semibold"
+                    : "text-[var(--ink-2)] hover:text-[var(--ink)] font-medium"
                 )}
               >
                 {label}
                 {isActive(href) && (
-                  <span className="absolute inset-x-0 bottom-0 h-0.5 bg-burgundy-900 dark:bg-gold-500 rounded-full" />
+                  <span className="absolute inset-x-3 bottom-2.5 h-px bg-[var(--brass)]" />
                 )}
               </Link>
             ))}
@@ -93,61 +108,64 @@ export function Navbar() {
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   aria-expanded={userMenuOpen}
+                  aria-controls="user-menu"
+                  aria-haspopup="menu"
                   aria-label="Account menu"
-                  className="flex items-center gap-1.5 rounded-full p-0.5 hover:ring-2 hover:ring-[var(--border)] transition-all focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+                  className="flex items-center gap-1.5 p-0.5 hover:ring-2 hover:ring-[var(--brass)]/30 transition-all focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
                 >
                   {session.user?.image ? (
                     <img
                       src={session.user.image}
                       alt=""
-                      className="h-8 w-8 rounded-full border border-[var(--border)]"
+                      className="h-8 w-8 border border-[var(--rule)]"
                     />
                   ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300 text-sm font-semibold border border-[var(--border)]">
+                    <span className="flex h-8 w-8 items-center justify-center bg-[var(--paper-2)] text-[var(--ink)] font-mono text-[12px] tracking-[0.05em] font-semibold border border-[var(--rule)]">
                       {session.user?.name?.charAt(0)?.toUpperCase() || <User className="h-4 w-4" />}
                     </span>
                   )}
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-lg py-1 z-50">
+                  <div id="user-menu" role="menu" className="absolute right-0 top-full mt-2 w-52 max-w-[calc(100vw-2rem)] border border-[var(--rule)] bg-[var(--paper)] shadow-lg py-1 z-50">
                     {userMenuLinks.map(({ href, label, icon: Icon }) => (
                       <Link
                         key={href}
                         href={href}
                         onClick={() => setUserMenuOpen(false)}
                         className={cn(
-                          "flex items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors",
-                          isActive(href) &&
-                            "text-[var(--foreground)] font-semibold"
+                          "flex items-center gap-2.5 px-4 py-2.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors",
+                          isActive(href)
+                            ? "text-[var(--ink)] font-semibold bg-[var(--paper-2)]"
+                            : "text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)]"
                         )}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-3.5 w-3.5 text-[var(--brass)]" />
                         {label}
                       </Link>
                     ))}
                     {!!(session as unknown as Record<string, unknown>)?.isAdmin && (
                       <>
-                        <div className="border-t border-[var(--border)] my-1" />
+                        <div className="border-t border-[var(--rule-soft)] my-1" />
                         <Link
                           href="/nalaadmin"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors"
+                          className="flex items-center gap-2.5 px-4 py-2.5 font-mono text-[11px] tracking-[0.16em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors"
                         >
-                          <Settings className="h-4 w-4" />
+                          <Settings className="h-3.5 w-3.5 text-[var(--brass)]" />
                           Admin
                         </Link>
                       </>
                     )}
-                    <div className="border-t border-[var(--border)] my-1" />
+                    <div className="border-t border-[var(--rule-soft)] my-1" />
                     <button
                       onClick={() => {
                         setUserMenuOpen(false);
                         signOut({ callbackUrl: "/" });
                       }}
-                      className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-[var(--muted)] transition-colors text-left"
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 font-mono text-[11px] tracking-[0.16em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors text-left"
                     >
-                      <LogOut className="h-4 w-4" />
+                      <LogOut className="h-3.5 w-3.5 text-[var(--brass)]" />
                       Sign Out
                     </button>
                   </div>
@@ -156,7 +174,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="rounded-lg bg-burgundy-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                className="ml-3 bg-burgundy-900 px-4 py-2 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-white hover:bg-burgundy-800 transition-colors"
               >
                 Sign In
               </Link>
@@ -169,7 +187,8 @@ export function Navbar() {
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
               aria-expanded={open}
-              className="rounded p-1 focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+              aria-controls="mobile-nav"
+              className="p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
             >
               {open ? (
                 <X className="h-6 w-6" />
@@ -181,16 +200,16 @@ export function Navbar() {
         </div>
 
         {open && (
-          <div className="lg:hidden border-t border-[var(--border)] py-4 space-y-3">
+          <div id="mobile-nav" className="lg:hidden border-t border-[var(--rule-soft)] py-4 space-y-3">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "block text-sm font-medium",
+                  "block font-mono text-[11px] tracking-[0.18em] uppercase",
                   isActive(href)
-                    ? "text-[var(--foreground)] font-semibold"
-                    : ""
+                    ? "text-[var(--ink)] font-semibold"
+                    : "text-[var(--ink-2)] font-medium"
                 )}
                 onClick={() => setOpen(false)}
               >
@@ -199,19 +218,19 @@ export function Navbar() {
             ))}
             {session ? (
               <>
-                <div className="flex items-center gap-3 pb-2 mb-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3 pb-3 mb-2 border-b border-[var(--rule-soft)]">
                   {session.user?.image ? (
                     <img
                       src={session.user.image}
                       alt=""
-                      className="h-8 w-8 rounded-full border border-[var(--border)]"
+                      className="h-8 w-8 border border-[var(--rule)]"
                     />
                   ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300 text-sm font-semibold border border-[var(--border)]">
+                    <span className="flex h-8 w-8 items-center justify-center bg-[var(--paper-2)] text-[var(--ink)] font-mono text-[12px] font-semibold border border-[var(--rule)]">
                       {session.user?.name?.charAt(0)?.toUpperCase() || "?"}
                     </span>
                   )}
-                  <span className="text-sm font-medium text-[var(--foreground)]">
+                  <span className="font-mono text-[11px] tracking-[0.16em] uppercase font-medium text-[var(--ink)]">
                     {session.user?.name || "Account"}
                   </span>
                 </div>
@@ -220,14 +239,14 @@ export function Navbar() {
                     key={href}
                     href={href}
                     className={cn(
-                      "flex items-center gap-2 text-sm font-medium",
+                      "flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase",
                       isActive(href)
-                        ? "text-[var(--foreground)] font-semibold"
-                        : ""
+                        ? "text-[var(--ink)] font-semibold"
+                        : "text-[var(--ink-2)] font-medium"
                     )}
                     onClick={() => setOpen(false)}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-3.5 w-3.5 text-[var(--brass)]" />
                     {label}
                   </Link>
                 ))}
@@ -236,16 +255,16 @@ export function Navbar() {
                     setOpen(false);
                     signOut({ callbackUrl: "/" });
                   }}
-                  className="flex items-center gap-2 text-sm font-medium"
+                  className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-medium text-[var(--ink-2)]"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3.5 w-3.5 text-[var(--brass)]" />
                   Sign Out
                 </button>
               </>
             ) : (
               <Link
                 href="/login"
-                className="block text-sm font-medium text-burgundy-700"
+                className="block font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]"
                 onClick={() => setOpen(false)}
               >
                 Sign In

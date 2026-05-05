@@ -78,17 +78,17 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
         disabled={loading}
         title={compact ? (isFavorite ? "Favorited" : "Add to Favorites") : undefined}
         className={cn(
-          "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
-          compact ? "px-2.5 py-2" : "px-4 py-2",
+          "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
+          compact ? "px-3 py-2.5" : "px-4 py-2.5",
           isFavorite
-            ? "bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300"
-            : "border border-[var(--border)] hover:bg-[var(--muted)]"
+            ? "border border-burgundy-900 bg-burgundy-900 text-white hover:bg-burgundy-800"
+            : "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)]"
         )}
       >
         <Heart
-          className={cn("h-4 w-4", isFavorite && "fill-burgundy-600 text-burgundy-600")}
+          className={cn("h-3.5 w-3.5", isFavorite ? "fill-white text-white" : "text-[var(--brass)]")}
         />
-        {!compact && (isFavorite ? "Favorited" : "Add to Favorites")}
+        {!compact && (isFavorite ? "Favorited" : "Favorite")}
       </button>
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 py-2.5 text-sm text-white dark:text-gray-900 shadow-lg animate-in slide-in-from-bottom-4">

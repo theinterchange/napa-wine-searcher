@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function Pagination({
   currentPage,
@@ -29,10 +28,8 @@ export function Pagination({
     return `${basePath}${qs ? `?${qs}` : ""}`;
   };
 
-  // Sibling-count windowing: always show first + last, ±SIBLING_COUNT around current,
-  // and expand the window at the edges so we don't render anemic strips like [1] 2 … 19.
   const SIBLING_COUNT = 2;
-  const TOTAL_VISIBLE = 2 * SIBLING_COUNT + 5; // first + last + current + 2*siblings + 2 dots = 9
+  const TOTAL_VISIBLE = 2 * SIBLING_COUNT + 5;
 
   const range = (start: number, end: number) =>
     Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -47,26 +44,23 @@ export function Pagination({
     const showRightDots = rightSibling < totalPages - 1;
 
     if (!showLeftDots && showRightDots) {
-      // Near start: [1..(2*siblings+3), …, last]
       const leftCount = 3 + 2 * SIBLING_COUNT;
       pages.push(...range(1, leftCount), "...", totalPages);
     } else if (showLeftDots && !showRightDots) {
-      // Near end: [1, …, (last-(2*siblings+2))..last]
       const rightCount = 3 + 2 * SIBLING_COUNT;
       pages.push(1, "...", ...range(totalPages - rightCount + 1, totalPages));
     } else {
-      // Middle: [1, …, leftSibling..rightSibling, …, last]
       pages.push(1, "...", ...range(leftSibling, rightSibling), "...", totalPages);
     }
   }
 
+  const baseCell =
+    "min-w-[44px] min-h-[44px] flex items-center justify-center font-mono text-[12px] tracking-[0.06em] tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2";
+
   return (
-    <nav aria-label="Pagination" className="flex items-center justify-center gap-1">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-1.5">
       {currentPage <= 1 ? (
-        <span
-          aria-disabled="true"
-          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center opacity-50 cursor-not-allowed"
-        >
+        <span aria-disabled="true" className={`${baseCell} opacity-30 cursor-not-allowed`}>
           <ChevronLeft className="h-4 w-4" />
         </span>
       ) : (
@@ -74,21 +68,21 @@ export function Pagination({
           href={hrefForPage(currentPage - 1)}
           aria-label="Previous page"
           scroll={true}
-          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+          className={`${baseCell} text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)]`}
         >
           <ChevronLeft className="h-4 w-4" />
         </Link>
       )}
       {pages.map((page, i) =>
         page === "..." ? (
-          <span key={`dots-${i}`} className="px-2 text-[var(--muted-foreground)]">
-            ...
+          <span key={`dots-${i}`} className="px-2 text-[var(--ink-3)] font-mono text-[12px]">
+            …
           </span>
         ) : page === currentPage ? (
           <span
             key={page}
             aria-current="page"
-            className="min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium bg-burgundy-700 text-white"
+            className={`${baseCell} bg-[var(--ink)] text-[var(--paper)] font-semibold`}
           >
             {page}
           </span>
@@ -97,17 +91,14 @@ export function Pagination({
             key={page}
             href={hrefForPage(page)}
             scroll={true}
-            className="min-w-[44px] min-h-[44px] rounded-lg flex items-center justify-center text-sm font-medium hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+            className={`${baseCell} text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)]`}
           >
             {page}
           </Link>
         )
       )}
       {currentPage >= totalPages ? (
-        <span
-          aria-disabled="true"
-          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center opacity-50 cursor-not-allowed"
-        >
+        <span aria-disabled="true" className={`${baseCell} opacity-30 cursor-not-allowed`}>
           <ChevronRight className="h-4 w-4" />
         </span>
       ) : (
@@ -115,7 +106,7 @@ export function Pagination({
           href={hrefForPage(currentPage + 1)}
           aria-label="Next page"
           scroll={true}
-          className="rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[var(--muted)] transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+          className={`${baseCell} text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)]`}
         >
           <ChevronRight className="h-4 w-4" />
         </Link>

@@ -57,7 +57,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         {/* Feature photo — full width */}
         <button
           onClick={() => setLightboxIndex(0)}
-          className="relative w-full aspect-[16/9] rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+          className="relative w-full aspect-[16/9] overflow-hidden photo-zoom focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
           aria-label={`View photo 1 of ${photos.length}`}
         >
           <Image
@@ -78,7 +78,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
               <button
                 key={photo.id}
                 onClick={() => setLightboxIndex(i + 1)}
-                className="relative aspect-[4/3] rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                className="relative aspect-[4/3] overflow-hidden photo-zoom focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
                 aria-label={`View photo ${i + 2} of ${photos.length}`}
               >
                 <Image
@@ -98,9 +98,9 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         {photos.length > 5 && (
           <button
             onClick={() => setLightboxIndex(5)}
-            className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--brass-2)] border-b border-[var(--brass)] pb-1 transition-colors"
           >
-            View all {photos.length} photos
+            View all {photos.length} photos →
           </button>
         )}
       </div>
@@ -108,7 +108,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--ink)]/95"
           onClick={close}
           role="dialog"
           aria-modal="true"
@@ -116,10 +116,10 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
         >
           <button
             onClick={close}
-            className="absolute top-4 right-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+            className="absolute top-4 right-4 z-10 border border-[var(--brass)]/40 bg-[var(--ink)]/60 p-2 text-[var(--brass)] hover:bg-[var(--brass)] hover:text-[var(--ink)] transition-colors"
             aria-label="Close lightbox"
           >
-            <X className="h-6 w-6" />
+            <X className="h-5 w-5" />
           </button>
 
           {photos.length > 1 && (
@@ -128,10 +128,10 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
                 e.stopPropagation();
                 prev();
               }}
-              className="absolute left-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+              className="absolute left-4 z-10 border border-white/30 bg-black/40 p-2 text-white hover:bg-black/60 transition-colors"
               aria-label="Previous photo"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
           )}
 
@@ -143,7 +143,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
             height={800}
             sizes="90vw"
             quality={90}
-            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
+            className="max-h-[85vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
 
@@ -153,14 +153,14 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
                 e.stopPropagation();
                 next();
               }}
-              className="absolute right-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+              className="absolute right-4 z-10 border border-white/30 bg-black/40 p-2 text-white hover:bg-black/60 transition-colors"
               aria-label="Next photo"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           )}
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10.5px] tracking-[0.22em] uppercase bg-black/50 px-3 py-1 text-[var(--brass)]">
             {lightboxIndex + 1} / {photos.length}
           </div>
         </div>

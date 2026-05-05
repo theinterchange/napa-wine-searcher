@@ -9,27 +9,27 @@ export function SeasonalBanner({ banner }: SeasonalBannerProps) {
   const Icon = banner.icon;
 
   return (
-    <section className={`${banner.bgClass} text-white`}>
-      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-center">
-          <span className="flex items-center gap-2 font-semibold">
-            <Icon className="h-4 w-4" />
+    <section className="bg-[var(--ink)] text-[var(--paper)] border-y border-[var(--brass)]/30">
+      <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
+          <span className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[#f0d894]">
+            <Icon className="h-3.5 w-3.5" />
             {banner.title}
           </span>
           {banner.links.length > 0 && (
-            <span className="flex gap-3">
+            <span className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
               {banner.links.map((link, i) => (
-                <span key={link.href} className="flex items-center gap-3">
+                <span key={link.href} className="flex items-center gap-5">
                   {i > 0 && (
-                    <span className="text-white/40" aria-hidden="true">
-                      |
+                    <span className="text-[var(--paper)]/30" aria-hidden="true">
+                      ·
                     </span>
                   )}
                   <Link
                     href={link.href}
-                    className="underline underline-offset-2 hover:text-gold-300 transition-colors"
+                    className="font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--paper)] border-b border-[var(--brass)] pb-0.5 hover:text-[#f0d894] hover:border-[#f0d894] transition-colors"
                   >
-                    {link.label} &rarr;
+                    {link.label} →
                   </Link>
                 </span>
               ))}

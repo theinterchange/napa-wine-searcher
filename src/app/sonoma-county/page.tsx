@@ -150,49 +150,59 @@ export default async function SonomaCountyPage() {
         heroImageUrl={heroImageUrl}
       />
 
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h2 className="font-heading text-2xl font-bold mb-4">
-          What Makes Sonoma County Special
-        </h2>
-        <div className="max-w-3xl space-y-4 text-[var(--muted-foreground)] leading-relaxed">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+        <div className="border-b border-[var(--rule)] pb-4 mb-8">
+          <span className="kicker">N° 01 / The Region</span>
+          <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+            What makes Sonoma <em>special.</em>
+          </h2>
+        </div>
+        <div className="max-w-3xl space-y-5 font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]">
           {content.editorial.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p key={i} className={i === 0 ? "drop-cap-editorial" : ""} style={{ textWrap: "pretty" }}>{p}</p>
           ))}
         </div>
       </section>
 
-      <section className="border-t border-[var(--border)]">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-2">
-            Top-Rated Sonoma County Wineries
-          </h2>
-          <p className="text-sm text-[var(--muted-foreground)] mb-6">
-            The highest-rated wineries across all Sonoma County sub-regions.
-          </p>
+      <section className="border-t border-[var(--rule-soft)]">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+          <div className="border-b border-[var(--rule)] pb-4 mb-8">
+            <span className="kicker">N° 02 / The Wineries</span>
+            <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+              Top-rated <em>estates.</em>
+            </h2>
+            <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
+              The highest-rated wineries across all Sonoma County sub-regions.
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {overview.topWineries.map((w) => (
               <WineryCard key={w.slug} winery={w} />
             ))}
           </div>
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <Link
               href="/wineries?valley=sonoma"
-              className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-semibold text-white hover:bg-burgundy-800 transition-colors"
+              className="inline-flex items-center gap-2 bg-[var(--ink)] px-6 py-3.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-white hover:bg-[var(--brass-2)] transition-colors"
             >
-              View All Sonoma Wineries
+              View all Sonoma wineries →
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-2">
-            Explore Sonoma County Sub-Regions
-          </h2>
-          <p className="text-sm text-[var(--muted-foreground)] mb-8">
-            From the fog-cooled Russian River Valley to the sun-baked slopes of Dry Creek and Alexander Valley.
-          </p>
+      <section className="border-t border-[var(--rule-soft)] bg-[var(--paper-2)]/40">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+          <div className="border-b border-[var(--rule)] pb-4 mb-8">
+            <span className="kicker">N° 03 / Sub-AVAs</span>
+            <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+              Region by <em>region.</em>
+            </h2>
+            <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-2xl" style={{ textWrap: "pretty" }}>
+              From the fog-cooled Russian River Valley to the sun-baked slopes
+              of Dry Creek and Alexander Valley.
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {enrichedSubRegions.map((sr) => (
               <RegionCard
@@ -211,21 +221,24 @@ export default async function SonomaCountyPage() {
       </section>
 
       {varietals.length > 0 && (
-        <section className="border-t border-[var(--border)]">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-2xl font-bold mb-6">
-              Popular Varietals in Sonoma County
-            </h2>
-            <div className="flex flex-wrap gap-3">
+        <section className="border-t border-[var(--rule-soft)]">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+            <div className="border-b border-[var(--rule)] pb-4 mb-8">
+              <span className="kicker">N° 04 / Varietals</span>
+              <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+                Popular <em>varietals.</em>
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-2.5">
               {varietals.map((v) => (
                 <Link
                   key={v.name}
                   href={`/wineries?valley=sonoma&varietal=${slugify(v.name)}`}
-                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm hover:border-burgundy-400 hover:text-burgundy-700 dark:hover:border-burgundy-600 dark:hover:text-burgundy-400 transition-colors"
+                  className="inline-flex items-center gap-2 border border-[var(--rule)] bg-[var(--paper)] px-4 py-2 font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:border-[var(--brass)] hover:text-[var(--ink)] transition-colors"
                 >
-                  <Grape className="h-4 w-4 text-burgundy-500" />
+                  <Grape className="h-3.5 w-3.5 text-[var(--brass)]" />
                   {v.name}
-                  <span className="text-[var(--muted-foreground)]">({v.count})</span>
+                  <span className="font-[var(--font-serif-text)] normal-case tracking-normal text-[12px] text-[var(--ink-3)]">({v.count})</span>
                 </Link>
               ))}
             </div>
@@ -234,17 +247,20 @@ export default async function SonomaCountyPage() {
       )}
 
       {accommodations.length > 0 && (
-        <section className="border-t border-[var(--border)]">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-bold">
-                Where to Stay in Sonoma County
-              </h2>
+        <section className="border-t border-[var(--rule-soft)]">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+            <div className="border-b border-[var(--rule)] pb-4 mb-8 flex items-end justify-between gap-4">
+              <div>
+                <span className="kicker">N° 05 / Lodging</span>
+                <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+                  Where to <em>stay.</em>
+                </h2>
+              </div>
               <Link
                 href="/where-to-stay/sonoma-county"
-                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+                className="hidden sm:inline-flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--brass-2)] transition-colors"
               >
-                All Sonoma hotels &rarr;
+                All Sonoma hotels →
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -256,49 +272,52 @@ export default async function SonomaCountyPage() {
         </section>
       )}
 
-      <section className="border-t border-[var(--border)]">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-6">
-            Plan Your Sonoma County Visit
-          </h2>
+      <section className="border-t border-[var(--rule-soft)]">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+          <div className="border-b border-[var(--rule)] pb-4 mb-8">
+            <span className="kicker">N° 06 / The Plan</span>
+            <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+              Plan your <em>visit.</em>
+            </h2>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-              <Calendar className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 mb-3" />
-              <h3 className="font-heading text-sm font-semibold mb-1">Best Time to Visit</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">{content.bestTimeToVisit}</p>
+            <div className="border border-[var(--rule-soft)] bg-[var(--paper-2)]/40 p-5">
+              <Calendar className="h-4 w-4 text-[var(--brass)] mb-3" />
+              <span className="kicker">Best Time</span>
+              <p className="mt-2 font-[var(--font-serif-text)] text-[13.5px] leading-[1.5] text-[var(--ink-2)]">{content.bestTimeToVisit}</p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-              <Grape className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 mb-3" />
-              <h3 className="font-heading text-sm font-semibold mb-1">Tasting Prices</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="border border-[var(--rule-soft)] bg-[var(--paper-2)]/40 p-5">
+              <Grape className="h-4 w-4 text-[var(--brass)] mb-3" />
+              <span className="kicker">Tasting Prices</span>
+              <p className="mt-2 font-[var(--font-serif-text)] text-[13.5px] leading-[1.5] text-[var(--ink-2)]">
                 ${overview.tastingPriceRange.min} – ${overview.tastingPriceRange.max} per tasting
               </p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-              <Dog className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 mb-3" />
-              <h3 className="font-heading text-sm font-semibold mb-1">Dog-Friendly</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="border border-[var(--rule-soft)] bg-[var(--paper-2)]/40 p-5">
+              <Dog className="h-4 w-4 text-[var(--brass)] mb-3" />
+              <span className="kicker">Dog-Friendly</span>
+              <p className="mt-2 font-[var(--font-serif-text)] text-[13.5px] leading-[1.5] text-[var(--ink-2)]">
                 {overview.amenities.dogFriendlyCount} wineries welcome dogs
               </p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-              <Baby className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400 mb-3" />
-              <h3 className="font-heading text-sm font-semibold mb-1">Kid-Friendly</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="border border-[var(--rule-soft)] bg-[var(--paper-2)]/40 p-5">
+              <Baby className="h-4 w-4 text-[var(--brass)] mb-3" />
+              <span className="kicker">Kid-Friendly</span>
+              <p className="mt-2 font-[var(--font-serif-text)] text-[13.5px] leading-[1.5] text-[var(--ink-2)]">
                 {overview.amenities.kidFriendlyCount} family-friendly options
               </p>
             </div>
           </div>
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/itineraries"
-              className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+              className="inline-flex items-center gap-2 border border-[var(--ink)] px-5 py-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
             >
               Browse Itineraries
             </Link>
             <Link
               href="/itineraries/build?valley=sonoma"
-              className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
+              className="inline-flex items-center gap-2 border border-[var(--ink)] px-5 py-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
             >
               Build Custom Route
             </Link>
@@ -307,20 +326,25 @@ export default async function SonomaCountyPage() {
       </section>
 
       {blogPosts.length > 0 && (
-        <section className="border-t border-[var(--border)]">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-heading text-2xl font-bold">From the Blog</h2>
+        <section className="border-t border-[var(--rule-soft)]">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+            <div className="border-b border-[var(--rule)] pb-4 mb-8 flex items-end justify-between gap-4">
+              <div>
+                <span className="kicker">N° 07 / Dispatches</span>
+                <h2 className="editorial-h2 text-[28px] sm:text-[34px] lg:text-[40px] mt-2">
+                  From the <em>blog.</em>
+                </h2>
+                <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
+                  Stories, seasonal guides, and insider knowledge from wine country.
+                </p>
+              </div>
               <Link
                 href="/blog"
-                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+                className="hidden sm:inline-flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--brass-2)] transition-colors"
               >
-                Read all posts &rarr;
+                Read all posts →
               </Link>
             </div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-8">
-              Stories, seasonal guides, and insider knowledge from wine country.
-            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {blogPosts.map((post) => (
                 <BlogCard key={post.slug} post={post} />
@@ -330,12 +354,17 @@ export default async function SonomaCountyPage() {
         </section>
       )}
 
-      <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
-        <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-2">
-            <HelpCircle className="h-5 w-5 text-burgundy-600 dark:text-burgundy-400" />
-            Frequently Asked Questions
-          </h2>
+      <section className="border-t border-[var(--rule-soft)] bg-[var(--paper-2)]/40">
+        <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
+          <div className="border-b border-[var(--rule)] pb-4 mb-2">
+            <span className="kicker inline-flex items-center gap-1.5">
+              <HelpCircle className="h-3 w-3 text-[var(--brass)]" />
+              N° 08 / FAQ
+            </span>
+            <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+              Frequently <em>asked.</em>
+            </h2>
+          </div>
           <FAQSection faqs={content.faq} />
         </div>
       </section>

@@ -56,10 +56,15 @@ export default async function MyTripsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="font-heading text-2xl font-bold flex items-center gap-2 mb-8">
-        <Route className="h-6 w-6 text-burgundy-600" />
-        My Trips
-      </h1>
+      <header className="mb-8 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker flex items-center gap-2">
+          <Route className="h-3.5 w-3.5 text-[var(--brass)]" />
+          Itineraries
+        </span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">
+          My <em>trips.</em>
+        </h1>
+      </header>
 
       {tripsWithStops.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -79,18 +84,17 @@ export default async function MyTripsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <Route className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
-          <h2 className="mt-4 font-heading text-lg font-semibold">
+        <div className="card-flat p-12 text-center">
+          <Route className="mx-auto h-9 w-9 text-[var(--brass)] opacity-70" />
+          <h2 className="mt-4 editorial-h2 text-[22px]">
             No saved trips yet
           </h2>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Use the{" "}
-            <Link href="/itineraries" className="text-[var(--foreground)] underline">
-              trip planner
-            </Link>{" "}
-            to create a route, then save it here.
+          <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[50ch] mx-auto">
+            Use the trip planner to create a route, then save it here.
           </p>
+          <Link href="/itineraries" className="btn-ink mt-6 inline-flex">
+            Plan a Trip
+          </Link>
         </div>
       )}
     </div>

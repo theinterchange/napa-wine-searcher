@@ -67,7 +67,7 @@ export function MapInfoCard({
         )}
 
         {/* Name */}
-        <h3 className="mt-1 font-heading text-base font-semibold leading-snug pr-6">
+        <h3 className="mt-1 font-[var(--font-heading)] text-[15px] font-normal leading-snug pr-6">
           {winery.name}
         </h3>
 

@@ -23,6 +23,10 @@ export default async function AdminAccommodationsPage() {
       diningJson: accommodations.diningJson,
       spaJson: accommodations.spaJson,
       activitiesJson: accommodations.activitiesJson,
+      curated: accommodations.curated,
+      curatedAt: accommodations.curatedAt,
+      spotlightYearMonth: accommodations.spotlightYearMonth,
+      spotlightTeaser: accommodations.spotlightTeaser,
     })
     .from(accommodations)
     .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))

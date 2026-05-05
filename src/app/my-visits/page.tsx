@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { visited, wineries, subRegions } from "@/db/schema";
 import { eq, desc, count } from "drizzle-orm";
+import { MapPin } from "lucide-react";
 import { WineryCard } from "@/components/directory/WineryCard";
 import type { Metadata } from "next";
 
@@ -33,6 +34,7 @@ export default async function MyVisitsPage() {
         picnicFriendly: wineries.picnicFriendly,
         kidFriendly: wineries.kidFriendly,
         kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+        tastingPriceMin: wineries.tastingPriceMin,
         heroImageUrl: wineries.heroImageUrl,
         subRegion: subRegions.name,
         valley: subRegions.valley,
@@ -52,13 +54,19 @@ export default async function MyVisitsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold">My Visits</h1>
-        <p className="mt-2 text-[var(--muted-foreground)]">
+      <header className="mb-8 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker flex items-center gap-2">
+          <MapPin className="h-3.5 w-3.5 text-[var(--brass)]" />
+          Logbook
+        </span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">
+          My <em>visits.</em>
+        </h1>
+        <p className="mt-3 font-mono text-[11px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
           {total} {total === 1 ? "winery" : "wineries"} visited &middot; {pct}%
           of all wineries
         </p>
-      </div>
+      </header>
 
       {visitedWineries.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -66,7 +74,7 @@ export default async function MyVisitsPage() {
             <div key={w.id} className="relative">
               <WineryCard winery={w} />
               {w.visitedDate && (
-                <span className="absolute top-2 left-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                <span className="absolute top-3 left-3 z-20 bg-[var(--ink)] px-2 py-1 font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--paper)]">
                   Visited{" "}
                   {new Date(w.visitedDate).toLocaleDateString("en-US", {
                     month: "short",
@@ -79,10 +87,10 @@ export default async function MyVisitsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
-          <p className="text-lg text-[var(--muted-foreground)]">
-            No visits yet. Browse wineries and mark the ones you&apos;ve
-            visited!
+        <div className="card-flat p-12 text-center">
+          <MapPin className="mx-auto h-9 w-9 text-[var(--brass)] opacity-70" />
+          <p className="mt-4 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[50ch] mx-auto">
+            No visits yet. Browse wineries and mark the ones you&apos;ve visited.
           </p>
         </div>
       )}

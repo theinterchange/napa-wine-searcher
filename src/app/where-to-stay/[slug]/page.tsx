@@ -25,6 +25,7 @@ import { AccommodationCard } from "@/components/accommodation/AccommodationCard"
 import { AccommodationHero } from "@/components/accommodation/AccommodationHero";
 import { getAllGuides } from "@/lib/guide-content";
 import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
+import { MobileBookingBar } from "@/components/monetization/MobileBookingBar";
 import { ImpressionBeacon } from "@/components/analytics/ImpressionBeacon";
 import { FAQSection } from "@/components/region/FAQSection";
 import { FAQSchema } from "@/components/seo/FAQSchema";
@@ -289,24 +290,26 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+          className="flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.16em] uppercase text-[var(--ink-3)] min-w-0"
         >
-          <Link href="/" className="hover:text-[var(--foreground)]">
+          <Link href="/" className="hover:text-[var(--ink)] transition-colors shrink-0">
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <Link
-            href="/where-to-stay"
-            className="hover:text-[var(--foreground)]"
-          >
-            Where to Stay
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <Link href={valleyHref} className="hover:text-[var(--foreground)]">
-            {valleyLabel}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-[var(--foreground)] truncate">
+          <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+          <span className="hidden sm:contents">
+            <Link
+              href="/where-to-stay"
+              className="hover:text-[var(--ink)] transition-colors shrink-0"
+            >
+              Where to Stay
+            </Link>
+            <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+            <Link href={valleyHref} className="hover:text-[var(--ink)] transition-colors shrink-0">
+              {valleyLabel}
+            </Link>
+            <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+          </span>
+          <span className="text-[var(--ink)] font-semibold truncate min-w-0" aria-current="page">
             {accommodation.name}
           </span>
         </nav>
@@ -316,6 +319,18 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
       <div className="mt-2">
         <AccommodationHero accommodation={accommodation} photos={photos} />
       </div>
+
+      {/* Mobile-only sticky booking bar — desktop has sidebar CTA */}
+      <MobileBookingBar
+        kind="hotel"
+        bookingUrl={accommodation.bookingUrl}
+        websiteUrl={accommodation.websiteUrl}
+        accommodationName={accommodation.name}
+        lat={accommodation.lat}
+        lng={accommodation.lng}
+        accommodationId={accommodation.id}
+        accommodationSlug={accommodation.slug}
+      />
 
       {/* Main content */}
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
@@ -329,13 +344,13 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 : [];
               return tags.length > 0 ? (
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-[var(--muted-foreground)] shrink-0">
+                  <span className="font-mono text-[10px] tracking-[0.22em] uppercase font-semibold text-[var(--brass-2)] shrink-0">
                     Known for
                   </span>
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]"
+                      className="font-mono text-[10px] tracking-[0.14em] uppercase px-2 py-1 border border-[var(--rule)] text-[var(--ink-2)]"
                     >
                       {tag}
                     </span>
@@ -349,20 +364,20 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               <section className="space-y-4">
                 {accommodation.whyStayHere && (
                   <>
-                    <h2 className="font-heading text-2xl font-bold">
+                    <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                       Why Stay Here
                     </h2>
-                    <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                    <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                       {accommodation.whyStayHere}
                     </p>
                   </>
                 )}
                 {whyReasons.length > 0 && (
-                  <ul className="space-y-2">
+                  <ul className="space-y-2.5">
                     {whyReasons.map((reason, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <Check className="h-5 w-5 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <span className="text-[var(--muted-foreground)]">
+                        <Check className="h-4 w-4 mt-1 text-[var(--brass-2)] shrink-0" />
+                        <span className="font-[var(--font-serif-text)] text-[15.5px] leading-[1.6] text-[var(--ink-2)]">
                           {reason}
                         </span>
                       </li>
@@ -375,10 +390,10 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* The Experience */}
             {accommodation.theExperience && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   The Experience
                 </h2>
-                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {accommodation.theExperience}
                 </p>
               </section>
@@ -387,7 +402,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* The Setting */}
             {accommodation.theSetting && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   The Setting
                 </h2>
                 {groundsPhoto && (
@@ -401,7 +416,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     />
                   </div>
                 )}
-                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {accommodation.theSetting}
                 </p>
               </section>
@@ -410,7 +425,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Rooms & Suites */}
             {rooms.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   Rooms & Suites
                 </h2>
                 {roomPhoto && (
@@ -428,19 +443,19 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   {rooms.slice(0, 6).map((room, i) => (
                     <div
                       key={i}
-                      className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+                      className="border-t border-[var(--rule)] bg-[var(--paper-2)]/40 p-5"
                     >
-                      <h3 className="font-heading font-semibold text-lg mb-2">
+                      <h3 className="font-[var(--font-heading)] text-[18px] font-normal mb-2 text-[var(--ink)]">
                         {room.name}
                       </h3>
-                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                      <p className="font-[var(--font-serif-text)] text-[14.5px] leading-[1.6] text-[var(--ink-2)]">
                         {room.description}
                       </p>
                     </div>
                   ))}
                 </div>
                 {rooms.length > 6 && (
-                  <p className="text-sm text-[var(--muted-foreground)] mt-3">
+                  <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mt-3">
                     +{rooms.length - 6} more room types available
                   </p>
                 )}
@@ -464,7 +479,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Dining */}
             {dining.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   Dining
                 </h2>
                 {diningPhoto && (
@@ -481,15 +496,15 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                 <div className="space-y-5">
                   {dining.map((d, i) => (
                     <div key={i}>
-                      <div className="flex items-baseline gap-2">
-                        <h3 className="font-heading font-semibold text-lg">
+                      <div className="flex items-baseline gap-3 flex-wrap">
+                        <h3 className="font-[var(--font-heading)] text-[18px] font-normal text-[var(--ink)]">
                           {d.name}
                         </h3>
-                        <span className="text-xs text-[var(--muted-foreground)]">
+                        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--brass-2)]">
                           {d.type}
                         </span>
                       </div>
-                      <p className="text-sm text-[var(--muted-foreground)] mt-1 leading-relaxed">
+                      <p className="font-[var(--font-serif-text)] text-[15px] leading-[1.6] text-[var(--ink-2)] mt-2">
                         {d.description}
                       </p>
                     </div>
@@ -515,7 +530,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Spa & Wellness */}
             {spa && spa.description && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   {spa.name || "Spa & Wellness"}
                 </h2>
                 {spaPhoto && (
@@ -529,7 +544,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     />
                   </div>
                 )}
-                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {spa.description}
                   {spa.highlights.length > 0 &&
                     ` Highlights include ${spa.highlights.join(", ").toLowerCase()}.`}
@@ -540,19 +555,19 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Activities & Experiences */}
             {activities.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   Activities & Experiences
                 </h2>
                 <div className="space-y-4">
                   {activities.map((a, i) => (
                     <div
                       key={i}
-                      className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+                      className="border-t border-[var(--rule)] bg-[var(--paper-2)]/40 p-5"
                     >
-                      <h3 className="font-heading font-semibold text-lg">
+                      <h3 className="font-[var(--font-heading)] text-[18px] font-normal text-[var(--ink)]">
                         {a.name}
                       </h3>
-                      <p className="text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
+                      <p className="font-[var(--font-serif-text)] text-[15px] leading-[1.6] text-[var(--ink-2)] mt-2">
                         {a.description}
                       </p>
                     </div>
@@ -578,14 +593,14 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Children's Amenities */}
             {childrenAmenities.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   Family Amenities
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {childrenAmenities.map((a) => (
                     <span
                       key={a}
-                      className="rounded-full bg-[var(--muted)] px-3 py-1.5 text-sm font-medium"
+                      className="font-mono text-[10px] tracking-[0.14em] uppercase px-2 py-1 border border-[var(--rule)] text-[var(--ink-2)]"
                     >
                       {a}
                     </span>
@@ -597,14 +612,14 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Wine features */}
             {wineFeatures.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   Wine Country Perks
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {wineFeatures.map((f) => (
                     <span
                       key={f}
-                      className="rounded-full bg-[var(--muted)] px-3 py-1.5 text-sm font-medium"
+                      className="font-mono text-[10px] tracking-[0.14em] uppercase px-2 py-1 border border-[var(--rule)] text-[var(--ink-2)]"
                     >
                       {wineFeatureLabels[f] || f}
                     </span>
@@ -616,10 +631,10 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Insider Tips */}
             {accommodation.beforeYouBook && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   Insider Tips
                 </h2>
-                <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
+                <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
                   {accommodation.beforeYouBook}
                 </p>
               </section>
@@ -628,10 +643,10 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* About (full description) */}
             {accommodation.description && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-4">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                   About {accommodation.name}
                 </h2>
-                <div className="text-base text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
+                <div className="font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)] whitespace-pre-line" style={{ textWrap: "pretty" }}>
                   {accommodation.description}
                 </div>
               </section>
@@ -641,7 +656,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {relatedAccommodations.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-heading text-2xl font-bold">
+                  <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                     More Places to Stay
                   </h2>
                   <Link
@@ -662,11 +677,11 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             {/* Nearby wineries */}
             {nearbyWineries.length > 0 && (
               <section>
-                <h2 className="font-heading text-2xl font-bold mb-6">
+                <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
                   Wineries Nearby
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {nearbyWineries.map((w) => (
+                  {nearbyWineries.slice(0, 8).map((w) => (
                     <div key={w.slug} className="relative">
                       <WineryCard winery={w} />
                       {w.distanceMiles != null && (
@@ -679,6 +694,16 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     </div>
                   ))}
                 </div>
+                {nearbyWineries.length > 8 && (
+                  <div className="mt-6">
+                    <Link
+                      href={`/wineries?valley=${accommodation.valley}`}
+                      className="inline-flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:text-[var(--brass-2)] transition-colors"
+                    >
+                      View all {nearbyWineries.length} wineries near this hotel →
+                    </Link>
+                  </div>
+                )}
               </section>
             )}
 
@@ -710,7 +735,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               if (related.length === 0) return null;
               return (
                 <section>
-                  <h2 className="font-heading text-xl font-semibold mb-4">
+                  <h2 className="font-[var(--font-heading)] text-[22px] sm:text-[24px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-4">
                     Related Guides
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -718,7 +743,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                       <Link
                         key={g.key}
                         href={g.href}
-                        className="rounded-full border border-[var(--border)] px-3 py-1.5 text-sm hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+                        className="font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold border border-[var(--ink)] bg-transparent text-[var(--ink)] px-3 py-2 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
                       >
                         {g.label}
                       </Link>
@@ -763,7 +788,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
 
               {/* Contact */}
               <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-3">
-                <h3 className="font-heading text-lg font-semibold">Contact</h3>
+                <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)]">Contact</h3>
                 {accommodation.address && (
                   <div className="flex items-start gap-2 text-sm">
                     <MapPin className="h-4 w-4 mt-0.5 text-[var(--muted-foreground)]" />
@@ -806,7 +831,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
               {/* Amenities & Policies — null = unknown (omit), true/false = stated fact */}
               {(accommodation.dogFriendly != null || accommodation.adultsOnly === true || accommodation.kidFriendlyNote || amenities.length > 0) && (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 space-y-4">
-                  <h3 className="font-heading text-lg font-semibold">
+                  <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)]">
                     Amenities & Policies
                   </h3>
 
@@ -881,11 +906,11 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                   </div>
 
                   {amenities.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       {amenities.map((a) => (
                         <span
                           key={a}
-                          className="rounded-full bg-[var(--muted)] px-2.5 py-1 text-xs font-medium"
+                          className="font-mono text-[10px] tracking-[0.14em] uppercase px-2 py-1 border border-[var(--rule)] text-[var(--ink-2)]"
                         >
                           {amenityLabels[a] || a}
                         </span>
@@ -911,7 +936,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
       {/* FAQ Section */}
       {faqs.length > 0 && (
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-10">
-          <h2 className="font-heading text-2xl font-bold mb-6">
+          <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
             Frequently Asked Questions
           </h2>
           <FAQSection faqs={faqs} />
@@ -983,6 +1008,7 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     value: true,
                   }))
                 : undefined,
+            dateModified: accommodation.updatedAt || undefined,
           }),
         }}
       />

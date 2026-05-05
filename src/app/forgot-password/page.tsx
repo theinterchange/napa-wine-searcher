@@ -22,28 +22,27 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+    <div className="flex min-h-[60vh] items-center justify-center px-4 py-10">
+      <div className="w-full max-w-sm card-flat px-8 py-9">
         <div className="text-center">
-          <Wine className="mx-auto h-10 w-10 text-[var(--foreground)]" />
-          <h1 className="mt-4 font-heading text-2xl font-bold">
-            Reset Password
+          <Wine className="mx-auto h-9 w-9 text-[var(--brass)]" />
+          <span className="block kicker mt-4">Members</span>
+          <h1 className="editorial-h2 text-[28px] sm:text-[32px] mt-2">
+            Reset <em>password.</em>
           </h1>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p className="font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] mt-3 leading-relaxed">
             Enter your email and we&apos;ll send you a reset link.
           </p>
         </div>
 
         {status === "success" ? (
-          <div className="mt-8 rounded-lg bg-green-50 px-4 py-3 dark:bg-green-900/30">
-            <p className="text-center text-sm text-green-700 dark:text-green-400">
-              If an account exists for that email, we&apos;ve sent a password reset link. Check your inbox (and spam folder).
-            </p>
+          <div className="mt-8 border border-[var(--brass)] bg-[var(--paper)] px-4 py-3 text-center font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
+            If an account exists for that email, we&apos;ve sent a password reset link. Check your inbox (and spam folder).
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
+              <label htmlFor="email" className="label-kicker">
                 Email
               </label>
               <input
@@ -52,14 +51,14 @@ export default function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                className="input-editorial"
               />
             </div>
 
             <button
               type="submit"
               disabled={status === "loading"}
-              className="w-full rounded-lg bg-burgundy-700 px-4 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
+              className="btn-ink w-full"
             >
               {status === "loading" ? (
                 <Loader2 className="h-4 w-4 animate-spin mx-auto" />
@@ -70,10 +69,10 @@ export default function ForgotPasswordPage() {
           </form>
         )}
 
-        <div className="mt-6 text-center text-sm text-[var(--muted-foreground)]">
+        <div className="mt-7 pt-5 border-t border-[var(--rule-soft)] text-center">
           <Link
             href="/login"
-            className="text-burgundy-700 hover:text-burgundy-800 dark:text-burgundy-400 font-medium"
+            className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink)] hover:text-[var(--brass-2)] transition-colors"
           >
             Back to Sign In
           </Link>

@@ -1,24 +1,39 @@
 import Link from "next/link";
 
-const filters = [
+const regionFilters = [
   { label: "Napa Valley", href: "/wineries?valley=napa" },
   { label: "Sonoma County", href: "/wineries?valley=sonoma" },
+];
+
+const amenityFilters = [
   { label: "Dog-Friendly", href: "/wineries?amenities=dog" },
   { label: "Kid-Friendly", href: "/wineries?amenities=kid" },
   { label: "Walk-in OK", href: "/wineries?amenities=walkin" },
   { label: "Under $40", href: "/wineries?tastingPrice=budget" },
   { label: "Luxury", href: "/wineries?tastingPrice=luxury" },
-  { label: "Cabernet Sauvignon", href: "/wineries?varietal=cabernet-sauvignon" },
+  { label: "Cabernet", href: "/wineries?varietal=cabernet-sauvignon" },
 ];
 
 export function QuickFilterBar() {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
-      {filters.map((f) => (
+    <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-4 border-b border-[var(--rule-soft)]">
+      <span className="kicker mr-1">Region</span>
+      {regionFilters.map((f) => (
         <Link
           key={f.href}
           href={f.href}
-          className="shrink-0 rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-400 hover:text-burgundy-700 dark:hover:border-burgundy-600 dark:hover:text-burgundy-400 transition-colors focus-visible:ring-2 focus-visible:ring-burgundy-500 focus-visible:ring-offset-2"
+          className="shrink-0 border border-[var(--ink)] bg-[var(--ink)] px-3.5 py-1.5 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--paper)] hover:bg-[var(--brass)] hover:border-[var(--brass)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
+        >
+          {f.label}
+        </Link>
+      ))}
+      <span className="hidden sm:inline-block w-px h-5 bg-[var(--rule)] mx-2" aria-hidden="true" />
+      <span className="kicker mr-1">Good for</span>
+      {amenityFilters.map((f) => (
+        <Link
+          key={f.href}
+          href={f.href}
+          className="shrink-0 border border-[var(--ink)] bg-transparent px-3.5 py-1.5 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brass)] focus-visible:ring-offset-2"
         >
           {f.label}
         </Link>

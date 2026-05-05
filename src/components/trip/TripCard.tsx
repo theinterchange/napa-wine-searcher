@@ -92,7 +92,7 @@ export function TripCard({
   return (
     <>
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-        <h3 className="font-heading font-semibold text-lg">{trip.name}</h3>
+        <h3 className="font-[var(--font-heading)] text-[18px] font-normal">{trip.name}</h3>
         <div className="mt-2 space-y-1">
           {trip.stops.map((stop, i) => (
             <p

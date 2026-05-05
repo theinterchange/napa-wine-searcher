@@ -26,6 +26,7 @@ const wineryCardFields = {
   picnicFriendly: wineries.picnicFriendly,
   kidFriendly: wineries.kidFriendly,
   kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+  tastingPriceMin: wineries.tastingPriceMin,
   curated: wineries.curated,
   heroImageUrl: wineries.heroImageUrl,
   websiteUrl: wineries.websiteUrl,

@@ -19,7 +19,7 @@ export function NearbyAccommodations({
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-heading text-2xl font-bold">{title}</h2>
+        <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">{title}</h2>
         <Link
           href={valley ? `/where-to-stay/${valley === "napa" ? "napa-valley" : "sonoma-county"}` : "/where-to-stay"}
           className="text-sm font-medium text-[var(--foreground)] hover:underline"

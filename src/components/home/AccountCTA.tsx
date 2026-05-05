@@ -12,7 +12,7 @@ export function AccountCTA() {
       <section className="border-t border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-heading text-2xl font-bold">
+            <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
               Your Free Wine Country Planning Guide
             </h2>
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
@@ -60,7 +60,7 @@ export function AccountCTA() {
     <section className="border-t border-[var(--border)]">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-heading text-2xl font-bold">
+          <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
             Your Wine Country Companion
           </h2>
           <p className="mt-3 text-[var(--muted-foreground)] text-sm sm:text-base max-w-xl mx-auto leading-relaxed">

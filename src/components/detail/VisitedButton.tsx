@@ -78,17 +78,17 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
         disabled={loading}
         title={compact ? (isVisited ? "Visited" : "Mark Visited") : undefined}
         className={cn(
-          "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
-          compact ? "px-2.5 py-2" : "px-4 py-2",
+          "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
+          compact ? "px-3 py-2.5" : "px-4 py-2.5",
           isVisited
-            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-            : "border border-[var(--border)] hover:bg-[var(--muted)]"
+            ? "border border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800"
+            : "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)]"
         )}
       >
         {isVisited ? (
-          <CheckCircle2 className="h-4 w-4 fill-emerald-600 text-emerald-600 dark:fill-emerald-400 dark:text-emerald-400" />
+          <CheckCircle2 className="h-3.5 w-3.5 fill-white text-white" />
         ) : (
-          <Circle className="h-4 w-4" />
+          <Circle className="h-3.5 w-3.5 text-[var(--brass)]" />
         )}
         {!compact && (isVisited ? "Visited" : "Mark Visited")}
       </button>

@@ -64,7 +64,7 @@ export function ProfileSettings() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-lg">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-heading text-lg font-bold">
+              <h3 className="font-[var(--font-heading)] text-[18px] font-normal tracking-[-0.005em] text-[var(--ink)]">
                 Profile Settings
               </h3>
               <button

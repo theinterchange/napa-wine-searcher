@@ -11,13 +11,11 @@ import {
 } from "./wine-constants";
 import { TriedItButton } from "./TriedItButton";
 
-function WineTypeBadge({ wineType, category }: { wineType: string | null; category: string | null }) {
+function WineTypeBadge({ wineType }: { wineType: string | null; category: string | null }) {
   if (!wineType) return null;
   return (
     <span
-      className={`inline-block max-w-full truncate rounded-full px-2 py-0.5 text-xs font-medium ${
-        categoryColors[category || ""] || categoryColors.other
-      }`}
+      className="inline-block whitespace-nowrap border border-[var(--rule)] bg-[var(--paper)] px-2 py-0.5 font-mono text-[10px] tracking-[0.08em] uppercase text-[var(--ink-2)]"
       title={wineType}
     >
       {wineType}
@@ -81,7 +79,7 @@ export function WineCategory({
             <table className="w-full text-sm table-fixed">
               <colgroup>
                 <col />
-                <col className="w-[160px]" />
+                <col className="w-[200px]" />
                 <col className="w-[72px]" />
                 <col className="w-[72px]" />
                 {wineryId && <col className="w-[90px]" />}

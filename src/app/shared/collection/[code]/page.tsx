@@ -67,6 +67,7 @@ export default async function SharedCollectionPage({
       picnicFriendly: wineries.picnicFriendly,
       kidFriendly: wineries.kidFriendly,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
@@ -79,21 +80,21 @@ export default async function SharedCollectionPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <p className="text-sm text-[var(--muted-foreground)] flex items-center gap-1 mb-2">
-          <FolderOpen className="h-4 w-4" />
-          Shared Collection
-        </p>
-        <h1 className="font-heading text-2xl font-bold">{collection.name}</h1>
+      <header className="mb-8 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker flex items-center gap-2">
+          <FolderOpen className="h-3.5 w-3.5 text-[var(--brass)]" />
+          Shared collection
+        </span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">{collection.name}</h1>
         {collection.description && (
-          <p className="mt-2 text-[var(--muted-foreground)]">
+          <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[60ch]">
             {collection.description}
           </p>
         )}
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-3 font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
           {items.length} {items.length === 1 ? "winery" : "wineries"}
         </p>
-      </div>
+      </header>
 
       {items.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -102,18 +103,15 @@ export default async function SharedCollectionPage({
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <p className="text-[var(--muted-foreground)]">
+        <div className="card-flat p-12 text-center">
+          <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
             This collection is empty.
           </p>
         </div>
       )}
 
-      <div className="mt-8 text-center">
-        <Link
-          href="/wineries"
-          className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-        >
+      <div className="mt-10 text-center">
+        <Link href="/wineries" className="btn-ink">
           Explore All Wineries
         </Link>
       </div>

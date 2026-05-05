@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="text-center">
         <Wine className="mx-auto h-12 w-12 text-[var(--foreground)] opacity-50" />
-        <h1 className="mt-4 font-heading text-2xl font-bold">
+        <h1 className="mt-4 font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
           Page Not Found
         </h1>
         <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-md mx-auto">

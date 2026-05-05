@@ -29,7 +29,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
           className="w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-left hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-colors"
         >
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+            <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] flex items-center gap-2">
               <Pencil className="h-4 w-4" />
               Tasting Notes
             </h3>
@@ -66,7 +66,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+        <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] flex items-center gap-2">
           <Pencil className="h-4 w-4" />
           My Notes
         </h3>

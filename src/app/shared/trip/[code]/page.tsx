@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { savedTrips, savedTripStops, wineries, subRegions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { MapPin, Route } from "lucide-react";
+import { Route } from "lucide-react";
 import Link from "next/link";
 import { WineryCard } from "@/components/directory/WineryCard";
 import type { Metadata } from "next";
@@ -68,6 +68,7 @@ export default async function SharedTripPage({
       picnicFriendly: wineries.picnicFriendly,
       kidFriendly: wineries.kidFriendly,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
@@ -81,27 +82,27 @@ export default async function SharedTripPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <p className="text-sm text-[var(--muted-foreground)] flex items-center gap-1 mb-2">
-          <Route className="h-4 w-4" />
-          Shared Trip Plan
-        </p>
-        <h1 className="font-heading text-2xl font-bold">{trip.name}</h1>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-          {stops.length} wineries
+      <header className="mb-8 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker flex items-center gap-2">
+          <Route className="h-3.5 w-3.5 text-[var(--brass)]" />
+          Shared trip plan
+        </span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">{trip.name}</h1>
+        <p className="mt-3 font-mono text-[11px] tracking-[0.12em] uppercase text-[var(--ink-3)]">
+          {stops.length} {stops.length === 1 ? "winery" : "wineries"}
           {trip.theme && ` · ${trip.theme}`}
         </p>
-      </div>
+      </header>
 
       <div className="space-y-4">
         {stops.map((stop, i) => (
           <div key={stop.id} className="flex gap-4 items-start">
             <div className="flex flex-col items-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-burgundy-700 text-white text-sm font-bold">
-                {i + 1}
+              <div className="flex h-9 w-9 items-center justify-center bg-[var(--ink)] text-[var(--paper)] font-mono text-[12px] tracking-[0.05em] tabular-nums">
+                {String(i + 1).padStart(2, "0")}
               </div>
               {i < stops.length - 1 && (
-                <div className="w-0.5 h-8 bg-[var(--border)]" />
+                <div className="w-0.5 h-8 bg-[var(--rule)]" />
               )}
             </div>
             <div className="flex-1 pb-4">
@@ -111,12 +112,9 @@ export default async function SharedTripPage({
         ))}
       </div>
 
-      <div className="mt-8 text-center">
-        <Link
-          href="/itineraries"
-          className="inline-flex items-center gap-2 rounded-lg bg-burgundy-700 px-6 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-        >
-          <Route className="h-4 w-4" />
+      <div className="mt-10 text-center">
+        <Link href="/itineraries" className="btn-ink">
+          <Route className="h-3.5 w-3.5" />
           Plan Your Own Trip
         </Link>
       </div>

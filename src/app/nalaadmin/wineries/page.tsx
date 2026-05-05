@@ -17,6 +17,8 @@ export default async function AdminWineriesPage() {
       priceLevel: wineries.priceLevel,
       curated: wineries.curated,
       curatedAt: wineries.curatedAt,
+      spotlightYearMonth: wineries.spotlightYearMonth,
+      spotlightTeaser: wineries.spotlightTeaser,
     })
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))

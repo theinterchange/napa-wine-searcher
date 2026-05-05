@@ -345,25 +345,28 @@ export default async function GuidesPage() {
       />
 
       {/* Editorial Hero */}
-      <section className="bg-[var(--muted)]/30 border-b border-[var(--border)]">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
-            Wine Country Guides
+      <section className="border-b border-[var(--rule)]">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+          <span className="kicker">The Library · Wine country, indexed</span>
+          <h1 className="editorial-h2 text-[36px] sm:text-[48px] mt-3">
+            Curated <em>guides.</em>
           </h1>
-          <p className="mt-3 text-[var(--muted-foreground)] max-w-2xl leading-relaxed">
-            Everything needed to plan the perfect wine country visit — whether
-            searching by region, varietal, budget, or style. Each guide is built
-            from verified winery data and local knowledge.
+          <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.5] text-[var(--ink-2)] mt-4 max-w-[55ch]">
+            Curated routes through Napa and Sonoma — by region, varietal,
+            budget, or style. Every guide built from verified winery data.
           </p>
         </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Featured Guides — visual picks at top */}
-        <div className="mb-12">
-          <h2 className="font-heading text-xl font-bold mb-6">
-            Popular Guides
-          </h2>
+        <div className="mb-14">
+          <header className="mb-6">
+            <span className="kicker">Popular</span>
+            <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+              Where most readers <em>start.</em>
+            </h2>
+          </header>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {featuredGuidesData.map((g) => (
               <GuideCard
@@ -383,8 +386,18 @@ export default async function GuidesPage() {
         <div className="space-y-14">
           {renderedSections.map(({ key, meta, heroImage, cards }) => (
             <section key={key}>
-              {/* Section hero band */}
-              <div className="relative h-36 sm:h-44 rounded-xl overflow-hidden mb-5">
+              {/* Section header — editorial flat */}
+              <header className="mb-5 pb-4 border-b border-[var(--rule)]">
+                <div className="flex items-center gap-2 text-[var(--brass-2)]">
+                  {meta.icon}
+                  <span className="kicker">{meta.label}</span>
+                </div>
+                <p className="font-[var(--font-serif-text)] text-[15px] leading-relaxed text-[var(--ink-2)] mt-2 max-w-[60ch]">
+                  {meta.description}
+                </p>
+              </header>
+              {/* Decorative section thumbnail (small, flat) */}
+              <div className="photo-zoom relative h-28 sm:h-32 mb-5 overflow-hidden">
                 <Image
                   src={heroImage}
                   alt=""
@@ -392,31 +405,19 @@ export default async function GuidesPage() {
                   sizes="(max-width: 1280px) 100vw, 1280px"
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
-                <div className="absolute bottom-4 left-5 right-5 sm:left-6 text-white">
-                  <div className="flex items-center gap-2">
-                    {meta.icon}
-                    <h2 className="font-heading text-2xl sm:text-3xl font-bold">
-                      {meta.label}
-                    </h2>
-                  </div>
-                  <p className="mt-1.5 text-sm text-white/85 max-w-2xl">
-                    {meta.description}
-                  </p>
-                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {cards.map((card) => (
                   <Link
                     key={card.slug}
                     href={card.href}
-                    className="group rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3.5 hover:border-burgundy-400 dark:hover:border-burgundy-600 hover:shadow-sm transition-all"
+                    className="group bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] px-4 py-3.5 transition-colors"
                   >
-                    <h3 className="font-medium text-sm group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                    <h3 className="font-[var(--font-heading)] text-[17px] leading-tight text-[var(--ink)] group-hover:text-[var(--color-burgundy-900)] transition-colors">
                       {card.title}
                     </h3>
                     {card.intro && (
-                      <p className="mt-1 text-xs text-[var(--muted-foreground)] line-clamp-2">
+                      <p className="mt-1.5 text-[13px] text-[var(--ink-3)] line-clamp-2">
                         {card.intro}
                       </p>
                     )}

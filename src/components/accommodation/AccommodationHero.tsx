@@ -117,7 +117,8 @@ export function AccommodationHero({
               />
             );
           })}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/40 via-[var(--ink)]/55 to-[var(--ink)]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--ink)]/55 via-transparent to-transparent" />
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-burgundy-800 via-burgundy-900 to-burgundy-950">
@@ -146,27 +147,11 @@ export function AccommodationHero({
         </>
       )}
 
-      <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-10 sm:pb-14 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          <span className="rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium">
-            {accommodation.starRating
-              ? `${accommodation.starRating}-star ${(typeLabels[accommodation.type] || accommodation.type).toLowerCase()}`
-              : typeLabels[accommodation.type] || accommodation.type}
-          </span>
-          {tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-gold-500/20 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gold-200"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
+      <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-12 sm:pb-16 sm:px-6 lg:px-8">
         {(accommodation.subRegion || accommodation.city) && (
-          <div className="flex items-center gap-2 text-white/70 text-sm mb-4">
-            <MapPin className="h-4 w-4" />
-            <span>
+          <div className="flex items-center gap-2 mb-5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
+            <MapPin className="h-3 w-3 text-[#f0d894]" />
+            <span className="font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-[#f0d894]">
               {[accommodation.subRegion, valleyLabel, accommodation.city]
                 .filter(Boolean)
                 .join(" · ")}
@@ -174,19 +159,40 @@ export function AccommodationHero({
           </div>
         )}
 
-        <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+        <h1
+          className="font-[var(--font-heading)] text-white text-[28px] sm:text-[44px] lg:text-[58px] leading-[1.12] sm:leading-[1.08] lg:leading-[1.05] tracking-[-0.015em] font-normal max-w-[18ch] pr-4"
+          style={{ textWrap: "balance", textShadow: "0 2px 24px rgba(0,0,0,0.5)" }}
+        >
           {accommodation.name}
         </h1>
 
-        <div className="mt-6 flex flex-wrap items-center gap-4">
+        <hr className="rule-brass mt-5" style={{ marginInline: 0 }} />
+
+        <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1.5" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.5)" }}>
+          <span className="font-[var(--font-serif-text)] text-white text-[15px] sm:text-[17px]">
+            {accommodation.starRating
+              ? `${accommodation.starRating}-star ${(typeLabels[accommodation.type] || accommodation.type).toLowerCase()}`
+              : typeLabels[accommodation.type] || accommodation.type}
+          </span>
+          {tags.slice(0, 2).map((tag) => (
+            <span
+              key={tag}
+              className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#f0d894] border border-[#f0d894]/50 px-2 py-0.5"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] tracking-[0.18em] uppercase text-white/95" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
           {accommodation.googleRating && (
-            <div className="flex items-center gap-1.5">
-              <Star className="h-5 w-5 fill-gold-400 text-gold-400" />
-              <span className="font-semibold text-lg">
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 fill-[#f0d894] text-[#f0d894]" />
+              <span className="font-semibold text-white">
                 {accommodation.googleRating.toFixed(1)}
               </span>
               {accommodation.googleReviewCount != null && (
-                <span className="text-white/60">
+                <span className="text-white/70 normal-case tracking-normal font-[var(--font-serif-text)] text-[13px]">
                   ({accommodation.googleReviewCount.toLocaleString()} reviews)
                 </span>
               )}

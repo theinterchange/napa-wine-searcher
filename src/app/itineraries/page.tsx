@@ -48,8 +48,6 @@ async function loadCuratedTripsWithCounts(): Promise<CuratedTripCard[]> {
       .from(dayTripRoutes)
       .orderBy(asc(dayTripRoutes.title));
 
-    // Second pass: per-route fallback image from the first stop with an image.
-    // Done in one query across all routes; de-duplicated in JS.
     const routeIds = baseRows.map((r) => r.id);
     const stopImages =
       routeIds.length > 0
@@ -139,46 +137,47 @@ export default async function ItinerariesLandingPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <header className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-          Plan your Napa & Sonoma trip
+      <header className="mb-10 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker">Itineraries</span>
+        <h1 className="editorial-h2 text-[36px] sm:text-[44px] mt-2">
+          Plan your Napa &amp; Sonoma <em>trip.</em>
         </h1>
-        <p className="mt-3 max-w-2xl text-[var(--muted-foreground)]">
-          Build your own from a few preferences, describe the trip you want, or
-          start from a curated route. Every stop is editable — swap, add, or
-          remove anytime.
+        <p className="mt-4 font-[var(--font-serif-text)] text-[17px] leading-[1.5] text-[var(--ink-2)] max-w-[60ch]">
+          Build from a few preferences or start with a curated route — every
+          stop editable.
         </p>
       </header>
 
       <section className="mb-12 grid gap-3 sm:grid-cols-2">
         <Link
           href="/itineraries/build"
-          className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 transition-shadow hover:shadow-md"
+          className="group flex flex-col bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-5 transition-colors"
         >
-          <PenLine className="h-6 w-6 text-burgundy-900" />
-          <h2 className="mt-3 font-serif text-lg font-semibold">Build your own</h2>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          <PenLine className="h-6 w-6 text-[var(--brass)]" />
+          <h2 className="mt-3 font-[var(--font-heading)] text-[19px] text-[var(--ink)] leading-tight">Build your own</h2>
+          <p className="mt-1.5 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
             A few questions, then a full itinerary tailored to your group.
           </p>
         </Link>
         <Link
           href="/itineraries/describe"
-          className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 transition-shadow hover:shadow-md"
+          className="group flex flex-col bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-5 transition-colors"
         >
-          <Sparkles className="h-6 w-6 text-burgundy-900" />
-          <h2 className="mt-3 font-serif text-lg font-semibold">Describe your trip</h2>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-            Tell us what you love; we'll match you to verified wineries.
+          <Sparkles className="h-6 w-6 text-[var(--brass)]" />
+          <h2 className="mt-3 font-[var(--font-heading)] text-[19px] text-[var(--ink)] leading-tight">Describe your trip</h2>
+          <p className="mt-1.5 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
+            Tell us what you love; we&apos;ll match you to verified wineries.
           </p>
         </Link>
       </section>
 
       <section>
-        <header className="mb-4">
-          <h2 className="font-serif text-2xl font-semibold">
-            Or start with a hand-picked trip
+        <header className="mb-5">
+          <span className="kicker">The Library</span>
+          <h2 className="editorial-h2 text-[24px] sm:text-[30px] mt-2">
+            Or start with a hand-picked <em>trip.</em>
           </h2>
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
             Editorial itineraries chosen by the guide team. Customize any of
             them the moment you land on the trip page.
           </p>

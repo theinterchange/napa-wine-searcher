@@ -72,7 +72,7 @@ export function AuthGateModal({ message, onClose }: AuthGateModalProps) {
         </button>
 
         <div className="p-6 sm:p-8">
-          <h2 className="font-heading text-xl sm:text-2xl font-bold pr-8">
+          <h2 className="font-[var(--font-heading)] text-[22px] sm:text-[26px] font-normal tracking-[-0.01em] text-[var(--ink)] pr-8">
             Create a free account
           </h2>
           <p className="mt-2 text-sm text-[var(--muted-foreground)] leading-relaxed">

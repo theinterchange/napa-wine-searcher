@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { collections, collectionItems } from "@/db/schema";
 import { eq, desc, count } from "drizzle-orm";
-import { FolderOpen, Plus } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import Link from "next/link";
 import { CopyShareLink } from "@/components/trip/CopyShareLink";
 import type { Metadata } from "next";
@@ -39,12 +39,15 @@ export default async function CollectionsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-heading text-2xl font-bold flex items-center gap-2">
-          <FolderOpen className="h-6 w-6 text-burgundy-600" />
-          My Collections
+      <header className="mb-8 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker flex items-center gap-2">
+          <FolderOpen className="h-3.5 w-3.5 text-[var(--brass)]" />
+          Lists
+        </span>
+        <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">
+          My <em>collections.</em>
         </h1>
-      </div>
+      </header>
 
       {userCollections.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -52,20 +55,21 @@ export default async function CollectionsPage() {
             <Link
               key={col.id}
               href={`/collections/${col.id}`}
-              className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-burgundy-400 dark:hover:border-burgundy-600 transition-colors"
+              className="bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-5 transition-colors"
             >
-              <h3 className="font-heading font-semibold text-lg">
+              <h3 className="font-[var(--font-heading)] text-[19px] leading-tight text-[var(--ink)]">
                 {col.name}
               </h3>
               {col.description && (
-                <p className="mt-1 text-sm text-[var(--muted-foreground)] line-clamp-2">
+                <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)] line-clamp-2">
                   {col.description}
                 </p>
               )}
-              <div className="mt-3 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+              <div className="mt-3 flex items-center gap-3 font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
                 <span>
                   {col.itemCount} {col.itemCount === 1 ? "winery" : "wineries"}
                 </span>
+                <span>·</span>
                 <span>
                   {new Date(col.createdAt).toLocaleDateString("en-US", {
                     month: "short",
@@ -84,19 +88,16 @@ export default async function CollectionsPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <FolderOpen className="mx-auto h-10 w-10 text-[var(--muted-foreground)] opacity-50" />
-          <h2 className="mt-4 font-heading text-lg font-semibold">
+        <div className="card-flat p-12 text-center">
+          <FolderOpen className="mx-auto h-9 w-9 text-[var(--brass)] opacity-70" />
+          <h2 className="mt-4 editorial-h2 text-[22px]">
             No collections yet
           </h2>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[50ch] mx-auto">
             Visit a winery page and click &ldquo;Add to List&rdquo; to create
             your first collection.
           </p>
-          <Link
-            href="/wineries"
-            className="mt-4 inline-block rounded-lg bg-burgundy-700 px-4 py-2 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-          >
+          <Link href="/wineries" className="btn-ink mt-6 inline-flex">
             Browse Wineries
           </Link>
         </div>

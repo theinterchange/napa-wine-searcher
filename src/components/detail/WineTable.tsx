@@ -27,14 +27,18 @@ export function WineTable({
   if (wines.length === 0) {
     return (
       <div>
-        <h2 className="font-heading text-2xl font-semibold mb-4">Wine List</h2>
-        <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-12 text-center">
-          <WineIcon className="mx-auto h-10 w-10 text-[var(--muted-foreground)]/50" />
-          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+        <span className="kicker">The Pour</span>
+        <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+          Wine <em>list.</em>
+        </h2>
+        <hr className="rule-brass mt-3" style={{ marginInline: 0 }} />
+        <div className="mt-6 border border-dashed border-[var(--rule)] bg-[var(--paper-2)]/40 px-6 py-12 text-center">
+          <WineIcon className="mx-auto h-10 w-10 text-[var(--brass)]/50" />
+          <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
             Wine details aren&apos;t available online.
           </p>
           {(websiteUrl || phone) && (
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
               Contact {wineryName || "the winery"} directly for current
               offerings
               {" \u2014 "}
@@ -43,7 +47,7 @@ export function WineTable({
                   href={websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--foreground)] underline font-medium"
+                  className="text-[var(--ink)] underline decoration-[var(--brass)] underline-offset-4 font-medium"
                 >
                   visit their website
                 </a>
@@ -52,7 +56,7 @@ export function WineTable({
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="text-[var(--foreground)] underline font-medium"
+                  className="text-[var(--ink)] underline decoration-[var(--brass)] underline-offset-4 font-medium"
                 >
                   call {phone}
                 </a>
@@ -89,18 +93,20 @@ export function WineTable({
 
   return (
     <div>
-      <h2 className="font-heading text-2xl font-semibold mb-2">
-        Wine List{" "}
-        <span className="text-base font-normal text-[var(--muted-foreground)]">
+      <span className="kicker">The Pour</span>
+      <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+        Wine <em>list.</em>{" "}
+        <span className="font-[var(--font-serif-text)] text-[16px] text-[var(--ink-3)]">
           ({wines.length})
         </span>
       </h2>
+      <hr className="rule-brass mt-3" style={{ marginInline: 0 }} />
       {!curated && (
-        <p className="mb-4 text-xs text-[var(--muted-foreground)] italic">
+        <p className="mt-4 font-[var(--font-serif-text)] text-[12.5px] text-[var(--ink-3)]">
           Prices are approximate and may not reflect current offerings.
         </p>
       )}
-      <div className="space-y-3">
+      <div className="mt-6 space-y-3">
         {orderedGroups.map((g) => (
           <WineCategory
             key={g.category}

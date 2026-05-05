@@ -31,16 +31,30 @@ export function ImpressionBeacon({
     const referrer =
       typeof document !== "undefined" ? document.referrer || undefined : undefined;
 
-    recordImpression({
-      path,
-      pageType,
-      entityType,
-      entityId,
-      wineryId,
-      accommodationId,
-      referrer,
-      viewedAt,
-    });
+    const fire = () =>
+      recordImpression({
+        path,
+        pageType,
+        entityType,
+        entityId,
+        wineryId,
+        accommodationId,
+        referrer,
+        viewedAt,
+      });
+
+    // Defer to idle so the beacon doesn't compete with critical paint resources
+    type IdleWindow = Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    const w = window as IdleWindow;
+    if (typeof w.requestIdleCallback === "function") {
+      const id = w.requestIdleCallback(fire, { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const id = setTimeout(fire, 0);
+    return () => clearTimeout(id);
   }, [path, pageType, entityType, entityId, wineryId, accommodationId]);
 
   return null;

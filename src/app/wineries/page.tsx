@@ -12,22 +12,22 @@ import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
+  title: "Best Napa & Sonoma Wineries — Tastings, Reservations, Dog-Friendly",
   description:
-    "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
+    "Compare 225+ Napa Valley and Sonoma County wineries — tasting prices, reservation policies, dog-friendly venues, and signature varietals. Plan a tasting day.",
   openGraph: {
-    title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
+    title: "Best Napa & Sonoma Wineries — Tastings, Reservations, Dog-Friendly",
     description:
-      "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
+      "Compare 225+ Napa Valley and Sonoma County wineries — tasting prices, reservation policies, dog-friendly venues, and signature varietals.",
     url: `${BASE_URL}/wineries`,
     siteName: "Napa Sonoma Guide",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Best Wineries in Napa Valley & Sonoma County | Napa Sonoma Guide",
+    title: "Best Napa & Sonoma Wineries — Tastings, Reservations, Dog-Friendly",
     description:
-      "Explore 225+ Napa and Sonoma wineries with ratings, prices, and tasting reservation info. Filter by region, varietal, and experience type.",
+      "Compare 225+ Napa Valley and Sonoma County wineries — tasting prices, reservations, dog-friendly venues.",
   },
   alternates: {
     canonical: `${BASE_URL}/wineries`,
@@ -210,6 +210,7 @@ export default async function WineriesPage({
       picnicFriendly: wineries.picnicFriendly,
       kidFriendly: wineries.kidFriendly,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       subRegionSlug: subRegions.slug,
@@ -262,12 +263,16 @@ export default async function WineriesPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
-      <div className="text-center mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-3">Browse Wineries</h1>
-        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
-          Explore {total}+ wineries across Napa Valley and Sonoma County — from
-          iconic estates to hidden gems. Filter by region, varietal, price, and
-          experience to find your perfect tasting.
+      <div className="mb-10 pb-7 border-b border-[var(--rule)]">
+        <span className="kicker">The Directory</span>
+        <h1 className="editorial-h2 text-[34px] sm:text-[44px] lg:text-[52px] mt-3">
+          Browse the <em>directory.</em>
+        </h1>
+        <p
+          className="mt-5 max-w-[52ch] text-[16px] sm:text-[17px] leading-[1.5] text-[var(--ink-2)]"
+          style={{ fontFamily: "var(--font-serif-text)", textWrap: "pretty" }}
+        >
+          Every winery in Napa and Sonoma — filter to fit.
         </p>
       </div>
 
@@ -283,23 +288,23 @@ export default async function WineriesPage({
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-lg text-[var(--muted-foreground)]">
+          <p className="font-[var(--font-serif-text)] text-[18px] text-[var(--ink-3)]">
             No wineries match your filters.
           </p>
         </div>
       )}
 
-      <div className="mt-8">
+      <div className="mt-10">
         <Pagination currentPage={clampedPage} totalPages={totalPages} />
       </div>
 
-      <div className="mt-12 text-center">
+      <div className="mt-16 pt-8 border-t border-[var(--rule-soft)] text-center">
         <Link
           href="/itineraries"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)] hover:underline"
+          className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] border-b border-[var(--brass)] pb-1 hover:text-[var(--brass-2)] transition-colors"
         >
-          <Route className="h-4 w-4" />
-          Explore Itineraries
+          <Route className="h-3.5 w-3.5" />
+          Explore Itineraries →
         </Link>
       </div>
     </div>

@@ -114,7 +114,8 @@ export function WineryHero({
               />
             );
           })}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/40 via-[var(--ink)]/55 to-[var(--ink)]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--ink)]/55 via-transparent to-transparent" />
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-burgundy-800 via-burgundy-900 to-burgundy-950">
@@ -143,11 +144,11 @@ export function WineryHero({
         </>
       )}
 
-      <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-10 sm:pb-14 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-12 sm:pb-16 sm:px-6 lg:px-8">
         {(winery.subRegion || winery.valley || winery.city) && (
-          <div className="flex items-center gap-2 text-white/70 text-sm mb-4">
-            <MapPin className="h-4 w-4" />
-            <span>
+          <div className="flex items-center gap-2 mb-5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
+            <MapPin className="h-3 w-3 text-[#f0d894]" />
+            <span className="font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-[#f0d894]">
               {[
                 winery.subRegion,
                 winery.valley === "napa"
@@ -163,25 +164,33 @@ export function WineryHero({
           </div>
         )}
 
-        <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+        <h1
+          className="font-[var(--font-heading)] text-white text-[28px] sm:text-[44px] lg:text-[58px] leading-[1.12] sm:leading-[1.08] lg:leading-[1.05] tracking-[-0.015em] font-normal max-w-[18ch] pr-4"
+          style={{ textWrap: "balance", textShadow: "0 2px 24px rgba(0,0,0,0.5)" }}
+        >
           {winery.name}
         </h1>
 
+        <hr className="rule-brass mt-5" style={{ marginInline: 0 }} />
+
         {winery.shortDescription && (
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/80">
+          <p
+            className="mt-5 max-w-2xl font-[var(--font-serif-text)] text-white text-[16px] sm:text-[18px] leading-[1.55]"
+            style={{ textWrap: "pretty", textShadow: "0 1px 12px rgba(0,0,0,0.5)" }}
+          >
             {winery.shortDescription}
           </p>
         )}
 
-        <div className="mt-6 flex flex-wrap items-center gap-4">
+        <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] tracking-[0.18em] uppercase text-white/95" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
           {winery.aggregateRating && (
             <div className="flex items-center gap-2">
               <StarRating rating={winery.aggregateRating} size="md" />
-              <span className="font-semibold">
+              <span className="font-semibold text-white">
                 {winery.aggregateRating.toFixed(1)}
               </span>
               {winery.totalRatings != null && (
-                <span className="text-white/60">
+                <span className="text-white/70 normal-case tracking-normal font-[var(--font-serif-text)] text-[13px]">
                   ({winery.totalRatings.toLocaleString()})
                 </span>
               )}
@@ -189,20 +198,18 @@ export function WineryHero({
           )}
           {winery.priceLevel && (
             <span
-              className="text-gold-300 font-medium"
+              className="text-[#f0d894] font-medium"
               aria-label={`Price level ${winery.priceLevel} of 4`}
             >
               {"$".repeat(winery.priceLevel)}
             </span>
           )}
-          <span className="text-sm text-white/60">
-            {winery.reservationRequired
-              ? "Reservations Required"
-              : "Walk-ins Welcome"}
+          <span>
+            {winery.reservationRequired ? "Reservations Required" : "Walk-ins Welcome"}
           </span>
           {winery.curated && verifiedDate && (
-            <span className="inline-flex items-center gap-1.5 text-xs text-emerald-300/80">
-              <BadgeCheck className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-1.5 text-[10.5px] text-emerald-300">
+              <BadgeCheck className="h-3 w-3" />
               Verified {verifiedDate}
             </span>
           )}

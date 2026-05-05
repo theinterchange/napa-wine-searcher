@@ -181,9 +181,10 @@ export function PreferenceBuilder({
 
   return (
     <div>
-      <header className="mb-10">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-[2.25rem]">
-          Build your trip
+      <header className="mb-10 pb-5 border-b border-[var(--rule)]">
+        <span className="kicker">Itineraries</span>
+        <h1 className="editorial-h2 text-[34px] sm:text-[40px] mt-2">
+          Build your <em>trip.</em>
         </h1>
       </header>
 
@@ -195,13 +196,13 @@ export function PreferenceBuilder({
 
       <section className="mt-10">
         <header className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+          <p className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[var(--brass-2)]">
             Step {activeStep + 1} of {STEP_TITLES.length}
           </p>
-          <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight">
+          <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2">
             {STEP_TITLES[activeStep]}
           </h2>
-          <p className="mt-1.5 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-2 font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
             {STEP_HINTS[activeStep]}
           </p>
         </header>
@@ -215,7 +216,7 @@ export function PreferenceBuilder({
         )}
 
         {error && (
-          <p className="mt-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+          <p className="mt-6 border border-red-700 bg-red-50 p-3 text-sm text-red-800">
             {error}
           </p>
         )}

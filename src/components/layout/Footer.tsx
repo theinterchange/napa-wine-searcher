@@ -1,143 +1,76 @@
-import { Wine } from "lucide-react";
 import Link from "next/link";
 import { FooterEmailCapture } from "./FooterEmailCapture";
 import { ThemeToggle } from "./ThemeToggle";
 
+const linkClass =
+  "text-[var(--ink-2)] hover:text-[var(--ink)] hover:underline decoration-[var(--brass)] underline-offset-4 transition-colors";
+
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--card)]">
-      {/* Email capture strip — hidden on auth routes and for logged-in users */}
+    <footer className="border-t border-[var(--rule)] bg-[var(--paper)]">
+      {/* Email capture strip — hidden on auth routes */}
       <FooterEmailCapture />
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Wine className="h-5 w-5 text-burgundy-900 dark:text-burgundy-200" />
-              <span className="font-heading text-lg font-extrabold text-burgundy-900 dark:text-gold-600">
-                Napa Sonoma Guide
-              </span>
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div className="md:col-span-4">
+            <div className="font-[var(--font-heading)] text-[24px] font-normal tracking-[-0.01em] text-[var(--ink)]">
+              Napa Sonoma <em className="italic" style={{ color: "var(--brass-2)" }}>Guide</em>
             </div>
-            <p className="text-sm text-[var(--muted-foreground)]">
-              Your definitive guide to Napa and Sonoma Valley wineries. Discover
-              exceptional wines, book tastings, and plan your wine country
-              adventure.
+            <p className="mt-4 text-[14px] leading-[1.55] text-[var(--ink-2)] max-w-[40ch]">
+              The complete visitor&apos;s guide to Napa Valley and Sonoma County wineries — ranked, reviewed, and filtered the way you&apos;d actually pick.
             </p>
           </div>
-          <div>
-            <h3 className="font-heading font-semibold mb-3">Explore</h3>
-            <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
-              <li>
-                <Link href="/wineries" className="hover:text-[var(--foreground)] transition-colors">
-                  All Wineries
-                </Link>
-              </li>
-              <li>
-                <Link href="/where-to-stay" className="hover:text-[var(--foreground)] transition-colors">
-                  Where to Stay
-                </Link>
-              </li>
-              <li>
-                <Link href="/itineraries" className="hover:text-[var(--foreground)] transition-colors">
-                  Itineraries
-                </Link>
-              </li>
-              <li>
-                <Link href="/itineraries/build" className="hover:text-[var(--foreground)] transition-colors">
-                  Plan a Trip
-                </Link>
-              </li>
-              <li>
-                <Link href="/map" className="hover:text-[var(--foreground)] transition-colors">
-                  Map View
-                </Link>
-              </li>
+
+          <div className="md:col-span-2">
+            <h3 className="kicker mb-4">Explore</h3>
+            <ul className="space-y-2.5 text-[14px]">
+              <li><Link href="/wineries" className={linkClass}>All Wineries</Link></li>
+              <li><Link href="/where-to-stay" className={linkClass}>Where to Stay</Link></li>
+              <li><Link href="/itineraries" className={linkClass}>Itineraries</Link></li>
+              <li><Link href="/itineraries/build" className={linkClass}>Plan a Trip</Link></li>
+              <li><Link href="/map" className={linkClass}>Map View</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-heading font-semibold mb-3">Regions</h3>
-            <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
-              <li>
-                <Link href="/napa-valley" className="hover:text-[var(--foreground)] transition-colors">
-                  Napa Valley
-                </Link>
-              </li>
-              <li>
-                <Link href="/sonoma-county" className="hover:text-[var(--foreground)] transition-colors">
-                  Sonoma County
-                </Link>
-              </li>
+
+          <div className="md:col-span-2">
+            <h3 className="kicker mb-4">Regions</h3>
+            <ul className="space-y-2.5 text-[14px]">
+              <li><Link href="/napa-valley" className={linkClass}>Napa Valley</Link></li>
+              <li><Link href="/sonoma-county" className={linkClass}>Sonoma County</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-heading font-semibold mb-3">Guides & Blog</h3>
-            <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
-              <li>
-                <Link href="/guides" className="hover:text-[var(--foreground)] transition-colors font-medium">
-                  Browse All Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/dog-friendly-wineries" className="hover:text-[var(--foreground)] transition-colors">
-                  Dog-Friendly Wineries
-                </Link>
-              </li>
-              <li>
-                <Link href="/kid-friendly-wineries" className="hover:text-[var(--foreground)] transition-colors">
-                  Kid-Friendly Wineries
-                </Link>
-              </li>
-              <li>
-                <Link href="/sustainable-wineries" className="hover:text-[var(--foreground)] transition-colors">
-                  Sustainable Wineries
-                </Link>
-              </li>
-              <li>
-                <Link href="/dog-friendly-hotels" className="hover:text-[var(--foreground)] transition-colors">
-                  Dog-Friendly Hotels
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides/best-cabernet-sauvignon-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
-                  Best Cabernet Sauvignon
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides/cheap-wine-tastings-napa-valley" className="hover:text-[var(--foreground)] transition-colors">
-                  Affordable Tastings
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides/napa-valley-vs-sonoma-county" className="hover:text-[var(--foreground)] transition-colors">
-                  Napa vs Sonoma
-                </Link>
-              </li>
+
+          <div className="md:col-span-4">
+            <h3 className="kicker mb-4">Guides &amp; Blog</h3>
+            <ul className="space-y-2.5 text-[14px] grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+              <li><Link href="/guides" className={`${linkClass} text-[var(--ink)]`}>Browse All Guides</Link></li>
+              <li><Link href="/blog" className={linkClass}>Blog</Link></li>
+              <li><Link href="/dog-friendly-wineries" className={linkClass}>Dog-Friendly Wineries</Link></li>
+              <li><Link href="/kid-friendly-wineries" className={linkClass}>Kid-Friendly Wineries</Link></li>
+              <li><Link href="/sustainable-wineries" className={linkClass}>Sustainable Wineries</Link></li>
+              <li><Link href="/dog-friendly-hotels" className={linkClass}>Dog-Friendly Hotels</Link></li>
+              <li><Link href="/guides/best-cabernet-sauvignon-napa-valley" className={linkClass}>Best Cabernet</Link></li>
+              <li><Link href="/guides/cheap-wine-tastings-napa-valley" className={linkClass}>Affordable Tastings</Link></li>
+              <li><Link href="/guides/napa-valley-vs-sonoma-county" className={linkClass}>Napa vs Sonoma</Link></li>
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-[var(--border)] text-sm text-[var(--muted-foreground)]">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+
+        <div className="mt-14 pt-7 border-t border-[var(--rule-soft)]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-[var(--ink-3)]">
             <p>&copy; {new Date().getFullYear()} Napa Sonoma Guide.</p>
-            <div className="flex items-center gap-4">
-              <Link href="/privacy" className="hover:text-[var(--foreground)] transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:text-[var(--foreground)] transition-colors">
-                Terms of Service
-              </Link>
+            <div className="flex items-center gap-5 font-mono text-[10.5px] tracking-[0.18em] uppercase">
+              <Link href="/privacy" className="hover:text-[var(--ink)] transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-[var(--ink)] transition-colors">Terms</Link>
               <ThemeToggle />
             </div>
           </div>
-          <p className="mt-4 text-center text-xs text-[var(--muted-foreground)]">
+          <p className="mt-5 text-center text-[12.5px] text-[var(--ink-3)]">
             Must be 21 or older to consume alcohol. Please drink responsibly.
           </p>
-          <p className="mt-2 text-center text-xs text-[var(--muted-foreground)]">
-            Photos and ratings powered by Google. Property details are for informational purposes — confirm directly with venues before visiting.
+          <p className="mt-1.5 text-center text-[12.5px] text-[var(--ink-3)]">
+            Photos and ratings powered by Google. Confirm details directly with venues before visiting.
           </p>
         </div>
       </div>

@@ -319,9 +319,9 @@ export default async function GuidePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
-      {/* Hero — image when available, muted header otherwise */}
+      {/* Hero — image when available, paper header otherwise */}
       {heroImage ? (
-        <div className="relative bg-burgundy-900 text-white overflow-hidden">
+        <div className="relative bg-[var(--ink)] text-white overflow-hidden">
           <Image
             src={heroImage}
             alt={guide.h1}
@@ -330,47 +330,61 @@ export default async function GuidePage({
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-          <div className="relative mx-auto max-w-7xl px-4 pt-24 sm:pt-32 pb-8 sm:px-6 lg:px-8">
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/85 via-[var(--ink)]/55 to-[var(--ink)]/20" />
+          <div className="relative mx-auto max-w-7xl px-4 pt-24 sm:pt-32 pb-10 sm:px-6 lg:px-8">
             {/* Breadcrumbs over image */}
             <nav
               aria-label="Breadcrumb"
-              className="mb-4 flex items-center gap-1 text-sm text-white/60"
+              className="mb-4 flex items-center gap-1 text-sm text-white/70"
             >
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
               <Link href="/guides" className="hover:text-white transition-colors">Guides</Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-              <span className="text-white/80 font-medium truncate">{guide.h1}</span>
+              <span className="text-white/85 font-medium truncate">{guide.h1}</span>
             </nav>
-            <h1 className="font-heading text-3xl sm:text-4xl font-bold max-w-3xl">
+            <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[#f0d894]">
+              The Library
+            </span>
+            <h1
+              className="font-[var(--font-heading)] font-normal tracking-[-0.02em] leading-[1.05] text-white text-[36px] sm:text-[48px] lg:text-[56px] mt-2 max-w-[22ch]"
+              style={{ textWrap: "balance", textShadow: "0 2px 24px rgba(0,0,0,0.45)" }}
+            >
               {guide.h1}
             </h1>
             {guide.intro.length > 0 && (
-              <p className="mt-4 text-base text-white/70 leading-relaxed max-w-2xl">
+              <p className="mt-4 font-[var(--font-serif-text)] text-[17px] leading-relaxed text-white/85 max-w-[60ch]">
                 {guide.intro[0]}
               </p>
             )}
           </div>
         </div>
       ) : (
-        <div className="bg-[var(--muted)]/30 border-b border-[var(--border)]">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="border-b border-[var(--rule)]">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
             <nav
               aria-label="Breadcrumb"
-              className="mb-4 flex items-center gap-1 text-sm text-[var(--muted-foreground)]"
+              className="mb-4 flex items-center gap-1 text-sm text-[var(--ink-3)]"
             >
-              <Link href="/" className="hover:text-[var(--foreground)] transition-colors">Home</Link>
+              <Link href="/" className="hover:text-[var(--ink)] transition-colors">Home</Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-              <Link href="/guides" className="hover:text-[var(--foreground)] transition-colors">Guides</Link>
+              <Link href="/guides" className="hover:text-[var(--ink)] transition-colors">Guides</Link>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-              <span className="text-[var(--foreground)] font-medium truncate" aria-current="page">{guide.h1}</span>
+              <span className="text-[var(--ink)] font-medium truncate" aria-current="page">{guide.h1}</span>
             </nav>
-            <h1 className="font-heading text-3xl sm:text-4xl font-bold">
+            <span className="kicker">The Library</span>
+            <h1 className="editorial-h2 text-[36px] sm:text-[44px] mt-2 max-w-[24ch]">
               {guide.h1}
             </h1>
             {guide.intro.map((p, i) => (
-              <p key={i} className="mt-4 text-[var(--muted-foreground)] leading-relaxed max-w-3xl">
+              <p
+                key={i}
+                className={
+                  i === 0
+                    ? "mt-4 font-[var(--font-serif-text)] text-[17px] leading-relaxed text-[var(--ink-2)] max-w-3xl"
+                    : "mt-4 font-[var(--font-serif-text)] text-[16px] leading-relaxed text-[var(--ink-2)] max-w-3xl"
+                }
+              >
                 {p}
               </p>
             ))}
@@ -381,9 +395,12 @@ export default async function GuidePage({
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Intro text for hero-image guides (second paragraph onwards) */}
         {heroImage && guide.intro.length > 1 && (
-          <div className="mb-8 max-w-3xl">
+          <div className="mb-10 max-w-3xl">
             {guide.intro.slice(1).map((p, i) => (
-              <p key={i} className="mt-4 text-[var(--muted-foreground)] leading-relaxed">
+              <p
+                key={i}
+                className="mt-4 font-[var(--font-serif-text)] text-[17px] leading-relaxed text-[var(--ink-2)]"
+              >
                 {p}
               </p>
             ))}
@@ -393,7 +410,7 @@ export default async function GuidePage({
         {/* Comparison table */}
         {guide.type === "comparison" && comparison && (
           <div className="mb-10">
-            <h2 className="font-heading text-2xl font-semibold mb-4">
+            <h2 className="editorial-h2 text-[26px] sm:text-[32px] mb-4">
               Side-by-Side Comparison
             </h2>
             <ComparisonTable
@@ -406,7 +423,7 @@ export default async function GuidePage({
         {/* Winery grid */}
         {wineries.length > 0 && (
           <div className="mb-10">
-            <h2 className="font-heading text-2xl font-semibold mb-2">
+            <h2 className="editorial-h2 text-[26px] sm:text-[32px] mb-2">
               {guide.type === "comparison"
                 ? "Featured Wineries"
                 : `${wineries.length} ${wineries.length === 1 ? "Winery" : "Wineries"} Found`}
@@ -426,21 +443,21 @@ export default async function GuidePage({
         )}
 
         {wineries.length === 0 && guide.type !== "comparison" && (
-          <div className="mb-10 rounded-xl border border-dashed border-[var(--border)] bg-[var(--muted)]/30 px-6 py-10 text-center">
-            <p className="text-[var(--foreground)] font-medium mb-2">
+          <div className="card-flat mb-10 text-center px-6 py-10">
+            <p className="font-[var(--font-heading)] text-[20px] text-[var(--ink)] mb-2">
               No wineries currently match this filter
             </p>
-            <p className="text-sm text-[var(--muted-foreground)] mb-6">
+            <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] mb-6 max-w-[55ch] mx-auto">
               We&apos;re still adding data for this category. In the meantime, try browsing
               all wineries or explore a related guide below.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href={guideValley === "napa" ? "/wineries?valley=napa" : guideValley === "sonoma" ? "/wineries?valley=sonoma" : "/wineries"}
-                className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+                className="btn-ink"
               >
                 Browse All Wineries
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
             {relatedGuides.length > 0 && (
@@ -449,7 +466,7 @@ export default async function GuidePage({
                   <Link
                     key={g.slug}
                     href={`/guides/${g.slug}`}
-                    className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-burgundy-400 transition-colors"
+                    className="font-mono text-[10.5px] tracking-[0.18em] uppercase border border-[var(--ink)] px-3 py-1.5 text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
                   >
                     {g.h1}
                   </Link>
@@ -461,19 +478,20 @@ export default async function GuidePage({
 
         {/* Plan Your Visit CTA */}
         {wineries.length > 0 && guide.type !== "comparison" && (
-          <div className="mb-10 rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 px-6 py-8 text-center">
-            <h2 className="font-heading text-xl font-semibold mb-2">
-              Ready to visit?
+          <div className="card-flat mb-10 text-center px-6 py-9">
+            <span className="kicker">Plan</span>
+            <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2 mb-3">
+              Ready to <em>visit?</em>
             </h2>
-            <p className="text-sm text-[var(--muted-foreground)] mb-5 max-w-lg mx-auto">
+            <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] mb-6 max-w-[55ch] mx-auto">
               Build a custom itinerary with these wineries — add tastings, lunch, and travel time to create your perfect day.
             </p>
             <Link
               href={guideValley === "napa" ? "/itineraries/build?valley=napa" : guideValley === "sonoma" ? "/itineraries/build?valley=sonoma" : "/itineraries"}
-              className="inline-flex items-center gap-2 rounded-lg bg-burgundy-900 px-6 py-3 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
+              className="btn-ink"
             >
               Plan Your Trip
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         )}
@@ -481,7 +499,7 @@ export default async function GuidePage({
         {/* FAQ Section */}
         {guide.faqs.length > 0 && (
           <div className="mb-10">
-            <h2 className="font-heading text-2xl font-semibold mb-4">
+            <h2 className="editorial-h2 text-[26px] sm:text-[32px] mb-4">
               Frequently Asked Questions
             </h2>
             <FAQSection faqs={guide.faqs} />
@@ -492,12 +510,12 @@ export default async function GuidePage({
         {accommodations.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-semibold">
+              <h2 className="editorial-h2 text-[26px] sm:text-[32px]">
                 Where to Stay
               </h2>
               <Link
                 href={guideValley === "napa" ? "/where-to-stay/napa-valley" : guideValley === "sonoma" ? "/where-to-stay/sonoma-county" : "/where-to-stay"}
-                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+                className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
               >
                 All hotels &rarr;
               </Link>
@@ -517,14 +535,14 @@ export default async function GuidePage({
 
         {/* Related Guides — structured by relevance */}
         {relatedGuides.length > 0 && (
-          <div className="border-t border-[var(--border)] pt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-heading text-xl font-semibold">
-                Related Guides
+          <div className="border-t border-[var(--rule)] pt-8">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="editorial-h2 text-[22px] sm:text-[26px]">
+                Related <em>guides.</em>
               </h2>
               <Link
                 href={guideValley === "napa" ? "/napa-valley" : guideValley === "sonoma" ? "/sonoma-county" : "/wineries"}
-                className="text-sm font-medium text-[var(--foreground)] hover:underline"
+                className="font-mono text-[11px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
               >
                 {guideValley === "napa" ? "Explore Napa Valley" : guideValley === "sonoma" ? "Explore Sonoma County" : "Browse all wineries"} &rarr;
               </Link>
@@ -534,12 +552,12 @@ export default async function GuidePage({
                 <Link
                   key={g.slug}
                   href={`/guides/${g.slug}`}
-                  className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-burgundy-400 hover:shadow-sm dark:hover:border-burgundy-600 transition-all"
+                  className="group bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] p-4 transition-colors"
                 >
-                  <h3 className="text-sm font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors">
+                  <h3 className="font-[var(--font-heading)] text-[16px] leading-tight text-[var(--ink)] group-hover:text-[var(--color-burgundy-900)] transition-colors">
                     {g.h1}
                   </h3>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)] line-clamp-2">
+                  <p className="mt-1.5 text-[13px] text-[var(--ink-3)] line-clamp-2">
                     {g.intro[0]?.slice(0, 100)}...
                   </p>
                 </Link>

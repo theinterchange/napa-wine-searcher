@@ -68,23 +68,26 @@ export default async function JournalPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-5 border-b border-[var(--rule)]">
         <div>
-          <h1 className="font-heading text-2xl font-bold flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-burgundy-600" />
-            Wine Journal
+          <span className="kicker flex items-center gap-2">
+            <BookOpen className="h-3.5 w-3.5 text-[var(--brass)]" />
+            Tasting log
+          </span>
+          <h1 className="editorial-h2 text-[28px] sm:text-[36px] mt-2">
+            Wine <em>journal.</em>
           </h1>
-          <div className="flex items-center gap-4 mt-1 text-sm text-[var(--muted-foreground)]">
+          <div className="flex items-center gap-4 mt-3 font-mono text-[11px] tracking-[0.12em] uppercase text-[var(--ink-3)] flex-wrap">
             <span>{total} {total === 1 ? "wine" : "wines"} logged</span>
             {visitedCount > 0 && (
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-[var(--brass)]" />
                 {visitedCount} {visitedCount === 1 ? "winery" : "wineries"} visited
               </span>
             )}
             {avgRating && (
-              <span className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 fill-gold-500 text-gold-500" />
+              <span className="flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5 fill-[var(--brass)] text-[var(--brass)]" />
                 {parseFloat(String(avgRating)).toFixed(1)} avg rating
               </span>
             )}
@@ -98,52 +101,47 @@ export default async function JournalPage() {
       {entries.length > 0 ? (
         <JournalView entries={entries} visitedWineries={visitedWineries} />
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 sm:p-12">
+        <div className="card-flat p-8 sm:p-12">
           <div className="text-center mb-8">
-            <BookOpen className="mx-auto h-10 w-10 text-burgundy-600" />
-            <h2 className="mt-4 font-heading text-xl font-semibold">
-              Welcome to Your Wine Journal
+            <BookOpen className="mx-auto h-9 w-9 text-[var(--brass)]" />
+            <span className="block kicker mt-4">Start here</span>
+            <h2 className="mt-2 editorial-h2 text-[24px] sm:text-[28px]">
+              Welcome to your <em>journal.</em>
             </h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
+            <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[55ch] mx-auto">
               Keep track of wines you&apos;ve tasted, rate your favorites, and build a personal record of your wine country adventures.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div className="rounded-lg border border-[var(--border)] p-5">
-              <Wine className="h-6 w-6 text-burgundy-600 mb-3" />
-              <h3 className="font-heading font-semibold text-sm">Log Wines</h3>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <div className="bg-[var(--paper)] border-t-2 border-[var(--brass)] p-5">
+              <Wine className="h-6 w-6 text-[var(--brass)] mb-3" />
+              <h3 className="font-[var(--font-heading)] text-[16px] text-[var(--ink)]">Log Wines</h3>
+              <p className="mt-1.5 text-xs text-[var(--ink-3)]">
                 Use the &ldquo;Tried it&rdquo; button on any winery page, or add wines manually with &ldquo;Log Wine&rdquo; above.
               </p>
             </div>
-            <div className="rounded-lg border border-[var(--border)] p-5">
-              <CheckCircle2 className="h-6 w-6 text-emerald-600 mb-3" />
-              <h3 className="font-heading font-semibold text-sm">Track Visits</h3>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <div className="bg-[var(--paper)] border-t-2 border-[var(--brass)] p-5">
+              <CheckCircle2 className="h-6 w-6 text-[var(--brass)] mb-3" />
+              <h3 className="font-[var(--font-heading)] text-[16px] text-[var(--ink)]">Track Visits</h3>
+              <p className="mt-1.5 text-xs text-[var(--ink-3)]">
                 Click &ldquo;Mark Visited&rdquo; on winery pages to record where you&apos;ve been and when.
               </p>
             </div>
-            <div className="rounded-lg border border-[var(--border)] p-5">
-              <Mail className="h-6 w-6 text-blue-600 mb-3" />
-              <h3 className="font-heading font-semibold text-sm">Trip Recaps</h3>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <div className="bg-[var(--paper)] border-t-2 border-[var(--brass)] p-5">
+              <Mail className="h-6 w-6 text-[var(--brass)] mb-3" />
+              <h3 className="font-[var(--font-heading)] text-[16px] text-[var(--ink)]">Trip Recaps</h3>
+              <p className="mt-1.5 text-xs text-[var(--ink-3)]">
                 After a saved trip, mark it complete on My Trips to get an email recap of your visit.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3">
-            <Link
-              href="/wineries"
-              className="rounded-lg bg-burgundy-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors"
-            >
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <Link href="/wineries" className="btn-ink">
               Browse Wineries
             </Link>
-            <Link
-              href="/itineraries"
-              className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium hover:bg-[var(--muted)] transition-colors"
-            >
+            <Link href="/itineraries" className="btn-paper">
               Plan a Trip
             </Link>
           </div>

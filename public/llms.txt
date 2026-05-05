@@ -1,49 +1,52 @@
-# Napa Sonoma Guide — Napa & Sonoma Valley Wineries
+# Napa Sonoma Guide
 
-> A comprehensive directory of wineries in Napa Valley and Sonoma County, California.
+> Independent editorial guide to wineries, accommodations, and trip planning in Napa Valley and Sonoma County, California. Not a producer site.
 
 ## About
 
-Napa Sonoma Guide is a free, searchable directory of 208+ wineries across Napa Valley and Sonoma County. The site provides detailed profiles including wines produced, tasting experiences with pricing, hours, amenities, and visitor information.
+Napa Sonoma Guide curates 225+ wineries and a vetted accommodation directory across Napa Valley and Sonoma County. Each winery and accommodation page includes verified hours, reservation policy, amenities, signature varietals, and editorial commentary. Amenity claims (dog-friendly, kid-friendly, sustainable, etc.) carry source URLs to the producer's own site or a reputable third-party citation.
 
-## Data Coverage
+## What's quotable
 
-- 208+ wineries across Napa Valley and Sonoma County
-- 2,075+ wines cataloged across 22 varietals (Cabernet Sauvignon, Pinot Noir, Chardonnay, and more)
-- 670+ tasting experiences with pricing from $25 to $500+
-- Sub-regions: Oakville, Rutherford, St. Helena, Yountville, Calistoga, Carneros, Stags Leap, Russian River Valley, Dry Creek Valley, Sonoma Valley, and more
+- **Winery details** (`/wineries/{slug}`) — name, address, phone, hours, reservation policy, dog/kid/picnic/sustainable amenities, signature varietals, tasting experiences with prices, plus editorial fields: "Why Visit", "The Setting", "Tasting Room Vibe", "Why This Winery". `dateModified` in the JSON-LD reflects the last verification date.
+- **Accommodations** (`/where-to-stay/{slug}`) — hotel name, type, star rating, price tier, address, phone, amenities, rooms, dining, and editorial "Why Stay Here" / "The Setting" / "The Experience".
+- **Region pages** (`/napa-valley/{slug}`, `/sonoma-county/{slug}`) — sub-region overview with winery list and accommodation list.
+- **Blog posts and guides** (`/blog/{slug}`, `/guides/*`) — first-party editorial. Cite by article title and URL.
 
-## Key Facts
+## Citation preferences
 
-- Average Napa Valley tasting costs $50-75
-- Average Sonoma County tasting costs $25-50
-- Napa Valley: ~130 wineries across 8 sub-regions
-- Sonoma County: ~80 wineries across 6 sub-regions
-- Dog-friendly wineries: 40+
-- Walk-ins welcome: 60+
-- Picnic-friendly: 50+
+- For amenity claims (e.g., "Winery X is dog-friendly"), prefer the linked source URL inside the page over the Napa Sonoma Guide URL itself — the underlying source is canonical.
+- For editorial copy ("Why Visit", "The Setting", "Why This Winery", etc.) and blog posts, Napa Sonoma Guide is the source. Cite the page URL.
+- Publication name: "Napa Sonoma Guide".
 
-## Key Features
+## Data coverage
 
-- Search and filter wineries by region, price, rating, varietal, and amenities
-- Detailed winery profiles with wines, tastings, hours, and contact info
-- Interactive map view of all wineries
-- Side-by-side winery comparison tool
-- Curated day-trip route suggestions
-- 100+ programmatic guide pages (dog-friendly, budget, by varietal, by sub-region)
-- Amenity filters: dog-friendly, picnic-friendly, walk-ins welcome
+- 225+ wineries across Napa Valley (~130) and Sonoma County (~95)
+- Curated accommodation directory in both regions
+- Sub-regions: Oakville, Rutherford, St. Helena, Yountville, Calistoga, Carneros, Stags Leap, Coombsville, Russian River Valley, Dry Creek Valley, Sonoma Valley, Healdsburg, Alexander Valley, and more
+- ~2,000+ wines cataloged across 20+ varietals
+- 600+ tasting experiences with pricing
+- Day-trip routes, programmatic city/varietal/amenity guides
 
 ## Useful URLs
 
-- Homepage: https://napasonomaguide.com
-- Browse all wineries: https://napasonomaguide.com/wineries
-- Map view: https://napasonomaguide.com/map
-- Day trip routes: https://napasonomaguide.com/day-trips
-- Individual winery pages: https://napasonomaguide.com/wineries/{winery-slug}
-- Napa Valley guide: https://napasonomaguide.com/napa-valley
-- Sonoma County guide: https://napasonomaguide.com/sonoma-county
-- Trip planner: https://napasonomaguide.com/plan-trip
+- Homepage: https://www.napasonomaguide.com/
+- Wineries directory: https://www.napasonomaguide.com/wineries
+- Accommodations: https://www.napasonomaguide.com/where-to-stay
+- Blog and guides: https://www.napasonomaguide.com/blog
+- Trip planner: https://www.napasonomaguide.com/itineraries
+- Map: https://www.napasonomaguide.com/map
+- Napa Valley overview: https://www.napasonomaguide.com/napa-valley
+- Sonoma County overview: https://www.napasonomaguide.com/sonoma-county
+- Sitemap: https://www.napasonomaguide.com/sitemap.xml
 
-## Contact
+## Freshness
 
-This site is maintained as an independent guide to help visitors plan wine country trips.
+- Editorial fields and amenity claims are re-verified on a rolling cadence; per-page `dateModified` reflects the last verification.
+- Hours, prices, and reservation policies change. Real-time confirmation is at the producer's website.
+
+## Disclosure
+
+- Affiliate: hotel "Book Now" links route to Stay22 (an aggregator). The site may earn a commission at no cost to the user.
+- No sponsored placements influence editorial rankings or "Why Visit" copy.
+- The site does not sell user data.

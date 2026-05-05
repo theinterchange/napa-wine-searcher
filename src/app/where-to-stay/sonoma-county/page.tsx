@@ -20,24 +20,25 @@ export default async function SonomaCountyStayPage() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
       <nav
         aria-label="Breadcrumb"
-        className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] mb-8"
+        className="flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-8"
       >
-        <Link href="/" className="hover:text-[var(--foreground)]">
+        <Link href="/" className="hover:text-[var(--ink)]">
           Home
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/where-to-stay" className="hover:text-[var(--foreground)]">
+        <ChevronRight className="h-3 w-3" />
+        <Link href="/where-to-stay" className="hover:text-[var(--ink)]">
           Where to Stay
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-[var(--foreground)]">Sonoma County</span>
+        <ChevronRight className="h-3 w-3" />
+        <span className="text-[var(--brass-2)]">Sonoma County</span>
       </nav>
 
-      <div className="text-center mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-3">
-          Where to Stay in Sonoma County
+      <div className="mb-10 pb-6 border-b border-[var(--rule)]">
+        <span className="kicker">Lodging · Sonoma County</span>
+        <h1 className="editorial-h2 text-[34px] sm:text-[44px] lg:text-[52px] mt-3">
+          Where to stay in <em>Sonoma.</em>
         </h1>
-        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-5 max-w-[56ch] font-[var(--font-serif-text)] text-[16px] sm:text-[18px] leading-[1.55] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
           From boutique hotels in Healdsburg to vineyard retreats in Russian
           River Valley — our picks for the best places to stay during your
           Sonoma wine trip.
@@ -52,11 +53,11 @@ export default async function SonomaCountyStayPage() {
         </div>
       ) : (
         <div className="text-center py-16">
-          <BedDouble className="mx-auto h-12 w-12 text-[var(--muted-foreground)] mb-4" />
-          <h2 className="font-heading text-xl font-semibold mb-2">
+          <BedDouble className="mx-auto h-12 w-12 text-[var(--brass)]/50 mb-4" />
+          <h2 className="font-[var(--font-heading)] text-[22px] font-normal mb-2 text-[var(--ink)]">
             Coming Soon
           </h2>
-          <p className="text-[var(--muted-foreground)]">
+          <p className="font-[var(--font-serif-text)] text-[var(--ink-3)]">
             We&apos;re curating the best places to stay in Sonoma County.
             Check back soon.
           </p>

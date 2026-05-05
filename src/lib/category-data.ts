@@ -85,6 +85,7 @@ export async function getCategoryWineries(
       kidFriendlyNote: wineries.kidFriendlyNote,
       kidFriendlySource: wineries.kidFriendlySource,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       sustainableFarming: wineries.sustainableFarming,
       sustainableNote: wineries.sustainableNote,
       sustainableSource: wineries.sustainableSource,

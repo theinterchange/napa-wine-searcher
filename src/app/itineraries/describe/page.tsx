@@ -13,28 +13,28 @@ export const metadata: Metadata = {
 export default function DescribeItineraryPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <Sparkles className="h-8 w-8 text-burgundy-900" />
-      <h1 className="mt-4 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-        Describe your ideal trip
+      <Sparkles className="h-8 w-8 text-[var(--brass)]" />
+      <span className="block kicker mt-4">Itineraries</span>
+      <h1 className="editorial-h2 text-[34px] sm:text-[40px] mt-2">
+        Describe your ideal <em>trip.</em>
       </h1>
-      <p className="mt-3 text-[var(--muted-foreground)]">
-        Tell us the wines you love, the setting you want, or the mood you're
-        after — we'll match you to verified wineries and build a full itinerary.
+      <p className="mt-4 font-[var(--font-serif-text)] text-[17px] leading-relaxed text-[var(--ink-2)] max-w-[60ch]">
+        Tell us the wines you love, the setting you want, or the mood you&apos;re
+        after — we&apos;ll match you to verified wineries and build a full itinerary.
       </p>
-      <div className="mt-6 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-sm text-[var(--muted-foreground)]">
-        <p className="font-semibold text-[var(--foreground)]">
+
+      <div className="card-flat mt-8 p-6">
+        <span className="kicker">Coming soon</span>
+        <p className="mt-2 font-[var(--font-heading)] text-[18px] text-[var(--ink)]">
           Arriving soon
         </p>
-        <p className="mt-2">
+        <p className="mt-2 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] leading-relaxed">
           Natural-language trip building is in final review. In the meantime,
           the preference builder asks a few quick questions and produces the
           same kind of itinerary — fully editable after.
         </p>
-        <Link
-          href="/itineraries/build"
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)] underline-offset-4 hover:underline"
-        >
-          Build from preferences <ArrowRight className="h-4 w-4" />
+        <Link href="/itineraries/build" className="btn-ink mt-5 inline-flex">
+          Build from preferences <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     </main>

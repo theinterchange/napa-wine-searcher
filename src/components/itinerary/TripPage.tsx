@@ -808,7 +808,7 @@ export function TripPage({
             <button
               type="button"
               onClick={() => void handleResetToEditorial()}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:border-burgundy-900"
+              className="inline-flex items-center gap-1.5 border border-[var(--ink)] bg-transparent px-3 py-2 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
             >
               <RotateCcw className="h-4 w-4" /> Reset
             </button>
@@ -842,7 +842,7 @@ export function TripPage({
             />
           )}
           {trip.stops.length === 0 && (
-            <p className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--muted-foreground)]">
+            <p className="border border-dashed border-[var(--rule)] bg-[var(--paper-2)] p-6 text-center font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
               No stops yet. Add a winery to start your trip.
             </p>
           )}
@@ -901,32 +901,30 @@ export function TripPage({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
-              Trip summary
-            </h2>
-            <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+          <section className="card-flat p-5">
+            <span className="kicker">Trip summary</span>
+            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
               <div>
-                <dt className="text-xs text-[var(--muted-foreground)]">Stops</dt>
-                <dd>{trip.stops.length}</dd>
+                <dt className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">Stops</dt>
+                <dd className="font-[var(--font-heading)] text-[18px] text-[var(--ink)] mt-0.5">{trip.stops.length}</dd>
               </div>
               <div>
-                <dt className="text-xs text-[var(--muted-foreground)]">Drive</dt>
-                <dd>
+                <dt className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">Drive</dt>
+                <dd className="font-[var(--font-heading)] text-[15px] text-[var(--ink)] mt-0.5">
                   {summary.totalDriveMin} min · {summary.totalMiles} mi
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-[var(--muted-foreground)]">
+                <dt className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
                   Tasting time
                 </dt>
-                <dd>{Math.round(summary.totalTasteMin / 60)} hr (approx)</dd>
+                <dd className="font-[var(--font-heading)] text-[15px] text-[var(--ink)] mt-0.5">{Math.round(summary.totalTasteMin / 60)} hr (approx)</dd>
               </div>
               <div>
-                <dt className="text-xs text-[var(--muted-foreground)]">
+                <dt className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
                   Tasting fees
                 </dt>
-                <dd>
+                <dd className="font-[var(--font-heading)] text-[15px] text-[var(--ink)] mt-0.5">
                   {summary.minCost === 0
                     ? "Varies"
                     : summary.minCost === summary.maxCost
@@ -938,15 +936,15 @@ export function TripPage({
             <button
               type="button"
               onClick={scrollToSummary}
-              className="mt-4 w-full rounded-lg border border-burgundy-900 bg-[var(--card)] px-3 py-2 text-sm font-semibold text-burgundy-900 hover:bg-burgundy-900 hover:text-white"
+              className="btn-ink mt-5 w-full"
             >
-              Review & book
+              Review &amp; book
             </button>
           </section>
           <TripMap
             stops={trip.stops}
             origin={trip.origin}
-            className="h-[320px] w-full overflow-hidden rounded-2xl border border-[var(--border)]"
+            className="h-[320px] w-full overflow-hidden border-t-2 border-[var(--brass)]"
           />
         </aside>
       </main>

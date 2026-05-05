@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Fraunces, Source_Serif_4, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Navbar } from "@/components/layout/Navbar";
@@ -10,16 +10,33 @@ import { Analytics } from "@vercel/analytics/next";
 
 import { BASE_URL } from "@/lib/constants";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   variable: "--font-heading",
   subsets: ["latin"],
   display: "swap",
+  axes: ["opsz"],
+  style: ["normal", "italic"],
+});
+
+const sourceSerif = Source_Serif_4({
+  variable: "--font-serif-text",
+  subsets: ["latin"],
+  display: "swap",
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600"],
 });
 
 const inter = Inter({
   variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -69,7 +86,7 @@ export default function RootLayout({
         strategy="afterInteractive"
       />
 
-      <body className={`${playfair.variable} ${inter.variable} antialiased`}>
+      <body className={`${fraunces.variable} ${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

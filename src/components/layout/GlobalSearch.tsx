@@ -327,11 +327,16 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
         {/* Desktop trigger */}
         <button
           onClick={() => setOpen(true)}
-          className="hidden md:flex w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3.5 py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
+          className="hidden md:flex w-full items-center gap-2.5 border border-[var(--rule)] bg-[var(--paper-2)]/40 px-3.5 py-2 text-[13px] text-[var(--ink-3)] hover:border-[var(--brass)] hover:bg-[var(--paper-2)]/70 transition-colors"
         >
-          <Search className="h-4 w-4 shrink-0" />
-          <span className="flex-1 text-left">Search wineries, regions, wines...</span>
-          <kbd className="shrink-0 inline-flex items-center gap-0.5 rounded border border-[var(--border)] bg-[var(--card)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--muted-foreground)]">
+          <Search className="h-3.5 w-3.5 shrink-0" />
+          <span
+            className="flex-1 text-left italic"
+            style={{ fontFamily: "var(--font-serif-text)" }}
+          >
+            Search wineries, regions, accommodations
+          </span>
+          <kbd className="shrink-0 inline-flex items-center gap-0.5 border border-[var(--rule)] bg-[var(--paper)] px-1.5 py-0.5 font-mono text-[10px] tracking-[0.06em] text-[var(--ink-3)]">
             <Command className="h-2.5 w-2.5" />K
           </kbd>
         </button>
@@ -339,7 +344,7 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
         {/* Mobile trigger */}
         <button
           onClick={() => setOpen(true)}
-          className="md:hidden p-2 text-[var(--muted-foreground)]"
+          className="md:hidden p-2 text-[var(--ink-2)]"
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
@@ -350,39 +355,48 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
 
   const modal = (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-4"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-[6vh] sm:pt-[12vh] px-3 sm:px-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) setOpen(false);
       }}
     >
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" onClick={() => setOpen(false)} />
+      <div className="fixed inset-0 bg-[var(--ink)]/40 backdrop-blur-sm" aria-hidden="true" onClick={() => setOpen(false)} />
 
       {/* Dialog */}
-      <div className="relative w-full max-w-xl rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl overflow-hidden">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search the site"
+        className="relative w-full max-w-xl md:max-w-2xl border border-[var(--rule)] bg-[var(--paper)] shadow-[0_8px_40px_rgba(0,0,0,0.18)] overflow-hidden"
+      >
         {/* Search input */}
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-4">
-          <Search className="h-5 w-5 text-[var(--muted-foreground)] shrink-0" />
+        <div className="flex items-center gap-2 sm:gap-3 border-b border-[var(--rule)] px-3 sm:px-4">
+          <Search className="h-4 w-4 text-[var(--ink-3)] shrink-0" aria-hidden="true" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Search wineries, wines, regions, filters..."
-            className="flex-1 bg-transparent py-4 text-base outline-none placeholder:text-[var(--muted-foreground)]"
+            placeholder="Search wineries, wines, regions"
+            aria-label="Search wineries, regions, and accommodations"
+            className="flex-1 min-w-0 bg-transparent py-4 text-[15px] italic outline-none text-[var(--ink)] placeholder:text-[var(--ink-3)]"
+            style={{ fontFamily: "var(--font-serif-text)" }}
           />
           {query && (
             <button
               onClick={() => { setQuery(""); inputRef.current?.focus(); }}
-              className="p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              aria-label="Clear search"
+              className="p-2 -mr-1 text-[var(--ink-3)] hover:text-[var(--ink)]"
             >
               <X className="h-4 w-4" />
             </button>
           )}
           <button
             onClick={() => setOpen(false)}
-            className="shrink-0 rounded border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--muted-foreground)]"
+            aria-label="Close search"
+            className="shrink-0 border border-[var(--rule)] bg-[var(--paper-2)] px-2.5 py-1.5 font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
           >
             ESC
           </button>
@@ -392,12 +406,15 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
         <div className="max-h-[60vh] overflow-y-auto overscroll-contain">
           {loading && !results && (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-5 w-5 animate-spin text-[var(--muted-foreground)]" />
+              <Loader2 className="h-5 w-5 animate-spin text-[var(--brass)]" />
             </div>
           )}
 
           {hasNoResults && (
-            <div className="py-12 text-center text-sm text-[var(--muted-foreground)]">
+            <div
+              className="py-12 text-center text-[13px] italic text-[var(--ink-3)]"
+              style={{ fontFamily: "var(--font-serif-text)" }}
+            >
               No results for &ldquo;{query}&rdquo;
             </div>
           )}
@@ -406,33 +423,32 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
             <div className="py-2">
               {groups.map((group) => (
                 <div key={group.category}>
-                  <div className="px-4 py-2 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+                  <div className="px-4 py-2 font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--brass-2)]">
                     {group.category}
                   </div>
                   {group.items.map((item) => {
                     const Icon = item.icon;
+                    const selected = activeIndex === item.globalIndex;
                     return (
                       <button
                         key={item.id}
                         onClick={() => navigate(item.href)}
                         onMouseEnter={() => setActiveIndex(item.globalIndex)}
                         className={cn(
-                          "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors",
-                          activeIndex === item.globalIndex
-                            ? "bg-burgundy-50 dark:bg-burgundy-950/50 text-burgundy-900 dark:text-burgundy-100"
-                            : "text-[var(--foreground)] hover:bg-[var(--muted)]/50"
+                          "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors border-l-2",
+                          selected
+                            ? "bg-[var(--paper-2)] text-[var(--ink)] border-[var(--brass)]"
+                            : "text-[var(--ink-2)] hover:bg-[var(--paper-2)]/60 border-transparent"
                         )}
                       >
                         <Icon className={cn(
                           "h-4 w-4 shrink-0",
-                          activeIndex === item.globalIndex
-                            ? "text-burgundy-600 dark:text-burgundy-400"
-                            : "text-[var(--muted-foreground)]"
+                          selected ? "text-[var(--brass)]" : "text-[var(--ink-3)]"
                         )} />
                         <div className="min-w-0 flex-1">
-                          <div className="truncate font-medium">{item.label}</div>
+                          <div className="truncate text-[14px] font-medium text-[var(--ink)]">{item.label}</div>
                           {item.sublabel && (
-                            <div className="truncate text-xs text-[var(--muted-foreground)]">
+                            <div className="truncate text-[12px] text-[var(--ink-3)]">
                               {item.sublabel}
                             </div>
                           )}
@@ -447,7 +463,10 @@ export function GlobalSearch({ hideButton }: { hideButton?: boolean } = {}) {
 
           {/* Hint when no query */}
           {!query.trim() && (
-            <div className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted-foreground)]">
+            <div
+              className="border-t border-[var(--rule-soft)] px-4 py-3 text-[12.5px] italic text-[var(--ink-3)]"
+              style={{ fontFamily: "var(--font-serif-text)" }}
+            >
               Search wineries by name, region, or feature (e.g. &ldquo;dog friendly&rdquo;, &ldquo;St Helena&rdquo;, &ldquo;cabernet&rdquo;)
             </div>
           )}

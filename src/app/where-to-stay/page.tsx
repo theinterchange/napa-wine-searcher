@@ -11,14 +11,14 @@ export const revalidate = 3600;
 const PAGE_SIZE = 18;
 
 export const metadata: Metadata = {
-  title: "Where to Stay in Wine Country",
+  title: "Where to Stay in Napa & Sonoma — Vineyard Hotels, Inns & Resorts",
   description:
-    "Hand-picked hotels, inns, and resorts for your Napa and Sonoma wine country trip. Curated by location, price, and proximity to the best wineries.",
+    "Hand-picked Napa Valley and Sonoma County hotels, inns, and vineyard resorts. Compare amenities, drive times to wineries, and book in one click.",
   alternates: { canonical: `${BASE_URL}/where-to-stay` },
   openGraph: {
-    title: "Where to Stay in Wine Country | Napa Sonoma Guide",
+    title: "Where to Stay in Napa & Sonoma — Vineyard Hotels, Inns & Resorts",
     description:
-      "Hand-picked hotels, inns, and resorts for your Napa and Sonoma wine country trip.",
+      "Hand-picked Napa Valley and Sonoma County hotels, inns, and vineyard resorts.",
   },
 };
 
@@ -99,14 +99,16 @@ export default async function WhereToStayPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
       {/* Hero — compact intro so first row of hotels stays above the fold */}
-      <div className="text-center mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-3">
-          Where to Stay in Wine Country
+      <div className="mb-10 pb-7 border-b border-[var(--rule)]">
+        <span className="kicker">Lodging</span>
+        <h1 className="editorial-h2 text-[34px] sm:text-[44px] lg:text-[52px] mt-3">
+          Where to <em>stay.</em>
         </h1>
-        <p className="text-sm text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed">
-          Hand-picked hotels, inns, and resorts across Napa and Sonoma — chosen
-          for their proximity to great wineries, the quality of the experience,
-          and value at every price point.
+        <p
+          className="mt-5 max-w-[52ch] text-[16px] sm:text-[17px] leading-[1.5] text-[var(--ink-2)]"
+          style={{ fontFamily: "var(--font-serif-text)", textWrap: "pretty" }}
+        >
+          Hand-picked hotels and inns across Napa and Sonoma.
         </p>
       </div>
 
@@ -122,15 +124,15 @@ export default async function WhereToStayPage({
         </div>
       ) : (
         <div className="text-center py-16">
-          <BedDouble className="mx-auto h-12 w-12 text-[var(--muted-foreground)] mb-4" />
-          <p className="text-lg text-[var(--muted-foreground)]">
+          <BedDouble className="mx-auto h-12 w-12 text-[var(--brass)]/50 mb-4" />
+          <p className="font-[var(--font-serif-text)] text-[18px] text-[var(--ink-3)]">
             No accommodations match your filters.
           </p>
         </div>
       )}
 
       {/* Pagination */}
-      <div className="mt-8">
+      <div className="mt-10">
         <Pagination
           currentPage={clampedPage}
           totalPages={totalPages}

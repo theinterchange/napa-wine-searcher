@@ -72,6 +72,10 @@ export const accommodations = sqliteTable(
     seasonalNote: text("seasonal_note"),
     nearbyDining: text("nearby_dining"),
     dataConfidence: text("data_confidence"),
+    curated: integer("curated", { mode: "boolean" }).default(false),
+    curatedAt: text("curated_at"),
+    spotlightYearMonth: text("spotlight_year_month"),
+    spotlightTeaser: text("spotlight_teaser"),
     updatedAt: text("updated_at"),
   },
   (t) => [

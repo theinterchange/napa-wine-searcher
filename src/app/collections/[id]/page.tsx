@@ -65,6 +65,7 @@ export default async function CollectionDetailPage({
       picnicFriendly: wineries.picnicFriendly,
       kidFriendly: wineries.kidFriendly,
       kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+      tastingPriceMin: wineries.tastingPriceMin,
       heroImageUrl: wineries.heroImageUrl,
       subRegion: subRegions.name,
       valley: subRegions.valley,
@@ -78,26 +79,29 @@ export default async function CollectionDetailPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-1 text-sm text-[var(--muted-foreground)]">
-        <Link href="/collections" className="hover:text-[var(--foreground)]">
+      <nav className="mb-6 flex items-center gap-1 text-sm text-[var(--ink-3)]">
+        <Link href="/collections" className="hover:text-[var(--ink)] transition-colors">
           Collections
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-[var(--foreground)]">{collection.name}</span>
+        <span className="text-[var(--ink)]">{collection.name}</span>
       </nav>
 
-      <div className="flex items-start justify-between gap-4 mb-8">
+      <div className="flex items-start justify-between gap-4 mb-8 pb-5 border-b border-[var(--rule)]">
         <div>
-          <h1 className="font-heading text-2xl font-bold flex items-center gap-2">
-            <FolderOpen className="h-6 w-6 text-burgundy-600" />
+          <span className="kicker flex items-center gap-2">
+            <FolderOpen className="h-3.5 w-3.5 text-[var(--brass)]" />
+            Collection
+          </span>
+          <h1 className="editorial-h2 text-[28px] sm:text-[34px] mt-2">
             {collection.name}
           </h1>
           {collection.description && (
-            <p className="mt-2 text-[var(--muted-foreground)]">
+            <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-[60ch]">
               {collection.description}
             </p>
           )}
-          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+          <p className="mt-3 font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
             {items.length} {items.length === 1 ? "winery" : "wineries"}
           </p>
         </div>
@@ -115,8 +119,8 @@ export default async function CollectionDetailPage({
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <p className="text-[var(--muted-foreground)]">
+        <div className="card-flat p-12 text-center">
+          <p className="font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)]">
             This collection is empty. Visit winery pages and click &ldquo;Add to
             List&rdquo; to add wineries.
           </p>

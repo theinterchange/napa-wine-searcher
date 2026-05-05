@@ -6,7 +6,6 @@ import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
-  BadgeCheck,
   Star,
   Map,
   ArrowRight,
@@ -24,10 +23,8 @@ interface FeaturedWinery {
 
 export function HeroFeatured({
   wineries,
-  totalWineries,
 }: {
   wineries: FeaturedWinery[];
-  totalWineries: number;
 }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -58,19 +55,47 @@ export function HeroFeatured({
   const w = wineries[current];
   if (!w) return null;
 
+  const valleyLabel = w.valley === "napa" ? "Napa Valley" : "Sonoma County";
+
+  const now = new Date();
+  const monthIdx = now.getUTCMonth();
+  const yearStr = now.getUTCFullYear();
+
+  const seasonLabel =
+    monthIdx >= 2 && monthIdx <= 4
+      ? `Spring ${yearStr}`
+      : monthIdx >= 5 && monthIdx <= 7
+      ? `Summer ${yearStr}`
+      : monthIdx >= 8 && monthIdx <= 10
+      ? `Fall ${yearStr}`
+      : `Winter ${yearStr}`;
+
+  const MONTHLY_DISPATCH = [
+    "Pruning the vines",        // Jan
+    "Mustard in bloom",         // Feb
+    "Bud break",                // Mar
+    "Flowering in the vines",   // Apr
+    "Bloom & BottleRock",       // May
+    "Solstice in the vineyards",// Jun
+    "High summer",              // Jul
+    "Veraison",                 // Aug
+    "Crush begins",             // Sep
+    "Harvest in full swing",    // Oct
+    "Cellar season",            // Nov
+    "Holiday tastings",         // Dec
+  ];
+  const monthlyDispatch = MONTHLY_DISPATCH[monthIdx];
+
   return (
     <section
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured Wineries"
-      className="relative min-h-[400px] sm:min-h-[500px] overflow-hidden"
+      className="relative min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] overflow-hidden bg-[var(--ink)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Fallback bg */}
-      <div className="absolute inset-0 bg-burgundy-950" />
-
-      {/* Stacked images with crossfade — using Next.js Image for optimization */}
+      {/* Stacked images with crossfade */}
       {wineries.map((winery, i) =>
         winery.heroImageUrl ? (
           <Image
@@ -89,71 +114,92 @@ export function HeroFeatured({
         ) : null
       )}
 
-      {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20" />
+      {/* Editorial gradient overlay — strong vertical fade for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/40 via-[var(--ink)]/55 to-[var(--ink)]/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--ink)]/60 via-transparent to-transparent" />
 
-      {/* Content */}
-      <div className="relative h-full min-h-[400px] sm:min-h-[500px] flex flex-col justify-end">
-        <div className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-          {/* Page H1 — editorial kicker above the featured badge */}
-          <h1 className="text-[0.7rem] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.15em] text-white/75 mb-3 sm:whitespace-nowrap">
-            Napa &amp; Sonoma Wineries — The Complete Visitor&apos;s Guide
-          </h1>
-
-          {/* Slide content with fade animation */}
-          <div key={current} className="animate-fade-in min-h-[120px] sm:min-h-[140px]">
-            <span className="inline-flex items-center gap-1 rounded-full bg-gold-500/90 px-2.5 py-0.5 text-xs font-semibold text-burgundy-950 mb-2">
-              <BadgeCheck className="h-3.5 w-3.5" />
-              Featured
+      <div className="relative h-full min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] flex flex-col">
+        {/* Top meta row — season + featured (left), AVA + rating (right) */}
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
+          <div
+            className="flex items-center justify-between gap-4"
+            style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}
+          >
+            {/* Left: season · monthly dispatch */}
+            <span className="font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-white/90 inline-flex items-center gap-2">
+              <span>{seasonLabel}</span>
+              <span className="opacity-50">·</span>
+              <span className="text-[#f0d894]">{monthlyDispatch}</span>
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-2xl">
+
+            {/* Right: AVA · valley · rating */}
+            {(w.subRegion || w.googleRating != null) && (
+              <span
+                key={`meta-${current}`}
+                className="animate-fade-in font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-white/90 text-right"
+              >
+                {w.subRegion}
+                {w.valley && <> · {valleyLabel}</>}
+                {w.googleRating != null && (
+                  <>
+                    <span className="mx-2 opacity-60">·</span>
+                    <Star className="inline-block h-3 w-3 fill-[#f0d894] text-[#f0d894] -mt-px mr-1" />
+                    {w.googleRating.toFixed(1)}
+                  </>
+                )}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Cover content anchored to bottom-left */}
+        <div className="flex-1 flex flex-col justify-end">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14">
+            {/* Site title — small kicker above the cover story */}
+            <span
+              className="block font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-white/85"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}
+            >
+              Napa &amp; Sonoma Wineries — The Complete Visitor&apos;s Guide
+            </span>
+
+            {/* H1 — winery name, capped to 2 lines */}
+            <h1
+              key={`h1-${current}`}
+              className="animate-fade-in font-[var(--font-heading)] text-white leading-[1.15] tracking-[-0.015em] text-[34px] sm:text-[44px] lg:text-[52px] font-normal mt-3 line-clamp-2 max-w-[18ch] pr-4"
+              style={{ textWrap: "balance", textShadow: "0 2px 24px rgba(0,0,0,0.55)" }}
+            >
               {w.name}
-            </h2>
-            <div className="flex items-center gap-3 mt-2">
-              {w.subRegion && (
-                <span className="text-sm text-white/80">
-                  {w.subRegion}
-                  {w.valley && (
-                    <> &middot; {w.valley === "napa" ? "Napa Valley" : "Sonoma County"}</>
-                  )}
-                </span>
-              )}
-              {w.googleRating && (
-                <span className="inline-flex items-center gap-1 text-sm text-white/90">
-                  <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
-                  {w.googleRating.toFixed(1)}
-                </span>
-              )}
+            </h1>
+
+            {/* Search trigger */}
+            <div className="mt-7 max-w-3xl">
+              <HeroSearchTrigger />
             </div>
-          </div>
 
-          {/* Search */}
-          <div className="mt-6">
-            <HeroSearchTrigger />
-          </div>
-
-          {/* CTAs */}
-          <div className="mt-6 flex flex-wrap gap-4">
-            <Link
-              href={`/wineries/${w.slug}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-gold-500 px-6 py-3 text-sm font-semibold text-burgundy-950 hover:bg-gold-400 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
-            >
-              Visit Winery
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/wineries"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
-            >
-              Browse Wineries
-            </Link>
-            <Link
-              href="/map"
-              className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
-            >
-              <Map className="h-4 w-4" />
-              View Map
-            </Link>
+            {/* CTAs */}
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                href={`/wineries/${w.slug}`}
+                className="inline-flex items-center gap-2 bg-[#f0d894] px-5 py-3 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:bg-white transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              >
+                Visit Winery
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/wineries"
+                className="inline-flex items-center gap-2 border border-white/60 bg-white/5 backdrop-blur-sm px-5 py-3 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-white hover:bg-white/15 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              >
+                Browse Wineries
+              </Link>
+              <Link
+                href="/map"
+                className="hidden sm:inline-flex items-center gap-2 border border-white/60 bg-white/5 backdrop-blur-sm px-5 py-3 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-white hover:bg-white/15 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              >
+                <Map className="h-3.5 w-3.5" />
+                View Map
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -162,14 +208,14 @@ export function HeroFeatured({
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              className="absolute left-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              className="absolute right-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
               aria-label="Next slide"
             >
               <ChevronRight className="h-5 w-5" />
@@ -185,10 +231,10 @@ export function HeroFeatured({
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`rounded-full transition-all focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 ${
+                className={`transition-all focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 ${
                   i === current
-                    ? "relative overflow-hidden bg-white/30 w-6 h-2"
-                    : "bg-white/50 w-2 h-2 hover:bg-white/70"
+                    ? "relative overflow-hidden bg-white/30 w-8 h-[3px]"
+                    : "bg-white/50 w-[3px] h-[3px] hover:bg-white/70"
                 }`}
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === current ? "true" : undefined}
@@ -196,7 +242,7 @@ export function HeroFeatured({
                 {i === current && (
                   <span
                     key={current}
-                    className="absolute inset-0 rounded-full bg-white origin-left"
+                    className="absolute inset-0 bg-[var(--brass)] origin-left"
                     style={{
                       animation: "progress-fill 5s linear forwards",
                       animationPlayState: paused ? "paused" : "running",

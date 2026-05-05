@@ -11,7 +11,7 @@ export function SignUpPrompt() {
 
   return (
     <div className="max-w-3xl mx-auto mb-12 text-center">
-      <h2 className="font-heading text-2xl font-bold mb-3">
+      <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-3">
         Create Your Free Account
       </h2>
       <p className="text-[var(--muted-foreground)] mb-6">

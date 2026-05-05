@@ -25,12 +25,12 @@ export function FooterEmailCapture() {
   }
 
   return (
-    <div className="border-b border-[var(--border)] bg-burgundy-50 dark:bg-burgundy-950/50">
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="border-y border-[var(--rule)] bg-[var(--paper-2)]/60">
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <EmailCapture
           source="footer"
-          heading="Get the free Napa & Sonoma planning guide"
-          description="Insider tasting tips, the best wineries by region, and how to make the most of every stop — delivered to your inbox."
+          heading="The Napa & Sonoma planning guide"
+          description="Tasting tips, the wineries worth a detour, and how to plan a weekend that actually works — sent occasionally."
         />
       </div>
     </div>

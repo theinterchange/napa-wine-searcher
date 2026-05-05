@@ -11,13 +11,13 @@ import { BASE_URL } from "@/lib/constants";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Blog | Napa Sonoma Guide",
+  title: "Wine Country Guides — Napa & Sonoma Trip Planning, Unpacked",
   description:
-    "Expert guides, insider tips, and practical advice for planning your Napa Valley and Sonoma County wine country visit.",
+    "Editorial guides for Napa Valley and Sonoma County trips — first-time itineraries, BottleRock weekend, Memorial Day, dog-friendly tastings, and more.",
   openGraph: {
-    title: "Blog | Napa Sonoma Guide",
+    title: "Wine Country Guides — Napa & Sonoma Trip Planning, Unpacked",
     description:
-      "Expert guides, insider tips, and practical advice for planning your wine country visit.",
+      "First-time Napa, BottleRock weekends, Memorial Day, dog-friendly tastings — editorial guides for wine country trips.",
     url: `${BASE_URL}/blog`,
     siteName: "Napa Sonoma Guide",
     type: "website",
@@ -73,27 +73,30 @@ export default async function BlogPage({
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] mb-8">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.16em] uppercase text-[var(--ink-3)] mb-8"
+        >
           <Link
             href="/"
-            className="hover:text-[var(--foreground)] transition-colors"
+            className="hover:text-[var(--ink)] transition-colors"
           >
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-[var(--foreground)]">Blog</span>
+          <ChevronRight className="h-3 w-3 text-[var(--rule)] shrink-0" aria-hidden="true" />
+          <span className="text-[var(--ink)] font-semibold" aria-current="page">Blog</span>
         </nav>
 
         {/* Header */}
-        <div className="max-w-2xl mb-10">
-          <h1 className="font-heading text-3xl sm:text-4xl font-bold">
-            Wine Country Blog
+        <header className="max-w-3xl mb-10 pb-7 border-b border-[var(--rule)]">
+          <span className="kicker">Dispatches</span>
+          <h1 className="editorial-h2 text-[36px] sm:text-[48px] mt-3">
+            Wine country, <em>unpacked.</em>
           </h1>
-          <p className="mt-3 text-lg text-[var(--muted-foreground)]">
-            Practical guides and insider tips for your Napa Valley and Sonoma
-            County visit.
+          <p className="font-[var(--font-serif-text)] text-[17px] leading-[1.5] text-[var(--ink-2)] mt-5 max-w-[52ch]">
+            Practical guides and insider notes for Napa and Sonoma.
           </p>
-        </div>
+        </header>
 
         {/* Tag filter */}
         {allTags.length > 0 && (

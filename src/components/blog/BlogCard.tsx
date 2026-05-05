@@ -1,55 +1,55 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar } from "lucide-react";
 import type { BlogPost } from "@/lib/blog";
 
 export function BlogCard({ post }: { post: BlogPost }) {
+  const dateStr = new Date(post.date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const firstTag = post.tags[0] ?? "Dispatch";
+
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:shadow-lg hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-all"
+      className="group flex flex-col bg-[var(--paper-2)] border-t-2 border-[var(--rule)] hover:border-[var(--brass)] transition-colors"
     >
-      <div className="relative aspect-[16/9] bg-burgundy-100 dark:bg-burgundy-900 overflow-hidden">
+      <div className="photo-zoom relative aspect-[16/10] bg-[var(--paper-2)]">
         {post.heroImage ? (
           <Image
             src={post.heroImage}
             alt={post.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-burgundy-300 dark:text-burgundy-700 font-heading text-2xl font-bold">
+          <div className="flex h-full items-center justify-center text-[var(--rule)] font-[var(--font-heading)] text-2xl">
             NSG
           </div>
         )}
       </div>
+
       <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-          <Calendar className="h-3.5 w-3.5" />
-          <time dateTime={post.date}>
-            {new Date(post.date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </time>
-        </div>
-        <h3 className="mt-2 font-heading text-lg font-semibold group-hover:text-burgundy-700 dark:group-hover:text-burgundy-400 transition-colors line-clamp-2">
+        <span className="kicker">
+          {firstTag} ·{" "}
+          <time dateTime={post.date}>{dateStr}</time>
+        </span>
+
+        <hr className="rule-brass mt-3" />
+
+        <h3 className="editorial-h2 text-[22px] mt-2 line-clamp-2 group-hover:text-[var(--color-burgundy-900)] transition-colors">
           {post.title}
         </h3>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)] line-clamp-2 flex-1">
+
+        <p className="font-[var(--font-serif-text)] text-[15px] leading-relaxed text-[var(--ink-2)] mt-3 line-clamp-3 flex-1">
           {post.description}
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-2 py-0.5 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300"
-            >
-              {tag}
-            </span>
-          ))}
+
+        <div className="mt-4 pt-4 border-t border-[var(--rule-soft)] flex items-center justify-between font-mono text-[11px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+          <span>Read</span>
+          <span aria-hidden="true">→</span>
         </div>
       </div>
     </Link>

@@ -34,16 +34,16 @@ export function AddToTripDetailButton({
           : undefined
       }
       className={cn(
-        "flex items-center gap-2 rounded-lg text-sm font-medium transition-colors",
-        compact ? "px-2.5 py-2" : "px-4 py-2",
+        "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
+        compact ? "px-3 py-2.5" : "px-4 py-2.5",
         selected
-          ? "bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300"
+          ? "border border-burgundy-900 bg-burgundy-900 text-white hover:bg-burgundy-800"
           : isFull
-            ? "border border-[var(--border)] opacity-50 cursor-not-allowed"
-            : "border border-[var(--border)] hover:bg-[var(--muted)]"
+            ? "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink-3)] opacity-50 cursor-not-allowed"
+            : "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)]"
       )}
     >
-      <Route className={cn("h-4 w-4", selected && "text-burgundy-600")} />
+      <Route className={cn("h-3.5 w-3.5", selected ? "text-white" : "text-[var(--brass)]")} />
       {!compact && (selected ? "In Your Trip" : "Add to Trip")}
     </button>
   );

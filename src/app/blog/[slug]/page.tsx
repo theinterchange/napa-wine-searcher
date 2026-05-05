@@ -38,6 +38,9 @@ export async function generateMetadata({
     title: `${post.title} | Napa Sonoma Guide`,
     description: post.description,
     keywords: post.tags,
+    alternates: {
+      canonical: `${BASE_URL}/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -50,6 +53,12 @@ export async function generateMetadata({
       ...(post.heroImage && {
         images: [{ url: `${BASE_URL}${post.heroImage}`, width: 1200, height: 630 }],
       }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      ...(post.heroImage && { images: [`${BASE_URL}${post.heroImage}`] }),
     },
   };
 }
@@ -205,7 +214,7 @@ export default async function BlogPostPage({
       {/* Matching wineries */}
       {matchingWineries.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)] mt-12">
-          <h2 className="font-heading text-2xl font-bold mb-6">
+          <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
             Explore These Wineries
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -231,7 +240,7 @@ export default async function BlogPostPage({
       {matchingAccommodations.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)]">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-heading text-2xl font-bold">
+            <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)]">
               Where to Stay Nearby
             </h2>
             <Link
@@ -263,7 +272,7 @@ export default async function BlogPostPage({
       {/* Related posts */}
       {related.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 border-t border-[var(--border)] mt-12">
-          <h2 className="font-heading text-2xl font-bold mb-6">
+          <h2 className="font-[var(--font-heading)] text-[26px] sm:text-[30px] font-normal tracking-[-0.01em] text-[var(--ink)] mb-6">
             More from the Blog
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -125,11 +125,8 @@ export function CategoryLandingLayout({
       <FAQSchema faqs={faqs} />
 
       <article>
-        {/* ── HERO ──────────────────────────────────────────────────────
-            Full-bleed feature image with dark gradient and white text
-            overlay. Matches the visual language of WineryHero so the
-            category pages and detail pages feel like one site. */}
-        <div className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white overflow-hidden">
+        {/* ── HERO ────────────────────────────────────────────────────── */}
+        <div className="relative bg-[var(--ink)] text-white overflow-hidden">
           {hero ? (
             <>
               <Image
@@ -141,7 +138,8 @@ export function CategoryLandingLayout({
                 priority
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/40 via-[var(--ink)]/55 to-[var(--ink)]/90" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--ink)]/55 via-transparent to-transparent" />
             </>
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-burgundy-800 via-burgundy-900 to-burgundy-950">
@@ -151,17 +149,17 @@ export function CategoryLandingLayout({
             </div>
           )}
 
-          <div className="relative mx-auto max-w-5xl px-4 pt-28 sm:pt-36 lg:pt-48 pb-10 sm:pb-12 lg:pb-16 sm:px-6 lg:px-8">
-            {/* Inline breadcrumb (white-on-dark) */}
+          <div className="relative mx-auto max-w-5xl px-4 pt-24 sm:pt-32 lg:pt-44 pb-12 sm:pb-14 lg:pb-18 sm:px-6 lg:px-8">
             <nav
               aria-label="Breadcrumb"
-              className="flex flex-wrap items-center gap-1 text-sm text-white/70 mb-5"
+              className="flex flex-wrap items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-white/85 mb-6"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}
             >
               {breadcrumb.map((item, i) => (
                 <span key={item.href} className="inline-flex items-center gap-1">
-                  {i > 0 && <ChevronRight className="h-3.5 w-3.5" aria-hidden />}
+                  {i > 0 && <ChevronRight className="h-3 w-3" aria-hidden />}
                   {i === breadcrumb.length - 1 ? (
-                    <span className="text-white">{item.name}</span>
+                    <span className="text-[#f0d894]">{item.name}</span>
                   ) : (
                     <Link
                       href={item.href}
@@ -174,18 +172,19 @@ export function CategoryLandingLayout({
               ))}
             </nav>
 
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-balance max-w-4xl">
+            <h1
+              className="font-[var(--font-heading)] text-white text-[34px] sm:text-[44px] lg:text-[56px] leading-[1.05] tracking-[-0.015em] font-normal max-w-[22ch]"
+              style={{ textWrap: "balance", textShadow: "0 2px 24px rgba(0,0,0,0.5)" }}
+            >
               {meta.h1}
             </h1>
           </div>
 
-          {/* Photo credit — small, bottom corner, links to the featured
-              winery's detail page for free inbound link equity */}
           {hero && (
             <div className="absolute bottom-3 right-4 sm:right-6 lg:right-8 z-10">
               <Link
                 href={`/wineries/${hero.winerySlug}`}
-                className="text-[11px] text-white/60 hover:text-white/90 transition-colors"
+                className="font-mono text-[10px] tracking-[0.18em] uppercase text-white/60 hover:text-white/90 transition-colors"
               >
                 Photo: {hero.wineryName} →
               </Link>
@@ -193,27 +192,26 @@ export function CategoryLandingLayout({
           )}
         </div>
 
-        {/* ── BODY LEAD ─────────────────────────────────────────────────
-            Single paragraph that sits between the hero and the winery grid.
-            text-lg matches the WineryHero shortDescription convention used
-            on the site. Inner max-w-3xl constrains line length for
-            readability without breaking the outer max-w-5xl alignment. */}
+        {/* ── BODY LEAD ─────────────────────────────────────────────── */}
         {deck && (
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16">
-            <p className="max-w-3xl text-lg leading-relaxed text-[var(--foreground)] text-pretty">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-14 sm:pt-18">
+            <p
+              className="drop-cap-editorial max-w-3xl font-[var(--font-serif-text)] text-[17px] leading-[1.7] text-[var(--ink-2)]"
+              style={{ textWrap: "pretty" }}
+            >
               {deck}
             </p>
           </div>
         )}
 
-        {/* ── THE WINERIES ──────────────────────────────────────────────
-            Functional guide pages exist to deliver the list. Body lead
-            above handles the elevator pitch; the wineries appear
-            immediately after with no further editorial buffer. */}
-        <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-16">
-          <h2 className="font-heading text-2xl font-bold mb-6 text-balance">
-            The wineries
-          </h2>
+        {/* ── THE WINERIES ──────────────────────────────────────────── */}
+        <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16">
+          <div className="border-b border-[var(--rule)] pb-4 mb-8 flex items-baseline justify-between gap-4">
+            <span className="kicker">The Wineries</span>
+            <span className="font-[var(--font-serif-text)] text-[13px] text-[var(--ink-3)]">
+              {wineries.length} {wineries.length === 1 ? "estate" : "estates"}
+            </span>
+          </div>
           {wineries.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {wineries.map((w) => (
@@ -221,7 +219,7 @@ export function CategoryLandingLayout({
               ))}
             </div>
           ) : (
-            <p className="text-[var(--muted-foreground)]">
+            <p className="font-[var(--font-serif-text)] text-[var(--ink-3)]">
               No wineries currently match this filter.
             </p>
           )}
@@ -229,14 +227,15 @@ export function CategoryLandingLayout({
 
         {/* ── MAKE IT A WEEKEND (revenue moment) ────────────────────── */}
         {nearbyAccommodations.length > 0 && (
-          <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
+          <section className="border-t border-[var(--rule-soft)] bg-[var(--paper-2)]/40">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
-              <div className="flex items-end justify-between gap-3 mb-6">
+              <div className="border-b border-[var(--rule)] pb-4 mb-8 flex items-end justify-between gap-3">
                 <div>
-                  <h2 className="font-heading text-2xl font-bold text-balance">
-                    Make it a weekend
+                  <span className="kicker">Make a Weekend</span>
+                  <h2 className="editorial-h2 text-[28px] sm:text-[34px] mt-2">
+                    Where to <em>stay.</em>
                   </h2>
-                  <p className="mt-2 text-base text-[var(--muted-foreground)] max-w-2xl">
+                  <p className="mt-3 font-[var(--font-serif-text)] text-[15px] text-[var(--ink-2)] max-w-2xl" style={{ textWrap: "pretty" }}>
                     {amenity === "dog"
                       ? "Dog-friendly hotels, inns, and resorts within easy driving distance — the natural extension of an afternoon in tasting rooms."
                       : amenity === "kid"
@@ -246,10 +245,10 @@ export function CategoryLandingLayout({
                 </div>
                 <Link
                   href={amenity === "dog" ? "/dog-friendly-hotels" : "/where-to-stay"}
-                  className="hidden sm:inline-flex items-center gap-1 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                  className="hidden sm:inline-flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--brass-2)] transition-colors"
                 >
                   See all
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-3 w-3" />
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -269,9 +268,12 @@ export function CategoryLandingLayout({
         {/* ── FAQ ───────────────────────────────────────────────────── */}
         {faqs.length > 0 && (
           <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16">
-            <h2 className="font-heading text-2xl font-bold mb-6 text-balance">
-              Frequently asked questions
-            </h2>
+            <div className="border-b border-[var(--rule)] pb-4 mb-2">
+              <span className="kicker">FAQ</span>
+              <h2 className="editorial-h2 text-[26px] sm:text-[32px] mt-2">
+                Frequently <em>asked.</em>
+              </h2>
+            </div>
             <FAQSection faqs={faqs} />
           </section>
         )}
@@ -279,19 +281,20 @@ export function CategoryLandingLayout({
         {/* ── SIBLING SPOKES (subregion only) ───────────────────────── */}
         {siblingSubregions.length > 0 && (
           <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-16">
-            <h2 className="font-heading text-2xl font-bold mb-4 text-balance">
-              Other {CLUSTER_LABEL[amenity].toLowerCase()} nearby
+            <span className="kicker">Nearby</span>
+            <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2 mb-5">
+              Other {CLUSTER_LABEL[amenity].toLowerCase()} <em>nearby.</em>
             </h2>
             <div className="flex flex-wrap gap-2">
               {siblingSubregions.map((sr) => (
                 <Link
                   key={sr.slug}
                   href={`${root}/${sr.slug}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-sm text-[var(--foreground)] hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-colors"
+                  className="inline-flex items-center gap-1.5 border border-[var(--rule)] bg-[var(--paper)] px-3 py-1.5 font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:border-[var(--brass)] hover:text-[var(--ink)] transition-colors"
                 >
-                  <MapPin className="h-3 w-3 text-[var(--muted-foreground)]" />
+                  <MapPin className="h-3 w-3 text-[var(--brass)]" />
                   {displaySubRegionName(sr.name)}
-                  <span className="text-xs text-[var(--muted-foreground)] tabular-nums">
+                  <span className="font-[var(--font-serif-text)] normal-case tracking-normal text-[11px] text-[var(--ink-3)]">
                     {sr.count}
                   </span>
                 </Link>
@@ -302,17 +305,18 @@ export function CategoryLandingLayout({
 
         {/* ── RELATED READING ───────────────────────────────────────── */}
         <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-16">
-          <h2 className="font-heading text-2xl font-bold mb-4 text-balance">
-            Related reading
+          <span className="kicker">Further Reading</span>
+          <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2 mb-5">
+            Related <em>reading.</em>
           </h2>
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 font-[var(--font-serif-text)] text-[15px]">
             {amenity === "dog" && (
               <li>
                 <Link
                   href="/blog/dog-friendly-wineries-guide"
-                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                  className="inline-flex items-center gap-2 text-[var(--ink-2)] underline decoration-[var(--brass)] underline-offset-4 hover:text-[var(--ink)]"
                 >
-                  <BookOpen className="h-4 w-4" />
+                  <BookOpen className="h-4 w-4 text-[var(--brass)]" />
                   The complete dog-friendly wine country guide
                 </Link>
               </li>
@@ -321,9 +325,9 @@ export function CategoryLandingLayout({
               <li>
                 <Link
                   href="/blog/wine-country-with-kids"
-                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                  className="inline-flex items-center gap-2 text-[var(--ink-2)] underline decoration-[var(--brass)] underline-offset-4 hover:text-[var(--ink)]"
                 >
-                  <BookOpen className="h-4 w-4" />
+                  <BookOpen className="h-4 w-4 text-[var(--brass)]" />
                   Wine country with kids — the complete guide
                 </Link>
               </li>
@@ -332,9 +336,9 @@ export function CategoryLandingLayout({
               <li>
                 <Link
                   href="/blog/beyond-the-tasting-room"
-                  className="inline-flex items-center gap-2 text-[var(--foreground)] hover:text-burgundy-700 dark:hover:text-burgundy-300 underline-offset-4 hover:underline"
+                  className="inline-flex items-center gap-2 text-[var(--ink-2)] underline decoration-[var(--brass)] underline-offset-4 hover:text-[var(--ink)]"
                 >
-                  <BookOpen className="h-4 w-4" />
+                  <BookOpen className="h-4 w-4 text-[var(--brass)]" />
                   Beyond the tasting room — vineyard experiences and farm tours
                 </Link>
               </li>

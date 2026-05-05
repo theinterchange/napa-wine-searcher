@@ -109,7 +109,7 @@ export function MapBottomCard({
           )}
 
           {/* Name */}
-          <h3 className="font-heading text-sm font-semibold leading-snug pr-6 line-clamp-1">
+          <h3 className="font-[var(--font-heading)] text-[14px] font-normal leading-snug pr-6 line-clamp-1">
             {item.name}
           </h3>
 

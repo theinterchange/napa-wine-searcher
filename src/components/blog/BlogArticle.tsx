@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, ChevronRight, Clock } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { BlogPost } from "@/lib/blog";
 
 function estimateReadTime(content: string): number {
@@ -16,25 +16,31 @@ export function BlogArticle({
   children: React.ReactNode;
 }) {
   const readTime = estimateReadTime(post.content);
+  const dateFormatted = new Date(post.date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const primaryTag = post.tags[0] ?? "Dispatch";
 
   return (
     <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-16">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1 text-sm text-[var(--muted-foreground)] py-6">
-        <Link href="/" className="hover:text-[var(--foreground)] transition-colors">
+      <nav className="flex items-center gap-1 text-sm text-[var(--ink-3)] py-6">
+        <Link href="/" className="hover:text-[var(--ink)] transition-colors">
           Home
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
+        <Link href="/blog" className="hover:text-[var(--ink)] transition-colors">
           Blog
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-[var(--foreground)] line-clamp-1">{post.title}</span>
+        <span className="text-[var(--ink)] line-clamp-1">{post.title}</span>
       </nav>
 
       {/* Hero image */}
       {post.heroImage && (
-        <div className="relative aspect-[2/1] rounded-2xl overflow-hidden mb-10 shadow-md">
+        <figure className="photo-zoom relative aspect-[2/1] mb-10 overflow-hidden">
           <Image
             src={post.heroImage}
             alt={post.title}
@@ -43,49 +49,30 @@ export function BlogArticle({
             className="object-cover"
             priority
           />
-        </div>
+        </figure>
       )}
 
       {/* Header */}
-      <header className="mb-10 border-b border-[var(--border)] pb-8">
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold leading-tight text-[var(--foreground)]">
+      <header className="mb-10">
+        <span className="kicker">
+          {primaryTag} · <time dateTime={post.date}>{dateFormatted}</time> · {readTime} min · {post.author}
+        </span>
+        <h1
+          className="editorial-h2 text-[36px] sm:text-[48px] lg:text-[54px] mt-3"
+          style={{ textWrap: "balance" }}
+        >
           {post.title}
         </h1>
-        <p className="mt-4 text-lg text-[var(--muted-foreground)] leading-relaxed">
-          {post.description}
-        </p>
-        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-[var(--muted-foreground)]">
-          <div className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" />
-            <time dateTime={post.date}>
-              {new Date(post.date).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </time>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" />
-            <span>{readTime} min read</span>
-          </div>
-          <span>by {post.author}</span>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/blog?tag=${encodeURIComponent(tag)}`}
-              className="text-xs px-2.5 py-1 rounded-full bg-burgundy-100 text-burgundy-700 dark:bg-burgundy-900 dark:text-burgundy-300 hover:bg-burgundy-200 dark:hover:bg-burgundy-800 transition-colors"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
+        {post.description && (
+          <p className="font-[var(--font-serif-text)] text-[18px] leading-relaxed text-[var(--ink-2)] mt-5 max-w-[55ch]">
+            {post.description}
+          </p>
+        )}
+        <hr className="rule-brass mt-7 mb-0" />
       </header>
 
       {/* MDX content */}
-      <div className="blog-prose prose prose-lg max-w-none">
+      <div className="blog-prose prose prose-lg editorial-prose max-w-none">
         {children}
       </div>
     </article>
