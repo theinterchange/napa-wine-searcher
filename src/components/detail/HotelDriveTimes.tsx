@@ -1,73 +1,94 @@
 import Link from "next/link";
 import { estimateSegment, formatDistance, formatDriveTime, haversineDistance } from "@/lib/geo";
+import { getAccommodationBySlug } from "@/lib/accommodation-data";
+import { BookHotelCTA } from "@/components/accommodation/BookHotelCTA";
 
-type Hotel = {
-  slug: string;
-  name: string;
-  lat: number;
-  lng: number;
-};
-
-const NAPA_HOTELS: Hotel[] = [
-  { slug: "the-westin-verasa-napa", name: "The Westin Verasa Napa", lat: 38.3040878, lng: -122.2836431 },
-  { slug: "archer-hotel-napa", name: "Archer Hotel Napa", lat: 38.2985362, lng: -122.2876861 },
-  { slug: "andaz-napa-by-hyatt", name: "Andaz Napa", lat: 38.2975698, lng: -122.2892687 },
-  { slug: "silverado-resort", name: "Silverado Resort", lat: 38.3491745, lng: -122.2656878 },
-  { slug: "carneros-resort-and-spa", name: "Carneros Resort and Spa", lat: 38.2557099, lng: -122.3351096 },
-  { slug: "the-meritage-resort-and-spa", name: "The Meritage Resort and Spa", lat: 38.246123, lng: -122.2741878 },
-];
+const NAPA_HOTEL_SLUGS = [
+  "the-westin-verasa-napa",
+  "archer-hotel-napa",
+  "andaz-napa-by-hyatt",
+  "silverado-resort",
+  "carneros-resort-and-spa",
+  "the-meritage-resort-and-spa",
+] as const;
 
 interface HotelDriveTimesProps {
   wineryLat: number;
   wineryLng: number;
   wineryName: string;
+  winerySlug?: string;
 }
 
-export function HotelDriveTimes({ wineryLat, wineryLng, wineryName }: HotelDriveTimesProps) {
-  const rows = NAPA_HOTELS
-    .map((hotel) => {
-      const straightLine = haversineDistance(hotel.lat, hotel.lng, wineryLat, wineryLng);
+export async function HotelDriveTimes({ wineryLat, wineryLng, wineryName, winerySlug }: HotelDriveTimesProps) {
+  const accommodations = await Promise.all(
+    NAPA_HOTEL_SLUGS.map((slug) => getAccommodationBySlug(slug))
+  );
+
+  const rows = accommodations
+    .filter((acc): acc is NonNullable<typeof acc> => acc !== null && acc.lat !== null && acc.lng !== null)
+    .map((acc) => {
+      const straightLine = haversineDistance(acc.lat!, acc.lng!, wineryLat, wineryLng);
       const { miles, minutes } = estimateSegment(straightLine);
-      return { hotel, miles, minutes };
+      return { acc, miles, minutes };
     })
     .sort((a, b) => a.minutes - b.minutes);
 
+  const sourcePage = winerySlug ? `/wineries/${winerySlug}` : undefined;
+
   return (
     <div>
-      <h2 className="font-heading text-xl font-bold mb-2">
-        Drive Times from Popular Napa Hotels
+      <span className="kicker">Drive Times</span>
+      <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2">
+        From Napa <em>hotels.</em>
       </h2>
-      <p className="text-sm text-[var(--muted-foreground)] mb-4">
+      <hr className="rule-brass mt-3" style={{ marginInline: 0 }} />
+      <p className="mt-4 font-[var(--font-serif-text)] text-[14.5px] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
         Estimated drive time from each hotel to {wineryName}, ordered by proximity.
       </p>
-      <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
-        <table className="w-full text-sm">
-          <thead className="bg-[var(--muted)]/50 text-left">
-            <tr>
-              <th className="px-4 py-2 font-medium">Hotel</th>
-              <th className="px-4 py-2 font-medium text-right">Drive time</th>
-              <th className="px-4 py-2 font-medium text-right">Distance</th>
+      <div className="mt-5 border-t-2 border-[var(--brass-2)] border-b border-[var(--rule)]">
+        <table className="w-full">
+          <thead>
+            <tr className="font-mono text-[10px] tracking-[0.22em] uppercase text-[var(--brass-2)] text-left">
+              <th className="px-2 py-3 font-semibold">Hotel</th>
+              <th className="px-2 py-3 font-semibold text-right">Drive</th>
+              <th className="px-2 py-3 font-semibold text-right hidden sm:table-cell">Distance</th>
+              <th className="px-2 py-3 font-semibold text-right">Book</th>
             </tr>
           </thead>
-          <tbody>
-            {rows.map(({ hotel, miles, minutes }) => (
-              <tr key={hotel.slug} className="border-t border-[var(--border)]">
-                <td className="px-4 py-2">
+          <tbody className="font-[var(--font-serif-text)] text-[14.5px]">
+            {rows.map(({ acc, miles, minutes }) => (
+              <tr key={acc.slug} className="border-t border-[var(--rule-soft)]">
+                <td className="px-2 py-3">
                   <Link
-                    href={`/where-to-stay/${hotel.slug}`}
-                    className="text-[var(--foreground)] hover:underline"
+                    href={`/where-to-stay/${acc.slug}`}
+                    className="text-[var(--ink)] hover:text-[var(--brass-2)] hover:underline decoration-[var(--brass)] underline-offset-4 transition-colors"
                   >
-                    {hotel.name}
+                    {acc.name}
                   </Link>
                 </td>
-                <td className="px-4 py-2 text-right tabular-nums">~{formatDriveTime(minutes)}</td>
-                <td className="px-4 py-2 text-right tabular-nums">{formatDistance(miles)}</td>
+                <td className="px-2 py-3 text-right tabular-nums text-[var(--ink-2)]">~{formatDriveTime(minutes)}</td>
+                <td className="px-2 py-3 text-right tabular-nums text-[var(--ink-2)] hidden sm:table-cell">{formatDistance(miles)}</td>
+                <td className="px-2 py-3 text-right">
+                  <BookHotelCTA
+                    bookingUrl={acc.bookingUrl}
+                    websiteUrl={acc.websiteUrl}
+                    accommodationName={acc.name}
+                    lat={acc.lat}
+                    lng={acc.lng}
+                    accommodationId={acc.id}
+                    accommodationSlug={acc.slug}
+                    sourcePage={sourcePage}
+                    sourceComponent="winery_hotel_drive_times"
+                    size="sm"
+                    label="Book"
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+      <p className="mt-3 font-[var(--font-serif-text)] text-[12.5px] text-[var(--ink-3)]">
         Estimates based on straight-line distance with a wine-country routing factor. Actual drive times vary with traffic and route choice.
       </p>
     </div>
