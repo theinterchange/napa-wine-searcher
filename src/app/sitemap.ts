@@ -153,6 +153,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const hotelsNearWineryEntries: MetadataRoute.Sitemap = allWineries.map((w) => ({
+    url: `${BASE_URL}/near/${w.slug}`,
+    lastModified: w.updatedAt ? new Date(w.updatedAt) : new Date(),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
   const napaSubRegions = allSubRegions.filter((r) => r.valley === "napa");
   const sonomaSubRegions = allSubRegions.filter((r) => r.valley === "sonoma");
 
@@ -247,6 +254,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...subRegionEntries,
     ...wineryEntries,
+    ...hotelsNearWineryEntries,
+    ...["napa", "yountville", "st-helena", "calistoga", "healdsburg", "sonoma", "guerneville", "petaluma"].map((city) => ({
+      url: `${BASE_URL}/where-to-stay/cities/${city}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...["highly-rated", "with-spa", "inns", "resorts"].map((type) => ({
+      url: `${BASE_URL}/where-to-stay/collections/${type}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     ...allRoutes.map((r) => ({
       url: `${BASE_URL}/itineraries/${r.slug}`,
       lastModified: new Date(),
