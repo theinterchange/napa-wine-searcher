@@ -12,16 +12,29 @@ const NAPA_HOTEL_SLUGS = [
   "the-meritage-resort-and-spa",
 ] as const;
 
+const SONOMA_HOTEL_SLUGS = [
+  "hotel-healdsburg",
+  "montage-healdsburg",
+  "farmhouse-inn",
+  "olea-hotel",
+  "cottage-inn-and-spa",
+  "the-lodge-at-bodega-bay",
+] as const;
+
+const VALLEY_LABEL = { napa: "Napa", sonoma: "Sonoma" } as const;
+
 interface HotelDriveTimesProps {
   wineryLat: number;
   wineryLng: number;
   wineryName: string;
+  valley?: "napa" | "sonoma";
   winerySlug?: string;
 }
 
-export async function HotelDriveTimes({ wineryLat, wineryLng, wineryName, winerySlug }: HotelDriveTimesProps) {
+export async function HotelDriveTimes({ wineryLat, wineryLng, wineryName, valley = "napa", winerySlug }: HotelDriveTimesProps) {
+  const slugs = valley === "sonoma" ? SONOMA_HOTEL_SLUGS : NAPA_HOTEL_SLUGS;
   const accommodations = await Promise.all(
-    NAPA_HOTEL_SLUGS.map((slug) => getAccommodationBySlug(slug))
+    slugs.map((slug) => getAccommodationBySlug(slug))
   );
 
   const rows = accommodations
@@ -33,13 +46,16 @@ export async function HotelDriveTimes({ wineryLat, wineryLng, wineryName, winery
     })
     .sort((a, b) => a.minutes - b.minutes);
 
+  if (rows.length === 0) return null;
+
   const sourcePage = winerySlug ? `/wineries/${winerySlug}` : undefined;
+  const sourceComponent = `winery_hotel_drive_times_${valley}`;
 
   return (
     <div>
       <span className="kicker">Drive Times</span>
       <h2 className="editorial-h2 text-[24px] sm:text-[28px] mt-2">
-        From Napa <em>hotels.</em>
+        From {VALLEY_LABEL[valley]} <em>hotels.</em>
       </h2>
       <hr className="rule-brass mt-3" style={{ marginInline: 0 }} />
       <p className="mt-4 font-[var(--font-serif-text)] text-[14.5px] text-[var(--ink-2)]" style={{ textWrap: "pretty" }}>
@@ -78,7 +94,7 @@ export async function HotelDriveTimes({ wineryLat, wineryLng, wineryName, winery
                     accommodationId={acc.id}
                     accommodationSlug={acc.slug}
                     sourcePage={sourcePage}
-                    sourceComponent="winery_hotel_drive_times"
+                    sourceComponent={sourceComponent}
                     size="sm"
                     label="Book"
                   />
