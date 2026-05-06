@@ -160,7 +160,8 @@ export function HeroFeatured({
               className="block font-mono text-[10.5px] sm:text-[11px] tracking-[0.22em] uppercase text-white/85"
               style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}
             >
-              Napa &amp; Sonoma Wineries — The Complete Visitor&apos;s Guide
+              <span className="sm:hidden">Napa &amp; Sonoma Wineries</span>
+              <span className="hidden sm:inline">Napa &amp; Sonoma Wineries — The Complete Visitor&apos;s Guide</span>
             </span>
 
             {/* H1 — winery name, capped to 2 lines */}
@@ -208,14 +209,14 @@ export function HeroFeatured({
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              className="hidden sm:block absolute left-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
+              className="hidden sm:block absolute right-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
               aria-label="Next slide"
             >
               <ChevronRight className="h-5 w-5" />

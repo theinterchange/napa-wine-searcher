@@ -129,14 +129,14 @@ export function WineryHero({
         <>
           <button
             onClick={prev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/30 p-2 text-white hover:bg-black/50 transition-colors"
+            className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 z-10 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
             aria-label="Previous photo"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={next}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/30 p-2 text-white hover:bg-black/50 transition-colors"
+            className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-10 border border-white/30 bg-black/30 backdrop-blur-sm p-2.5 text-white hover:bg-black/60 transition-colors focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50"
             aria-label="Next photo"
           >
             <ChevronRight className="h-5 w-5" />
@@ -217,18 +217,31 @@ export function WineryHero({
       </div>
 
       {allImages.length > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5" aria-live="polite">
+          <style>{`@keyframes progress-fill { from { transform: scaleX(0) } to { transform: scaleX(1) } }`}</style>
           {allImages.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
-              className={`rounded-full transition-all ${
+              className={`transition-all focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black/50 ${
                 i === current
-                  ? "w-2.5 h-2.5 bg-white"
-                  : "w-2 h-2 bg-white/40 hover:bg-white/60"
+                  ? "relative overflow-hidden bg-white/30 w-8 h-[3px]"
+                  : "bg-white/50 w-[3px] h-[3px] hover:bg-white/70"
               }`}
               aria-label={`Go to photo ${i + 1}`}
-            />
+              aria-current={i === current ? "true" : undefined}
+            >
+              {i === current && (
+                <span
+                  key={current}
+                  className="absolute inset-0 bg-[var(--brass)] origin-left"
+                  style={{
+                    animation: "progress-fill 3s linear forwards",
+                    animationPlayState: paused ? "paused" : "running",
+                  }}
+                />
+              )}
+            </button>
           ))}
         </div>
       )}

@@ -93,19 +93,19 @@ export default async function WhereToStayPage({
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
       {/* Hero — compact intro so first row of hotels stays above the fold */}
-      <div className="mb-10 pb-7 border-b border-[var(--rule)]">
+      <div className="mb-5 pb-4 sm:mb-10 sm:pb-7 border-b border-[var(--rule)]">
         <span className="kicker">Lodging</span>
-        <h1 className="editorial-h2 text-[34px] sm:text-[44px] lg:text-[52px] mt-3">
+        <h1 className="editorial-h2 text-[28px] sm:text-[44px] lg:text-[52px] mt-2 sm:mt-3">
           Where to <em>stay.</em>
         </h1>
         <p
-          className="mt-5 max-w-[52ch] text-[16px] sm:text-[17px] leading-[1.5] text-[var(--ink-2)]"
+          className="hidden sm:block mt-5 max-w-[52ch] text-[16px] sm:text-[17px] leading-[1.5] text-[var(--ink-2)]"
           style={{ fontFamily: "var(--font-serif-text)", textWrap: "pretty" }}
         >
           Hand-picked hotels and inns across Napa and Sonoma.

@@ -51,11 +51,11 @@ export function WineCategory({
   });
 
   return (
-    <div className="rounded-xl border border-[var(--border)] overflow-hidden">
+    <div className="rounded-xl border border-[var(--rule)] bg-[var(--paper-2)] overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--muted)]/50 ${
-          open ? "bg-[var(--muted)]/30" : ""
+        className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--paper)]/60 ${
+          open ? "bg-[var(--paper)]/40" : ""
         }`}
       >
         <span className="flex items-center gap-2 font-medium text-sm">
@@ -75,7 +75,7 @@ export function WineCategory({
       {open && (
         <>
           {/* Desktop table */}
-          <div className="hidden md:block border-t border-[var(--border)]">
+          <div className="hidden md:block border-t border-[var(--rule-soft)] bg-[var(--paper)]">
             <table className="w-full text-sm table-fixed">
               <colgroup>
                 <col />
@@ -84,8 +84,8 @@ export function WineCategory({
                 <col className="w-[72px]" />
                 {wineryId && <col className="w-[90px]" />}
               </colgroup>
-              <thead className="bg-[var(--muted)]">
-                <tr className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
+              <thead className="bg-[var(--paper-2)]">
+                <tr className="text-xs text-[var(--ink-3)] uppercase tracking-wider">
                   <th className="text-left px-3 py-2 font-medium">Wine</th>
                   <th className="text-left px-3 py-2 font-medium">Type</th>
                   <th className="text-left px-3 py-2 font-medium">Vintage</th>
@@ -93,9 +93,9 @@ export function WineCategory({
                   {wineryId && <th className="px-3 py-2 font-medium" />}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]">
+              <tbody className="divide-y divide-[var(--rule-soft)]">
                 {sorted.map((wine) => (
-                  <tr key={wine.id} className="hover:bg-[var(--muted)]/50">
+                  <tr key={wine.id} className="hover:bg-[var(--paper-2)]/60">
                     <td className="px-3 py-2.5" title={wine.name}>
                       <div className="font-medium truncate">{wine.name}</div>
                       {wine.description && (
@@ -131,11 +131,11 @@ export function WineCategory({
           </div>
 
           {/* Mobile card layout */}
-          <div className="md:hidden border-t border-[var(--border)] p-3 space-y-3">
+          <div className="md:hidden border-t border-[var(--rule-soft)] p-3 space-y-3">
             {sorted.map((wine) => (
               <div
                 key={wine.id}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4"
+                className="rounded-xl border border-[var(--rule-soft)] bg-[var(--paper)] p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">

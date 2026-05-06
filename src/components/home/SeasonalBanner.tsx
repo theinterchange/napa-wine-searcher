@@ -14,7 +14,14 @@ export function SeasonalBanner({ banner }: SeasonalBannerProps) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
           <span className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[#f0d894]">
             <Icon className="h-3.5 w-3.5" />
-            {banner.title}
+            {banner.mobileTitle ? (
+              <>
+                <span className="sm:hidden">{banner.mobileTitle}</span>
+                <span className="hidden sm:inline">{banner.title}</span>
+              </>
+            ) : (
+              banner.title
+            )}
           </span>
           {banner.links.length > 0 && (
             <span className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">

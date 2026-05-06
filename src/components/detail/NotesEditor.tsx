@@ -26,16 +26,16 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
       <>
         <button
           onClick={() => setShowAuthModal(true)}
-          className="w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)] p-6 text-left hover:border-burgundy-300 dark:hover:border-burgundy-700 transition-colors"
+          className="w-full rounded-xl border border-dashed border-[var(--rule)] bg-[var(--paper-2)] p-6 text-left hover:border-[var(--brass)] transition-colors"
         >
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] flex items-center gap-2">
               <Pencil className="h-4 w-4" />
               Tasting Notes
             </h3>
-            <Lock className="h-4 w-4 text-[var(--muted-foreground)]" />
+            <Lock className="h-4 w-4 text-[var(--ink-3)]" />
           </div>
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-[var(--ink-2)]">
             Create a free account to keep personal notes on every winery visited.
           </p>
         </button>
@@ -64,7 +64,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
   };
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+    <div className="rounded-xl border border-[var(--rule)] bg-[var(--paper-2)] p-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-[var(--font-heading)] text-[18px] sm:text-[20px] font-normal tracking-[-0.01em] text-[var(--ink)] flex items-center gap-2">
           <Pencil className="h-4 w-4" />
@@ -74,7 +74,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
           <button
             onClick={save}
             disabled={loading}
-            className="flex items-center gap-1 text-sm text-[var(--foreground)] hover:underline"
+            className="flex items-center gap-1 text-sm text-[var(--ink)] hover:underline"
           >
             <Save className="h-3.5 w-3.5" />
             Save
@@ -89,7 +89,7 @@ export function NotesEditor({ wineryId }: { wineryId: number }) {
         }}
         onBlur={() => !saved && save()}
         placeholder="Add your tasting notes, visit reminders..."
-        className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] p-3 text-sm min-h-[100px] resize-y focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+        className="w-full rounded-lg border border-[var(--rule-soft)] bg-[var(--paper)] p-3 text-sm min-h-[100px] resize-y focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
       />
     </div>
   );

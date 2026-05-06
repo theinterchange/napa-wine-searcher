@@ -9,6 +9,7 @@ export interface SeasonalBannerLink {
 export interface SeasonalBannerDef {
   id: string;
   title: string;
+  mobileTitle?: string;
   startDate: string;
   endDate: string;
   icon: LucideIcon;
@@ -19,7 +20,8 @@ export interface SeasonalBannerDef {
 const SEASONAL_BANNERS: SeasonalBannerDef[] = [
   {
     id: "bottlerock-2026",
-    title: "BottleRock 2026 — May 22\u201324 in Napa Valley",
+    title: "BottleRock 2026 — May 22–24 in Napa Valley",
+    mobileTitle: "BottleRock 2026 — May 22–24",
     startDate: "2026-04-01",
     endDate: "2026-05-25",
     icon: Music,

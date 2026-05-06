@@ -349,21 +349,21 @@ export default async function HomePage() {
       ))}
 
       {/* N° 01 / Wineries — directory */}
-      <section className="py-10 sm:py-12 lg:py-14">
+      <section className="py-6 sm:py-12 lg:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="section-head">
             <span className="num">N° 01 / Wineries</span>
             <h2>
               Browse the <em>directory.</em>
             </h2>
-            <p className="lede">
+            <p className="lede hidden sm:block">
               Hand-picked — iconic estates and tucked-away gems alike.
             </p>
           </div>
 
           <QuickFilterBar />
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-6 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {homepageWineries.map((winery) => (
               <WineryCard key={winery.slug} winery={winery} />
             ))}
