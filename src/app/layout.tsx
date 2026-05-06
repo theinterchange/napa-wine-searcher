@@ -47,10 +47,9 @@ export const metadata: Metadata = {
   },
   description:
     "Discover the finest wineries in Napa and Sonoma Valleys. Browse wines, compare tasting experiences, and plan your wine country visit.",
-  icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
-  },
+  // icons removed — Next.js App Router auto-detects src/app/icon.svg,
+  // src/app/icon.png, and src/app/apple-icon.png and emits the right
+  // <link rel="icon"> + <link rel="apple-touch-icon"> headers.
   openGraph: {
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
