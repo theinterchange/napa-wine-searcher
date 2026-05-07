@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import {
   MapPin,
@@ -78,6 +78,26 @@ export function WineryHero({
     return () => clearInterval(id);
   }, [paused, next, allImages.length]);
 
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) prev();
+      else next();
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   const verifiedDate = winery.curatedAt
     ? new Date(winery.curatedAt).toLocaleDateString("en-US", {
         month: "long",
@@ -87,9 +107,11 @@ export function WineryHero({
 
   return (
     <div
-      className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white overflow-hidden"
+      className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white overflow-hidden touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {allImages.length > 0 ? (
         <>

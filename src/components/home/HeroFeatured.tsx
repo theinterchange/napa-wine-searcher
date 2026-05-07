@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -52,6 +52,26 @@ export function HeroFeatured({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [prev, next]);
 
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) prev();
+      else next();
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   const w = wineries[current];
   if (!w) return null;
 
@@ -61,14 +81,11 @@ export function HeroFeatured({
   const monthIdx = now.getUTCMonth();
   const yearStr = now.getUTCFullYear();
 
-  const seasonLabel =
-    monthIdx >= 2 && monthIdx <= 4
-      ? `Spring ${yearStr}`
-      : monthIdx >= 5 && monthIdx <= 7
-      ? `Summer ${yearStr}`
-      : monthIdx >= 8 && monthIdx <= 10
-      ? `Fall ${yearStr}`
-      : `Winter ${yearStr}`;
+  const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  const seasonLabel = `${MONTH_NAMES[monthIdx]} ${yearStr}`;
 
   const MONTHLY_DISPATCH = [
     "Pruning the vines",        // Jan
@@ -91,9 +108,11 @@ export function HeroFeatured({
       role="region"
       aria-roledescription="carousel"
       aria-label="Featured Wineries"
-      className="relative min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] overflow-hidden bg-[var(--ink)]"
+      className="relative min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] overflow-hidden bg-[var(--ink)] touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {/* Stacked images with crossfade */}
       {wineries.map((winery, i) =>
