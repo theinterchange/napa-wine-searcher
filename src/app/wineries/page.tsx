@@ -3,6 +3,7 @@ import { wineries, subRegions, wines, wineTypes, tastingExperiences } from "@/db
 import { eq, gte, lte, asc, desc, sql, and, count, inArray } from "drizzle-orm";
 import Link from "next/link";
 import { Route } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { WineryFilters } from "@/components/directory/WineryFilters";
 import { Pagination } from "@/components/directory/Pagination";
@@ -10,6 +11,41 @@ import { TASTING_PRICE_TIERS } from "@/lib/filters";
 import { wineryRankingScore } from "@/lib/winery-ranking";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
+
+// Cached reads for filter scaffolding — these are independent of search params
+// and rarely change. Hot path goes from ~3 Turso roundtrips to 0 on warm cache.
+const getAllSubRegions = unstable_cache(
+  () =>
+    db
+      .select({ slug: subRegions.slug, name: subRegions.name, valley: subRegions.valley })
+      .from(subRegions)
+      .orderBy(asc(subRegions.valley), asc(subRegions.name)),
+  ["wineries-page:sub-regions"],
+  { revalidate: 3600, tags: ["sub-regions"] }
+);
+
+const getWineTypeCounts = unstable_cache(
+  () =>
+    db
+      .select({
+        id: wineTypes.id,
+        name: wineTypes.name,
+        count: count(),
+      })
+      .from(wineTypes)
+      .innerJoin(wines, eq(wines.wineTypeId, wineTypes.id))
+      .groupBy(wineTypes.id, wineTypes.name)
+      .orderBy(desc(count()))
+      .having(sql`count(*) > 0`),
+  ["wineries-page:wine-type-counts"],
+  { revalidate: 3600, tags: ["wine-types"] }
+);
+
+const getAllWineTypes = unstable_cache(
+  () => db.select({ id: wineTypes.id, name: wineTypes.name }).from(wineTypes),
+  ["wineries-page:all-wine-types"],
+  { revalidate: 3600, tags: ["wine-types"] }
+);
 
 export const metadata: Metadata = {
   title: "Best Napa & Sonoma Wineries — Tastings, Reservations, Dog-Friendly",
@@ -102,7 +138,7 @@ export default async function WineriesPage({
   if (varietal) {
     const slugs = varietal.split(",").filter(Boolean);
     // Convert slugs back to names for matching
-    const allTypes = await db.select({ id: wineTypes.id, name: wineTypes.name }).from(wineTypes);
+    const allTypes = await getAllWineTypes();
     const matchingTypeIds = allTypes
       .filter((t) => slugs.includes(t.name.toLowerCase().replace(/\s+/g, "-")))
       .map((t) => t.id);
@@ -181,20 +217,22 @@ export default async function WineriesPage({
     reviews: desc(wineries.totalRatings),
   }[sort] || sql`${wineryRankingScore} DESC`;
 
-  // Count
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(wineries)
-    .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .where(where);
+  // Phase 1 — count + cached scaffolding queries in parallel. Cached queries
+  // hit Turso only on first warm; everything else returns from the data cache.
+  const [[{ total }], allSubRegions, wineTypeCounts] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(where),
+    getAllSubRegions(),
+    getWineTypeCounts(),
+  ]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const clampedPage = Math.min(page, Math.max(1, totalPages));
 
-  // If the requested page exceeds the max, show the last valid page
-  // (results will reflect the clamped page; pagination will show correctly)
-
-  // Fetch
+  // Phase 2 — results (depends on clampedPage which depends on total).
   const results = await db
     .select({
       id: wineries.id,
@@ -223,25 +261,6 @@ export default async function WineriesPage({
     .orderBy(secondaryOrder)
     .limit(PAGE_SIZE)
     .offset((clampedPage - 1) * PAGE_SIZE);
-
-  // Sub regions for filter
-  const allSubRegions = await db
-    .select({ slug: subRegions.slug, name: subRegions.name, valley: subRegions.valley })
-    .from(subRegions)
-    .orderBy(asc(subRegions.valley), asc(subRegions.name));
-
-  // Wine types with counts for varietal filter
-  const wineTypeCounts = await db
-    .select({
-      id: wineTypes.id,
-      name: wineTypes.name,
-      count: count(),
-    })
-    .from(wineTypes)
-    .innerJoin(wines, eq(wines.wineTypeId, wineTypes.id))
-    .groupBy(wineTypes.id, wineTypes.name)
-    .orderBy(desc(count()))
-    .having(sql`count(*) > 0`);
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
