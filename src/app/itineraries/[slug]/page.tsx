@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     trip.editorialPull ??
     `${trip.stops.length} hand-picked Napa and Sonoma wineries with drive times, reservation tips, and where to stay.`;
   return {
-    title: `${trip.name} | Napa Sonoma Guide`,
+    title: trip.name,
     description,
     alternates: { canonical: `${BASE_URL}/itineraries/${slug}` },
     openGraph: {

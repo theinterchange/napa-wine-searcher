@@ -69,7 +69,7 @@ export async function generateMetadata({
       ? `${winery.subRegion}, ${valleyLabel}`
       : valleyLabel || winery.city || "Wine Country";
 
-  const title = `${winery.name} — ${locationSuffix} | Napa Sonoma Guide`;
+  const title = `${winery.name} — ${locationSuffix}`;
   const ogTitle = winery.name;
   const description =
     winery.whyVisit || winery.shortDescription || `Visit ${winery.name} in wine country`;

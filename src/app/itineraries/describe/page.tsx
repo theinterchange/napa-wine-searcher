@@ -4,7 +4,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Describe your Napa & Sonoma trip | Napa Sonoma Guide",
+  title: "Describe your Napa & Sonoma trip",
   description:
     "Tell us the wines you love and the setting you want — we'll match you to verified wineries and build a full itinerary.",
   alternates: { canonical: `${BASE_URL}/itineraries/describe` },

@@ -32,7 +32,7 @@ import { BASE_URL } from "@/lib/constants";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Wine Country Guides | Napa Sonoma Guide",
+  title: "Wine Country Guides",
   description:
     "Curated guides to Napa Valley and Sonoma County wineries — by amenity, varietal, price, experience, and region comparison.",
   openGraph: {

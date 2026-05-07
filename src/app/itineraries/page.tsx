@@ -9,7 +9,7 @@ import type { CuratedTripCard } from "@/components/itinerary/CuratedTripGallery"
 import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Napa & Sonoma Itineraries | Napa Sonoma Guide",
+  title: "Napa & Sonoma Itineraries",
   description:
     "Hand-picked Napa and Sonoma trip itineraries. Build your own from preferences, describe the trip you want and get matched with verified wineries, or start from a curated route.",
   alternates: { canonical: `${BASE_URL}/itineraries` },

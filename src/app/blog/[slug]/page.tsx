@@ -35,7 +35,7 @@ export async function generateMetadata({
   if (!post) return { title: "Post Not Found" };
 
   return {
-    title: `${post.title} | Napa Sonoma Guide`,
+    title: post.title,
     description: post.description,
     keywords: post.tags,
     alternates: {

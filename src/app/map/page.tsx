@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Winery Map | Napa Sonoma Guide",
+  title: "Winery Map",
   description:
     "Explore Napa Valley and Sonoma County wineries and hotels on an interactive map. Find nearby tasting rooms, toggle accommodations, and plan your wine country trip.",
   openGraph: {
