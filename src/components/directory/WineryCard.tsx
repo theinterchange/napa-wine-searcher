@@ -31,6 +31,7 @@ interface WineryCardProps {
   kidFriendly: boolean | null;
   kidFriendlyConfidence: string | null;
   curated: boolean | null;
+  featured?: boolean | null;
   heroImageUrl: string | null;
   tastingPriceMin?: number | null;
 }
@@ -74,7 +75,7 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
         ) : (
           <Wine className="h-12 w-12 text-[var(--rule)]" />
         )}
-        {winery.curated && (
+        {winery.featured && (
           <span className="absolute top-3 left-3 inline-flex items-center gap-1 bg-[var(--brass)] px-2.5 py-1 font-mono text-[10px] tracking-[0.18em] uppercase text-[var(--paper)]">
             <BadgeCheck className="h-3 w-3" />
             Featured

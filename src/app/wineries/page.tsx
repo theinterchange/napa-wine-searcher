@@ -254,6 +254,7 @@ export default async function WineriesPage({
       subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
       curated: wineries.curated,
+      spotlightYearMonth: wineries.spotlightYearMonth,
     })
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
@@ -261,6 +262,14 @@ export default async function WineriesPage({
     .orderBy(secondaryOrder)
     .limit(PAGE_SIZE)
     .offset((clampedPage - 1) * PAGE_SIZE);
+
+  // Compute featured flag: only wineries with a spotlight slot get the
+  // "Featured" badge. `curated` is too broad — it's set on most rows and
+  // also drives ranking, so it can't double as a scarcity signal.
+  const resultsWithFeatured = results.map((w) => ({
+    ...w,
+    featured: !!w.spotlightYearMonth,
+  }));
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -299,9 +308,9 @@ export default async function WineriesPage({
         <WineryFilters subRegions={allSubRegions} wineTypes={wineTypeCounts} />
       </div>
 
-      {results.length > 0 ? (
+      {resultsWithFeatured.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((w) => (
+          {resultsWithFeatured.map((w) => (
             <WineryCard key={w.id} winery={w} />
           ))}
         </div>
