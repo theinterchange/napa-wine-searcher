@@ -7,6 +7,7 @@ import {
   subRegions,
 } from "@/db/schema";
 import { eq, desc, asc, and, sql } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 
 export interface AccommodationCard {
   slug: string;
@@ -137,20 +138,31 @@ const rankingScore = sql`(
   + COALESCE(${accommodations.priceTier}, 2) * 15
 )`;
 
-export async function getAllAccommodations(
+// Cached. ~140 rows + ranking sort runs ~once per hour per valley filter
+// (undefined / "napa" / "sonoma"). Hot path returns from the data cache,
+// eliminating the Turso roundtrip that blocks /where-to-stay, /napa-valley,
+// /sonoma-county, blog detail pages, and other callers.
+const fetchAllAccommodations = unstable_cache(
+  async (valley?: "napa" | "sonoma"): Promise<AccommodationCard[]> => {
+    const baseQuery = db
+      .select(cardFields)
+      .from(accommodations)
+      .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))
+      .orderBy(sql`${rankingScore} DESC`);
+
+    if (valley) {
+      return baseQuery.where(eq(accommodations.valley, valley));
+    }
+    return baseQuery;
+  },
+  ["all-accommodations"],
+  { revalidate: 3600, tags: ["accommodations"] }
+);
+
+export function getAllAccommodations(
   valley?: "napa" | "sonoma"
 ): Promise<AccommodationCard[]> {
-  let query = db
-    .select(cardFields)
-    .from(accommodations)
-    .leftJoin(subRegions, eq(accommodations.subRegionId, subRegions.id))
-    .orderBy(sql`${rankingScore} DESC`);
-
-  if (valley) {
-    return query.where(eq(accommodations.valley, valley));
-  }
-
-  return query;
+  return fetchAllAccommodations(valley);
 }
 
 export async function getAccommodationBySlug(

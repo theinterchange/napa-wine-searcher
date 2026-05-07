@@ -151,6 +151,7 @@ export default async function WineryDetailPage({
       bestForTags: wineries.bestForTags,
       highlightTags: wineries.highlightTags,
       subRegion: subRegions.name,
+      subRegionSlug: subRegions.slug,
       valley: subRegions.valley,
     })
     .from(wineries)
@@ -227,14 +228,7 @@ export default async function WineryDetailPage({
 
   // Build breadcrumb items
   const valleyPrefix = winery.valley === "napa" ? "/napa-valley" : winery.valley === "sonoma" ? "/sonoma-county" : null;
-  const subRegionSlug = winery.subRegion
-    ? await db
-        .select({ slug: subRegions.slug })
-        .from(subRegions)
-        .where(eq(subRegions.name, winery.subRegion))
-        .limit(1)
-        .then((r) => r[0]?.slug)
-    : null;
+  const subRegionSlug = winery.subRegionSlug;
 
   const breadcrumbItems = [
     { name: "Home", href: "/" },

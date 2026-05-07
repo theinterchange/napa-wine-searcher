@@ -79,10 +79,10 @@ export function WineCategory({
             <table className="w-full text-sm table-fixed">
               <colgroup>
                 <col />
-                <col className="w-[200px]" />
-                <col className="w-[72px]" />
-                <col className="w-[72px]" />
-                {wineryId && <col className="w-[90px]" />}
+                <col className="w-[180px]" />
+                <col className="w-[68px]" />
+                <col className="w-[68px]" />
+                {wineryId && <col className="w-[124px]" />}
               </colgroup>
               <thead className="bg-[var(--paper-2)]">
                 <tr className="text-xs text-[var(--ink-3)] uppercase tracking-wider">

@@ -12,8 +12,8 @@ import { wineryRankingScore } from "@/lib/winery-ranking";
 import type { Metadata } from "next";
 import { BASE_URL } from "@/lib/constants";
 
-// Cached reads for filter scaffolding — these are independent of search params
-// and rarely change. Hot path goes from ~3 Turso roundtrips to 0 on warm cache.
+// Cached reads for filter scaffolding — independent of search params, rarely
+// change. Hot path goes from ~3 Turso roundtrips to 0 on warm cache.
 const getAllSubRegions = unstable_cache(
   () =>
     db
@@ -45,6 +45,172 @@ const getAllWineTypes = unstable_cache(
   () => db.select({ id: wineTypes.id, name: wineTypes.name }).from(wineTypes),
   ["wineries-page:all-wine-types"],
   { revalidate: 3600, tags: ["wine-types"] }
+);
+
+// Varietal → winery IDs (depends on selected slugs, but rarely changes)
+const getVarietalWineryIds = unstable_cache(
+  async (slugs: string[]) => {
+    const allTypes = await getAllWineTypes();
+    const matchingTypeIds = allTypes
+      .filter((t) => slugs.includes(t.name.toLowerCase().replace(/\s+/g, "-")))
+      .map((t) => t.id);
+    if (matchingTypeIds.length === 0) return [] as number[];
+    const matched = await db
+      .selectDistinct({ wineryId: wines.wineryId })
+      .from(wines)
+      .where(inArray(wines.wineTypeId, matchingTypeIds));
+    return matched.map((m) => m.wineryId);
+  },
+  ["wineries-page:varietal-ids"],
+  { revalidate: 3600, tags: ["wineries", "wines"] }
+);
+
+// Tasting price → winery IDs
+const getTastingPriceWineryIds = unstable_cache(
+  async (tierKeys: string[]) => {
+    const tpConditions = tierKeys
+      .map((key) => {
+        const tier = TASTING_PRICE_TIERS.find((t) => t.key === key);
+        if (!tier) return null;
+        return and(
+          gte(tastingExperiences.price, tier.min),
+          lte(tastingExperiences.price, tier.max)
+        );
+      })
+      .filter(Boolean);
+    if (tpConditions.length === 0) return [] as number[];
+    const matched = await db
+      .selectDistinct({ wineryId: tastingExperiences.wineryId })
+      .from(tastingExperiences)
+      .where(
+        tpConditions.length === 1
+          ? tpConditions[0]!
+          : sql`(${sql.join(
+              tpConditions.map((c) => sql`(${c})`),
+              sql` OR `
+            )})`
+      );
+    return matched.map((m) => m.wineryId);
+  },
+  ["wineries-page:tasting-price-ids"],
+  { revalidate: 3600, tags: ["wineries", "tasting-experiences"] }
+);
+
+// All filters resolved to plain values — fed into the cached page-query helper.
+type DirectoryFilters = {
+  valleys: string[];
+  regions: string[];
+  rating: number | null;
+  amenities: string[];
+  intersectIds: number[] | null; // null = no intersection filter; [] = no matches
+  sort: string;
+  page: number;
+};
+
+// Cached page-results query. Keyed by all filter inputs + sort + page so every
+// distinct filter combo is memoized. Inside, we rebuild Drizzle conditions from
+// the plain inputs (Drizzle SQL fragments aren't serializable across the cache
+// boundary).
+const getDirectoryPage = unstable_cache(
+  async (filters: DirectoryFilters) => {
+    const { valleys, regions, rating, amenities, intersectIds, sort, page } = filters;
+    const conditions: ReturnType<typeof and>[] = [];
+
+    if (valleys.length === 1) {
+      conditions.push(eq(subRegions.valley, valleys[0] as "napa" | "sonoma"));
+    } else if (valleys.length > 1) {
+      conditions.push(inArray(subRegions.valley, valleys as ("napa" | "sonoma")[]));
+    }
+    if (regions.length === 1) {
+      conditions.push(eq(subRegions.slug, regions[0]));
+    } else if (regions.length > 1) {
+      conditions.push(inArray(subRegions.slug, regions));
+    }
+    if (rating !== null) {
+      conditions.push(gte(wineries.aggregateRating, rating));
+    }
+    for (const a of amenities) {
+      switch (a) {
+        case "dog":
+          conditions.push(eq(wineries.dogFriendly, true));
+          break;
+        case "kid":
+          conditions.push(eq(wineries.kidFriendly, true));
+          break;
+        case "picnic":
+          conditions.push(eq(wineries.picnicFriendly, true));
+          break;
+        case "walkin":
+          conditions.push(eq(wineries.reservationRequired, false));
+          break;
+        case "sustainable":
+          conditions.push(eq(wineries.sustainableFarming, true));
+          break;
+      }
+    }
+    if (intersectIds !== null) {
+      if (intersectIds.length === 0) {
+        conditions.push(eq(wineries.id, -1));
+      } else {
+        conditions.push(inArray(wineries.id, intersectIds));
+      }
+    }
+
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const secondaryOrder = {
+      rating: desc(wineries.aggregateRating),
+      name: asc(wineries.name),
+      "price-asc": asc(wineries.priceLevel),
+      "price-desc": desc(wineries.priceLevel),
+      reviews: desc(wineries.totalRatings),
+    }[sort] || sql`${wineryRankingScore} DESC`;
+
+    // Phase 1 — count
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(where);
+
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const clampedPage = Math.min(page, Math.max(1, totalPages));
+
+    // Phase 2 — results
+    const results = await db
+      .select({
+        id: wineries.id,
+        slug: wineries.slug,
+        name: wineries.name,
+        shortDescription: wineries.shortDescription,
+        city: wineries.city,
+        priceLevel: wineries.priceLevel,
+        aggregateRating: wineries.aggregateRating,
+        totalRatings: wineries.totalRatings,
+        reservationRequired: wineries.reservationRequired,
+        dogFriendly: wineries.dogFriendly,
+        picnicFriendly: wineries.picnicFriendly,
+        kidFriendly: wineries.kidFriendly,
+        kidFriendlyConfidence: wineries.kidFriendlyConfidence,
+        tastingPriceMin: wineries.tastingPriceMin,
+        heroImageUrl: wineries.heroImageUrl,
+        subRegion: subRegions.name,
+        subRegionSlug: subRegions.slug,
+        valley: subRegions.valley,
+        curated: wineries.curated,
+        spotlightYearMonth: wineries.spotlightYearMonth,
+      })
+      .from(wineries)
+      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
+      .where(where)
+      .orderBy(secondaryOrder)
+      .limit(PAGE_SIZE)
+      .offset((clampedPage - 1) * PAGE_SIZE);
+
+    return { total, totalPages, clampedPage, results };
+  },
+  ["wineries-page:directory-results"],
+  { revalidate: 60, tags: ["wineries"] }
 );
 
 export const metadata: Metadata = {
@@ -87,181 +253,49 @@ export default async function WineriesPage({
   const tastingPrice = params.tastingPrice || "";
   const amenities = params.amenities || "";
 
-  // Build conditions
-  const conditions = [];
-  if (valley) {
-    const valleys = valley.split(",").filter(Boolean);
-    if (valleys.length === 1) {
-      conditions.push(eq(subRegions.valley, valleys[0] as "napa" | "sonoma"));
-    } else if (valleys.length > 1) {
-      conditions.push(inArray(subRegions.valley, valleys as ("napa" | "sonoma")[]));
-    }
-  }
-  if (region) {
-    const regions = region.split(",").filter(Boolean);
-    if (regions.length === 1) {
-      conditions.push(eq(subRegions.slug, regions[0]));
-    } else if (regions.length > 1) {
-      conditions.push(inArray(subRegions.slug, regions));
-    }
-  }
-  if (rating) {
-    conditions.push(gte(wineries.aggregateRating, parseFloat(rating)));
-  }
+  // Resolve subquery filters (varietal + tasting price → winery IDs) in
+  // parallel. Each is independently cached.
+  const [varietalWineryIds, tastingPriceWineryIds] = await Promise.all([
+    varietal
+      ? getVarietalWineryIds(varietal.split(",").filter(Boolean).sort())
+      : Promise.resolve(null),
+    tastingPrice
+      ? getTastingPriceWineryIds(tastingPrice.split(",").filter(Boolean).sort())
+      : Promise.resolve(null),
+  ]);
 
-  // Amenities filter
-  if (amenities) {
-    const amenityList = amenities.split(",").filter(Boolean);
-    for (const a of amenityList) {
-      switch (a) {
-        case "dog":
-          conditions.push(eq(wineries.dogFriendly, true));
-          break;
-        case "kid":
-          conditions.push(eq(wineries.kidFriendly, true));
-          break;
-        case "picnic":
-          conditions.push(eq(wineries.picnicFriendly, true));
-          break;
-        case "walkin":
-          conditions.push(eq(wineries.reservationRequired, false));
-          break;
-        case "sustainable":
-          conditions.push(eq(wineries.sustainableFarming, true));
-          break;
-      }
-    }
-  }
-
-  // Varietal filter: find winery IDs that have matching wine types
-  let varietalWineryIds: number[] | null = null;
-  if (varietal) {
-    const slugs = varietal.split(",").filter(Boolean);
-    // Convert slugs back to names for matching
-    const allTypes = await getAllWineTypes();
-    const matchingTypeIds = allTypes
-      .filter((t) => slugs.includes(t.name.toLowerCase().replace(/\s+/g, "-")))
-      .map((t) => t.id);
-
-    if (matchingTypeIds.length > 0) {
-      const matched = await db
-        .selectDistinct({ wineryId: wines.wineryId })
-        .from(wines)
-        .where(inArray(wines.wineTypeId, matchingTypeIds));
-      varietalWineryIds = matched.map((m) => m.wineryId);
-    } else {
-      varietalWineryIds = [];
-    }
-  }
-
-  // Tasting price filter: find winery IDs with tastings in selected price ranges
-  let tastingPriceWineryIds: number[] | null = null;
-  if (tastingPrice) {
-    const keys = tastingPrice.split(",").filter(Boolean);
-    const tpConditions = keys
-      .map((key) => {
-        const tier = TASTING_PRICE_TIERS.find((t) => t.key === key);
-        if (!tier) return null;
-        return and(
-          gte(tastingExperiences.price, tier.min),
-          lte(tastingExperiences.price, tier.max)
-        );
-      })
-      .filter(Boolean);
-
-    if (tpConditions.length > 0) {
-      const matched = await db
-        .selectDistinct({ wineryId: tastingExperiences.wineryId })
-        .from(tastingExperiences)
-        .where(
-          tpConditions.length === 1
-            ? tpConditions[0]!
-            : sql`(${sql.join(
-                tpConditions.map((c) => sql`(${c})`),
-                sql` OR `
-              )})`
-        );
-      tastingPriceWineryIds = matched.map((m) => m.wineryId);
-    } else {
-      tastingPriceWineryIds = [];
-    }
-  }
-
-  // Intersect winery ID sets from sub-filters
+  // Intersect ID sets from sub-filters → single sorted array (or null if no
+  // sub-filters were applied; empty array means "no matches").
+  let intersectIds: number[] | null = null;
   const idFilters = [varietalWineryIds, tastingPriceWineryIds].filter(
     (ids): ids is number[] => ids !== null
   );
   if (idFilters.length > 0) {
-    const intersection = idFilters.reduce((acc, ids) => {
-      const set = new Set(ids);
-      return acc.filter((id) => set.has(id));
-    });
-    if (intersection.length > 0) {
-      conditions.push(inArray(wineries.id, intersection));
-    } else {
-      // No wineries match — push impossible condition
-      conditions.push(eq(wineries.id, -1));
-    }
+    intersectIds = idFilters
+      .reduce((acc, ids) => {
+        const set = new Set(ids);
+        return acc.filter((id) => set.has(id));
+      })
+      .slice()
+      .sort((a, b) => a - b);
   }
 
-  const where = conditions.length > 0 ? and(...conditions) : undefined;
-
-  // Ranking score imported from @/lib/winery-ranking
-
-  // Sort — default uses ranking score, user can override
-  const secondaryOrder = {
-    rating: desc(wineries.aggregateRating),
-    name: asc(wineries.name),
-    "price-asc": asc(wineries.priceLevel),
-    "price-desc": desc(wineries.priceLevel),
-    reviews: desc(wineries.totalRatings),
-  }[sort] || sql`${wineryRankingScore} DESC`;
-
-  // Phase 1 — count + cached scaffolding queries in parallel. Cached queries
-  // hit Turso only on first warm; everything else returns from the data cache.
-  const [[{ total }], allSubRegions, wineTypeCounts] = await Promise.all([
-    db
-      .select({ total: count() })
-      .from(wineries)
-      .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-      .where(where),
+  // Cached page query + filter scaffolding in parallel.
+  const [pageData, allSubRegions, wineTypeCounts] = await Promise.all([
+    getDirectoryPage({
+      valleys: valley.split(",").filter(Boolean).sort(),
+      regions: region.split(",").filter(Boolean).sort(),
+      rating: rating ? parseFloat(rating) : null,
+      amenities: amenities.split(",").filter(Boolean).sort(),
+      intersectIds,
+      sort,
+      page,
+    }),
     getAllSubRegions(),
     getWineTypeCounts(),
   ]);
 
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const clampedPage = Math.min(page, Math.max(1, totalPages));
-
-  // Phase 2 — results (depends on clampedPage which depends on total).
-  const results = await db
-    .select({
-      id: wineries.id,
-      slug: wineries.slug,
-      name: wineries.name,
-      shortDescription: wineries.shortDescription,
-      city: wineries.city,
-      priceLevel: wineries.priceLevel,
-      aggregateRating: wineries.aggregateRating,
-      totalRatings: wineries.totalRatings,
-      reservationRequired: wineries.reservationRequired,
-      dogFriendly: wineries.dogFriendly,
-      picnicFriendly: wineries.picnicFriendly,
-      kidFriendly: wineries.kidFriendly,
-      kidFriendlyConfidence: wineries.kidFriendlyConfidence,
-      tastingPriceMin: wineries.tastingPriceMin,
-      heroImageUrl: wineries.heroImageUrl,
-      subRegion: subRegions.name,
-      subRegionSlug: subRegions.slug,
-      valley: subRegions.valley,
-      curated: wineries.curated,
-      spotlightYearMonth: wineries.spotlightYearMonth,
-    })
-    .from(wineries)
-    .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .where(where)
-    .orderBy(secondaryOrder)
-    .limit(PAGE_SIZE)
-    .offset((clampedPage - 1) * PAGE_SIZE);
+  const { total, totalPages, clampedPage, results } = pageData;
 
   // Compute featured flag: only wineries with a spotlight slot get the
   // "Featured" badge. `curated` is too broad — it's set on most rows and
