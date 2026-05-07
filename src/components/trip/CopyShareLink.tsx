@@ -31,7 +31,7 @@ export function CopyShareLink({ path }: { path: string }) {
         )}
       </button>
       {copied && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 py-2 text-sm font-medium text-white dark:text-gray-900 shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--ink)] px-4 py-2 text-sm font-medium text-[var(--paper)] shadow-[0_8px_24px_rgba(0,0,0,0.18)] animate-in fade-in slide-in-from-bottom-2 duration-200">
           Link copied to clipboard!
         </div>
       )}

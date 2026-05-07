@@ -51,7 +51,7 @@ export function WineCategory({
   });
 
   return (
-    <div className="rounded-xl border border-[var(--rule)] bg-[var(--paper-2)] overflow-hidden">
+    <div className="border border-[var(--rule)] bg-[var(--paper-2)] overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--paper)]/60 ${
@@ -61,7 +61,7 @@ export function WineCategory({
         <span className="flex items-center gap-2 font-medium text-sm">
           <span className="text-base">{icon}</span>
           <span>{label}</span>
-          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${color}`}>
+          <span className={`inline-flex items-center px-2 py-0.5 font-mono text-[10px] tracking-[0.08em] uppercase font-semibold ${color}`}>
             {wines.length}
           </span>
         </span>
@@ -135,7 +135,7 @@ export function WineCategory({
             {sorted.map((wine) => (
               <div
                 key={wine.id}
-                className="rounded-xl border border-[var(--rule-soft)] bg-[var(--paper)] p-4"
+                className="border border-[var(--rule-soft)] bg-[var(--paper)] p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">

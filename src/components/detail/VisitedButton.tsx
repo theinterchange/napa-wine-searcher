@@ -89,8 +89,8 @@ export function VisitedButton({ wineryId }: { wineryId: number }) {
         {isVisited ? "Visited" : "Visited?"}
       </button>
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 py-2.5 text-sm text-white dark:text-gray-900 shadow-lg animate-in slide-in-from-bottom-4">
-          <Check className="h-4 w-4 text-emerald-400 dark:text-emerald-600" />
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[var(--ink)] px-4 py-2.5 text-sm text-[var(--paper)] shadow-[0_8px_24px_rgba(0,0,0,0.18)] animate-in slide-in-from-bottom-4">
+          <Check className="h-4 w-4 text-[var(--brass)]" />
           {toast}
         </div>
       )}
