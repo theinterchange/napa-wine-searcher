@@ -181,7 +181,7 @@ export function Navbar() {
             )}
           </div>
 
-          <div className="flex lg:hidden items-center gap-1">
+          <div className="flex lg:hidden items-center gap-1 -mr-2">
             <GlobalSearch hideButton={pathname === "/"} />
             <button
               onClick={() => setOpen(!open)}

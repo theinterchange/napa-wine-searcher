@@ -142,12 +142,21 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Edge-cache the directory listing — no per-user content in the SSR
+      // Edge-cache the directory listings — no per-user content in the SSR
       // HTML (Navbar/auth state hydrates client-side). Each filter combo
       // gets its own cache entry; ~60s freshness, 5m stale-while-revalidate
       // means at most one user per minute eats the SSR cost.
       {
         source: "/wineries",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=60, stale-while-revalidate=300",
+          },
+        ],
+      },
+      {
+        source: "/where-to-stay",
         headers: [
           {
             key: "Cache-Control",

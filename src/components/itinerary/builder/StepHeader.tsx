@@ -10,18 +10,40 @@ interface StepHeaderProps {
 }
 
 /**
- * Horizontal progress stepper — flex-wraps gracefully on narrow screens
- * instead of horizontally scrolling. Labels are short single words that
- * always fit on desktop; on mobile the full row wraps to two lines.
+ * Mobile: compact "Step N of 5" label + thin brass progress bar — keeps the
+ * top of the wizard readable instead of a 5-chip flex-wrap mess. Desktop
+ * keeps the editorial chip-row with dividers and clickable completed steps.
  */
 export function StepHeader({
   activeStep,
   completedThrough,
   onJump,
 }: StepHeaderProps) {
+  const total = STEP_TITLES.length;
+  const progressPct = ((activeStep + 1) / total) * 100;
+
   return (
     <nav aria-label="Trip builder progress">
-      <ol className="flex flex-wrap items-center gap-y-2">
+      {/* Mobile compact stepper */}
+      <div className="sm:hidden">
+        <div className="flex items-baseline justify-between">
+          <span className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[var(--brass-2)]">
+            Step {activeStep + 1} of {total}
+          </span>
+          <span className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-3)]">
+            {STEP_TITLES[activeStep]}
+          </span>
+        </div>
+        <div className="mt-2 h-[3px] w-full bg-[var(--rule-soft)] overflow-hidden">
+          <div
+            className="h-full bg-[var(--brass)] transition-all duration-300"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop full chip stepper */}
+      <ol className="hidden sm:flex flex-wrap items-center gap-y-2">
         {STEP_TITLES.map((title, i) => {
           const isActive = i === activeStep;
           const isDone = i <= completedThrough && !isActive;

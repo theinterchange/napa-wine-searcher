@@ -98,7 +98,7 @@ export function YesNoSegment({
   return (
     <div
       role="radiogroup"
-      className="inline-flex h-10 items-center rounded-lg bg-[var(--muted)] p-1"
+      className="inline-flex h-10 items-center rounded-lg bg-[var(--paper-2)] p-1"
     >
       <SegmentButton active={value === true} onClick={() => onChange(true)}>
         Yes
@@ -127,8 +127,8 @@ function SegmentButton({
       onClick={onClick}
       className={`inline-flex h-8 items-center justify-center rounded-md px-4 text-xs font-semibold transition-all ${
         active
-          ? "bg-[var(--background)] text-[var(--foreground)] shadow-sm"
-          : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+          ? "bg-[var(--ink)] text-[var(--paper)]"
+          : "text-[var(--ink-3)] hover:text-[var(--ink)]"
       }`}
     >
       {children}

@@ -181,9 +181,9 @@ export function PreferenceBuilder({
 
   return (
     <div>
-      <header className="mb-10 pb-5 border-b border-[var(--rule)]">
+      <header className="mb-5 pb-3 sm:mb-10 sm:pb-5 border-b border-[var(--rule)]">
         <span className="kicker">Itineraries</span>
-        <h1 className="editorial-h2 text-[34px] sm:text-[40px] mt-2">
+        <h1 className="editorial-h2 text-[24px] sm:text-[40px] mt-2">
           Build your <em>trip.</em>
         </h1>
       </header>
@@ -194,8 +194,16 @@ export function PreferenceBuilder({
         onJump={jump}
       />
 
-      <section className="mt-10">
-        <header className="mb-6">
+      <section className="mt-6 sm:mt-10">
+        {/* Mobile: just the hint — StepHeader already shows "Step N of 5" + title */}
+        <p
+          className="sm:hidden mb-5 text-[14px] leading-[1.5] text-[var(--ink-2)]"
+          style={{ fontFamily: "var(--font-serif-text)" }}
+        >
+          {STEP_HINTS[activeStep]}
+        </p>
+
+        <header className="hidden sm:block mb-6">
           <p className="font-mono text-[10.5px] tracking-[0.22em] uppercase text-[var(--brass-2)]">
             Step {activeStep + 1} of {STEP_TITLES.length}
           </p>
