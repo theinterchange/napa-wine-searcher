@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Share2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function ShareButton({ title, text, compact }: { title: string; text?: string; compact?: boolean }) {
+export function ShareButton({ title, text }: { title: string; text?: string }) {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -28,21 +28,19 @@ export function ShareButton({ title, text, compact }: { title: string; text?: st
     <>
       <button
         onClick={handleShare}
-        title={compact ? (copied ? "Link Copied" : "Share") : undefined}
         className={cn(
-          "inline-flex items-center gap-2 border border-[var(--rule)] bg-[var(--paper)] font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)] transition-colors",
-          compact ? "px-3 py-2.5" : "px-4 py-2.5"
+          "inline-flex items-center gap-2 px-3.5 py-2.5 border border-[var(--rule)] bg-[var(--paper)] font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)] transition-colors"
         )}
       >
         {copied ? (
           <>
             <Check className="h-3.5 w-3.5 text-emerald-700" />
-            {!compact && "Copied"}
+            Copied
           </>
         ) : (
           <>
             <Share2 className="h-3.5 w-3.5 text-[var(--brass)]" />
-            {!compact && "Share"}
+            Share
           </>
         )}
       </button>

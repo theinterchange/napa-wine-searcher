@@ -106,32 +106,32 @@ export function JournalEntryForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-[var(--font-heading)] text-[18px] font-normal tracking-[-0.005em] text-[var(--ink)]">Log a Wine</h3>
-          <button onClick={onClose} className="p-1 hover:bg-[var(--muted)] rounded">
-            <X className="h-5 w-5" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--ink)]/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md rounded-xl border border-[var(--rule)] bg-[var(--paper)] p-6 shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-[var(--font-heading)] text-[20px] font-normal tracking-[-0.005em] text-[var(--ink)]">Log a Wine</h3>
+          <button onClick={onClose} className="p-1 hover:bg-[var(--paper-2)] rounded" aria-label="Close">
+            <X className="h-5 w-5 text-[var(--ink-3)]" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               {error}
             </div>
           )}
 
           {/* Wine picker (if on a winery page with wines) */}
           {wines.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium mb-1">
+            <div className="min-w-0">
+              <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">
                 Select Wine
               </label>
               <select
                 value={selectedWineId?.toString() ?? "custom"}
                 onChange={(e) => handleWineSelect(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+                className="w-full min-w-0 h-11 rounded-lg border border-[var(--rule-soft)] bg-[var(--paper-2)] px-3 text-[14px] text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
               >
                 <option value="custom">Enter custom wine...</option>
                 {wines.map((w) => (
@@ -146,8 +146,8 @@ export function JournalEntryForm({
 
           {/* Wine name (editable, or hidden if selected from picker) */}
           {(!selectedWineId || wines.length === 0) && (
-            <div>
-              <label className="block text-sm font-medium mb-1">
+            <div className="min-w-0">
+              <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">
                 Wine Name
               </label>
               <input
@@ -156,20 +156,20 @@ export function JournalEntryForm({
                 value={wineName}
                 onChange={(e) => setWineName(e.target.value)}
                 placeholder="e.g. Estate Cabernet Sauvignon"
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                className="w-full min-w-0 h-11 rounded-lg border border-[var(--rule-soft)] bg-[var(--paper-2)] px-3 text-[14px] text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
               />
             </div>
           )}
 
           {wineryName && (
-            <div className="text-sm text-[var(--muted-foreground)]">
+            <div className="text-[13px] italic text-[var(--ink-3)]" style={{ fontFamily: "var(--font-serif-text)" }}>
               at {wineryName}
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Vintage</label>
+          <div className="grid grid-cols-2 gap-3 min-w-0">
+            <div className="min-w-0">
+              <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">Vintage</label>
               <input
                 type="number"
                 value={vintage}
@@ -177,11 +177,11 @@ export function JournalEntryForm({
                 placeholder="2022"
                 min={1900}
                 max={2030}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                className="w-full min-w-0 h-11 rounded-lg border border-[var(--rule-soft)] bg-[var(--paper-2)] px-3 text-[14px] text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
+            <div className="min-w-0">
+              <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">
                 Date Tried
               </label>
               <input
@@ -189,18 +189,18 @@ export function JournalEntryForm({
                 required
                 value={dateTried}
                 onChange={(e) => setDateTried(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+                className="w-full min-w-0 h-11 rounded-lg border border-[var(--rule-soft)] bg-[var(--paper-2)] px-3 text-[14px] text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Rating</label>
+            <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">Rating</label>
             <InteractiveStarRating value={rating} onChange={setRating} />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="min-w-0">
+            <label className="block font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink-2)] mb-1.5">
               Tasting Notes
             </label>
             <textarea
@@ -208,14 +208,14 @@ export function JournalEntryForm({
               onChange={(e) => setTastingNotes(e.target.value)}
               placeholder="What did you think? Flavors, aromas, pairings..."
               rows={3}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-burgundy-500"
+              className="w-full min-w-0 rounded-lg border border-[var(--rule-soft)] bg-[var(--paper-2)] px-3 py-2.5 text-[14px] text-[var(--ink)] resize-y focus:outline-none focus:ring-2 focus:ring-[var(--brass)]"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-burgundy-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
+            className="w-full h-11 rounded-lg bg-burgundy-900 px-4 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold text-white hover:bg-burgundy-800 transition-colors disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save to Journal"}
           </button>

@@ -1,13 +1,13 @@
 "use client";
 
-import { CheckCircle2, Circle, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
 import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
-export function VisitedButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
+export function VisitedButton({ wineryId }: { wineryId: number }) {
   const { data: session } = useSession();
   const [isVisited, setIsVisited] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,21 +76,17 @@ export function VisitedButton({ wineryId, compact }: { wineryId: number; compact
       <button
         onClick={toggle}
         disabled={loading}
-        title={compact ? (isVisited ? "Visited" : "Mark Visited") : undefined}
         className={cn(
-          "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
-          compact ? "px-3 py-2.5" : "px-4 py-2.5",
+          "inline-flex items-center gap-2 px-3.5 py-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
           isVisited
             ? "border border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800"
             : "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)]"
         )}
       >
-        {isVisited ? (
-          <CheckCircle2 className="h-3.5 w-3.5 fill-white text-white" />
-        ) : (
-          <Circle className="h-3.5 w-3.5 text-[var(--brass)]" />
-        )}
-        {!compact && (isVisited ? "Visited" : "Mark Visited")}
+        <Check
+          className={cn("h-3.5 w-3.5", isVisited ? "text-white" : "text-[var(--brass)]")}
+        />
+        {isVisited ? "Visited" : "Visited?"}
       </button>
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 py-2.5 text-sm text-white dark:text-gray-900 shadow-lg animate-in slide-in-from-bottom-4">

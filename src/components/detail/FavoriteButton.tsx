@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
 import { setPendingAction, consumePendingAction } from "@/lib/pending-action";
 
-export function FavoriteButton({ wineryId, compact }: { wineryId: number; compact?: boolean }) {
+export function FavoriteButton({ wineryId }: { wineryId: number }) {
   const { data: session } = useSession();
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,10 +76,8 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
       <button
         onClick={toggle}
         disabled={loading}
-        title={compact ? (isFavorite ? "Favorited" : "Add to Favorites") : undefined}
         className={cn(
-          "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
-          compact ? "px-3 py-2.5" : "px-4 py-2.5",
+          "inline-flex items-center gap-2 px-3.5 py-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
           isFavorite
             ? "border border-burgundy-900 bg-burgundy-900 text-white hover:bg-burgundy-800"
             : "border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--brass)] hover:text-[var(--brass-2)]"
@@ -88,7 +86,7 @@ export function FavoriteButton({ wineryId, compact }: { wineryId: number; compac
         <Heart
           className={cn("h-3.5 w-3.5", isFavorite ? "fill-white text-white" : "text-[var(--brass)]")}
         />
-        {!compact && (isFavorite ? "Favorited" : "Favorite")}
+        {isFavorite ? "Saved" : "Save"}
       </button>
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-gray-100 px-4 py-2.5 text-sm text-white dark:text-gray-900 shadow-lg animate-in slide-in-from-bottom-4">

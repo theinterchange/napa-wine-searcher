@@ -422,18 +422,10 @@ export default async function WineryDetailPage({
             {/* Action buttons + tags */}
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
-                <div className="contents sm:hidden">
-                  <FavoriteButton wineryId={winery.id} compact />
-                  <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} compact />
-                  <VisitedButton wineryId={winery.id} compact />
-                  <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} compact />
-                </div>
-                <div className="hidden sm:contents">
-                  <FavoriteButton wineryId={winery.id} />
-                  <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
-                  <VisitedButton wineryId={winery.id} />
-                  <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
-                </div>
+                <FavoriteButton wineryId={winery.id} />
+                <ShareButton title={winery.name} text={winery.shortDescription ?? undefined} />
+                <VisitedButton wineryId={winery.id} />
+                <AddToTripDetailButton wineryId={winery.id} winerySlug={winery.slug} wineryName={winery.name} />
               </div>
 
               {/* Highlight tags */}

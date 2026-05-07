@@ -48,7 +48,11 @@ export function TriedItButton({
     <>
       <button
         onClick={handleClick}
-        className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-colors whitespace-nowrap bg-[var(--muted)] text-[var(--foreground)] hover:bg-[var(--border)]"
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10.5px] tracking-[0.14em] uppercase font-semibold transition-colors whitespace-nowrap border ${
+          logged
+            ? "border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-800"
+            : "border-[var(--brass)] bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--brass)] hover:text-[var(--paper)]"
+        }`}
       >
         {logged ? (
           <>

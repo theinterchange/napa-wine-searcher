@@ -8,12 +8,10 @@ export function AddToTripDetailButton({
   wineryId,
   winerySlug,
   wineryName,
-  compact,
 }: {
   wineryId: number;
   winerySlug: string;
   wineryName: string;
-  compact?: boolean;
 }) {
   const { toggle, isSelected, isFull } = useTripBuilder();
   const selected = isSelected(wineryId);
@@ -24,18 +22,9 @@ export function AddToTripDetailButton({
         if (!selected && isFull) return;
         toggle(wineryId, winerySlug, wineryName);
       }}
-      title={
-        compact
-          ? selected
-            ? "In your trip"
-            : isFull
-              ? "Trip is full (5 max)"
-              : "Add to Trip"
-          : undefined
-      }
+      title={isFull && !selected ? "Trip is full (5 max)" : undefined}
       className={cn(
-        "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
-        compact ? "px-3 py-2.5" : "px-4 py-2.5",
+        "inline-flex items-center gap-2 px-3.5 py-2.5 font-mono text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors",
         selected
           ? "border border-burgundy-900 bg-burgundy-900 text-white hover:bg-burgundy-800"
           : isFull
@@ -44,7 +33,7 @@ export function AddToTripDetailButton({
       )}
     >
       <Route className={cn("h-3.5 w-3.5", selected ? "text-white" : "text-[var(--brass)]")} />
-      {!compact && (selected ? "In Your Trip" : "Add to Trip")}
+      {selected ? "In Trip" : "Add Trip"}
     </button>
   );
 }
