@@ -114,24 +114,31 @@ export function HeroFeatured({
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* Stacked images with crossfade */}
-      {wineries.map((winery, i) =>
-        winery.heroImageUrl ? (
+      {/* Stacked images with crossfade — only render slides the user has
+          seen plus the next one (for crossfade preload). Avoids the LCP hit
+          of letting the browser pull every featured image at mount. */}
+      {wineries.map((winery, i) => {
+        const nextIdx = (current + 1) % wineries.length;
+        const isCurrent = i === current;
+        const isNext = i === nextIdx;
+        if (!winery.heroImageUrl || (!isCurrent && !isNext)) return null;
+        return (
           <Image
             key={winery.slug}
             src={winery.heroImageUrl}
             alt={winery.name}
             fill
             sizes="100vw"
-            quality={85}
-            priority={i === 0}
+            quality={75}
+            priority={isCurrent}
+            loading={isCurrent ? "eager" : "lazy"}
             className={`object-cover transition-opacity duration-1000 ${
-              i === current ? "opacity-100" : "opacity-0"
+              isCurrent ? "opacity-100" : "opacity-0"
             }`}
-            aria-hidden={i !== current}
+            aria-hidden={!isCurrent}
           />
-        ) : null
-      )}
+        );
+      })}
 
       {/* Editorial gradient overlay — strong vertical fade for legibility */}
       <div className="absolute inset-0 bg-gradient-to-b from-[var(--ink)]/40 via-[var(--ink)]/55 to-[var(--ink)]/90" />

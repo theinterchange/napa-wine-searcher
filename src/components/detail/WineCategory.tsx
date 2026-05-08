@@ -95,11 +95,11 @@ export function WineCategory({
               </thead>
               <tbody className="divide-y divide-[var(--rule-soft)]">
                 {sorted.map((wine) => (
-                  <tr key={wine.id} className="hover:bg-[var(--paper-2)]/60">
-                    <td className="px-3 py-2.5" title={wine.name}>
-                      <div className="font-medium truncate">{wine.name}</div>
+                  <tr key={wine.id} className="hover:bg-[var(--paper-2)]/60 align-top">
+                    <td className="px-3 py-3" title={wine.name}>
+                      <div className="font-medium leading-snug line-clamp-2">{wine.name}</div>
                       {wine.description && (
-                        <div className="mt-0.5 text-xs text-[var(--muted-foreground)] truncate">
+                        <div className="mt-1 text-xs leading-snug text-[var(--muted-foreground)] line-clamp-2">
                           {wine.description}
                         </div>
                       )}
