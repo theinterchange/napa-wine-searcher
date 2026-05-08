@@ -107,6 +107,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     qualities: [75, 85, 90],
+    // Default is 60s. With low traffic, the optimizer evicts encoded
+    // versions before real users hit them — every Lighthouse / cold visitor
+    // pays the encode cost. Winery photos rarely change, so a long TTL is
+    // safe; we can bust by changing the source URL.
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "https",

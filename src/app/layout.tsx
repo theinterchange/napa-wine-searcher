@@ -24,12 +24,19 @@ const sourceSerif = Source_Serif_4({
   display: "swap",
   style: ["normal", "italic"],
   weight: ["400", "500", "600"],
+  // Used for body text below the fold (winery descriptions, prose). The
+  // hero uses Fraunces + JetBrains Mono only, so we don't need this on the
+  // LCP-critical path. Browsers fetch it on-demand when CSS first uses it,
+  // and display:swap keeps fallback in place until then.
+  preload: false,
 });
 
 const inter = Inter({
   variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
+  // Body fallback only (3 CSS refs). Not in the hero. Skip preload.
+  preload: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -65,12 +72,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
-      <head>
-        <link
-          rel="preconnect"
-          href="https://iubllytv2maaomk9.public.blob.vercel-storage.com"
-        />
-      </head>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script
           defer
