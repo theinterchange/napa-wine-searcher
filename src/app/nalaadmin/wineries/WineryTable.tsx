@@ -11,10 +11,9 @@ import {
   ArrowUpDown,
   ChevronUp,
   ChevronDown,
-  Calendar,
   X,
-  Check,
 } from "lucide-react";
+import { SpotlightMonthPicker } from "../_components/SpotlightMonthPicker";
 
 interface WineryRow {
   id: number;
@@ -139,35 +138,26 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
     });
   }
 
-  const [editingSpotlight, setEditingSpotlight] = useState<number | null>(null);
-  const [draftSpotlight, setDraftSpotlight] = useState("");
-  const [spotlightError, setSpotlightError] = useState<{ id: number; msg: string } | null>(null);
+  async function setSpotlightMonth(id: number, next: string | null) {
+    if (next !== null && !YEAR_MONTH_RE.test(next)) return;
 
-  function startEdit(id: number, current: string | null) {
-    setEditingSpotlight(id);
-    setDraftSpotlight(current ?? "");
-    setSpotlightError(null);
-  }
-
-  function cancelEdit() {
-    setEditingSpotlight(null);
-    setDraftSpotlight("");
-    setSpotlightError(null);
-  }
-
-  async function saveSpotlight(id: number) {
-    const value = draftSpotlight.trim();
-    const next = value === "" ? null : value;
-
-    if (next !== null && !YEAR_MONTH_RE.test(next)) {
-      setSpotlightError({ id, msg: "Use YYYY-MM (e.g., 2026-08)" });
-      return;
-    }
+    // If reassigning a month already taken by another winery, unassign that one first locally.
+    const collidingId = next
+      ? data.find((w) => w.id !== id && w.spotlightYearMonth === next)?.id ?? null
+      : null;
 
     const previous = data.find((w) => w.id === id)?.spotlightYearMonth ?? null;
-    setData((prev) => prev.map((w) => w.id === id ? { ...w, spotlightYearMonth: next } : w));
-    setEditingSpotlight(null);
-    setSpotlightError(null);
+    const previousColliding = collidingId
+      ? data.find((w) => w.id === collidingId)?.spotlightYearMonth ?? null
+      : null;
+
+    setData((prev) =>
+      prev.map((w) => {
+        if (w.id === id) return { ...w, spotlightYearMonth: next };
+        if (collidingId && w.id === collidingId) return { ...w, spotlightYearMonth: null };
+        return w;
+      })
+    );
 
     const res = await fetch(`/api/admin/wineries/${id}`, {
       method: "PATCH",
@@ -176,26 +166,27 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
     });
 
     if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setData((prev) => prev.map((w) => w.id === id ? { ...w, spotlightYearMonth: previous } : w));
-      setSpotlightError({ id, msg: body.message ?? "Could not save spotlight assignment" });
+      setData((prev) =>
+        prev.map((w) => {
+          if (w.id === id) return { ...w, spotlightYearMonth: previous };
+          if (collidingId && w.id === collidingId) return { ...w, spotlightYearMonth: previousColliding };
+          return w;
+        })
+      );
+      return;
     }
-  }
 
-  async function clearSpotlight(id: number) {
-    const previous = data.find((w) => w.id === id)?.spotlightYearMonth ?? null;
-    if (!previous) return;
-    setData((prev) => prev.map((w) => w.id === id ? { ...w, spotlightYearMonth: null } : w));
-    setSpotlightError(null);
-
-    const res = await fetch(`/api/admin/wineries/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spotlightYearMonth: null }),
-    });
-
-    if (!res.ok) {
-      setData((prev) => prev.map((w) => w.id === id ? { ...w, spotlightYearMonth: previous } : w));
+    if (collidingId) {
+      const colRes = await fetch(`/api/admin/wineries/${collidingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ spotlightYearMonth: null }),
+      });
+      if (!colRes.ok) {
+        setData((prev) =>
+          prev.map((w) => (w.id === collidingId ? { ...w, spotlightYearMonth: previousColliding } : w))
+        );
+      }
     }
   }
 
@@ -245,6 +236,14 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
   const missingTeaserCount = data.filter((w) => !w.spotlightTeaser).length;
   const spotlightCount = data.filter((w) => !!w.spotlightYearMonth).length;
   const thisMonthCount = data.filter((w) => w.spotlightYearMonth === thisMonth).length;
+
+  const occupiedMonths = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const w of data) {
+      if (w.spotlightYearMonth) map[w.spotlightYearMonth] = w.name;
+    }
+    return map;
+  }, [data]);
   const avgRating = filtered.length > 0
     ? (filtered.reduce((s, w) => s + (w.googleRating || 0), 0) / filtered.length).toFixed(2)
     : "—";
@@ -379,50 +378,12 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
                     </button>
                   </td>
                   <td className="px-3 py-3">
-                    {editingSpotlight === w.id ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="text"
-                            value={draftSpotlight}
-                            onChange={(e) => setDraftSpotlight(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveSpotlight(w.id);
-                              else if (e.key === "Escape") cancelEdit();
-                            }}
-                            placeholder="2026-08"
-                            autoFocus
-                            className="w-24 input-editorial py-1 px-2 text-xs"
-                          />
-                          <button onClick={() => saveSpotlight(w.id)} className="p-1 text-[var(--brass)] hover:bg-[var(--paper)] rounded" title="Save">
-                            <Check className="h-3.5 w-3.5" />
-                          </button>
-                          <button onClick={cancelEdit} className="p-1 text-[var(--ink-3)] hover:bg-[var(--paper)] rounded" title="Cancel">
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                        {spotlightError?.id === w.id && (
-                          <p className="text-[10px] text-red-700">{spotlightError.msg}</p>
-                        )}
-                      </div>
-                    ) : w.spotlightYearMonth ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => startEdit(w.id, w.spotlightYearMonth)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] uppercase font-semibold bg-[var(--brass)] text-[var(--paper)] hover:bg-[var(--brass-2)] transition-colors"
-                        >
-                          <Calendar className="h-3 w-3" />
-                          {w.spotlightYearMonth}
-                        </button>
-                        <button onClick={() => clearSpotlight(w.id)} className="p-1 text-[var(--ink-3)] hover:text-red-700 rounded" title="Clear">
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button onClick={() => startEdit(w.id, null)} className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)] hover:text-[var(--brass-2)] transition-colors">
-                        + Assign
-                      </button>
-                    )}
+                    <SpotlightMonthPicker
+                      current={w.spotlightYearMonth}
+                      occupied={occupiedMonths}
+                      ownerName={w.name}
+                      onSelect={(ym) => setSpotlightMonth(w.id, ym)}
+                    />
                   </td>
                   <td className="px-3 py-3 align-top">
                     {editingTeaser === w.id ? (

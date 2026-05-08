@@ -9,6 +9,7 @@ export const users = sqliteTable("users", {
   passwordHash: text("password_hash"),
   username: text("username").unique(),
   isPublic: integer("is_public", { mode: "boolean" }).default(false),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
 });
 
 export const accounts = sqliteTable(

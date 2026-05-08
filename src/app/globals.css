@@ -596,7 +596,10 @@ p, li, span {
   color: var(--ink);
   border: 1px solid var(--ink);
   border-radius: 0;
-  padding: 10px 14px;
+  padding-top: 10px;
+  padding-right: 14px;
+  padding-bottom: 10px;
+  padding-left: 14px;
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.4;

@@ -12,6 +12,10 @@ import {
   ExternalLink,
   TrendingUp,
   Clock,
+  Search,
+  Map,
+  Eye,
+  Star,
 } from "lucide-react";
 import {
   getTotalClicks,
@@ -27,6 +31,21 @@ import {
   getClicksByHourOfWeek,
   getWeekOverWeekStats,
   getZeroClickWineryCount,
+  getAccountStats,
+  getAccountTrend,
+  getGscSiteStats,
+  getGscSiteTrend,
+  getGscTopQueriesSiteWide,
+  getGscTopPagesSiteWide,
+  getTripPlannerStats,
+  getTripPlannerByTheme,
+  getTripPlannerByValley,
+  getTripPlannerTrend,
+  getPageImpressionStats,
+  getPageImpressionsByType,
+  getTopReferrers,
+  getTopImpressionPages,
+  getSpotlightPerformance,
 } from "@/lib/analytics-queries";
 import { StatCard } from "./components/StatCard";
 import { BarChart, formatClickType } from "./components/BarChart";
@@ -70,6 +89,21 @@ export default async function AnalyticsPage({
     hourOfWeek,
     wow,
     zeroClickCount,
+    accountStats,
+    accountTrend,
+    gscStats,
+    gscTrend,
+    gscTopQueries,
+    gscTopPages,
+    tripStats,
+    tripByTheme,
+    tripByValley,
+    tripTrend,
+    impressionStats,
+    impressionsByType,
+    topReferrers,
+    topImpressionPages,
+    spotlightPerf,
   ] = await Promise.all([
     getTotalClicks(startDate),
     getUniqueWineriesClicked(startDate),
@@ -84,6 +118,21 @@ export default async function AnalyticsPage({
     getClicksByHourOfWeek(startDate),
     getWeekOverWeekStats(),
     getZeroClickWineryCount(),
+    getAccountStats(startDate),
+    getAccountTrend(startDate),
+    getGscSiteStats(startDate),
+    getGscSiteTrend(startDate),
+    getGscTopQueriesSiteWide(startDate, 10),
+    getGscTopPagesSiteWide(startDate, 10),
+    getTripPlannerStats(startDate),
+    getTripPlannerByTheme(startDate),
+    getTripPlannerByValley(startDate),
+    getTripPlannerTrend(startDate),
+    getPageImpressionStats(startDate),
+    getPageImpressionsByType(startDate),
+    getTopReferrers(startDate, 10),
+    getTopImpressionPages(startDate, 10),
+    getSpotlightPerformance(24),
   ]);
 
   return (
@@ -392,7 +441,7 @@ export default async function AnalyticsPage({
       </div>
 
       {subscribers.bySource.length > 0 && (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 max-w-lg">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 max-w-lg mb-10">
           <h2 className="font-heading text-lg font-bold mb-4">
             Subscribers by Source
           </h2>
@@ -406,6 +455,383 @@ export default async function AnalyticsPage({
           />
         </div>
       )}
+
+      {/* ===== Accounts ===== */}
+      <h2 className="font-heading text-2xl font-bold mt-12 mb-4 flex items-center gap-2">
+        <Users className="h-6 w-6" />
+        Accounts
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+        <StatCard
+          label="Total Accounts"
+          value={accountStats.total}
+          subtitle={`${accountStats.newInPeriod} new in ${rangeLabel}`}
+        />
+        <StatCard
+          label="Password Signups"
+          value={accountStats.withPassword}
+          subtitle="Credentials provider"
+        />
+        <StatCard
+          label="OAuth Linked"
+          value={accountStats.withOAuth}
+          subtitle="Google / etc."
+        />
+        <StatCard
+          label="Public Profiles"
+          value={accountStats.publicProfiles}
+          subtitle={`${accountStats.withUsername} have a username`}
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Account Engagement</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            How many accounts are using each feature?
+          </p>
+          <BarChart
+            data={[
+              { label: "Favorited a winery", value: accountStats.withFavorites },
+              { label: "Logged a wine journal entry", value: accountStats.withJournal },
+              { label: "Saved a trip plan", value: accountStats.withSavedTrips },
+            ]}
+          />
+        </div>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">New Accounts Trend</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Backfilled before 2026-05-07; real signups tracked daily after.
+          </p>
+          <LineChart data={accountTrend} color="#0f766e" />
+        </div>
+      </div>
+
+      {/* ===== Google Search Console ===== */}
+      <h2 className="font-heading text-2xl font-bold mt-12 mb-4 flex items-center gap-2">
+        <Search className="h-6 w-6" />
+        Google Search ({rangeLabel})
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <StatCard
+          label="Impressions"
+          value={gscStats.impressions.toLocaleString()}
+          subtitle={`${gscStats.uniquePages} pages indexed`}
+        />
+        <StatCard
+          label="Clicks"
+          value={gscStats.clicks.toLocaleString()}
+          subtitle={`${(gscStats.ctr * 100).toFixed(2)}% CTR`}
+        />
+        <StatCard
+          label="Avg Position"
+          value={gscStats.avgPosition ? gscStats.avgPosition.toFixed(1) : "—"}
+          subtitle="Lower = better"
+        />
+        <StatCard
+          label="Unique Queries"
+          value={gscStats.uniqueQueries.toLocaleString()}
+          subtitle="People searched and saw us"
+        />
+      </div>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-6">
+        <h3 className="font-heading text-lg font-bold mb-1">GSC Click Trend</h3>
+        <p className="text-xs text-[var(--muted-foreground)] mb-4">
+          Clicks per day from Google search results.
+        </p>
+        <LineChart
+          data={gscTrend.map((d) => ({ date: d.date, total: d.total }))}
+          color="#1e40af"
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Top Queries</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Search terms that surface this site, sorted by impressions.
+          </p>
+          {gscTopQueries.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No GSC data yet</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)] text-left text-[var(--muted-foreground)]">
+                    <th className="pb-2 pr-3 font-medium">Query</th>
+                    <th className="pb-2 pr-3 text-right font-medium">Impr.</th>
+                    <th className="pb-2 pr-3 text-right font-medium">Clicks</th>
+                    <th className="pb-2 text-right font-medium">Pos.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gscTopQueries.map((q) => (
+                    <tr key={q.query} className="border-b border-[var(--border)] last:border-0">
+                      <td className="py-2 pr-3 truncate max-w-[200px]">{q.query}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums">{Number(q.impressions ?? 0).toLocaleString()}</td>
+                      <td className="py-2 pr-3 text-right tabular-nums font-medium">{Number(q.clicks ?? 0)}</td>
+                      <td className="py-2 text-right tabular-nums text-[var(--muted-foreground)]">{q.avgPosition ? Number(q.avgPosition).toFixed(1) : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Top Pages (GSC)</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Pages that earn the most search impressions.
+          </p>
+          {gscTopPages.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No GSC data yet</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)] text-left text-[var(--muted-foreground)]">
+                    <th className="pb-2 pr-3 font-medium">Page</th>
+                    <th className="pb-2 pr-3 text-right font-medium">Impr.</th>
+                    <th className="pb-2 text-right font-medium">Clicks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gscTopPages.map((p) => {
+                    const short = p.page.replace(/^https?:\/\/(www\.)?napasonomaguide\.com/, "") || "/";
+                    return (
+                      <tr key={p.page} className="border-b border-[var(--border)] last:border-0">
+                        <td className="py-2 pr-3 truncate max-w-[260px] font-mono text-xs">{short}</td>
+                        <td className="py-2 pr-3 text-right tabular-nums">{Number(p.impressions ?? 0).toLocaleString()}</td>
+                        <td className="py-2 text-right tabular-nums font-medium">{Number(p.clicks ?? 0)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ===== Trip Planner ===== */}
+      <h2 className="font-heading text-2xl font-bold mt-12 mb-4 flex items-center gap-2">
+        <Map className="h-6 w-6" />
+        Trip Planner
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <StatCard
+          label="Trips Created"
+          value={tripStats.totalTrips}
+          subtitle={`${tripStats.totalStops} total stops`}
+        />
+        <StatCard
+          label="Avg Stops / Trip"
+          value={tripStats.avgStopsPerTrip}
+          subtitle="Higher = more engaged"
+        />
+        <StatCard
+          label="With Origin Set"
+          value={tripStats.withOrigin}
+          subtitle={
+            tripStats.totalTrips > 0
+              ? `${Math.round((tripStats.withOrigin / tripStats.totalTrips) * 100)}% of trips`
+              : "—"
+          }
+        />
+        <StatCard
+          label="With Home Base"
+          value={tripStats.withHomeBase}
+          subtitle="Phase 5.5 adoption"
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Trips by Theme</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            What kind of trips are people building?
+          </p>
+          {tripByTheme.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No themed trips yet</p>
+          ) : (
+            <BarChart
+              data={tripByTheme.map((t) => ({
+                label: t.theme || "—",
+                value: t.total,
+              }))}
+            />
+          )}
+        </div>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Trips by Valley</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Napa vs. Sonoma trip popularity.
+          </p>
+          {tripByValley.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No valley-tagged trips yet</p>
+          ) : (
+            <BarChart
+              data={tripByValley.map((t) => ({
+                label: t.valley || "—",
+                value: t.total,
+              }))}
+            />
+          )}
+        </div>
+      </div>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
+        <h3 className="font-heading text-lg font-bold mb-1">Trip Creation Trend</h3>
+        <p className="text-xs text-[var(--muted-foreground)] mb-4">
+          Anonymous trips created per day.
+        </p>
+        <LineChart data={tripTrend} color="#9a3412" />
+      </div>
+
+      {/* ===== Page Impressions ===== */}
+      <h2 className="font-heading text-2xl font-bold mt-12 mb-4 flex items-center gap-2">
+        <Eye className="h-6 w-6" />
+        On-Site Page Impressions ({rangeLabel})
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <StatCard
+          label="Pageviews"
+          value={impressionStats.total.toLocaleString()}
+          subtitle="Beacon-tracked"
+        />
+        <StatCard
+          label="Sessions"
+          value={impressionStats.uniqueSessions.toLocaleString()}
+          subtitle={`${impressionStats.pagesPerSession} pages/session`}
+        />
+        <StatCard
+          label="Page Types"
+          value={impressionsByType.length}
+          subtitle="Distinct surfaces tracked"
+        />
+        <StatCard
+          label="Top Referrer"
+          value={
+            topReferrers[0]?.referrer
+              ? truncateReferrer(topReferrers[0].referrer)
+              : "—"
+          }
+          subtitle={topReferrers[0] ? `${topReferrers[0].total} hits` : "No referrers yet"}
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Pageviews by Page Type</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Which surface gets the most attention?
+          </p>
+          {impressionsByType.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No impression data yet</p>
+          ) : (
+            <BarChart
+              data={impressionsByType.map((t) => ({
+                label: t.pageType || "unknown",
+                value: t.total,
+              }))}
+            />
+          )}
+        </div>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6">
+          <h3 className="font-heading text-lg font-bold mb-1">Top Referrers</h3>
+          <p className="text-xs text-[var(--muted-foreground)] mb-4">
+            Where visitors are arriving from.
+          </p>
+          {topReferrers.length === 0 ? (
+            <p className="text-sm text-[var(--muted-foreground)] py-4">No referrers logged yet</p>
+          ) : (
+            <BarChart
+              data={topReferrers.map((r) => ({
+                label: truncateReferrer(r.referrer || ""),
+                value: r.total,
+              }))}
+            />
+          )}
+        </div>
+      </div>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
+        <h3 className="font-heading text-lg font-bold mb-1">Top Pages (On-Site)</h3>
+        <p className="text-xs text-[var(--muted-foreground)] mb-4">
+          Most-viewed pages by our own beacon (separate from GSC).
+        </p>
+        {topImpressionPages.length === 0 ? (
+          <p className="text-sm text-[var(--muted-foreground)] py-4">No impression data yet</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] text-left text-[var(--muted-foreground)]">
+                  <th className="pb-2 pr-3 font-medium">Path</th>
+                  <th className="pb-2 text-right font-medium">Views</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topImpressionPages.map((p) => (
+                  <tr key={p.path} className="border-b border-[var(--border)] last:border-0">
+                    <td className="py-2 pr-3 font-mono text-xs truncate max-w-[400px]">{p.path}</td>
+                    <td className="py-2 text-right tabular-nums font-medium">{p.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ===== Spotlight Performance ===== */}
+      <h2 className="font-heading text-2xl font-bold mt-12 mb-4 flex items-center gap-2">
+        <Star className="h-6 w-6" />
+        Spotlight Performance
+      </h2>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
+        <p className="text-xs text-[var(--muted-foreground)] mb-4">
+          Outbound clicks attributed to each spotlighted entity during its assigned month. Use this to judge whether the rotation is paying off.
+        </p>
+        {spotlightPerf.length === 0 ? (
+          <p className="text-sm text-[var(--muted-foreground)] py-4">No spotlights assigned yet</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] text-left text-[var(--muted-foreground)]">
+                  <th className="pb-2 pr-3 font-medium">Month</th>
+                  <th className="pb-2 pr-3 font-medium">Type</th>
+                  <th className="pb-2 pr-3 font-medium">Entity</th>
+                  <th className="pb-2 text-right font-medium">Clicks in month</th>
+                </tr>
+              </thead>
+              <tbody>
+                {spotlightPerf.map((s) => (
+                  <tr key={`${s.kind}-${s.id}`} className="border-b border-[var(--border)] last:border-0">
+                    <td className="py-2 pr-3 font-mono text-xs">{s.yearMonth}</td>
+                    <td className="py-2 pr-3 text-[var(--muted-foreground)] text-xs uppercase tracking-wide">{s.kind}</td>
+                    <td className="py-2 pr-3">
+                      <Link
+                        href={s.kind === "winery" ? `/wineries/${s.slug}` : `/where-to-stay/${s.slug}`}
+                        target="_blank"
+                        className="hover:underline"
+                      >
+                        {s.name}
+                      </Link>
+                    </td>
+                    <td className="py-2 text-right tabular-nums font-medium">{s.clicks}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+function truncateReferrer(ref: string): string {
+  if (!ref) return "—";
+  try {
+    const u = new URL(ref);
+    return u.hostname.replace(/^www\./, "");
+  } catch {
+    return ref.length > 40 ? ref.slice(0, 40) + "…" : ref;
+  }
 }

@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       name,
       email,
       passwordHash,
+      createdAt: new Date().toISOString(),
     });
 
     return NextResponse.json({ success: true });

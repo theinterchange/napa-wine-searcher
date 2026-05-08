@@ -13,8 +13,8 @@ import {
   ChevronUp,
   ChevronDown,
   BadgeCheck,
-  Calendar,
 } from "lucide-react";
+import { SpotlightMonthPicker } from "../_components/SpotlightMonthPicker";
 
 interface AccRow {
   id: number;
@@ -71,9 +71,6 @@ export function AccommodationTable({ accommodations }: { accommodations: AccRow[
   const [curationFilter, setCurationFilter] = useState<CurationFilter>("all");
   const [data, setData] = useState(accommodations);
   const [isPending, startTransition] = useTransition();
-  const [editingSpotlight, setEditingSpotlight] = useState<number | null>(null);
-  const [draftSpotlight, setDraftSpotlight] = useState("");
-  const [spotlightError, setSpotlightError] = useState<{ id: number; msg: string } | null>(null);
   const thisMonth = currentYearMonth();
 
   async function toggleCurated(id: number, current: boolean) {
@@ -84,31 +81,25 @@ export function AccommodationTable({ accommodations }: { accommodations: AccRow[
     });
   }
 
-  function startEdit(id: number, current: string | null) {
-    setEditingSpotlight(id);
-    setDraftSpotlight(current ?? "");
-    setSpotlightError(null);
-  }
+  async function setSpotlightMonth(id: number, next: string | null) {
+    if (next !== null && !YEAR_MONTH_RE.test(next)) return;
 
-  function cancelEdit() {
-    setEditingSpotlight(null);
-    setDraftSpotlight("");
-    setSpotlightError(null);
-  }
-
-  async function saveSpotlight(id: number) {
-    const value = draftSpotlight.trim();
-    const next = value === "" ? null : value;
-
-    if (next !== null && !YEAR_MONTH_RE.test(next)) {
-      setSpotlightError({ id, msg: "Use YYYY-MM (e.g., 2026-08)" });
-      return;
-    }
+    const collidingId = next
+      ? data.find((a) => a.id !== id && a.spotlightYearMonth === next)?.id ?? null
+      : null;
 
     const previous = data.find((a) => a.id === id)?.spotlightYearMonth ?? null;
-    setData((prev) => prev.map((a) => a.id === id ? { ...a, spotlightYearMonth: next } : a));
-    setEditingSpotlight(null);
-    setSpotlightError(null);
+    const previousColliding = collidingId
+      ? data.find((a) => a.id === collidingId)?.spotlightYearMonth ?? null
+      : null;
+
+    setData((prev) =>
+      prev.map((a) => {
+        if (a.id === id) return { ...a, spotlightYearMonth: next };
+        if (collidingId && a.id === collidingId) return { ...a, spotlightYearMonth: null };
+        return a;
+      })
+    );
 
     const res = await fetch(`/api/admin/accommodations/${id}`, {
       method: "PATCH",
@@ -117,25 +108,27 @@ export function AccommodationTable({ accommodations }: { accommodations: AccRow[
     });
 
     if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setData((prev) => prev.map((a) => a.id === id ? { ...a, spotlightYearMonth: previous } : a));
-      setSpotlightError({ id, msg: body.message ?? "Could not save spotlight assignment" });
+      setData((prev) =>
+        prev.map((a) => {
+          if (a.id === id) return { ...a, spotlightYearMonth: previous };
+          if (collidingId && a.id === collidingId) return { ...a, spotlightYearMonth: previousColliding };
+          return a;
+        })
+      );
+      return;
     }
-  }
 
-  async function clearSpotlight(id: number) {
-    const previous = data.find((a) => a.id === id)?.spotlightYearMonth ?? null;
-    if (!previous) return;
-    setData((prev) => prev.map((a) => a.id === id ? { ...a, spotlightYearMonth: null } : a));
-
-    const res = await fetch(`/api/admin/accommodations/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spotlightYearMonth: null }),
-    });
-
-    if (!res.ok) {
-      setData((prev) => prev.map((a) => a.id === id ? { ...a, spotlightYearMonth: previous } : a));
+    if (collidingId) {
+      const colRes = await fetch(`/api/admin/accommodations/${collidingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ spotlightYearMonth: null }),
+      });
+      if (!colRes.ok) {
+        setData((prev) =>
+          prev.map((a) => (a.id === collidingId ? { ...a, spotlightYearMonth: previousColliding } : a))
+        );
+      }
     }
   }
 
@@ -250,6 +243,14 @@ export function AccommodationTable({ accommodations }: { accommodations: AccRow[
   const thisMonthCount = data.filter((a) => a.spotlightYearMonth === thisMonth).length;
   const pct = (n: number) => Math.round((n / data.length) * 100);
 
+  const occupiedMonths = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const a of data) {
+      if (a.spotlightYearMonth) map[a.spotlightYearMonth] = a.name;
+    }
+    return map;
+  }, [data]);
+
   return (
     <div>
       {/* Search + valley + content filters */}
@@ -358,50 +359,12 @@ export function AccommodationTable({ accommodations }: { accommodations: AccRow[
                     </button>
                   </td>
                   <td className="px-3 py-3">
-                    {editingSpotlight === a.id ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="text"
-                            value={draftSpotlight}
-                            onChange={(e) => setDraftSpotlight(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveSpotlight(a.id);
-                              else if (e.key === "Escape") cancelEdit();
-                            }}
-                            placeholder="2026-08"
-                            autoFocus
-                            className="w-24 input-editorial py-1 px-2 text-xs"
-                          />
-                          <button onClick={() => saveSpotlight(a.id)} className="p-1 text-[var(--brass)] hover:bg-[var(--paper)] rounded" title="Save">
-                            <Check className="h-3.5 w-3.5" />
-                          </button>
-                          <button onClick={cancelEdit} className="p-1 text-[var(--ink-3)] hover:bg-[var(--paper)] rounded" title="Cancel">
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                        {spotlightError?.id === a.id && (
-                          <p className="text-[10px] text-red-700">{spotlightError.msg}</p>
-                        )}
-                      </div>
-                    ) : a.spotlightYearMonth ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => startEdit(a.id, a.spotlightYearMonth)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] uppercase font-semibold bg-[var(--brass)] text-[var(--paper)] hover:bg-[var(--brass-2)] transition-colors"
-                        >
-                          <Calendar className="h-3 w-3" />
-                          {a.spotlightYearMonth}
-                        </button>
-                        <button onClick={() => clearSpotlight(a.id)} className="p-1 text-[var(--ink-3)] hover:text-red-700 rounded" title="Clear">
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button onClick={() => startEdit(a.id, null)} className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-[var(--ink-3)] hover:text-[var(--brass-2)] transition-colors">
-                        + Assign
-                      </button>
-                    )}
+                    <SpotlightMonthPicker
+                      current={a.spotlightYearMonth}
+                      occupied={occupiedMonths}
+                      ownerName={a.name}
+                      onSelect={(ym) => setSpotlightMonth(a.id, ym)}
+                    />
                   </td>
                   <td className="px-3 py-3 align-top">
                     {editingTeaser === a.id ? (

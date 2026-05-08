@@ -10,6 +10,13 @@ import {
   wineryPhotos,
   pageImpressions,
   gscDailyQueries,
+  users,
+  accounts,
+  favorites,
+  wineJournalEntries,
+  savedTrips,
+  anonymousTrips,
+  anonymousTripStops,
 } from "@/db/schema";
 import { count, eq, gte, lte, and, isNotNull, desc, sql, countDistinct, sum, inArray } from "drizzle-orm";
 
@@ -727,3 +734,400 @@ export async function getWineryTopQueries(
     .orderBy(desc(sum(gscDailyQueries.impressions)))
     .limit(limit);
 }
+
+// ===== Account / user-creation analytics =====
+
+export async function getAccountStats(startDate: DateFilter) {
+  const [
+    [totalRow],
+    [withPasswordRow],
+    [withUsernameRow],
+    [publicProfileRow],
+    [oauthRow],
+    [newRow],
+    [withFavoritesRow],
+    [withJournalRow],
+    [withSavedTripsRow],
+  ] = await Promise.all([
+    db.select({ total: count() }).from(users),
+    db
+      .select({ total: count() })
+      .from(users)
+      .where(isNotNull(users.passwordHash)),
+    db
+      .select({ total: count() })
+      .from(users)
+      .where(isNotNull(users.username)),
+    db.select({ total: count() }).from(users).where(eq(users.isPublic, true)),
+    db
+      .select({ total: countDistinct(accounts.userId) })
+      .from(accounts),
+    startDate
+      ? db
+          .select({ total: count() })
+          .from(users)
+          .where(gte(users.createdAt, startDate))
+      : Promise.resolve([{ total: 0 }]),
+    db
+      .select({ total: countDistinct(favorites.userId) })
+      .from(favorites),
+    db
+      .select({ total: countDistinct(wineJournalEntries.userId) })
+      .from(wineJournalEntries),
+    db
+      .select({ total: countDistinct(savedTrips.userId) })
+      .from(savedTrips),
+  ]);
+
+  return {
+    total: totalRow.total,
+    newInPeriod: newRow.total,
+    withPassword: withPasswordRow.total,
+    withOAuth: oauthRow.total,
+    withUsername: withUsernameRow.total,
+    publicProfiles: publicProfileRow.total,
+    withFavorites: withFavoritesRow.total,
+    withJournal: withJournalRow.total,
+    withSavedTrips: withSavedTripsRow.total,
+  };
+}
+
+export async function getAccountTrend(startDate: DateFilter) {
+  const conditions = [isNotNull(users.createdAt)];
+  if (startDate) conditions.push(gte(users.createdAt, startDate));
+  return db
+    .select({
+      date: sql<string>`strftime('%Y-%m-%d', ${users.createdAt})`.as("date"),
+      total: count(),
+    })
+    .from(users)
+    .where(and(...conditions))
+    .groupBy(sql`strftime('%Y-%m-%d', ${users.createdAt})`)
+    .orderBy(sql`strftime('%Y-%m-%d', ${users.createdAt})`);
+}
+
+// ===== GSC site-wide analytics =====
+
+export async function getGscSiteStats(startDate: DateFilter) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+
+  const [row] = await db
+    .select({
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+      avgPosition: sql<number>`AVG(${gscDailyQueries.position})`,
+      uniquePages: countDistinct(gscDailyQueries.page),
+      uniqueQueries: countDistinct(gscDailyQueries.query),
+    })
+    .from(gscDailyQueries)
+    .where(conditions.length ? and(...conditions) : undefined);
+
+  const impressions = Number(row?.impressions ?? 0);
+  const clicks = Number(row?.clicks ?? 0);
+  return {
+    impressions,
+    clicks,
+    ctr: impressions > 0 ? clicks / impressions : 0,
+    avgPosition: Number(row?.avgPosition ?? 0),
+    uniquePages: Number(row?.uniquePages ?? 0),
+    uniqueQueries: Number(row?.uniqueQueries ?? 0),
+  };
+}
+
+export async function getGscSiteTrend(startDate: DateFilter) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+
+  const rows = await db
+    .select({
+      date: gscDailyQueries.date,
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+    })
+    .from(gscDailyQueries)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(gscDailyQueries.date)
+    .orderBy(gscDailyQueries.date);
+
+  return rows.map((r) => ({
+    date: r.date,
+    total: Number(r.clicks ?? 0),
+    impressions: Number(r.impressions ?? 0),
+  }));
+}
+
+export async function getGscTopQueriesSiteWide(startDate: DateFilter, limit = 10) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+
+  return db
+    .select({
+      query: gscDailyQueries.query,
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+      avgPosition: sql<number>`AVG(${gscDailyQueries.position})`,
+    })
+    .from(gscDailyQueries)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(gscDailyQueries.query)
+    .orderBy(desc(sum(gscDailyQueries.impressions)))
+    .limit(limit);
+}
+
+export async function getGscTopPagesSiteWide(startDate: DateFilter, limit = 10) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(gscDailyQueries.date, startDate.slice(0, 10)));
+
+  return db
+    .select({
+      page: gscDailyQueries.page,
+      impressions: sum(gscDailyQueries.impressions),
+      clicks: sum(gscDailyQueries.clicks),
+      avgPosition: sql<number>`AVG(${gscDailyQueries.position})`,
+    })
+    .from(gscDailyQueries)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(gscDailyQueries.page)
+    .orderBy(desc(sum(gscDailyQueries.impressions)))
+    .limit(limit);
+}
+
+// ===== Trip planner usage =====
+
+export async function getTripPlannerStats(startDate: DateFilter) {
+  const dateCond = startDate ? [gte(anonymousTrips.createdAt, startDate)] : [];
+
+  const [
+    [totalRow],
+    [withOriginRow],
+    [withHomeBaseRow],
+    [withNightsRow],
+    [stopsRow],
+  ] = await Promise.all([
+    db.select({ total: count() }).from(anonymousTrips).where(dateCond.length ? and(...dateCond) : undefined),
+    db
+      .select({ total: count() })
+      .from(anonymousTrips)
+      .where(
+        and(isNotNull(anonymousTrips.originLat), ...(dateCond.length ? dateCond : []))
+      ),
+    db
+      .select({ total: count() })
+      .from(anonymousTrips)
+      .where(
+        and(
+          isNotNull(anonymousTrips.homeBaseAccommodationId),
+          ...(dateCond.length ? dateCond : [])
+        )
+      ),
+    db
+      .select({ total: count() })
+      .from(anonymousTrips)
+      .where(
+        and(isNotNull(anonymousTrips.nights), ...(dateCond.length ? dateCond : []))
+      ),
+    db
+      .select({ total: count() })
+      .from(anonymousTripStops)
+      .innerJoin(anonymousTrips, eq(anonymousTripStops.tripId, anonymousTrips.id))
+      .where(dateCond.length ? and(...dateCond) : undefined),
+  ]);
+
+  const totalTrips = totalRow.total;
+  const totalStops = stopsRow.total;
+
+  return {
+    totalTrips,
+    totalStops,
+    avgStopsPerTrip: totalTrips > 0 ? +(totalStops / totalTrips).toFixed(1) : 0,
+    withOrigin: withOriginRow.total,
+    withHomeBase: withHomeBaseRow.total,
+    withNights: withNightsRow.total,
+  };
+}
+
+export async function getTripPlannerByTheme(startDate: DateFilter) {
+  const conditions = [isNotNull(anonymousTrips.theme)];
+  if (startDate) conditions.push(gte(anonymousTrips.createdAt, startDate));
+
+  return db
+    .select({
+      theme: anonymousTrips.theme,
+      total: count(),
+    })
+    .from(anonymousTrips)
+    .where(and(...conditions))
+    .groupBy(anonymousTrips.theme)
+    .orderBy(desc(count()));
+}
+
+export async function getTripPlannerByValley(startDate: DateFilter) {
+  const conditions = [isNotNull(anonymousTrips.valley)];
+  if (startDate) conditions.push(gte(anonymousTrips.createdAt, startDate));
+
+  return db
+    .select({
+      valley: anonymousTrips.valley,
+      total: count(),
+    })
+    .from(anonymousTrips)
+    .where(and(...conditions))
+    .groupBy(anonymousTrips.valley)
+    .orderBy(desc(count()));
+}
+
+export async function getTripPlannerTrend(startDate: DateFilter) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(anonymousTrips.createdAt, startDate));
+
+  return db
+    .select({
+      date: sql<string>`strftime('%Y-%m-%d', ${anonymousTrips.createdAt})`.as("date"),
+      total: count(),
+    })
+    .from(anonymousTrips)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(sql`strftime('%Y-%m-%d', ${anonymousTrips.createdAt})`)
+    .orderBy(sql`strftime('%Y-%m-%d', ${anonymousTrips.createdAt})`);
+}
+
+// ===== Page impression analytics (site-wide) =====
+
+export async function getPageImpressionStats(startDate: DateFilter) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  const [row] = await db
+    .select({
+      total: count(),
+      sessions: countDistinct(pageImpressions.sessionId),
+    })
+    .from(pageImpressions)
+    .where(conditions.length ? and(...conditions) : undefined);
+
+  return {
+    total: row.total,
+    uniqueSessions: row.sessions,
+    pagesPerSession: row.sessions > 0 ? +(row.total / row.sessions).toFixed(1) : 0,
+  };
+}
+
+export async function getPageImpressionsByType(startDate: DateFilter) {
+  const conditions = [isNotNull(pageImpressions.pageType)];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  return db
+    .select({
+      pageType: pageImpressions.pageType,
+      total: count(),
+    })
+    .from(pageImpressions)
+    .where(and(...conditions))
+    .groupBy(pageImpressions.pageType)
+    .orderBy(desc(count()));
+}
+
+export async function getTopReferrers(startDate: DateFilter, limit = 10) {
+  const conditions = [
+    isNotNull(pageImpressions.referrer),
+    sql`${pageImpressions.referrer} <> ''`,
+  ];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  return db
+    .select({
+      referrer: pageImpressions.referrer,
+      total: count(),
+    })
+    .from(pageImpressions)
+    .where(and(...conditions))
+    .groupBy(pageImpressions.referrer)
+    .orderBy(desc(count()))
+    .limit(limit);
+}
+
+export async function getTopImpressionPages(startDate: DateFilter, limit = 10) {
+  const conditions = [];
+  if (startDate) conditions.push(gte(pageImpressions.viewedAt, startDate));
+
+  return db
+    .select({
+      path: pageImpressions.path,
+      total: count(),
+    })
+    .from(pageImpressions)
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(pageImpressions.path)
+    .orderBy(desc(count()))
+    .limit(limit);
+}
+
+// ===== Spotlight performance =====
+//
+// For each entity that's been spotlighted (winery or accommodation), count the
+// outbound clicks attributed to that entity during its assigned month. Returns
+// the most recent N spotlights with their performance.
+
+export async function getSpotlightPerformance(limit = 24) {
+  const wineryRows = await db
+    .select({
+      kind: sql<string>`'winery'`.as("kind"),
+      id: wineries.id,
+      slug: wineries.slug,
+      name: wineries.name,
+      yearMonth: wineries.spotlightYearMonth,
+    })
+    .from(wineries)
+    .where(isNotNull(wineries.spotlightYearMonth))
+    .orderBy(desc(wineries.spotlightYearMonth));
+
+  const accommodationRows = await db
+    .select({
+      kind: sql<string>`'accommodation'`.as("kind"),
+      id: accommodations.id,
+      slug: accommodations.slug,
+      name: accommodations.name,
+      yearMonth: accommodations.spotlightYearMonth,
+    })
+    .from(accommodations)
+    .where(isNotNull(accommodations.spotlightYearMonth))
+    .orderBy(desc(accommodations.spotlightYearMonth));
+
+  const all = [...wineryRows, ...accommodationRows]
+    .filter((r) => r.yearMonth != null)
+    .sort((a, b) => (b.yearMonth! > a.yearMonth! ? 1 : b.yearMonth! < a.yearMonth! ? -1 : 0))
+    .slice(0, limit);
+
+  // For each spotlight, count clicks during its assigned month.
+  const enriched = await Promise.all(
+    all.map(async (s) => {
+      const ym = s.yearMonth!;
+      const monthStart = `${ym}-01T00:00:00.000Z`;
+      // First day of the next month.
+      const [yStr, mStr] = ym.split("-");
+      const y = parseInt(yStr, 10);
+      const m = parseInt(mStr, 10);
+      const nextY = m === 12 ? y + 1 : y;
+      const nextM = m === 12 ? 1 : m + 1;
+      const monthEnd = `${nextY}-${String(nextM).padStart(2, "0")}-01T00:00:00.000Z`;
+
+      const conditions =
+        s.kind === "winery"
+          ? [eq(outboundClicks.wineryId, s.id)]
+          : [eq(outboundClicks.accommodationId, s.id)];
+      conditions.push(gte(outboundClicks.createdAt, monthStart));
+      conditions.push(sql`${outboundClicks.createdAt} < ${monthEnd}`);
+
+      const [row] = await db
+        .select({ total: count() })
+        .from(outboundClicks)
+        .where(and(...conditions));
+
+      return { ...s, clicks: row.total };
+    })
+  );
+
+  return enriched;
+}
+
