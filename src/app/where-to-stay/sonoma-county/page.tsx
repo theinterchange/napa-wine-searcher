@@ -47,8 +47,8 @@ export default async function SonomaCountyStayPage() {
 
       {accommodations.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accommodations.map((a) => (
-            <AccommodationCard key={a.slug} accommodation={a} />
+          {accommodations.map((a, i) => (
+            <AccommodationCard key={a.slug} accommodation={a} priority={i === 0} />
           ))}
         </div>
       ) : (

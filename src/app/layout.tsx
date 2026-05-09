@@ -23,11 +23,10 @@ const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   display: "swap",
   style: ["normal", "italic"],
-  weight: ["400", "500", "600"],
-  // Used for body text below the fold (winery descriptions, prose). The
-  // hero uses Fraunces + JetBrains Mono only, so we don't need this on the
-  // LCP-critical path. Browsers fetch it on-demand when CSS first uses it,
-  // and display:swap keeps fallback in place until then.
+  // Source Serif is only used at the default 400 weight (winery descriptions,
+  // prose). No CSS rule references font-weight 500 or 600 on it, so we skip
+  // those to halve the bytes fetched for this family.
+  weight: ["400"],
   preload: false,
 });
 
@@ -72,6 +71,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
+      <head>
+        {/* Open the connection to image CDNs as early as possible so the LCP
+            hero image can start downloading without waiting for DNS + TLS.
+            crossOrigin matters because Next/Image fetches with CORS. */}
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://iubllytv2maaomk9.public.blob.vercel-storage.com" crossOrigin="anonymous" />
+        {/* DNS-prefetch for non-critical third parties (analytics scripts load
+            after interactive but the resolution can start sooner). */}
+        <link rel="dns-prefetch" href="https://plausible.io" />
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
+      </head>
       {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
         <Script
           defer

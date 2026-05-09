@@ -28,6 +28,9 @@ export function HeroFeatured({
 }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  // Defer rendering the next-slide image until after first paint so it
+  // doesn't compete with the LCP image for bandwidth.
+  const [nextSlideMounted, setNextSlideMounted] = useState(false);
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % wineries.length);
@@ -42,6 +45,21 @@ export function HeroFeatured({
     const id = setInterval(next, 5000);
     return () => clearInterval(id);
   }, [paused, next, wineries.length]);
+
+  useEffect(() => {
+    if (wineries.length <= 1) return;
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number })
+      .requestIdleCallback;
+    if (idle) {
+      const handle = idle(() => setNextSlideMounted(true), { timeout: 2500 });
+      return () => {
+        const cancel = (window as Window & { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
+        if (cancel) cancel(handle);
+      };
+    }
+    const t = window.setTimeout(() => setNextSlideMounted(true), 2000);
+    return () => window.clearTimeout(t);
+  }, [wineries.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -121,7 +139,10 @@ export function HeroFeatured({
         const nextIdx = (current + 1) % wineries.length;
         const isCurrent = i === current;
         const isNext = i === nextIdx;
-        if (!winery.heroImageUrl || (!isCurrent && !isNext)) return null;
+        // Only render the current slide on first paint; defer next slide
+        // until idle so the LCP image has uncontested bandwidth.
+        if (!winery.heroImageUrl) return null;
+        if (!isCurrent && !(isNext && nextSlideMounted)) return null;
         return (
           <Image
             key={winery.slug}

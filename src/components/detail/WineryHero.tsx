@@ -63,6 +63,9 @@ export function WineryHero({
 
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  // Defer mounting neighbor images until after first paint so they don't
+  // contend for bandwidth with the LCP image on slow networks.
+  const [neighborsMounted, setNeighborsMounted] = useState(false);
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % allImages.length);
@@ -77,6 +80,21 @@ export function WineryHero({
     const id = setInterval(next, 3000);
     return () => clearInterval(id);
   }, [paused, next, allImages.length]);
+
+  useEffect(() => {
+    if (allImages.length <= 1) return;
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number })
+      .requestIdleCallback;
+    if (idle) {
+      const handle = idle(() => setNeighborsMounted(true), { timeout: 2000 });
+      return () => {
+        const cancel = (window as Window & { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
+        if (cancel) cancel(handle);
+      };
+    }
+    const t = window.setTimeout(() => setNeighborsMounted(true), 1500);
+    return () => window.clearTimeout(t);
+  }, [allImages.length]);
 
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -116,10 +134,11 @@ export function WineryHero({
       {allImages.length > 0 ? (
         <>
           {allImages.map((url, i) => {
-            const shouldRender =
-              i === current ||
+            const isCurrent = i === current;
+            const isNeighbor =
               i === (current + 1) % allImages.length ||
               i === (current - 1 + allImages.length) % allImages.length;
+            const shouldRender = isCurrent || (neighborsMounted && isNeighbor);
             if (!shouldRender) return null;
             return (
               <Image
@@ -128,10 +147,10 @@ export function WineryHero({
                 alt={`${winery.name} photo ${i + 1}`}
                 fill
                 sizes="100vw"
-                quality={85}
+                quality={75}
                 priority={i === 0}
                 className={`object-cover transition-opacity duration-700 ease-in-out ${
-                  i === current ? "opacity-100" : "opacity-0"
+                  isCurrent ? "opacity-100" : "opacity-0"
                 }`}
               />
             );

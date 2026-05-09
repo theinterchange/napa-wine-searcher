@@ -43,7 +43,7 @@ function tierFromTastingPrice(price: number): number {
   return 4;
 }
 
-export function WineryCard({ winery }: { winery: WineryCardProps }) {
+export function WineryCard({ winery, priority = false }: { winery: WineryCardProps; priority?: boolean }) {
   const subRegionHref = winery.subRegion && winery.subRegionSlug && winery.valley && valleyPrefix[winery.valley]
     ? `${valleyPrefix[winery.valley]}/${winery.subRegionSlug}`
     : null;
@@ -71,6 +71,8 @@ export function WineryCard({ winery }: { winery: WineryCardProps }) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
           />
         ) : (
           <Wine className="h-12 w-12 text-[var(--rule)]" />

@@ -27,11 +27,13 @@ export function AccommodationCard({
   accommodation,
   showBookingCTA = false,
   sourceComponent,
+  priority = false,
 }: {
   accommodation: AccommodationCardData & { distanceMiles?: number | null };
   /** If true, render an inline "Book Now" Stay22 CTA below the card body */
   showBookingCTA?: boolean;
   sourceComponent?: string;
+  priority?: boolean;
 }) {
   const a = accommodation;
   const subRegionHref =
@@ -64,6 +66,8 @@ export function AccommodationCard({
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
+            priority={priority}
+            loading={priority ? "eager" : "lazy"}
           />
         ) : (
           <BedDouble className="h-12 w-12 text-[var(--rule)]" />

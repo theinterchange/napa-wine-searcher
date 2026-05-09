@@ -118,8 +118,8 @@ export default async function WhereToStayPage({
       {/* Grid */}
       {paged.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {paged.map((a) => (
-            <AccommodationCard key={a.slug} accommodation={a} showBookingCTA />
+          {paged.map((a, i) => (
+            <AccommodationCard key={a.slug} accommodation={a} showBookingCTA priority={i === 0} />
           ))}
         </div>
       ) : (

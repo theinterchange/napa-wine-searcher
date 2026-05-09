@@ -232,12 +232,13 @@ export default async function CollectionPage({
       <section>
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cards.map((a) => (
+            {cards.map((a, i) => (
               <AccommodationCard
                 key={a.slug}
                 accommodation={a}
                 showBookingCTA
                 sourceComponent={`Collection_${cfg.slug}`}
+                priority={i === 0}
               />
             ))}
           </div>

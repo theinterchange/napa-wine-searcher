@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Tree-shake heavy icon packs and DB drivers so unused exports don't ship.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "drizzle-orm", "date-fns"],
+  },
+  // Drop console.log in production (keeps console.error/warn for debugging).
+  compiler: {
+    removeConsole: { exclude: ["error", "warn"] },
+  },
   async redirects() {
     // 301 redirects: old guide pages → new category cluster pages.
     // Dog + kid amenity guides are superseded by dedicated category routes.
@@ -166,6 +174,60 @@ const nextConfig: NextConfig = {
           {
             key: "Cache-Control",
             value: "public, s-maxage=60, stale-while-revalidate=300",
+          },
+        ],
+      },
+      {
+        source: "/where-to-stay/cities/:city",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
+          },
+        ],
+      },
+      {
+        source: "/where-to-stay/collections/:type",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
+          },
+        ],
+      },
+      {
+        source: "/where-to-stay/napa-valley",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
+          },
+        ],
+      },
+      {
+        source: "/where-to-stay/sonoma-county",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
+          },
+        ],
+      },
+      {
+        source: "/napa-valley",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
+          },
+        ],
+      },
+      {
+        source: "/sonoma-county",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=300, stale-while-revalidate=900",
           },
         ],
       },

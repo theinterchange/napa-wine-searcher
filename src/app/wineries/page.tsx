@@ -344,8 +344,8 @@ export default async function WineriesPage({
 
       {resultsWithFeatured.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {resultsWithFeatured.map((w) => (
-            <WineryCard key={w.id} winery={w} />
+          {resultsWithFeatured.map((w, i) => (
+            <WineryCard key={w.id} winery={w} priority={i === 0} />
           ))}
         </div>
       ) : (
