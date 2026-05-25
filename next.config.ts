@@ -155,28 +155,14 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Edge-cache the directory listings — no per-user content in the SSR
-      // HTML (Navbar/auth state hydrates client-side). Each filter combo
-      // gets its own cache entry; ~60s freshness, 5m stale-while-revalidate
-      // means at most one user per minute eats the SSR cost.
-      {
-        source: "/wineries",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, s-maxage=60, stale-while-revalidate=300",
-          },
-        ],
-      },
-      {
-        source: "/where-to-stay",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, s-maxage=60, stale-while-revalidate=300",
-          },
-        ],
-      },
+      // Edge-cache the static directory subpages — these don't read
+      // searchParams, so Vercel's CDN can hold them. /wineries and
+      // /where-to-stay are intentionally absent: they read searchParams,
+      // which makes them dynamic, and Next.js stamps `private, no-cache,
+      // no-store` at runtime that overrides anything we set here. The
+      // unstable_cache layer keeps the lambda response fast on MISS;
+      // converting to edge HIT would require Cache Components (`'use cache'`)
+      // — tracked separately.
       {
         source: "/where-to-stay/cities/:city",
         headers: [
