@@ -6,11 +6,11 @@ Napa/Sonoma winery discovery platform. 225+ wineries, trip planning, day trips, 
 ## Owner
 Michael Chen — PM at DoorDash, building passive income projects with Claude Code. This is his #2 priority passive income project.
 
-## Revenue Status (as of 2026-04-18)
+## Revenue Status (as of 2026-05-25)
 
 **Active monetization channels:**
-- **Stay22 hotel booking widget:** ✅ LIVE on accommodation pages
-- **Click tracking:** ✅ live (outbound_clicks table)
+- **Stay22 hotel bookings:** ✅ LIVE and converting — **8 hotel bookings in the 30d ending 2026-05-25**, the first ever. First click landed 2026-05-04 after commit `ba448f9` added inline `BookHotelCTA` to blog posts + the HotelDriveTimes table. Surfaces: blog_bookhotel_inline (6 clicks), MobileBookingBar (9), AccommodationCard (8 hotel bookings). Top accommodations: The George (3), Archer Hotel Napa (2). **Distribution surface > channel** — the accommodation-page widget sat at 0 for 30+ days; blog/winery surfaces produced clicks within 24 hours.
+- **Click tracking:** ✅ live (outbound_clicks table) — 61 outbound clicks last 30d (75% Book Tasting, 13% Book Hotel, 11% Website Visit).
 - **Affiliate link builders:** ✅ coded in `/src/lib/affiliate.ts`
 
 **Declined — do not recommend:**
@@ -19,13 +19,15 @@ Michael Chen — PM at DoorDash, building passive income projects with Claude Co
 
 **Other:**
 - NapaCabs affiliate: status unclear — ask Michael before recommending action
-- Email list: 0 real subscribers (3 entries in db as of 2026-04-13, all Michael's test signups) — growth target, not monetization channel yet
+- Email list: 0 real subscribers (3 entries in db, all Michael's test signups, unchanged for 8 weeks through 2026-05-25 — including across BottleRock peak week). Footer-only capture is provably not earning at any traffic level the site has seen. Either ship an inline editorial capture test or stop tracking subscribers as a weekly metric.
 
 **Analytics:** ✅ Vercel Web Analytics live since 2026-04-05. ✅ Cloudflare Web Analytics live. ✅ GSC active with sitemap submitted. Speed Insights declined (paid).
 
-## Peak Season Sprint Status (BottleRock May 22-24)
+## Peak Season Sprint Status (BottleRock May 22-24 — now past)
 
-Most of the pre-peak checklist shipped. Remaining items:
+BottleRock weekend is over. Week 7 stats (2026-05-25) confirm the pre-peak metadata work paid off: BottleRock guide blog post earned 17 clicks/28d (+240% vs Week 4) and where-to-stay variant 14/28d (+180%). Both hit during the 5/18–5/22 lead-in. **Site-wide CTR moved 0.332% → 0.415% (+25%); GSC clicks +112%; outbound clicks +205% on 30d.** Memorial Day weekend (5/24–5/26) is the next seasonal moment; post-peak strategy now pivots to compounding the wins on summer/category clusters.
+
+Remaining items:
 
 **Done:**
 - ✅ H1 tag fix on homepage (2026-04-13)
@@ -40,7 +42,7 @@ Most of the pre-peak checklist shipped. Remaining items:
 - **Tourism/wine directory submissions** — 5-10 backlinks
 - **Email list growth** — better signup CTA, lead magnet. Currently 0 real subs.
 - **Winery/Accommodation JSON-LD** — structured data on detail pages for rich results
-- **Internal linking improvements** — high-traffic pages → individual winery pages (185 of 186 wineries have never been clicked per GSC)
+- **Internal linking improvements** — high-traffic pages → individual winery pages (155 of 180 tracked wineries have never been clicked (30d through 2026-05-25) per GSC)
 - **GSC manual indexing queue** — `gsc-indexing-queue.md` in repo root, 140 URLs over 14 days, started 2026-04-18
 
 **Executing GSC manual submissions is low-leverage background work — don't treat it as the main priority.** The sustainable indexing fix is authority (backlinks), not submission volume.
@@ -56,7 +58,7 @@ Most of the pre-peak checklist shipped. Remaining items:
 **SEO actions still needed:**
 1. **Verify SSR** — test with `curl -s https://www.napasonomaguide.com/wineries/silver-oak | grep -i "silver oak"`.
 2. **Add LocalBusiness/Winery structured data (JSON-LD)** to individual winery pages — enables rich search results.
-3. **Improve internal linking** from high-traffic pages (homepage, blog posts, /plan-trip) to individual winery pages — 185 of 186 wineries have never been clicked.
+3. **Improve internal linking** from high-traffic pages (homepage, blog posts, /plan-trip) to individual winery pages — 155 of 180 tracked wineries have never been clicked (30d through 2026-05-25).
 4. **Build 5-10 backlinks** — wine directories, Napa tourism sites, winery outreach.
 5. **Monitor CTR on fixed snippets** — blog post metadata was improved on 2026-04-05 (see weekly stats ritual). Expect 2–4 weeks for Google to recrawl and reflect changes in GSC data.
 
@@ -71,7 +73,7 @@ Most of the pre-peak checklist shipped. Remaining items:
 1. **Traffic still early.** First-month analytics baseline just landed. If the May–June peak shows <1K visits/month, Stay22 won't generate meaningful revenue and strategy shifts entirely to sponsorships.
 2. **Only one active affiliate (Stay22).** No diversification. If Stay22 terms change or conversion is weak, there's no fallback monetization until sponsorships land in fall.
 3. **Seasonal revenue.** Napa tourism peaks May-Oct. Plan for $0-low revenue Nov-March. Don't make commitments based on peak-season numbers.
-4. **Email list has 0 real subscribers (as of 2026-04-13).** The 3 entries in the db are all Michael's test signups. Email is not a monetization channel yet — it's a growth target. Prioritize list building (better signup CTA, lead magnets) before investing in email campaigns.
+4. **Email list has 0 real subscribers through 2026-05-25 (8 weeks unchanged).** The 3 entries in the db are all Michael's test signups. BottleRock peak week brought 117 Vercel visitors / 244 pageviews and produced zero email signups. Footer-only capture is not earning at any traffic level the site has seen — either ship an inline editorial capture experiment or stop tracking subscribers as a metric until sponsorships land.
 5. **Don't spend money on paid traffic here.** Wine country keywords are expensive. Rely on organic SEO from the 225+ content pages. Focus ad budget on Encore instead.
 
 ## Sponsorship Revenue Roadmap (B2B — highest ceiling)
