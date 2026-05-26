@@ -43,6 +43,11 @@ export interface BuilderState {
 
   /** Step 5 */
   amenities: Set<string>;
+  /** Wine-category preferences (multi-select). Soft signal: the generator
+   *  scores wineries that produce these varietals higher rather than filtering
+   *  others out, so picking a few doesn't shrink the pool. Keys match the
+   *  WINE_CATEGORY_MAP labels in /api/routes/generate. */
+  tastes: Set<string>;
   mustVisits: AnchorWinery[];
 }
 
@@ -58,8 +63,23 @@ export const DEFAULT_STATE: BuilderState = {
   origin: null,
   originLabel: "",
   amenities: new Set<string>(),
+  tastes: new Set<string>(),
   mustVisits: [],
 };
+
+/** Wine categories the trip generator understands. Keys must match
+ *  WINE_CATEGORY_MAP in /api/routes/generate so the wineTypes URL param
+ *  routes through correctly. Ordered loosely by popularity in the catalog. */
+export const TASTE_OPTIONS: Array<{ id: string; label: string; blurb: string }> = [
+  { id: "Cabernet Sauvignon", label: "Cabernet Sauvignon", blurb: "Big Napa reds — Bordeaux varietals." },
+  { id: "Pinot Noir", label: "Pinot Noir", blurb: "Cool-climate elegance — Sonoma's signature." },
+  { id: "Chardonnay", label: "Chardonnay", blurb: "Buttery to crisp; widely poured." },
+  { id: "Sparkling", label: "Sparkling", blurb: "Bubbles — Carneros and Green Valley." },
+  { id: "Rosé", label: "Rosé", blurb: "Dry, food-friendly, summer-leaning." },
+  { id: "Zinfandel", label: "Zinfandel", blurb: "Bold reds, often Dry Creek-grown." },
+  { id: "Red Blends", label: "Red Blends", blurb: "Merlot, Syrah, Petite Sirah, GSM." },
+  { id: "White & Other", label: "White & Other", blurb: "Sauv Blanc, Viognier, Riesling, etc." },
+];
 
 export const STEP_TITLES = [
   "Who's going",

@@ -1,8 +1,9 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Wine } from "lucide-react";
 import { MustVisitPicker } from "./MustVisitPicker";
 import type { BuilderState } from "./types";
+import { TASTE_OPTIONS } from "./types";
 
 /**
  * Amenities a user can toggle here. Dog/kid are handled separately —
@@ -40,12 +41,58 @@ export function StepPreferences({ state, update }: StepPreferencesProps) {
     update({ amenities: next });
   };
 
+  const toggleTaste = (id: string) => {
+    const next = new Set(state.tastes);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    update({ tastes: next });
+  };
+
   const confirmed: Array<{ id: string; label: string }> = [];
   if (state.withDogs) confirmed.push({ id: "dog", label: "Dog-friendly" });
   if (state.withKids) confirmed.push({ id: "kid", label: "Kid-friendly" });
 
   return (
     <div className="space-y-8">
+      <div>
+        <label className="mb-2 block text-sm font-semibold">
+          <Wine className="inline-block h-3.5 w-3.5 mr-1.5 -mt-0.5 text-burgundy-900" />
+          Wines you like
+          <span className="ml-2 text-xs font-normal text-[var(--muted-foreground)]">
+            optional · multi-select
+          </span>
+        </label>
+        <p className="mb-3 text-xs text-[var(--muted-foreground)]">
+          We&apos;ll prioritize wineries that pour these. Not a hard filter —
+          we won&apos;t cut a great stop just because it doesn&apos;t make your
+          favorite varietal.
+        </p>
+        <ul className="grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {TASTE_OPTIONS.map((t) => {
+            const active = state.tastes.has(t.id);
+            return (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => toggleTaste(t.id)}
+                  aria-pressed={active}
+                  className={`flex h-full w-full flex-col items-start gap-1 rounded-2xl border p-3 text-left transition-colors ${
+                    active
+                      ? "border-burgundy-900 bg-[var(--card)] ring-1 ring-burgundy-900"
+                      : "border-[var(--border)] bg-[var(--card)] hover:border-burgundy-900/60"
+                  }`}
+                >
+                  <span className="text-sm font-semibold">{t.label}</span>
+                  <span className="text-xs text-[var(--muted-foreground)]">
+                    {t.blurb}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
       {confirmed.length > 0 && (
         <div>
           <label className="mb-2 block text-sm font-semibold">

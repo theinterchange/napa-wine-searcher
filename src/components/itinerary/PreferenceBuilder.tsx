@@ -87,6 +87,12 @@ export function PreferenceBuilder({
     if (state.mustVisits.length > 0) {
       params.set("anchorIds", state.mustVisits.map((m) => m.id).join(","));
     }
+    if (state.tastes.size > 0) {
+      // Soft scoring — the generator boosts wineries producing these
+      // categories without excluding others. See WINE_CATEGORY_MAP in
+      // /api/routes/generate.
+      params.set("wineTypes", Array.from(state.tastes).join(","));
+    }
     if (strict) params.set("strictSources", "1");
 
     const res = await fetch(`/api/routes/generate?${params.toString()}`);
