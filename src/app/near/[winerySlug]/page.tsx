@@ -59,8 +59,13 @@ export async function generateMetadata({
     winery.valley === "napa" ? "Napa Valley" : winery.valley === "sonoma" ? "Sonoma County" : "Wine Country";
   const cityLabel = winery.city ? `${winery.city}, ${valleyLabel}` : valleyLabel;
 
-  const title = `Hotels near ${winery.name} — Drive times from ${cityLabel}`;
-  const description = `${HOTELS_TO_SHOW} hotels closest to ${winery.name} in ${cityLabel}. Drive times, distances, and direct booking links.`;
+  // Metadata phrasing deliberately includes "drive time" + "distance" verbatim
+  // because the highest-impression queries hitting this URL pattern use those
+  // literal terms (~1,800 imp / 0 clicks across 7+ "google maps … distance
+  // drive time" variants, per Week 7 GSC). Google needs the exact strings to
+  // route the query to this page instead of the winery detail page.
+  const title = `Hotels near ${winery.name} — Drive Time & Distance from ${cityLabel}`;
+  const description = `Google Maps drive times and distances from ${HOTELS_TO_SHOW} hotels to ${winery.name} in ${cityLabel}. Direct booking links for each.`;
 
   return {
     title,
@@ -176,6 +181,11 @@ export default async function HotelsNearWineryPage({
             {winery.city ? ` in ${winery.city}` : ""}, ordered by drive time. Closest is about{" "}
             {closestMin} minutes; farthest on this list is about {farthestMin} minutes.
           </p>
+          <p className="mt-3 font-[var(--font-serif-text)] text-[14.5px] leading-[1.55] text-[var(--ink-3)] max-w-2xl">
+            Each entry shows the drive time and distance from the hotel to{" "}
+            {winery.name}. For live traffic, tap a hotel name and search the
+            route on Google Maps.
+          </p>
         </div>
       </section>
 
@@ -231,7 +241,10 @@ export default async function HotelsNearWineryPage({
             </table>
           </div>
           <p className="mt-4 font-[var(--font-serif-text)] text-[12.5px] text-[var(--ink-3)]">
-            Estimates based on straight-line distance with a wine-country routing factor. Actual drive times vary with traffic and route choice.
+            Drive time and distance estimates use straight-line distance with a
+            wine-country routing factor. For live traffic-adjusted Google Maps
+            directions from any hotel to {winery.name}, open the hotel page and
+            tap the address.
           </p>
         </div>
       </section>
