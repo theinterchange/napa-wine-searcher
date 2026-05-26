@@ -17,6 +17,7 @@ import { FAQSchema } from "@/components/seo/FAQSchema";
 import { CategoryWineryCard } from "@/components/category/CategoryWineryCard";
 import { CategoryJsonLd } from "@/components/seo/CategoryJsonLd";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { CategoryHotelInline } from "@/components/category/CategoryHotelInline";
 import { BASE_URL } from "@/lib/constants";
 import {
   displaySubRegionName,
@@ -102,7 +103,8 @@ export function CategoryLandingLayout({
   nearbyAccommodations,
 }: CategoryLandingLayoutProps) {
   const root = CLUSTER_ROOT[amenity];
-  const pageUrl = `${BASE_URL}${root}${meta.pathSegments.length ? "/" + meta.pathSegments.join("/") : ""}`;
+  const pagePath = `${root}${meta.pathSegments.length ? "/" + meta.pathSegments.join("/") : ""}`;
+  const pageUrl = `${BASE_URL}${pagePath}`;
   const breadcrumb = buildBreadcrumb(amenity, scope, qualifyingSubregions);
   const faqs = getCategoryFaqs(amenity);
 
@@ -202,6 +204,15 @@ export function CategoryLandingLayout({
               {deck}
             </p>
           </div>
+        )}
+
+        {/* ── INLINE HOTEL CTA (top-of-page revenue moment) ─────────── */}
+        {nearbyAccommodations.length > 0 && (
+          <CategoryHotelInline
+            accommodation={nearbyAccommodations[0]}
+            amenity={amenity}
+            sourcePage={pagePath}
+          />
         )}
 
         {/* ── THE WINERIES ──────────────────────────────────────────── */}
