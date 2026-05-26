@@ -71,9 +71,15 @@ export const VALLEY_CONTENT: Record<"napa" | "sonoma", ValleyContent> = {
   },
   sonoma: {
     title: "Sonoma County Wineries",
-    metaTitle: "Best Wineries in Sonoma County | Complete 2026 Guide",
+    // Title + description apply the proven CTR pattern (feedback memory
+    // guide_metadata_ctr_pattern): lead with concrete varietals + end with a
+    // benefit. /sonoma-county had been stuck at pos 42 / 968 imp / 1 click in
+    // Week 7 stats; /napa-valley recovered 13 positions over 3 weeks without
+    // changes here, so we're testing whether richer metadata moves the Sonoma
+    // hub the way it moved /guides/* listicles (~18x CTR lift).
+    metaTitle: "Best Sonoma County wineries — Pinot Noir, Zinfandel, walk-in tastings",
     metaDescription:
-      "Explore 75+ wineries across 7 Sonoma County regions. From Russian River Valley Pinot Noir to Dry Creek Valley Zinfandel, plan your Sonoma wine country visit.",
+      "75+ Sonoma County wineries by sub-region — Russian River Pinot Noir, Dry Creek Zinfandel, Alexander Valley Cab. More affordable than Napa; walk-ins welcome at many estates.",
     heroSubtitle:
       "From the world-class Pinot Noirs of Russian River Valley to the heritage Zinfandels of Dry Creek, discover Sonoma's laid-back charm and extraordinary diversity.",
     editorial: [

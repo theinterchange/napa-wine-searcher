@@ -32,10 +32,21 @@ export async function generateMetadata({
   if (!data || data.region.valley !== "sonoma") return { title: "Not Found" };
 
   const content = SUBREGION_CONTENT[slug];
-  const title = `${data.region.name} Wineries | Sonoma County Guide`;
-  const description =
-    content?.description[0]?.slice(0, 160) ??
-    `Explore ${data.wineries.length} wineries in ${data.region.name}, Sonoma County.`;
+  // Apply the proven CTR pattern (lead with concrete varietals + benefit) to
+  // sub-region metadata. /sonoma-county/sonoma-valley was stuck at pos 66 / 667
+  // imp / 1 click in Week 7. Mirroring the /napa-valley recovery playbook —
+  // metadata richness is the cheap, mechanical lever.
+  const known = content?.knownFor ?? [];
+  const knownList = known.length >= 2
+    ? `${known[0]}, ${known[1]}${known[2] ? `, ${known[2]}` : ""}`
+    : known[0] ?? "tastings";
+  const title = `Best ${data.region.name} wineries — ${knownList}`;
+  const descParts = [
+    `${data.wineries.length} ${data.region.name} wineries in Sonoma County`,
+  ];
+  if (content?.signatureVarietal) descParts.push(`signature ${content.signatureVarietal}`);
+  if (content?.bestTimeToVisit) descParts.push(content.bestTimeToVisit.split(";")[0].trim().toLowerCase());
+  const description = `${descParts.join(" — ")}. Tasting prices, reservation policies, and drive times.`;
 
   return {
     title,
