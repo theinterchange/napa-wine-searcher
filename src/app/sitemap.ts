@@ -234,6 +234,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.75,
     },
+    {
+      url: `${BASE_URL}/free/napa-day-trip-plan`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/free/weekend-trip-planner`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
     ...dogClusterEntries,
     ...kidClusterEntries,
     ...sustainableClusterEntries,

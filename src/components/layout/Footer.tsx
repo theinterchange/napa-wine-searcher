@@ -26,9 +26,11 @@ export function Footer() {
             <h3 className="kicker mb-4">Explore</h3>
             <ul className="space-y-2.5 text-[14px]">
               <li><Link href="/wineries" className={linkClass}>All Wineries</Link></li>
+              <li><Link href="/wineries/editors-picks" className={linkClass}>Editor&apos;s Picks</Link></li>
               <li><Link href="/where-to-stay" className={linkClass}>Where to Stay</Link></li>
               <li><Link href="/itineraries" className={linkClass}>Itineraries</Link></li>
               <li><Link href="/itineraries/build" className={linkClass}>Plan a Trip</Link></li>
+              <li><Link href="/free/napa-day-trip-plan" className={linkClass}>Free Day-Trip Plan</Link></li>
               <li><Link href="/map" className={linkClass}>Map View</Link></li>
             </ul>
           </div>
