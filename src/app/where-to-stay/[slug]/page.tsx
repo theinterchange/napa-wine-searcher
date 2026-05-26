@@ -826,6 +826,15 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
                     </a>
                   </div>
                 )}
+                <div className="pt-3 mt-3 border-t border-[var(--border)] text-xs italic text-[var(--muted-foreground)]">
+                  Own this property?{" "}
+                  <a
+                    href={`/for-wineries?listing=accommodation:${accommodation.id}#inquire`}
+                    className="not-italic underline hover:text-[var(--foreground)]"
+                  >
+                    Manage your listing →
+                  </a>
+                </div>
               </div>
 
               {/* Amenities & Policies — null = unknown (omit), true/false = stated fact */}
@@ -964,12 +973,18 @@ export default async function AccommodationDetailPage({ params }: PageProps) {
             description:
               accommodation.whyStayHere || accommodation.shortDescription,
             url: `${BASE_URL}/where-to-stay/${accommodation.slug}`,
+            // sameAs aggregates the producer's own URLs so AI crawlers and
+            // Google's Knowledge Graph can pivot to the canonical source.
+            sameAs: [accommodation.websiteUrl, accommodation.bookingUrl].filter(
+              (u): u is string => !!u && u.trim() !== ""
+            ),
             address: accommodation.address
               ? {
                   "@type": "PostalAddress",
                   streetAddress: accommodation.address,
                   addressLocality: accommodation.city,
                   addressRegion: "CA",
+                  addressCountry: "US",
                 }
               : undefined,
             geo:
