@@ -67,9 +67,10 @@ export default async function AdminDashboard() {
     db.select({ curatedAccommodations: count() }).from(accommodations).where(eq(accommodations.curated, true)),
     db.select({ totalClicks: count() }).from(outboundClicks),
     db
-      .select({ ym: wineries.spotlightYearMonth, name: wineries.name, slug: wineries.slug })
+      .select({ id: wineries.id, name: wineries.name, slug: wineries.slug, rank: wineries.editorsPickRank })
       .from(wineries)
-      .where(isNotNull(wineries.spotlightYearMonth)),
+      .where(eq(wineries.editorsPick, true))
+      .orderBy(wineries.editorsPickRank),
     db
       .select({ ym: accommodations.spotlightYearMonth, name: accommodations.name, slug: accommodations.slug })
       .from(accommodations)
@@ -110,12 +111,11 @@ export default async function AdminDashboard() {
       .limit(5),
   ]);
 
-  const wineryYmSet = new Set(wineryAssignments.map((w) => w.ym!));
   const accommodationYmSet = new Set(accommodationAssignments.map((a) => a.ym!));
 
   const months = next6Months();
-  const wineryGaps = months.filter((m) => !wineryYmSet.has(m.ym));
   const accommodationGaps = months.filter((m) => !accommodationYmSet.has(m.ym));
+  const editorsPicks = wineryAssignments; // 8 rows ordered by rank
 
   // Combine recent edits, sort by date desc, limit 12
   type Recent = {
@@ -157,51 +157,44 @@ export default async function AdminDashboard() {
               Spotlight gaps
             </span>
             <Link
-              href="/nalaadmin/spotlight"
+              href="/wineries/editors-picks"
               className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
             >
-              Calendar →
+              View →
             </Link>
           </div>
           <h2 className="font-[var(--font-heading)] text-[16px] text-[var(--ink)] mb-3">
-            Next 6 months
+            Editor&apos;s Picks ({editorsPicks.length}/8)
           </h2>
-          {wineryGaps.length === 0 && accommodationGaps.length === 0 ? (
+          {editorsPicks.length === 0 ? (
             <p className="font-[var(--font-serif-text)] text-[14px] text-[var(--ink-2)]">
-              All months covered (manual or auto). Nothing to schedule.
+              No picks set. Run <code>apply-editors-picks-data.ts</code>.
             </p>
           ) : (
-            <div className="space-y-3">
-              {wineryGaps.length > 0 && (
-                <div>
-                  <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-1.5">
-                    Wineries — {wineryGaps.length} unassigned
-                  </p>
-                  <ul className="space-y-1">
-                    {wineryGaps.map((m) => (
-                      <li key={m.ym} className="font-mono text-[12px] text-[var(--ink-2)] flex items-center gap-2">
-                        <AlertCircle className="h-3 w-3 text-[var(--brass)]" />
-                        {m.label} · auto-pick
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {accommodationGaps.length > 0 && (
-                <div>
-                  <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-1.5">
-                    Hotels — {accommodationGaps.length} unassigned
-                  </p>
-                  <ul className="space-y-1">
-                    {accommodationGaps.map((m) => (
-                      <li key={m.ym} className="font-mono text-[12px] text-[var(--ink-2)] flex items-center gap-2">
-                        <AlertCircle className="h-3 w-3 text-[var(--brass)]" />
-                        {m.label} · auto-pick
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            <ul className="space-y-1 mb-4">
+              {editorsPicks.map((p) => (
+                <li key={p.slug} className="font-mono text-[12px] text-[var(--ink-2)] flex items-baseline gap-2">
+                  <span className="text-[var(--ink-3)] tabular-nums w-5 shrink-0">#{p.rank}</span>
+                  <Link href={`/wineries/${p.slug}`} target="_blank" className="text-[var(--ink)] hover:text-[var(--brass-2)] transition-colors truncate">
+                    {p.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {accommodationGaps.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-[var(--rule-soft)]">
+              <p className="font-mono text-[10.5px] tracking-[0.18em] uppercase text-[var(--ink-3)] mb-1.5">
+                Hotel spotlight gaps — {accommodationGaps.length}
+              </p>
+              <ul className="space-y-1">
+                {accommodationGaps.map((m) => (
+                  <li key={m.ym} className="font-mono text-[12px] text-[var(--ink-2)] flex items-center gap-2">
+                    <AlertCircle className="h-3 w-3 text-[var(--brass)]" />
+                    {m.label} · auto-pick
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </section>
@@ -293,9 +286,9 @@ export default async function AdminDashboard() {
 
       {/* Quick navigation row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <NavCard href="/nalaadmin/wineries" title="Manage Wineries" subtitle="Curate, schedule spotlights, write teasers" />
+        <NavCard href="/nalaadmin/wineries" title="Manage Wineries" subtitle="Curate properties, write editor's notes" />
         <NavCard href="/nalaadmin/accommodations" title="Manage Hotels" subtitle="Curate properties, schedule spotlights" />
-        <NavCard href="/nalaadmin/spotlight" title="Spotlight Schedule" subtitle="12-month calendar with click-to-assign" icon={Calendar} />
+        <NavCard href="/wineries/editors-picks" title="Editor's Picks" subtitle="Public rotation of 8 — homepage spotlight cycles weekly" icon={Calendar} />
         <NavCard href="/nalaadmin/analytics" title="Analytics" subtitle="Click tracking, engagement, sponsorship" icon={BarChart3} />
       </div>
     </div>

@@ -17,7 +17,8 @@ export default async function AdminWineriesPage() {
       priceLevel: wineries.priceLevel,
       curated: wineries.curated,
       curatedAt: wineries.curatedAt,
-      spotlightYearMonth: wineries.spotlightYearMonth,
+      editorsPick: wineries.editorsPick,
+      editorsPickRank: wineries.editorsPickRank,
       spotlightTeaser: wineries.spotlightTeaser,
     })
     .from(wineries)

@@ -17,6 +17,7 @@ export interface SpotlightWinery {
   subRegion: string | null;
   valley: string | null;
   spotlightTeaser: string | null;
+  editorsPickRank: number | null;
 }
 
 function poursLabel(priceLevel: number | null): string {
@@ -74,13 +75,13 @@ export function HomepageSpotlight({ winery }: { winery: SpotlightWinery | null }
           style={{ borderColor: "var(--brass-2)" }}
         >
           <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-[var(--brass)] pb-2 whitespace-nowrap">
-            N° 02 / Spotlight
+            {winery.editorsPickRank ? `N° 02 / Editor's Pick · ${winery.editorsPickRank} of 8` : "N° 02 / Editor's Pick"}
           </span>
           <h2
             className="font-[var(--font-heading)] text-[28px] sm:text-[36px] lg:text-[44px] leading-[1.05] tracking-[-0.02em] font-normal text-[var(--paper)] max-w-[20ch]"
             style={{ textWrap: "balance" }}
           >
-            This month&apos;s{" "}
+            This week&apos;s{" "}
             <em
               className="italic font-light"
               style={{ color: "color-mix(in srgb, var(--brass) 70%, white)" }}
@@ -88,12 +89,13 @@ export function HomepageSpotlight({ winery }: { winery: SpotlightWinery | null }
               cellar.
             </em>
           </h2>
-          <p
-            className="text-[15px] leading-[1.5] text-[var(--paper)]/70 pb-1 lg:whitespace-nowrap"
+          <Link
+            href="/wineries/editors-picks"
+            className="text-[15px] leading-[1.5] text-[var(--paper)]/70 pb-1 lg:whitespace-nowrap hover:text-[var(--brass)] transition-colors"
             style={{ fontFamily: "var(--font-serif-text)" }}
           >
-            Hand-picked by the editors, monthly.
-          </p>
+            See all 8 Editor&apos;s Picks →
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 lg:gap-12 mt-10 lg:items-stretch">

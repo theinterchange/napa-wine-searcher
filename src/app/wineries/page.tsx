@@ -198,7 +198,7 @@ const getDirectoryPage = unstable_cache(
         subRegionSlug: subRegions.slug,
         valley: subRegions.valley,
         curated: wineries.curated,
-        spotlightYearMonth: wineries.spotlightYearMonth,
+        editorsPick: wineries.editorsPick,
       })
       .from(wineries)
       .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
@@ -297,12 +297,12 @@ export default async function WineriesPage({
 
   const { total, totalPages, clampedPage, results } = pageData;
 
-  // Compute featured flag: only wineries with a spotlight slot get the
-  // "Featured" badge. `curated` is too broad — it's set on most rows and
-  // also drives ranking, so it can't double as a scarcity signal.
+  // Editor's Pick badge surfaces on the 8 rotation wineries. `curated` is too
+  // broad — it's set on most rows and also drives ranking, so it can't double
+  // as a scarcity signal.
   const resultsWithFeatured = results.map((w) => ({
     ...w,
-    featured: !!w.spotlightYearMonth,
+    editorsPick: !!w.editorsPick,
   }));
 
   const itemListJsonLd = {

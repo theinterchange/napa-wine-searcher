@@ -48,7 +48,13 @@ export const wineries = sqliteTable("wineries", {
   totalRatings: integer("total_ratings").default(0),
   curated: integer("curated", { mode: "boolean" }).default(false),
   curatedAt: text("curated_at"),
-  spotlightYearMonth: text("spotlight_year_month"),
+  // Editor's Pick rotation: 8 wineries flagged with editors_pick=true,
+  // ranked 1-8. Homepage spotlight picks by week-of-year modulo. All 8
+  // carry the badge on cards + detail pages. spotlight_teaser is the
+  // 30-word editorial note rendered by both the homepage spotlight
+  // and the /wineries/editors-picks index page.
+  editorsPick: integer("editors_pick", { mode: "boolean" }).default(false),
+  editorsPickRank: integer("editors_pick_rank"),
   spotlightTeaser: text("spotlight_teaser"),
   whyVisit: text("why_visit"),
   theSetting: text("the_setting"),

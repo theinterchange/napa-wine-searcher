@@ -139,6 +139,7 @@ export default async function WineryDetailPage({
       totalRatings: wineries.totalRatings,
       curated: wineries.curated,
       curatedAt: wineries.curatedAt,
+      editorsPick: wineries.editorsPick,
       lastScrapedAt: wineries.lastScrapedAt,
       updatedAt: wineries.updatedAt,
       heroImageUrl: wineries.heroImageUrl,

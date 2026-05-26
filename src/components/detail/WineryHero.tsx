@@ -33,6 +33,7 @@ interface WineryHeroProps {
   curated: boolean | null;
   curatedAt: string | null;
   reservationRequired: boolean | null;
+  editorsPick?: boolean | null;
 }
 
 function normalizePhotoUrl(url: string): string {
@@ -186,6 +187,16 @@ export function WineryHero({
       )}
 
       <div className="relative mx-auto max-w-5xl px-4 pt-32 sm:pt-40 lg:pt-56 pb-12 sm:pb-16 sm:px-6 lg:px-8">
+        {winery.editorsPick && (
+          <a
+            href="/wineries/editors-picks"
+            className="inline-flex items-center gap-1.5 mb-4 bg-[var(--brass)] px-2.5 py-1 font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-[var(--paper)] hover:bg-[#f0d894] transition-colors"
+            style={{ boxShadow: "0 1px 8px rgba(0,0,0,0.3)" }}
+          >
+            <BadgeCheck className="h-3 w-3" />
+            Editor&apos;s Pick
+          </a>
+        )}
         {(winery.subRegion || winery.valley || winery.city) && (
           <div className="flex items-center gap-2 mb-5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
             <MapPin className="h-3 w-3 text-[#f0d894]" />

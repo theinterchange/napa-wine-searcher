@@ -1063,11 +1063,12 @@ export async function getTopImpressionPages(startDate: DateFilter, limit = 10) {
     .limit(limit);
 }
 
-// ===== Spotlight performance =====
+// ===== Spotlight / Editor's Pick performance =====
 //
-// For each entity that's been spotlighted (winery or accommodation), count the
-// outbound clicks attributed to that entity during its assigned month. Returns
-// the most recent N spotlights with their performance.
+// Editor's Picks (wineries) are surfaced via the weekly homepage rotation;
+// accommodation spotlights still use the legacy monthly assignment. We report
+// editor's pick clicks lifetime-since-rank-set, and accommodation spotlights
+// for their assigned month.
 
 export async function getSpotlightPerformance(limit = 24) {
   const wineryRows = await db
@@ -1076,11 +1077,12 @@ export async function getSpotlightPerformance(limit = 24) {
       id: wineries.id,
       slug: wineries.slug,
       name: wineries.name,
-      yearMonth: wineries.spotlightYearMonth,
+      yearMonth: sql<string | null>`NULL`.as("yearMonth"),
+      editorsPickRank: wineries.editorsPickRank,
     })
     .from(wineries)
-    .where(isNotNull(wineries.spotlightYearMonth))
-    .orderBy(desc(wineries.spotlightYearMonth));
+    .where(eq(wineries.editorsPick, true))
+    .orderBy(wineries.editorsPickRank);
 
   const accommodationRows = await db
     .select({
@@ -1089,22 +1091,35 @@ export async function getSpotlightPerformance(limit = 24) {
       slug: accommodations.slug,
       name: accommodations.name,
       yearMonth: accommodations.spotlightYearMonth,
+      editorsPickRank: sql<number | null>`NULL`.as("editorsPickRank"),
     })
     .from(accommodations)
     .where(isNotNull(accommodations.spotlightYearMonth))
     .orderBy(desc(accommodations.spotlightYearMonth));
 
-  const all = [...wineryRows, ...accommodationRows]
-    .filter((r) => r.yearMonth != null)
-    .sort((a, b) => (b.yearMonth! > a.yearMonth! ? 1 : b.yearMonth! < a.yearMonth! ? -1 : 0))
-    .slice(0, limit);
+  const all = [...wineryRows, ...accommodationRows].slice(0, limit);
 
-  // For each spotlight, count clicks during its assigned month.
+  // Click attribution windows:
+  //  - Editor's pick wineries: lifetime clicks (no month boundary — the
+  //    pick is durable, rotated only by week-of-year, no per-month scope).
+  //  - Legacy accommodation spotlights: clicks within their assigned month.
   const enriched = await Promise.all(
     all.map(async (s) => {
-      const ym = s.yearMonth!;
+      const baseEq =
+        s.kind === "winery"
+          ? eq(outboundClicks.wineryId, s.id)
+          : eq(outboundClicks.accommodationId, s.id);
+
+      if (s.kind === "winery" || s.yearMonth == null) {
+        const [row] = await db
+          .select({ total: count() })
+          .from(outboundClicks)
+          .where(baseEq);
+        return { ...s, clicks: row.total };
+      }
+
+      const ym = s.yearMonth;
       const monthStart = `${ym}-01T00:00:00.000Z`;
-      // First day of the next month.
       const [yStr, mStr] = ym.split("-");
       const y = parseInt(yStr, 10);
       const m = parseInt(mStr, 10);
@@ -1112,17 +1127,16 @@ export async function getSpotlightPerformance(limit = 24) {
       const nextM = m === 12 ? 1 : m + 1;
       const monthEnd = `${nextY}-${String(nextM).padStart(2, "0")}-01T00:00:00.000Z`;
 
-      const conditions =
-        s.kind === "winery"
-          ? [eq(outboundClicks.wineryId, s.id)]
-          : [eq(outboundClicks.accommodationId, s.id)];
-      conditions.push(gte(outboundClicks.createdAt, monthStart));
-      conditions.push(sql`${outboundClicks.createdAt} < ${monthEnd}`);
-
       const [row] = await db
         .select({ total: count() })
         .from(outboundClicks)
-        .where(and(...conditions));
+        .where(
+          and(
+            baseEq,
+            gte(outboundClicks.createdAt, monthStart),
+            sql`${outboundClicks.createdAt} < ${monthEnd}`
+          )
+        );
 
       return { ...s, clicks: row.total };
     })

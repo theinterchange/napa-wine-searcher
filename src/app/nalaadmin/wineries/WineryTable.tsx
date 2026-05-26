@@ -13,7 +13,6 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
-import { SpotlightMonthPicker } from "../_components/SpotlightMonthPicker";
 
 interface WineryRow {
   id: number;
@@ -27,15 +26,9 @@ interface WineryRow {
   priceLevel: number | null;
   curated: boolean | null;
   curatedAt: string | null;
-  spotlightYearMonth: string | null;
+  editorsPick: boolean | null;
+  editorsPickRank: number | null;
   spotlightTeaser: string | null;
-}
-
-const YEAR_MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
-
-function currentYearMonth(): string {
-  const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 type SortKey = "name" | "rating" | "reviews" | "price" | "curated";
@@ -45,8 +38,7 @@ type CurationFilter =
   | "curated"
   | "not-curated"
   | "missing-teaser"
-  | "has-spotlight"
-  | "spotlight-this-month";
+  | "editors-pick";
 
 export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
   const searchParams = useSearchParams();
@@ -60,7 +52,6 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [valley, setValley] = useState<"all" | "napa" | "sonoma">("all");
   const [curationFilter, setCurationFilter] = useState<CurationFilter>("all");
-  const thisMonth = currentYearMonth();
 
   const filtered = useMemo(() => {
     let result = data;
@@ -87,11 +78,8 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
       case "missing-teaser":
         result = result.filter((w) => !w.spotlightTeaser);
         break;
-      case "has-spotlight":
-        result = result.filter((w) => !!w.spotlightYearMonth);
-        break;
-      case "spotlight-this-month":
-        result = result.filter((w) => w.spotlightYearMonth === thisMonth);
+      case "editors-pick":
+        result = result.filter((w) => !!w.editorsPick);
         break;
     }
 
@@ -106,7 +94,7 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
       }
       return sortDir === "desc" ? -cmp : cmp;
     });
-  }, [data, search, valley, curationFilter, sortKey, sortDir, thisMonth]);
+  }, [data, search, valley, curationFilter, sortKey, sortDir]);
 
   // Scroll to highlighted row + flash
   useEffect(() => {
@@ -136,58 +124,6 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
       const res = await fetch(`/api/admin/wineries/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ curated: !current }) });
       if (!res.ok) setData((prev) => prev.map((w) => w.id === id ? { ...w, curated: current } : w));
     });
-  }
-
-  async function setSpotlightMonth(id: number, next: string | null) {
-    if (next !== null && !YEAR_MONTH_RE.test(next)) return;
-
-    // If reassigning a month already taken by another winery, unassign that one first locally.
-    const collidingId = next
-      ? data.find((w) => w.id !== id && w.spotlightYearMonth === next)?.id ?? null
-      : null;
-
-    const previous = data.find((w) => w.id === id)?.spotlightYearMonth ?? null;
-    const previousColliding = collidingId
-      ? data.find((w) => w.id === collidingId)?.spotlightYearMonth ?? null
-      : null;
-
-    setData((prev) =>
-      prev.map((w) => {
-        if (w.id === id) return { ...w, spotlightYearMonth: next };
-        if (collidingId && w.id === collidingId) return { ...w, spotlightYearMonth: null };
-        return w;
-      })
-    );
-
-    const res = await fetch(`/api/admin/wineries/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spotlightYearMonth: next }),
-    });
-
-    if (!res.ok) {
-      setData((prev) =>
-        prev.map((w) => {
-          if (w.id === id) return { ...w, spotlightYearMonth: previous };
-          if (collidingId && w.id === collidingId) return { ...w, spotlightYearMonth: previousColliding };
-          return w;
-        })
-      );
-      return;
-    }
-
-    if (collidingId) {
-      const colRes = await fetch(`/api/admin/wineries/${collidingId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ spotlightYearMonth: null }),
-      });
-      if (!colRes.ok) {
-        setData((prev) =>
-          prev.map((w) => (w.id === collidingId ? { ...w, spotlightYearMonth: previousColliding } : w))
-        );
-      }
-    }
   }
 
   const [editingTeaser, setEditingTeaser] = useState<number | null>(null);
@@ -234,16 +170,8 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
   const curatedCount = data.filter((w) => w.curated).length;
   const filteredCurated = filtered.filter((w) => w.curated).length;
   const missingTeaserCount = data.filter((w) => !w.spotlightTeaser).length;
-  const spotlightCount = data.filter((w) => !!w.spotlightYearMonth).length;
-  const thisMonthCount = data.filter((w) => w.spotlightYearMonth === thisMonth).length;
+  const editorsPickCount = data.filter((w) => !!w.editorsPick).length;
 
-  const occupiedMonths = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const w of data) {
-      if (w.spotlightYearMonth) map[w.spotlightYearMonth] = w.name;
-    }
-    return map;
-  }, [data]);
   const avgRating = filtered.length > 0
     ? (filtered.reduce((s, w) => s + (w.googleRating || 0), 0) / filtered.length).toFixed(2)
     : "—";
@@ -318,14 +246,9 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
           label={`Missing teaser · ${missingTeaserCount}`}
         />
         <FilterChip
-          active={curationFilter === "has-spotlight"}
-          onClick={() => setCurationFilter("has-spotlight")}
-          label={`Has spotlight · ${spotlightCount}`}
-        />
-        <FilterChip
-          active={curationFilter === "spotlight-this-month"}
-          onClick={() => setCurationFilter("spotlight-this-month")}
-          label={`This month (${thisMonth}) · ${thisMonthCount}`}
+          active={curationFilter === "editors-pick"}
+          onClick={() => setCurationFilter("editors-pick")}
+          label={`Editor's Pick · ${editorsPickCount}/8`}
         />
       </div>
 
@@ -346,8 +269,8 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
                 <th className="text-center px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]">
                   <button onClick={() => handleSort("curated")} className="flex items-center gap-1 mx-auto hover:text-[var(--brass-2)]">Curated <SortIcon col="curated" /></button>
                 </th>
-                <th className="text-left px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]">Spotlight</th>
-                <th className="text-left px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]" style={{ minWidth: "300px" }}>Teaser</th>
+                <th className="text-left px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]">Editor&apos;s Pick</th>
+                <th className="text-left px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]" style={{ minWidth: "300px" }}>Editor&apos;s note</th>
                 <th className="text-left px-3 py-3 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)]">Location</th>
                 <th className="text-left px-3 py-3"><button onClick={() => handleSort("rating")} className="flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:text-[var(--brass-2)]">Rating <SortIcon col="rating" /></button></th>
                 <th className="text-left px-3 py-3"><button onClick={() => handleSort("reviews")} className="flex items-center gap-1 font-mono text-[10.5px] tracking-[0.18em] uppercase font-semibold text-[var(--ink)] hover:text-[var(--brass-2)]">Reviews <SortIcon col="reviews" /></button></th>
@@ -378,12 +301,16 @@ export function WineryTable({ wineries }: { wineries: WineryRow[] }) {
                     </button>
                   </td>
                   <td className="px-3 py-3">
-                    <SpotlightMonthPicker
-                      current={w.spotlightYearMonth}
-                      occupied={occupiedMonths}
-                      ownerName={w.name}
-                      onSelect={(ym) => setSpotlightMonth(w.id, ym)}
-                    />
+                    {w.editorsPick && w.editorsPickRank != null ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[10px] tracking-[0.14em] uppercase font-semibold bg-[var(--brass)] text-[var(--paper)]">
+                        <BadgeCheck className="h-3 w-3" />
+                        #{w.editorsPickRank} of 8
+                      </span>
+                    ) : (
+                      <span className="font-mono text-[10px] tracking-[0.14em] uppercase text-[var(--ink-3)]">
+                        —
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-3 align-top">
                     {editingTeaser === w.id ? (

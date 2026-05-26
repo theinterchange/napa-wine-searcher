@@ -77,6 +77,16 @@ function currentYearMonth(): string {
   return `${y}-${m}`;
 }
 
+// Week-of-year (1–53, ISO-ish). The exact algorithm doesn't matter for
+// correctness — we just need a stable monotonic-ish integer that advances
+// once per week so the homepage rotates through the 8 picks deterministically.
+function currentWeekIndex(): number {
+  const now = new Date();
+  const start = Date.UTC(now.getUTCFullYear(), 0, 1);
+  const diff = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start;
+  return Math.floor(diff / (7 * 24 * 60 * 60 * 1000));
+}
+
 const SPOTLIGHT_WINERY_FIELDS = {
   id: wineries.id,
   slug: wineries.slug,
@@ -93,33 +103,22 @@ const SPOTLIGHT_WINERY_FIELDS = {
   subRegion: subRegions.name,
   valley: subRegions.valley,
   spotlightTeaser: wineries.spotlightTeaser,
+  editorsPickRank: wineries.editorsPickRank,
 } as const;
 
 async function getSpotlightWinery(): Promise<SpotlightWinery | null> {
-  // Step 1 — manual override: a winery explicitly assigned to the current month.
-  const ym = currentYearMonth();
-  const [override] = await db
+  // Editor's Pick rotation: pull all 8 picks ordered by rank, then pick
+  // (weekIndex % count) so the homepage cycles through them weekly.
+  const picks = await db
     .select(SPOTLIGHT_WINERY_FIELDS)
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .where(eq(wineries.spotlightYearMonth, ym))
-    .limit(1);
+    .where(and(eq(wineries.editorsPick, true), isNotNull(wineries.editorsPickRank)))
+    .orderBy(wineries.editorsPickRank);
 
-  if (override) return override as SpotlightWinery;
-
-  // Step 2 — auto-rotation fallback over curated pool.
-  const candidates = await db
-    .select(SPOTLIGHT_WINERY_FIELDS)
-    .from(wineries)
-    .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .where(and(eq(wineries.curated, true), isNotNull(wineries.heroImageUrl)))
-    .orderBy(wineryRankingDesc)
-    .limit(20);
-
-  if (candidates.length === 0) return null;
-  const now = new Date();
-  const monthIdx = now.getUTCMonth() + now.getUTCFullYear() * 12;
-  return (candidates[monthIdx % candidates.length] ?? null) as SpotlightWinery | null;
+  if (picks.length === 0) return null;
+  const idx = currentWeekIndex() % picks.length;
+  return picks[idx];
 }
 
 const SPOTLIGHT_ACCOMMODATION_FIELDS = {
