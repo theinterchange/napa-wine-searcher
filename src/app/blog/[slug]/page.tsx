@@ -159,33 +159,70 @@ export default async function BlogPostPage({
     inLanguage: "en-US",
   };
 
-  const eventJsonLd = post.event
-    ? {
-        "@context": "https://schema.org",
-        "@type": post.event.eventType || "Event",
-        name: post.event.name,
-        startDate: post.event.startDate,
-        endDate: post.event.endDate,
-        eventStatus: "https://schema.org/EventScheduled",
-        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-        location: {
-          "@type": "Place",
-          name: post.event.locationName,
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: post.event.locationAddress,
-            addressLocality: post.event.locationCity,
-            addressRegion: post.event.locationRegion || "CA",
-            ...(post.event.locationPostal && {
-              postalCode: post.event.locationPostal,
-            }),
-            addressCountry: "US",
-          },
+  // Event JSON-LD with all GSC-recommended "Improve item appearance" fields
+  // populated via sensible fallbacks. Frontmatter can override any of these.
+  // Fields filled here: image (→ post.heroImage), description (→ post.description),
+  // organizer (→ event name as Organization), performer (→ "Various Artists" for
+  // MusicEvent), offers (→ ticketUrl/url + status based on event date).
+  const eventJsonLd = (() => {
+    const e = post.event;
+    if (!e) return null;
+
+    const isMusic = (e.eventType || "Event") === "MusicEvent";
+    const imageUrl = e.image ?? (post.heroImage ? `${BASE_URL}${post.heroImage}` : undefined);
+    const description = e.description ?? post.description;
+    const ticketUrl = e.ticketUrl ?? e.url;
+
+    // Status reflects current time vs. event window.
+    const now = new Date();
+    const ended = new Date(e.endDate) < now;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": e.eventType || "Event",
+      name: e.name,
+      startDate: e.startDate,
+      endDate: e.endDate,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      ...(description && { description }),
+      ...(imageUrl && { image: imageUrl }),
+      location: {
+        "@type": "Place",
+        name: e.locationName,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: e.locationAddress,
+          addressLocality: e.locationCity,
+          addressRegion: e.locationRegion || "CA",
+          ...(e.locationPostal && { postalCode: e.locationPostal }),
+          addressCountry: "US",
         },
-        ...(post.event.url && { url: post.event.url }),
-        ...(post.event.image && { image: post.event.image }),
-      }
-    : null;
+      },
+      ...(e.url && { url: e.url }),
+      organizer: {
+        "@type": "Organization",
+        name: e.organizer ?? e.name,
+        ...(e.url && { url: e.url }),
+      },
+      // MusicEvent requires performer; non-music events also benefit from it.
+      // "Various Artists" is honest for festivals with rotating lineups.
+      performer: {
+        "@type": isMusic ? "MusicGroup" : "PerformingGroup",
+        name: e.performer ?? "Various Artists",
+      },
+      ...(ticketUrl && {
+        offers: {
+          "@type": "Offer",
+          url: ticketUrl,
+          availability: ended
+            ? "https://schema.org/SoldOut"
+            : "https://schema.org/InStock",
+          validFrom: post.date,
+        },
+      }),
+    };
+  })();
 
   return (
     <>

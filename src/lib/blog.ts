@@ -14,6 +14,14 @@ export interface BlogPostEvent {
   locationPostal?: string;
   url?: string;
   image?: string;
+  /** Optional override for the JSON-LD description; falls back to post.description. */
+  description?: string;
+  /** MusicEvent performer name(s). Falls back to "Various Artists" when unset. */
+  performer?: string;
+  /** Organization that runs the event. Falls back to the event name. */
+  organizer?: string;
+  /** Ticket / registration URL (used to build the Offer). Falls back to event.url. */
+  ticketUrl?: string;
 }
 
 export interface BlogPost {
