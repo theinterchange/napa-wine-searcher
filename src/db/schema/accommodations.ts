@@ -76,6 +76,8 @@ export const accommodations = sqliteTable(
     curatedAt: text("curated_at"),
     spotlightYearMonth: text("spotlight_year_month"),
     spotlightTeaser: text("spotlight_teaser"),
+    tier: text("tier").default("free"),
+    tierUpdatedAt: integer("tier_updated_at"),
     updatedAt: text("updated_at"),
   },
   (t) => [
@@ -120,5 +122,9 @@ export const accommodationNearbyWineries = sqliteTable(
   },
   (t) => [
     primaryKey({ columns: [t.accommodationId, t.wineryId] }),
+    // Reverse-lookup index: the composite PK only serves accommodation_id-first
+    // queries. "Which hotels are near this winery?" filters on winery_id alone
+    // (trip planner + /near pages) and would otherwise full-scan the table.
+    index("idx_anw_winery_id").on(t.wineryId),
   ]
 );
