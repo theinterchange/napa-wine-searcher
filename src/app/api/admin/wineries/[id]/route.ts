@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { wineries } from "@/db/schema";
@@ -41,6 +42,12 @@ export async function PATCH(
   }
 
   await db.update(wineries).set(updates).where(eq(wineries.id, wineryId));
+
+  // Hero carousel pulls from `curated`; flip it and the homepage should
+  // reflect it on the very next visit, not 24h from now.
+  if ("curated" in updates) {
+    revalidatePath("/");
+  }
 
   return NextResponse.json({ ok: true });
 }

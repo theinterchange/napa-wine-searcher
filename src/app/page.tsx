@@ -48,7 +48,9 @@ export const metadata: Metadata = {
 };
 
 async function getFeaturedWineries() {
-  const top = await db
+  // Hero pool = every curated winery with a hero image. The admin "Curated"
+  // toggle at /nalaadmin/wineries is the live control over this set.
+  const pool = await db
     .select({
       slug: wineries.slug,
       name: wineries.name,
@@ -59,15 +61,13 @@ async function getFeaturedWineries() {
     })
     .from(wineries)
     .leftJoin(subRegions, eq(wineries.subRegionId, subRegions.id))
-    .where(eq(wineries.curated, true))
-    .orderBy(wineryRankingDesc)
-    .limit(10);
+    .where(and(eq(wineries.curated, true), isNotNull(wineries.heroImageUrl)));
 
-  for (let i = top.length - 1; i > 0; i--) {
+  for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [top[i], top[j]] = [top[j], top[i]];
+    [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  return top.slice(0, 5);
+  return pool.slice(0, 5);
 }
 
 function currentYearMonth(): string {
