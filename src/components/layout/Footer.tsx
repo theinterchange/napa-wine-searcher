@@ -63,6 +63,7 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-[var(--ink-3)]">
             <p>&copy; {new Date().getFullYear()} Napa Sonoma Guide.</p>
             <div className="flex items-center gap-5 font-mono text-[10.5px] tracking-[0.18em] uppercase">
+              <a href="mailto:info@napasonomaguide.com" className="hover:text-[var(--ink)] transition-colors">Contact</a>
               <Link href="/privacy" className="hover:text-[var(--ink)] transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-[var(--ink)] transition-colors">Terms</Link>
               <ThemeToggle />
