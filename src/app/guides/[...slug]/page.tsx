@@ -85,8 +85,7 @@ async function getGuideData(guide: GuideDefinition) {
       wineries: await getWineriesByVarietal(
         guide.varietal,
         guide.valley,
-        guide.subRegionSlug,
-        guide.varietalGroup
+        guide.subRegionSlug
       ),
     };
   }
