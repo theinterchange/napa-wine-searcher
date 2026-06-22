@@ -14,6 +14,7 @@ import {
 } from "@/lib/guide-content";
 import { AddToTripButton } from "@/components/trip/AddToTripButton";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { GuideHotelInline } from "@/components/guide/GuideHotelInline";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import {
   getWineriesByAmenity,
@@ -84,7 +85,8 @@ async function getGuideData(guide: GuideDefinition) {
       wineries: await getWineriesByVarietal(
         guide.varietal,
         guide.valley,
-        guide.subRegionSlug
+        guide.subRegionSlug,
+        guide.varietalGroup
       ),
     };
   }
@@ -284,6 +286,12 @@ export default async function GuidePage({
   const wineries = "wineries" in data ? (data.wineries as WineryCardProps[]) : [];
 
   const guideValley = guide.valley;
+  const valleyLabel =
+    guideValley === "napa"
+      ? "Napa Valley"
+      : guideValley === "sonoma"
+        ? "Sonoma County"
+        : "wine country";
   const accommodations = guideValley
     ? allAccommodations.filter((a) => a.valley === guideValley).slice(0, 3)
     : allAccommodations.slice(0, 3);
@@ -474,6 +482,15 @@ export default async function GuidePage({
               </div>
             )}
           </div>
+        )}
+
+        {/* Inline hotel CTA — high-intent revenue moment, just after the winery list */}
+        {wineries.length > 0 && accommodations.length > 0 && (
+          <GuideHotelInline
+            accommodation={accommodations[0]}
+            valleyLabel={valleyLabel}
+            sourcePage={`/guides/${guide.slug}`}
+          />
         )}
 
         {/* Plan Your Visit CTA */}
