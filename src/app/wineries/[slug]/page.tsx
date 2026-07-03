@@ -22,7 +22,7 @@ import { FAQSection } from "@/components/region/FAQSection";
 import { getMoreWineriesInRegion } from "@/lib/region-data";
 import { getAccommodationsNearWinery } from "@/lib/accommodation-data";
 import { NearbyAccommodations } from "@/components/accommodation/NearbyAccommodations";
-import { HotelDriveTimes } from "@/components/detail/HotelDriveTimes";
+import { WineryHotelInline } from "@/components/accommodation/WineryHotelInline";
 import { wineryWinesUrl } from "@/lib/affiliate";
 import { TrackedLink } from "@/components/monetization/TrackedLink";
 import { MobileBookingBar } from "@/components/monetization/MobileBookingBar";
@@ -717,25 +717,20 @@ export default async function WineryDetailPage({
       {nearbyAccommodations.length > 0 && (
         <section className="border-t border-[var(--border)] bg-[var(--muted)]/30">
           <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-            <NearbyAccommodations
-              accommodations={nearbyAccommodations}
-              title="Where to Stay Nearby"
-              valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
-            />
-          </div>
-        </section>
-      )}
-
-      {(winery.valley === "napa" || winery.valley === "sonoma") && winery.lat != null && winery.lng != null && (
-        <section className="border-t border-[var(--border)]">
-          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-            <HotelDriveTimes
-              wineryLat={winery.lat}
-              wineryLng={winery.lng}
+            {/* Lead with the single "Book nearest hotel" band (the converting
+                format); the card grid below is for browsing more options. */}
+            <WineryHotelInline
+              accommodation={nearbyAccommodations[0]}
               wineryName={winery.name}
-              valley={winery.valley}
               winerySlug={winery.slug}
             />
+            <div className="mt-8">
+              <NearbyAccommodations
+                accommodations={nearbyAccommodations}
+                title="Where to Stay Nearby"
+                valley={winery.valley === "napa" ? "napa" : winery.valley === "sonoma" ? "sonoma" : undefined}
+              />
+            </div>
           </div>
         </section>
       )}
