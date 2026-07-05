@@ -67,11 +67,21 @@ export async function getWineriesByAmenity(
 export async function getWineriesByVarietal(
   varietalName: string,
   valley?: "napa" | "sonoma",
-  subRegionSlug?: string
+  subRegionSlug?: string,
+  // For grouped varietals (e.g. Sparkling Wine → Brut, Blanc de Blancs,
+  // Sparkling Rosé). When provided, match any of these wine_type names
+  // instead of the single display varietal.
+  varietalGroup?: string[]
 ) {
   const conditions = [];
   if (valley) conditions.push(eq(subRegions.valley, valley));
   if (subRegionSlug) conditions.push(eq(subRegions.slug, subRegionSlug));
+
+  // Names to match against wine_types.name (case-insensitive).
+  const matchNames = (varietalGroup && varietalGroup.length > 0
+    ? varietalGroup
+    : [varietalName]
+  ).map((n) => n.toLowerCase());
 
   // Subquery: count of wines matching this varietal per winery
   const varietalCount = db
@@ -81,7 +91,12 @@ export async function getWineriesByVarietal(
     })
     .from(wines)
     .innerJoin(wineTypes, eq(wines.wineTypeId, wineTypes.id))
-    .where(sql`LOWER(${wineTypes.name}) = LOWER(${varietalName})`)
+    .where(
+      sql`LOWER(${wineTypes.name}) IN (${sql.join(
+        matchNames.map((n) => sql`${n}`),
+        sql`, `
+      )})`
+    )
     .groupBy(wines.wineryId)
     .as("vc");
 

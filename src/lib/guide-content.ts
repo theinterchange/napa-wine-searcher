@@ -15,6 +15,10 @@ export interface GuideDefinition {
   // Filters used by the data layer
   amenity?: "dogFriendly" | "kidFriendly" | "picnicFriendly" | "walkIn";
   varietal?: string;
+  // For varietals that span multiple wine_type names (e.g. Sparkling Wine =
+  // Brut + Blanc de Blancs + Sparkling Rosé). When set, the data layer
+  // matches any of these names instead of the display varietal.
+  varietalGroup?: string[];
   priceTier?: "free" | "budget" | "mid" | "luxury";
   wineMaxPrice?: number;
   valley?: "napa" | "sonoma";
@@ -192,6 +196,14 @@ const VARIETAL_INTROS: Record<string, (region: string) => string[]> = {
     `Syrah in ${region} produces bold, peppery wines with dark fruit, smoked meat, and a savory complexity that sets it apart from the region's more common varietals. Thriving in both warm hillside vineyards and cooler coastal sites, Syrah rewards adventurous tasters with some of wine country's most exciting and underappreciated bottles.`,
     `The wineries below are ${region}'s standout Syrah producers — explore them for an alternative to the Cabernet and Pinot mainstream.`,
   ],
+  "Sparkling Wine": (region) => [
+    `${region} is serious sparkling-wine country. Cool, fog-touched sites — Carneros above all — give the high-acid Chardonnay and Pinot Noir that méthode champenoise demands, and the houses below craft everything from crisp Blanc de Blancs to toasty, age-worthy tête de cuvée.`,
+    `Expect dedicated sparkling specialists alongside still-wine estates that keep a few cuvées on the books. Many pair their bubbles with caviar or a terrace view, so a sparkling tasting here is as much an occasion as a flight — explore the producers below.`,
+  ],
+  "White Blend": (region) => [
+    `White blends are ${region}'s quiet overachievers — Rhône-style Marsanne-Roussanne, Bordeaux Sauvignon Blanc-Sémillon, and inventive field blends that let a winemaker balance aromatics, texture, and acidity in ways a single grape can't.`,
+    `Often the most food-friendly and best-value whites in the tasting room, these blends reward the curious. The wineries below are ${region}'s standout white-blend producers.`,
+  ],
 };
 
 function getVarietalIntro(varietal: string, region: string): string[] {
@@ -326,7 +338,15 @@ const VARIETALS = [
   "Rosé",
   "Cabernet Franc",
   "Syrah",
+  "White Blend",
+  "Sparkling Wine",
 ];
+
+// Display varietals that map to multiple wine_type names in the data.
+// "Sparkling Wine" has no single wine_type — it spans these three.
+const VARIETAL_GROUPS: Record<string, string[]> = {
+  "Sparkling Wine": ["Brut", "Blanc de Blancs", "Sparkling Rosé"],
+};
 
 export function getAllGuides(): GuideDefinition[] {
   const guides: GuideDefinition[] = [];
@@ -394,6 +414,7 @@ export function getAllGuides(): GuideDefinition[] {
           },
         ],
         varietal,
+        varietalGroup: VARIETAL_GROUPS[varietal],
         valley: valley.key,
       });
     }
@@ -416,6 +437,7 @@ export function getAllGuides(): GuideDefinition[] {
         intro: getVarietalIntro(varietal, region),
         faqs: [],
         varietal,
+        varietalGroup: VARIETAL_GROUPS[varietal],
         valley: sr.valley,
         subRegionSlug: sr.slug,
       });
