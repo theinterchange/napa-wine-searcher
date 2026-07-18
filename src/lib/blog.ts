@@ -29,6 +29,10 @@ export interface BlogPost {
   title: string;
   description: string;
   date: string;
+  /** Optional ISO date of the last meaningful revision. When set, drives the
+   *  visible "Updated …" label (card + byline) and JSON-LD dateModified, while
+   *  `date` stays the honest original publish date. */
+  updated?: string;
   author: string;
   tags: string[];
   heroImage: string;
@@ -52,6 +56,7 @@ function readAllPosts(): BlogPost[] {
         title: data.title ?? "",
         description: data.description ?? "",
         date: data.date ?? "",
+        updated: (data.updated as string | undefined) || undefined,
         author: data.author ?? "Napa Sonoma Guide",
         tags: data.tags ?? [],
         heroImage: data.heroImage ?? "",

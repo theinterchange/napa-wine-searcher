@@ -48,6 +48,7 @@ export async function generateMetadata({
       siteName: "Napa Sonoma Guide",
       type: "article",
       publishedTime: post.date,
+      modifiedTime: post.updated ?? post.date,
       authors: [post.author],
       tags: post.tags,
       ...(post.heroImage && {
@@ -144,6 +145,7 @@ export default async function BlogPostPage({
     description: post.description,
     image: post.heroImage ? `${BASE_URL}${post.heroImage}` : undefined,
     datePublished: post.date,
+    dateModified: post.updated ?? post.date,
     url: `${BASE_URL}/blog/${post.slug}`,
     mainEntityOfPage: `${BASE_URL}/blog/${post.slug}`,
     author: {

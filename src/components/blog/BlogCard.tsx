@@ -3,7 +3,9 @@ import Image from "next/image";
 import type { BlogPost } from "@/lib/blog";
 
 export function BlogCard({ post }: { post: BlogPost }) {
-  const dateStr = new Date(post.date).toLocaleDateString("en-US", {
+  const displayDate = post.updated ?? post.date;
+  const datePrefix = post.updated ? "Updated " : "";
+  const dateStr = new Date(displayDate).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -34,7 +36,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
       <div className="flex flex-col flex-1 p-5">
         <span className="kicker">
           {firstTag} ·{" "}
-          <time dateTime={post.date}>{dateStr}</time>
+          <time dateTime={displayDate}>{datePrefix}{dateStr}</time>
         </span>
 
         <hr className="rule-brass mt-3" />

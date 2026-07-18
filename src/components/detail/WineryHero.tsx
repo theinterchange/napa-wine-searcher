@@ -126,7 +126,7 @@ export function WineryHero({
 
   return (
     <div
-      className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white overflow-hidden touch-pan-y"
+      className="relative bg-burgundy-900 dark:bg-burgundy-950 text-white overflow-hidden touch-pan-y min-h-[420px] sm:min-h-[520px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={onTouchStart}

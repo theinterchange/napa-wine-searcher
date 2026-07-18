@@ -16,7 +16,9 @@ export function BlogArticle({
   children: React.ReactNode;
 }) {
   const readTime = estimateReadTime(post.content);
-  const dateFormatted = new Date(post.date).toLocaleDateString("en-US", {
+  const displayDate = post.updated ?? post.date;
+  const datePrefix = post.updated ? "Updated " : "";
+  const dateFormatted = new Date(displayDate).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -55,7 +57,7 @@ export function BlogArticle({
       {/* Header */}
       <header className="mb-10">
         <span className="kicker">
-          {primaryTag} · <time dateTime={post.date}>{dateFormatted}</time> · {readTime} min · {post.author}
+          {primaryTag} · <time dateTime={displayDate}>{datePrefix}{dateFormatted}</time> · {readTime} min · {post.author}
         </span>
         <h1
           className="editorial-h2 text-[36px] sm:text-[48px] lg:text-[54px] mt-3"
