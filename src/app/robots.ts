@@ -6,7 +6,12 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        // Narrow exception: the read-only weekly analytics report is token-gated
+        // (see src/app/api/cron/weekly-stats/route.ts) and needs to be fetchable
+        // by Claude's scheduled weekly-checkup task, which respects robots.txt.
+        // Without the correct token the endpoint returns 401 regardless of
+        // crawler — allowing the path here does not expose any data.
+        allow: ["/", "/api/cron/weekly-stats"],
         disallow: [
           "/api/",
           "/profile",
