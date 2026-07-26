@@ -597,6 +597,24 @@ export function getAllGuides(): GuideDefinition[] {
     });
   }
 
+  // Per-slug SEO overrides (title/metaDescription only) for CTR testing.
+  // Scoped to individual slugs so the shared varietal template — which also
+  // governs top-performing pages like best-pinot-noir-napa-valley — is untouched.
+  const SEO_OVERRIDES: Record<string, { title?: string; metaDescription?: string }> = {
+    "best-pinot-noir-sonoma-county": {
+      title: "15 Best Pinot Noir Wineries in Sonoma County (2026 Guide)",
+      metaDescription:
+        "Where to taste standout Sonoma County Pinot Noir — top Russian River, Sonoma Coast & Carneros producers, tasting fees, and how to book. Updated 2026.",
+    },
+  };
+  for (const g of guides) {
+    const o = SEO_OVERRIDES[g.slug];
+    if (o) {
+      if (o.title) g.title = o.title;
+      if (o.metaDescription) g.metaDescription = o.metaDescription;
+    }
+  }
+
   return guides;
 }
 
