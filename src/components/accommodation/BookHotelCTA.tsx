@@ -3,6 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import { TrackedLink } from "../monetization/TrackedLink";
 import { hotelBookingUrl } from "@/lib/affiliate";
+import { useDefaultStayDates } from "@/lib/use-stay-dates";
 
 interface BookHotelCTAProps {
   bookingUrl: string | null;
@@ -31,11 +32,12 @@ export function BookHotelCTA({
   size = "md",
   label = "Book Now" as React.ReactNode,
 }: BookHotelCTAProps) {
+  const stayDates = useDefaultStayDates();
   const stay22 =
     accommodationName && lat && lng
       ? { name: accommodationName, lat, lng }
       : undefined;
-  const href = hotelBookingUrl(bookingUrl, websiteUrl, stay22);
+  const href = hotelBookingUrl(bookingUrl, websiteUrl, stay22, stayDates);
   if (!href) return null;
 
   const sizeClasses = {

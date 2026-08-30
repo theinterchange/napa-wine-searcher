@@ -3,6 +3,7 @@
 import { CalendarCheck, ExternalLink } from "lucide-react";
 import { TrackedLink } from "./TrackedLink";
 import { hotelBookingUrl } from "@/lib/affiliate";
+import { useDefaultStayDates } from "@/lib/use-stay-dates";
 
 type WineryProps = {
   kind: "winery";
@@ -28,6 +29,7 @@ type HotelProps = {
 type Props = WineryProps | HotelProps;
 
 export function MobileBookingBar(props: Props) {
+  const stayDates = useDefaultStayDates();
   let href: string | null = null;
   let clickType: "book_tasting" | "book_hotel";
   let sourcePage: string | undefined;
@@ -59,7 +61,7 @@ export function MobileBookingBar(props: Props) {
       props.accommodationName && props.lat && props.lng
         ? { name: props.accommodationName, lat: props.lat, lng: props.lng }
         : undefined;
-    href = hotelBookingUrl(props.bookingUrl, props.websiteUrl, stay22);
+    href = hotelBookingUrl(props.bookingUrl, props.websiteUrl, stay22, stayDates);
     if (!href) return null;
     clickType = "book_hotel";
     accommodationId = props.accommodationId;

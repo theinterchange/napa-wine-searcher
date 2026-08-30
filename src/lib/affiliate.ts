@@ -19,6 +19,10 @@ export function wineSearchUrl(
   return url.toString();
 }
 
+/** Optional pre-filled stay dates (YYYY-MM-DD) forwarded to the OTA so the
+ * user lands on a priced, bookable result instead of an empty date picker. */
+export type StayDates = { checkin: string; checkout: string };
+
 /**
  * Build a Stay22 Allez deep link for a specific property.
  * Returns null when the affiliate ID env var is not set.
@@ -26,7 +30,8 @@ export function wineSearchUrl(
 export function stay22BookingUrl(
   name: string,
   lat: number,
-  lng: number
+  lng: number,
+  dates?: StayDates
 ): string | null {
   const affiliateId = process.env.NEXT_PUBLIC_STAY22_AFFILIATE_ID;
   if (!affiliateId) return null;
@@ -36,6 +41,10 @@ export function stay22BookingUrl(
   url.searchParams.set("hotelname", name);
   url.searchParams.set("lat", String(lat));
   url.searchParams.set("lng", String(lng));
+  if (dates?.checkin && dates?.checkout) {
+    url.searchParams.set("checkin", dates.checkin);
+    url.searchParams.set("checkout", dates.checkout);
+  }
   return url.toString();
 }
 
@@ -46,7 +55,8 @@ export function stay22BookingUrl(
 export function hotelBookingUrl(
   bookingUrl: string | null,
   websiteUrl: string | null,
-  stay22?: { name: string; lat: number; lng: number }
+  stay22?: { name: string; lat: number; lng: number },
+  dates?: StayDates
 ): string | null {
   // 1. Direct affiliate deep link from DB
   if (bookingUrl) {
@@ -61,7 +71,7 @@ export function hotelBookingUrl(
 
   // 2. Stay22 Allez link (if we have coordinates)
   if (stay22) {
-    const allez = stay22BookingUrl(stay22.name, stay22.lat, stay22.lng);
+    const allez = stay22BookingUrl(stay22.name, stay22.lat, stay22.lng, dates);
     if (allez) return allez;
   }
 
