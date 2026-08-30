@@ -7,6 +7,8 @@ import { unstable_cache } from "next/cache";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { WineryFilters } from "@/components/directory/WineryFilters";
 import { Pagination } from "@/components/directory/Pagination";
+import { GuideHotelInline } from "@/components/accommodation/GuideHotelInline";
+import { getAllAccommodations } from "@/lib/accommodation-data";
 import { TASTING_PRICE_TIERS } from "@/lib/filters";
 import { wineryRankingScore } from "@/lib/winery-ranking";
 import type { Metadata } from "next";
@@ -280,20 +282,31 @@ export default async function WineriesPage({
       .sort((a, b) => a - b);
   }
 
+  // If exactly one valley is selected, bias the hotel band to that valley;
+  // otherwise show the top-rated stay overall.
+  const selectedValleys = valley.split(",").filter(Boolean);
+  const valleyHint =
+    selectedValleys.length === 1 &&
+    (selectedValleys[0] === "napa" || selectedValleys[0] === "sonoma")
+      ? (selectedValleys[0] as "napa" | "sonoma")
+      : undefined;
+
   // Cached page query + filter scaffolding in parallel.
-  const [pageData, allSubRegions, wineTypeCounts] = await Promise.all([
-    getDirectoryPage({
-      valleys: valley.split(",").filter(Boolean).sort(),
-      regions: region.split(",").filter(Boolean).sort(),
-      rating: rating ? parseFloat(rating) : null,
-      amenities: amenities.split(",").filter(Boolean).sort(),
-      intersectIds,
-      sort,
-      page,
-    }),
-    getAllSubRegions(),
-    getWineTypeCounts(),
-  ]);
+  const [pageData, allSubRegions, wineTypeCounts, topAccommodations] =
+    await Promise.all([
+      getDirectoryPage({
+        valleys: valley.split(",").filter(Boolean).sort(),
+        regions: region.split(",").filter(Boolean).sort(),
+        rating: rating ? parseFloat(rating) : null,
+        amenities: amenities.split(",").filter(Boolean).sort(),
+        intersectIds,
+        sort,
+        page,
+      }),
+      getAllSubRegions(),
+      getWineTypeCounts(),
+      getAllAccommodations(valleyHint),
+    ]);
 
   const { total, totalPages, clampedPage, results } = pageData;
 
@@ -353,6 +366,19 @@ export default async function WineriesPage({
           <p className="font-[var(--font-serif-text)] text-[18px] text-[var(--ink-3)]">
             No wineries match your filters.
           </p>
+        </div>
+      )}
+
+      {/* Book a stay — inline gold band (the converting surface). /wineries is
+          the top pageview page, so surface a hotel CTA here in the browse flow. */}
+      {resultsWithFeatured.length > 0 && topAccommodations.length > 0 && (
+        <div className="mt-10">
+          <GuideHotelInline
+            accommodation={topAccommodations[0]}
+            sourcePage="/wineries"
+            sourceComponent="wineries_bookhotel_inline"
+            lead="Staying the night?"
+          />
         </div>
       )}
 

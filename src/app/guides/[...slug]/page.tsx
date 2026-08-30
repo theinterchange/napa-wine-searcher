@@ -14,6 +14,7 @@ import {
 } from "@/lib/guide-content";
 import { AddToTripButton } from "@/components/trip/AddToTripButton";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { GuideHotelInline } from "@/components/accommodation/GuideHotelInline";
 import { getAllAccommodations } from "@/lib/accommodation-data";
 import {
   getWineriesByAmenity,
@@ -475,6 +476,16 @@ export default async function GuidePage({
               </div>
             )}
           </div>
+        )}
+
+        {/* Book a stay — inline gold band (the converting surface; the bottom
+            "Where to Stay" card grid historically converts at ~0). Placed
+            mid-guide after the winery grid, where trip intent peaks. */}
+        {accommodations.length > 0 && (
+          <GuideHotelInline
+            accommodation={accommodations[0]}
+            sourcePage={`/guides/${guide.slug}`}
+          />
         )}
 
         {/* Plan Your Visit CTA */}
