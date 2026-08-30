@@ -115,6 +115,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     qualities: [75, 85, 90],
+    // Trim the default breakpoint sets (8 device + 8 image widths) to the sizes
+    // this layout actually renders at. Each (source × width × quality × format)
+    // combo is a billed Image Optimization transformation; fewer widths ⇒ fewer
+    // unique transforms, with no visible change at these breakpoints.
+    deviceSizes: [640, 828, 1080, 1200, 1920],
+    imageSizes: [64, 128, 256, 384],
     // Default is 60s. With low traffic, the optimizer evicts encoded
     // versions before real users hit them — every Lighthouse / cold visitor
     // pays the encode cost. Winery photos rarely change, so a long TTL is

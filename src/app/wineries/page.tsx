@@ -23,7 +23,7 @@ const getAllSubRegions = unstable_cache(
       .from(subRegions)
       .orderBy(asc(subRegions.valley), asc(subRegions.name)),
   ["wineries-page:sub-regions"],
-  { revalidate: 3600, tags: ["sub-regions"] }
+  { revalidate: 86400, tags: ["sub-regions"] }
 );
 
 const getWineTypeCounts = unstable_cache(
@@ -40,13 +40,13 @@ const getWineTypeCounts = unstable_cache(
       .orderBy(desc(count()))
       .having(sql`count(*) > 0`),
   ["wineries-page:wine-type-counts"],
-  { revalidate: 3600, tags: ["wine-types"] }
+  { revalidate: 86400, tags: ["wine-types"] }
 );
 
 const getAllWineTypes = unstable_cache(
   () => db.select({ id: wineTypes.id, name: wineTypes.name }).from(wineTypes),
   ["wineries-page:all-wine-types"],
-  { revalidate: 3600, tags: ["wine-types"] }
+  { revalidate: 86400, tags: ["wine-types"] }
 );
 
 // Varietal → winery IDs (depends on selected slugs, but rarely changes)
@@ -64,7 +64,7 @@ const getVarietalWineryIds = unstable_cache(
     return matched.map((m) => m.wineryId);
   },
   ["wineries-page:varietal-ids"],
-  { revalidate: 3600, tags: ["wineries", "wines"] }
+  { revalidate: 86400, tags: ["wineries", "wines"] }
 );
 
 // Tasting price → winery IDs
@@ -95,7 +95,7 @@ const getTastingPriceWineryIds = unstable_cache(
     return matched.map((m) => m.wineryId);
   },
   ["wineries-page:tasting-price-ids"],
-  { revalidate: 3600, tags: ["wineries", "tasting-experiences"] }
+  { revalidate: 86400, tags: ["wineries", "tasting-experiences"] }
 );
 
 // All filters resolved to plain values — fed into the cached page-query helper.
@@ -212,7 +212,7 @@ const getDirectoryPage = unstable_cache(
     return { total, totalPages, clampedPage, results };
   },
   ["wineries-page:directory-results"],
-  { revalidate: 60, tags: ["wineries"] }
+  { revalidate: 3600, tags: ["wineries"] }
 );
 
 export const metadata: Metadata = {

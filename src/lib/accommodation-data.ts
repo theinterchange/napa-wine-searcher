@@ -156,7 +156,7 @@ const fetchAllAccommodations = unstable_cache(
     return baseQuery;
   },
   ["all-accommodations"],
-  { revalidate: 3600, tags: ["accommodations"] }
+  { revalidate: 86400, tags: ["accommodations"] }
 );
 
 export function getAllAccommodations(

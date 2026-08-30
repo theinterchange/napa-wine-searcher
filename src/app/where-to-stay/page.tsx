@@ -6,7 +6,7 @@ import { Pagination } from "@/components/directory/Pagination";
 import { BedDouble } from "lucide-react";
 import { BASE_URL } from "@/lib/constants";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 const PAGE_SIZE = 18;
 
