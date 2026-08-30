@@ -114,6 +114,13 @@ const nextConfig: NextConfig = {
     return redirects;
   },
   images: {
+    // Vercel's image optimizer returns HTTP 402 once the Hobby-plan
+    // transformation quota is exceeded, which breaks EVERY next/image on the
+    // site. Our photos are already served by CDNs (Vercel Blob + Google), so
+    // bypass the optimizer entirely: images load straight from source, render
+    // regardless of quota, and stop consuming the transformation meter. Same
+    // images/dimensions/layout — only server-side re-encoding is skipped.
+    unoptimized: true,
     qualities: [75, 85, 90],
     // Trim the default breakpoint sets (8 device + 8 image widths) to the sizes
     // this layout actually renders at. Each (source × width × quality × format)
