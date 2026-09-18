@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: "Napa & Sonoma Winery Map — Explore 225+ Wineries & Hotels",
   description:
     "Interactive map of Napa Valley and Sonoma County wineries. Filter by region, toggle hotels, find nearby tasting rooms, and book tastings while you plan your wine country trip.",
+  // Filter state lives in query params (?valley=napa, ?hotels=1, …). Those are
+  // the same page as /map, so point every variant at the clean canonical to
+  // resolve GSC "Duplicate without user-selected canonical".
+  alternates: { canonical: `${BASE_URL}/map` },
   openGraph: {
     title: "Napa & Sonoma Winery Map — 225+ Wineries & Hotels | Napa Sonoma Guide",
     description:

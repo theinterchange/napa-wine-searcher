@@ -24,6 +24,23 @@ export default function robots(): MetadataRoute.Robots {
           "/forgot-password",
           "/reset-password",
           "/nalaadmin",
+          // Faceted / paginated directory URLs: infinite ?valley=&region=&
+          // rating=&sort=&varietal=&tastingPrice=&amenities=&page= combinations.
+          // Each is a dynamic render (Fluid CPU) + potential ISR write and
+          // should never be indexed — canonical is the clean path. Blocking the
+          // crawl space cuts bot-driven usage across all three metered meters.
+          // Clean paths (/wineries, /wineries/[slug], /where-to-stay) are NOT
+          // affected — these patterns only match URLs that carry a query string.
+          "/wineries?",
+          "/where-to-stay?",
+          // Map filter facets (?valley=&hotels=&…) are the same content as the
+          // clean /map path — canonical handles indexed variants, this stops
+          // the crawl of new ones (GSC "Duplicate without user-selected canonical").
+          "/map?",
+          // /for-wineries?listing=accommodation:N are transactional deep-links
+          // into the owner claim flow, not indexable content — Google was
+          // flagging them as Soft 404. The clean /for-wineries page stays indexed.
+          "/for-wineries?",
         ],
       },
       // Explicitly allow AI crawlers for AEO/GEO visibility
