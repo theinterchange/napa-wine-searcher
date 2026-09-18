@@ -75,6 +75,54 @@ export function getAllPosts(): BlogPost[] {
   return cached;
 }
 
+/**
+ * Recent posts for the 3-up "From the blog" modules, chosen for visual AND
+ * topical variety so no module shows a cluster of near-identical cards.
+ *
+ * Two dedupe rules:
+ *  - No two cards share the same hero image (several posts may reuse one hero).
+ *  - No two cards share the same primary tag (tags[0]) — e.g. the three newest
+ *    posts are all "dog-friendly"; without this the module would show three
+ *    dog cards in a row even once their photos differ.
+ *
+ * This exists because the naive `getAllPosts().slice(0, 3)` surfaced the
+ * dog-friendly cluster as three identical-looking cards on the homepage and
+ * both region pages.
+ *
+ * `preferTag` (e.g. "napa valley") floats posts carrying that tag to the front
+ * without breaking date order within each group, so region pages surface
+ * region-relevant dispatches first.
+ */
+export function getRecentDistinctPosts(
+  limit: number,
+  preferTag?: string
+): BlogPost[] {
+  const all = getAllPosts(); // already newest-first
+  const ordered = preferTag
+    ? // Array.prototype.sort is stable in Node, so date order is preserved
+      // within the "has tag" and "lacks tag" groups.
+      [...all].sort(
+        (a, b) =>
+          (a.tags.includes(preferTag) ? 0 : 1) -
+          (b.tags.includes(preferTag) ? 0 : 1)
+      )
+    : all;
+
+  const seenImages = new Set<string>();
+  const seenPrimaryTags = new Set<string>();
+  const out: BlogPost[] = [];
+  for (const post of ordered) {
+    if (post.heroImage && seenImages.has(post.heroImage)) continue;
+    const primaryTag = post.tags[0]?.toLowerCase();
+    if (primaryTag && seenPrimaryTags.has(primaryTag)) continue;
+    if (post.heroImage) seenImages.add(post.heroImage);
+    if (primaryTag) seenPrimaryTags.add(primaryTag);
+    out.push(post);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return getAllPosts().find((p) => p.slug === slug);
 }

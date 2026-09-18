@@ -22,7 +22,7 @@ import { WineryCard } from "@/components/directory/WineryCard";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { getAllAccommodations } from "@/lib/accommodation-data";
-import { getAllPosts } from "@/lib/blog";
+import { getRecentDistinctPosts } from "@/lib/blog";
 import { getGuideBySlug } from "@/lib/guide-content";
 import { SUBREGION_CONTENT } from "@/lib/region-content";
 
@@ -314,7 +314,7 @@ export default async function HomePage() {
     getHomepageWineries(),
     getPopularSubRegions(),
     getAllAccommodations(),
-    Promise.resolve(getAllPosts().slice(0, 3)),
+    Promise.resolve(getRecentDistinctPosts(3)),
     getGuideHeroFallbacks(),
     getSpotlightWinery(),
     getSpotlightAccommodation(),
