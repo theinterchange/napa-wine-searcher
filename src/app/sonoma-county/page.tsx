@@ -8,11 +8,12 @@ import { wineryRankingDesc } from "@/lib/winery-ranking";
 import { getValleyOverview, getTopVarietals } from "@/lib/region-data";
 import { VALLEY_CONTENT, SUBREGION_CONTENT } from "@/lib/region-content";
 import { getAllAccommodations } from "@/lib/accommodation-data";
-import { getAllPosts } from "@/lib/blog";
+import { getRecentDistinctPosts } from "@/lib/blog";
 import { WineryCard } from "@/components/directory/WineryCard";
 import { ValleyHero } from "@/components/region/ValleyHero";
 import { RegionCard } from "@/components/home/RegionCard";
 import { AccommodationCard } from "@/components/accommodation/AccommodationCard";
+import { GuideHotelInline } from "@/components/accommodation/GuideHotelInline";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { FAQSection } from "@/components/region/FAQSection";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -90,7 +91,7 @@ export default async function SonomaCountyPage() {
       getAllAccommodations().then((all) =>
         all.filter((a) => a.valley === "sonoma").slice(0, 3)
       ),
-      Promise.resolve(getAllPosts().slice(0, 3)),
+      Promise.resolve(getRecentDistinctPosts(3, "sonoma county")),
     ]);
 
   const subRegionHeroImages = await getSubRegionHeroImages(
@@ -190,6 +191,22 @@ export default async function SonomaCountyPage() {
           </div>
         </div>
       </section>
+
+      {/* 3b. Inline hotel CTA — the converting gold band (the N° 05 lodging
+          card grid below historically converts at ~0; this proven inline
+          format sits high on the page where trip intent peaks). */}
+      {accommodations.length > 0 && (
+        <section className="border-t border-[var(--rule-soft)]">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <GuideHotelInline
+              accommodation={accommodations[0]}
+              sourcePage="/sonoma-county"
+              sourceComponent="region_bookhotel_inline"
+              lead="Planning a Sonoma weekend?"
+            />
+          </div>
+        </section>
+      )}
 
       <section className="border-t border-[var(--rule-soft)] bg-[var(--paper-2)]/40">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
