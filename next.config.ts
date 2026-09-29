@@ -139,6 +139,16 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
+      // Cloudflare R2 custom domain — winery/accommodation photos moved here
+      // (zero egress) so image bandwidth no longer bills into Vercel's Fast
+      // Origin Transfer meter. Update this hostname if R2_PUBLIC_BASE_URL differs.
+      {
+        protocol: "https",
+        hostname: "images.napasonomaguide.com",
+        pathname: "/**",
+      },
+      // Legacy Vercel Blob — kept until the Blob→R2 migration is verified in
+      // production, then remove (and optionally empty the Blob store).
       {
         protocol: "https",
         hostname: "iubllytv2maaomk9.public.blob.vercel-storage.com",
